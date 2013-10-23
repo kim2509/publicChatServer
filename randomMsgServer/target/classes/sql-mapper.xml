@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dy.mapper">
+
+	<select id="getUserCount" resultType="int">
+		select count(USER_NO) from USER;
+	</select>
+
+	<insert id="insertUser" parameterType="com.dy.domain.User" useGeneratedKeys="true" keyProperty="USER_NO"  keyColumn="USER_NO">
+		INSERT INTO USER( CREATE_DATE, LAST_LOGIN_DATE )
+		VALUES( NOW(), NOW() );
+		<selectKey keyProperty="USER_NO" resultType="long" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="getUser" resultType="com.dy.domain.User" parameterType="string">
+		select * from USER where USER_NO = #{id}
+	</select>
+	
+</mapper>
