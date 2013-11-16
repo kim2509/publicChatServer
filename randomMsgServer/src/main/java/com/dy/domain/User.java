@@ -2,84 +2,105 @@ package com.dy.domain;
 
 public class User {
 
-	private long USER_NO;
+	private long userNo;
 	
-	private String USER_ID;
+	private String userID;
 	
-	private String USER_NAME;
+	private String userName;
 	
-	private String NICKNAME;
+	private String nickName;
 	
-	private String CREATE_DATE;
+	private String createDate;
 	
-	private String LAST_LOGIN_DATE;
+	private String lastLoginDate;
 	
-	private String SEX;
+	private int sex;
 	
-	private int AGE;
+	private int birthYear;
+	
+	private String latitude;
+	
+	private String longitude;
 
-	public long getUSER_NO() {
-		return USER_NO;
+	public long getUserNo() {
+		return userNo;
 	}
 
-	public void setUSER_NO(long uSER_NO) {
-		USER_NO = uSER_NO;
+	public void setUserNo(long userNo) {
+		this.userNo = userNo;
 	}
 
-	public String getUSER_ID() {
-		return USER_ID;
+	public String getUserID() {
+		return userID;
 	}
 
-	public void setUSER_ID(String uSER_ID) {
-		USER_ID = uSER_ID;
+	public void setUserID(String userID) {
+		this.userID = userID;
 	}
 
-	public String getUSER_NAME() {
-		return USER_NAME;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUSER_NAME(String uSER_NAME) {
-		USER_NAME = uSER_NAME;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public String getNICKNAME() {
-		return NICKNAME;
+	public String getNickName() {
+		return nickName;
 	}
 
-	public void setNICKNAME(String nICKNAME) {
-		NICKNAME = nICKNAME;
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 
-	public String getCREATE_DATE() {
-		return CREATE_DATE;
+	public String getCreateDate() {
+		return createDate;
 	}
 
-	public void setCREATE_DATE(String cREATE_DATE) {
-		CREATE_DATE = cREATE_DATE;
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
 	}
 
-	public String getLAST_LOGIN_DATE() {
-		return LAST_LOGIN_DATE;
+	public String getLastLoginDate() {
+		return lastLoginDate;
 	}
 
-	public void setLAST_LOGIN_DATE(String lAST_LOGIN_DATE) {
-		LAST_LOGIN_DATE = lAST_LOGIN_DATE;
+	public void setLastLoginDate(String lastLoginDate) {
+		this.lastLoginDate = lastLoginDate;
 	}
 
-	public String getSEX() {
-		return SEX;
+	public int getSex() {
+		return sex;
 	}
 
-	public void setSEX(String sEX) {
-		SEX = sEX;
+	public void setSex(int sex) {
+		this.sex = sex;
 	}
 
-	public int getAGE() {
-		return AGE;
+	public String getLatitude() {
+		return latitude;
 	}
 
-	public void setAGE(int aGE) {
-		AGE = aGE;
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public int getBirthYear() {
+		return birthYear;
+	}
+
+	public void setBirthYear(int birthYear) {
+		this.birthYear = birthYear;
+	}
+
 	
 }

@@ -5,19 +5,88 @@
 <mapper namespace="com.dy.mapper">
 
 	<select id="getUserCount" resultType="int">
-		select count(USER_NO) from USER;
+		select count(userNo) from
+		USER;
 	</select>
 
-	<insert id="insertUser" parameterType="com.dy.domain.User" useGeneratedKeys="true" keyProperty="USER_NO"  keyColumn="USER_NO">
-		INSERT INTO USER( CREATE_DATE, LAST_LOGIN_DATE )
+	<insert id="insertUser" parameterType="com.dy.domain.User"
+		useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
+		INSERT INTO USER( createDate, lastLoginDate )
 		VALUES( NOW(), NOW() );
-		<selectKey keyProperty="USER_NO" resultType="long" order="AFTER">
+		<selectKey keyProperty="userNo" resultType="long" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
 	</insert>
 
-	<select id="getUser" resultType="com.dy.domain.User" parameterType="string">
-		select * from USER where USER_NO = #{id}
+	<insert id="insertUserLocation" parameterType="com.dy.domain.User">
+		INSERT INTO
+		USER_LOCATION( userNo, locationName, latitude, longitude )
+		VALUES(
+		#{userNo}, 'LOGIN_LOCATION', #{latitude}, #{longitude} );
+	</insert>
+
+	<update id="updateUserLocation" parameterType="com.dy.domain.User">
+		UPDATE
+		USER_LOCATION SET latitude=#{latitude}, longitude=#{longitude} where
+		userNo=#{userNo}
+	</update>
+
+	<select id="getUser" resultType="com.dy.domain.User"
+		parameterType="string">
+		select U.userNo, userID, userName, nickName, createDate,
+		lastLoginDate, sex, birthYear, latitude, longitude
+		from USER U
+		left outer join USER_LOCATION UL on U.userNo=UL.userNo
+		where U.userNo = #{userNo}
 	</select>
+
+	<update id="updateUserSex" parameterType="com.dy.domain.User">
+		UPDATE USER SET
+		sex=#{sex} where userNo=#{userNo}
+	</update>
+
+	<update id="updateUserAge" parameterType="com.dy.domain.User">
+		UPDATE USER SET
+		birthYear=#{birthYear} where userNo=#{userNo}
+	</update>
+
+	<select id="getUserProfileKeywordDic" resultType="com.dy.domain.UserProfileKeywordDic">
+		SELECT * FROM
+		USER_PROFILE_KEYWORD_DIC;
+	</select>
+
+	<delete id="deleteUserProfileKeywords" parameterType="com.dy.domain.UserProfileKeyword">
+		delete from USER_PROFILE_KEYWORD where userNo=#{userNo}
+	</delete>
+
+	<!-- Batch Insert example, using the Account parameter class -->
+	<insert id="batchInsertUserProfileKeywords" parameterType="java.util.List">
+		replace into USER_PROFILE_KEYWORD (
+		userNo, keywordNo
+		)
+		values (
+		<foreach item="UserProfileKeyword" collection="list" open="" close=""
+			separator="),(">
+			#{UserProfileKeyword.userNo}, #{UserProfileKeyword.keywordNo}
+		</foreach>
+		)
+	</insert>
 	
+	<select id="getUsersNearMe" parameterType="com.dy.domain.User" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT userNo, TRUNCATE((
+    		6371 * acos ( cos ( radians( #{latitude} ) )
+      		* cos( radians( latitude ) )
+      		* cos( radians( longitude ) - radians( #{longitude} ) )
+      		+ sin ( radians( #{latitude} ) )
+      		* sin( radians( latitude ) )
+    		)
+  			) , 1)  AS distance
+			FROM USER_LOCATION
+			WHERE userNo <> #{userNo}
+			ORDER BY distance
+			LIMIT 0 , 20;
+		]]>
+	</select>
+
 </mapper>
