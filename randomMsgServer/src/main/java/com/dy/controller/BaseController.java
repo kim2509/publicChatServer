@@ -155,6 +155,21 @@ public class BaseController implements BeanFactoryAware {
 		return "true";
 	}
 	
+	@RequestMapping( value ="/fetchMessage.do", method = RequestMethod.POST)
+	public @ResponseBody String fetchMessage(ModelMap model, @RequestBody String bodyString ) {
+		
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+		}
+		catch( Exception ex )
+		{
+			ex.printStackTrace();
+		}
+		
+		return "true";
+	}
+	
 	public void setBeanFactory(BeanFactory context) throws BeansException {
 		
 	}
