@@ -2,6 +2,7 @@ package com.dy.domain;
 
 public class ChatMessage {
 
+	private int chatID;
 	private long roomID;
 	private String msg;
 	private String sender;
@@ -29,5 +30,11 @@ public class ChatMessage {
 	}
 	public void setSender(String sender) {
 		this.sender = sender;
+	}
+	public int getChatID() {
+		return chatID;
+	}
+	public void setChatID(int chatID) {
+		this.chatID = chatID;
 	}
 }
