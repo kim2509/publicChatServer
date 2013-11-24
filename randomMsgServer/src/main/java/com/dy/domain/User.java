@@ -21,6 +21,16 @@ public class User {
 	private String latitude;
 	
 	private String longitude;
+	
+	public User()
+	{
+		
+	}
+	
+	public User( long userNo )
+	{
+		this.userNo = userNo;
+	}
 
 	public long getUserNo() {
 		return userNo;

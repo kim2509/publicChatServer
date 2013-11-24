@@ -88,5 +88,60 @@
 			LIMIT 0 , 20;
 		]]>
 	</select>
+	
+	<select id="existChatHistory" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT * FROM CHAT_ROOM_USERS
+		WHERE ROOM_ID in
+			(SELECT ROOM_ID FROM CHAT_ROOM_USERS WHERE userNo=#{userNo})
+		AND userNo <> #{userNo}
+		AND userNo in (#{anotherUserNo})
+		]]>
+	</select>
+	
+	<insert id="insertChatRoom" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="roomID" keyColumn="roomID">
+		INSERT INTO CHAT_ROOMS(userNo, createDate)
+		values(#{userNo}, NOW());
+		<selectKey keyProperty="roomID" resultType="long" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<insert id="createChatRoomTable" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="roomID" keyColumn="roomID">
+		<![CDATA[
+		CREATE  TABLE CHAT_ROOM_#{roomID} (
+		`chatID` INT NOT NULL AUTO_INCREMENT ,
+  		`sender` INT NOT NULL ,
+  		`msg` VARCHAR(100) NULL ,
+  		`createDate` DATETIME NULL ,
+  		PRIMARY KEY (`chatID`) ,
+  		INDEX `idx1` (`createDate` ASC, `sender` ASC) );
+  		]]>
+	</insert>
+	
+	<insert id="insertChatRoomUsers" parameterType="java.util.List">
+		insert into CHAT_ROOM_USERS (
+		ROOM_ID, userNo
+		)
+		values (
+		<foreach item="User" collection="list" open="" close=""
+			separator="),(">
+			#{User.roomID}, #{User.userNo}
+		</foreach>
+		)
+	</insert>
 
+	<insert id="insertChatMessage" parameterType="com.dy.domain.ChatMessage">
+		INSERT INTO CHAT_ROOM_#{roomID}(sender,msg,createDate)
+		values(#{sender},#{msg},NOW());
+	</insert>
+	
+	<select id="chatMessages" parameterType="java.util.HashMap" resultType="com.dy.domain.ChatMessage">
+		<![CDATA[
+		SELECT *, #{roomID} as roomID FROM CHAT_ROOM_#{roomID}
+		ORDER BY createDate,chatID
+		LIMIT 0,30
+		]]>
+	</select>
+	
 </mapper>

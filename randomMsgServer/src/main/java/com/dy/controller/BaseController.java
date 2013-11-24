@@ -1,7 +1,13 @@
 package com.dy.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.sql.DataSource;
 
@@ -19,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dy.domain.ChatMessage;
 import com.dy.domain.User;
 import com.dy.domain.UserProfileKeyword;
 import com.dy.domain.UserProfileKeywordDic;
@@ -31,6 +38,12 @@ public class BaseController implements BeanFactoryAware {
 	
 	@Autowired
 	private DataSource dataSource;
+	
+	@RequestMapping( value ="/test.do", method = RequestMethod.POST)
+	public @ResponseBody String test( ModelMap model, @RequestBody String bodyString )
+	{
+		return bodyString;
+	}
 	
 	@RequestMapping( value ="/mainInfo.do", method = RequestMethod.POST)
 	public @ResponseBody List<HashMap<String, String>> mainInfo( ModelMap model, @RequestBody String bodyString )
@@ -155,19 +168,97 @@ public class BaseController implements BeanFactoryAware {
 		return "true";
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/fetchMessage.do", method = RequestMethod.POST)
-	public @ResponseBody String fetchMessage(ModelMap model, @RequestBody String bodyString ) {
+	public @ResponseBody List<ChatMessage> fetchMessage(ModelMap model, @RequestBody String bodyString ) {
 		
 		try
 		{
 			ObjectMapper mapper = new ObjectMapper();
+			
+			HashMap<String,String> hash = mapper.readValue(bodyString, new TypeReference<HashMap<String,String>>(){});
+			
+			List<HashMap<String,String>> list = sqlSession.selectList("com.dy.mapper.existChatHistory", hash );
+			
+			if ( list != null && list.size() > 0 )
+			{
+				HashMap ChatHistory = list.get(0);
+				ChatHistory.put("roomID", ChatHistory.get("ROOM_ID"));
+			
+				List<ChatMessage> chatMessages = sqlSession.selectList("com.dy.mapper.chatMessages", ChatHistory );
+				
+				System.out.println( mapper.writeValueAsString( chatMessages ) );
+				
+				return chatMessages;
+			}
 		}
 		catch( Exception ex )
 		{
 			ex.printStackTrace();
 		}
 		
-		return "true";
+		return null;
+	}
+	
+	@RequestMapping( value ="/sendMessage.do", method = RequestMethod.POST)
+	public @ResponseBody List<HashMap<String,String>> sendMessage(ModelMap model, @RequestBody String bodyString ) {
+		
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			
+			HashMap<String,String> hash = mapper.readValue(bodyString, new TypeReference<HashMap<String,String>>(){});
+			
+			List<HashMap<String,String>> list = sqlSession.selectList("com.dy.mapper.existChatHistory", hash );
+			
+			long roomID = 0;
+			
+			if ( list == null || list.size() == 0 )
+			{
+				sqlSession.insert("com.dy.mapper.insertChatRoom", hash );
+				
+				ArrayList<HashMap<String,String>> users = new ArrayList<HashMap<String,String>>();
+				HashMap<String,String> user = new HashMap<String,String>();
+				user.put("roomID", String.valueOf(hash.get("roomID")));
+				user.put("userNo", String.valueOf(hash.get("userNo")));
+				users.add( user );
+				HashMap<String,String> anotherUser = new HashMap<String,String>();
+				anotherUser.put("roomID", String.valueOf(hash.get("roomID")));
+				anotherUser.put("userNo", String.valueOf(hash.get("anotherUserNo")));
+				users.add( anotherUser );
+				
+				sqlSession.insert("com.dy.mapper.insertChatRoomUsers", users );
+				
+				sqlSession.insert("com.dy.mapper.createChatRoomTable", hash );
+				
+				System.out.println( mapper.writeValueAsString( hash ) );
+				
+				String strRoomID = String.valueOf( hash.get("roomID") );
+				roomID = Long.valueOf( strRoomID );
+			}
+			else
+			{
+				HashMap ChatHistory = list.get(0);
+				String strRoomID = String.valueOf( ChatHistory.get("ROOM_ID") );
+				roomID = Long.valueOf( strRoomID );	
+			}
+
+			ChatMessage msg = new ChatMessage();
+			
+			//int roomID = Integer.parseInt(  );
+			msg.setSender(String.valueOf(hash.get("userNo")));
+			msg.setRoomID( roomID );
+			msg.setMsg(hash.get("msg"));
+			sqlSession.insert("com.dy.mapper.insertChatMessage", msg );
+
+			return list;
+		}
+		catch( Exception ex )
+		{
+			ex.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public void setBeanFactory(BeanFactory context) throws BeansException {
