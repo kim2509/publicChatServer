@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dy.common.Constants;
 import com.dy.domain.ChatMessage;
 import com.dy.domain.User;
 import com.dy.domain.UserProfileKeyword;
@@ -184,6 +185,8 @@ public class BaseController implements BeanFactoryAware {
 			{
 				HashMap ChatHistory = list.get(0);
 				ChatHistory.put("roomID", ChatHistory.get("ROOM_ID"));
+				ChatHistory.put("fetchCount", Constants.FETCH_MESSAGE_COUNT );
+				ChatHistory.put("lastChatID", hash.get("lastChatID") );
 			
 				List<ChatMessage> chatMessages = sqlSession.selectList("com.dy.mapper.chatMessages", ChatHistory );
 				

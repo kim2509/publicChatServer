@@ -138,9 +138,13 @@
 	
 	<select id="chatMessages" parameterType="java.util.HashMap" resultType="com.dy.domain.ChatMessage">
 		<![CDATA[
-		SELECT *, #{roomID} as roomID FROM CHAT_ROOM_#{roomID}
-		ORDER BY createDate,chatID
-		LIMIT 0,30
+		SELECT * FROM (
+			SELECT *, #{roomID} as roomID FROM CHAT_ROOM_#{roomID}
+			ORDER BY chatID desc
+			LIMIT 0, #{fetchCount}
+		) A
+		WHERE chatID > #{lastChatID}
+		ORDER BY chatID
 		]]>
 	</select>
 	
