@@ -1,13 +1,8 @@
 package com.dy.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.sql.DataSource;
 
@@ -26,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dy.common.Constants;
+import com.dy.domain.Chat;
 import com.dy.domain.ChatMessage;
 import com.dy.domain.User;
 import com.dy.domain.UserProfileKeyword;
@@ -40,10 +36,10 @@ public class BaseController implements BeanFactoryAware {
 	@Autowired
 	private DataSource dataSource;
 	
-	@RequestMapping( value ="/test.do", method = RequestMethod.POST)
-	public @ResponseBody String test( ModelMap model, @RequestBody String bodyString )
+	@RequestMapping( value ="/test.do", method = RequestMethod.GET)
+	public @ResponseBody String test( ModelMap model )
 	{
-		return bodyString;
+		return "test";
 	}
 	
 	@RequestMapping( value ="/mainInfo.do", method = RequestMethod.POST)
@@ -264,7 +260,35 @@ public class BaseController implements BeanFactoryAware {
 		return null;
 	}
 	
-	public void setBeanFactory(BeanFactory context) throws BeansException {
+	@RequestMapping( value ="/chatList.do", method = RequestMethod.POST)
+	public @ResponseBody List<Chat> chatList( ModelMap model, @RequestBody String bodyString )
+	{
+		List<Chat> chatList = null;
+		
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			chatList = sqlSession.selectList("com.dy.mapper.chatList", user );
+			
+			for ( Chat chat : chatList )
+			{
+				HashMap<String, String> hash = sqlSession.selectOne("com.dy.mapper.lastChatPerUser", chat );
+				chat.setLastMessage( hash.get("msg") );
+				Object tp = hash.get("createDate");
+				chat.setDateTime( tp.toString() );
+			}
+		}
+		catch( Exception ex )
+		{
+			ex.printStackTrace();
+		}
+		
+		return chatList;
+	}
+
+	public void setBeanFactory(BeanFactory arg0) throws BeansException {
+		// TODO Auto-generated method stub
 		
 	}
  

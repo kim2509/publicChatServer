@@ -148,4 +148,25 @@
 		]]>
 	</select>
 	
+	<select id="chatList" parameterType="com.dy.domain.User" resultType="com.dy.domain.Chat">
+		<![CDATA[
+		SELECT * FROM CHAT_ROOM_USERS
+		WHERE ROOM_ID IN (
+			SELECT ROOM_ID FROM CHAT_ROOM_USERS
+			WHERE userNo=#{userNo}
+		)
+		AND userNo <> #{userNo}
+		GROUP BY ROOM_ID;
+		]]>
+	</select>
+	
+	<select id="lastChatPerUser" parameterType="com.dy.domain.Chat" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT * FROM CHAT_ROOM_#{ROOM_ID}
+		WHERE msg <> ''
+		ORDER BY createDate desc
+		LIMIT 0, 1;
+		]]>
+	</select>
+	
 </mapper>
