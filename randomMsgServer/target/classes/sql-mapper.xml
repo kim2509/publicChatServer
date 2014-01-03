@@ -169,4 +169,14 @@
 		]]>
 	</select>
 	
+	<select id="hometownUserList" parameterType="com.dy.domain.User" resultType="java.util.HashMap">
+		<![CDATA[
+		select K.userNo, UKD.keywordName, U.*
+		from USER_PROFILE_KEYWORD K
+		LEFT OUTER JOIN USER_PROFILE_KEYWORD_DIC UKD ON UKD.keywordNo=K.keywordNo
+		INNER JOIN USER U on K.userNo=U.userNo
+		WHERE UKD.keywordCaregory='고향'
+		AND K.userNo <> #{userNo}
+		]]>
+	</select>
 </mapper>

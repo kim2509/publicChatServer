@@ -287,6 +287,25 @@ public class BaseController implements BeanFactoryAware {
 		return chatList;
 	}
 
+	@RequestMapping( value ="/hometownUserList.do", method = RequestMethod.POST)
+	public @ResponseBody List<HashMap<String,String>> hometownUserList( ModelMap model, @RequestBody String bodyString )
+	{
+		List<HashMap<String,String>> hometownUserList = null;
+		
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			hometownUserList = sqlSession.selectList("com.dy.mapper.hometownUserList", user );
+		}
+		catch( Exception ex )
+		{
+			ex.printStackTrace();
+		}
+		
+		return hometownUserList;
+	}
+	
 	public void setBeanFactory(BeanFactory arg0) throws BeansException {
 		// TODO Auto-generated method stub
 		
