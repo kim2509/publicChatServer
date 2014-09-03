@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.salsa.mapper">
+
+    <select id="getAllUsers" resultType="com.hellosalsa.domain.User"
+		parameterType="string">
+		select * from USER;
+	</select>
+	
+    <select id="getUser" resultType="com.hellosalsa.domain.User"
+		parameterType="String">
+		select *
+		from USER U
+		where U.userID = #{value}
+	</select>
+	
+    <insert id="insertUser" parameterType="com.hellosalsa.domain.User">
+		insert into USER(userID, userName, password, sex, birthyear )
+		values ( #{userID}, #{userName}, #{password}, #{sex}, #{birthYear} );
+	</insert>
+	
+    <select id="login" resultType="com.hellosalsa.domain.User"
+		parameterType="com.hellosalsa.domain.User">
+		select *
+		from USER U
+		where U.userID = #{userID} and U.password = #{password}
+	</select>
+	
+    <update id="updateUserLocation" parameterType="com.hellosalsa.domain.User">
+		UPDATE
+		USER SET latitude=#{latitude}, longitude=#{longitude} where
+		userID=#{userID}
+	</update>
+	
+    <select id="getUsersNearMe" parameterType="com.hellosalsa.domain.User" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT userID, TRUNCATE((
+    		6371 * acos ( cos ( radians( #{latitude} ) )
+      		* cos( radians( latitude ) )
+      		* cos( radians( longitude ) - radians( #{longitude} ) )
+      		+ sin ( radians( #{latitude} ) )
+      		* sin( radians( latitude ) )
+    		)
+  			) , 1)  AS distance
+			FROM USER
+			WHERE userID <> #{userID}
+			AND latitude is not null
+			and longitude is not null
+			ORDER BY distance
+			LIMIT 0 , 20;
+		]]>
+	</select>
+	
+</mapper>

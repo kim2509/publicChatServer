@@ -42,6 +42,7 @@ public class BaseController implements BeanFactoryAware {
 		return "test";
 	}
 	
+	/*
 	@RequestMapping( value ="/mainInfo.do", method = RequestMethod.POST)
 	public @ResponseBody List<HashMap<String, String>> mainInfo( ModelMap model, @RequestBody String bodyString )
 	{
@@ -60,6 +61,7 @@ public class BaseController implements BeanFactoryAware {
 		
 		return userList;
 	}
+	*/
 	
 	@RequestMapping( value ="/registerAsRandomID.do", method = RequestMethod.POST)
 	public @ResponseBody User registerAsRandomID(ModelMap model, @RequestBody String bodyString ) {
@@ -304,6 +306,12 @@ public class BaseController implements BeanFactoryAware {
 		}
 		
 		return hometownUserList;
+	}
+	
+	@RequestMapping( value ="/getMetaInfo.do", method = RequestMethod.POST)
+	public @ResponseBody String getMetaInfo(ModelMap model, @RequestBody String bodyString ) {
+		
+		return "true2";
 	}
 	
 	public void setBeanFactory(BeanFactory arg0) throws BeansException {
