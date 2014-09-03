@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dy.mapper">
+
+    <select id="getAllPosts" resultType="com.neighborhood.domain.Post"
+		parameterType="com.neighborhood.domain.User">
+		<![CDATA[
+		SELECT userID, TRUNCATE((
+    		6371 * acos ( cos ( radians( #{latitude} ) )
+      		* cos( radians( latitude ) )
+      		* cos( radians( longitude ) - radians( #{longitude} ) )
+      		+ sin ( radians( #{latitude} ) )
+      		* sin( radians( latitude ) )
+    		)
+  			) , 1)  AS distance, message
+			FROM POST
+			WHERE latitude is not null
+			and longitude is not null
+			ORDER BY distance
+			LIMIT 0 , 20;
+		]]>
+	</select>
+	
+</mapper>

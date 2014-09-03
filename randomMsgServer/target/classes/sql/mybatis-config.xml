@@ -6,5 +6,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	<mappers>
 		<mapper resource="sql-mapper.xml"/>
 		<mapper resource="sql-salsa.xml"/>
+		<mapper resource="sql-neighborhood.xml"/>
 	</mappers>
 </configuration>
