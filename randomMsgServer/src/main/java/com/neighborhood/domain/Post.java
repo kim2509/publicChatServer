@@ -1,5 +1,7 @@
 package com.neighborhood.domain;
 
+import java.util.List;
+
 public class Post {
 
 	private String postID;
@@ -11,6 +13,9 @@ public class Post {
 	private String userName;
 	private String distance;
 	private String createDate;
+	
+	private List<PostLike> postLikes;
+	private List<PostReply> postReplies;
 	
 	public String getLatitude() {
 		return latitude;
@@ -59,5 +64,17 @@ public class Post {
 	}
 	public void setCreateDate(String createDate) {
 		this.createDate = createDate;
+	}
+	public List<PostLike> getPostLikes() {
+		return postLikes;
+	}
+	public void setPostLikes(List<PostLike> postLikes) {
+		this.postLikes = postLikes;
+	}
+	public List<PostReply> getPostReplies() {
+		return postReplies;
+	}
+	public void setPostReplies(List<PostReply> postReplies) {
+		this.postReplies = postReplies;
 	}
 }

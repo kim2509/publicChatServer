@@ -16,6 +16,8 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.neighborhood.domain.Post;
+import com.neighborhood.domain.PostLike;
+import com.neighborhood.domain.PostReply;
 import com.neighborhood.domain.User;
 
 @Controller
@@ -81,6 +83,12 @@ public class NeighborhoodController {
 			post = mapper.readValue(bodyString, new TypeReference<Post>(){});
 			
 			post = sqlSession.selectOne("com.tessoft.neighborhood.getPostDetail", post );
+			
+			List<PostLike> postLikes = sqlSession.selectList("com.tessoft.neighborhood.getPostLikes", post );
+			post.setPostLikes(postLikes);
+			
+			List<PostReply> postReplies = sqlSession.selectList("com.tessoft.neighborhood.getPostReplies", post );
+			post.setPostReplies(postReplies);
 		}
 		catch( Exception ex )
 		{

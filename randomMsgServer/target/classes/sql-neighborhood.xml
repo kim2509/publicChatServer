@@ -42,4 +42,20 @@
 		]]>
 	</select>
 	
+	<select id="getPostLikes" resultType="com.neighborhood.domain.PostLike"
+		parameterType="com.neighborhood.domain.Post">
+		<![CDATA[
+		SELECT * FROM POST_LIKE
+		WHERE postID=#{postID}
+		]]>
+	</select>
+	
+	<select id="getPostReplies" resultType="com.neighborhood.domain.PostReply"
+		parameterType="com.neighborhood.domain.Post">
+		<![CDATA[
+		SELECT * FROM POST_REPLY
+		WHERE postID=#{postID}
+		]]>
+	</select>
+	
 </mapper>
