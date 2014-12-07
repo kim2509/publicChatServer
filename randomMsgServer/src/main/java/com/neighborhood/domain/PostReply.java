@@ -5,6 +5,7 @@ public class PostReply {
 	private String replyID;
 	private String postID;
 	private String userID;
+	private String userName;
 	private String message;
 	private String createDate;
 	public String getPostID() {
@@ -36,5 +37,11 @@ public class PostReply {
 	}
 	public void setCreateDate(String createDate) {
 		this.createDate = createDate;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 }

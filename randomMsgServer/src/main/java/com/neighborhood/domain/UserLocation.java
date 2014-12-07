@@ -1,17 +1,15 @@
 package com.neighborhood.domain;
 
-public class User {
+public class UserLocation {
 
 	private String userID;
-	private String userName;
+	private String locationName;
 	
 	private String latitude;
 	
 	private String longitude;
 	
-	private String regID;
-	
-	private String distance;
+	private String priority;
 
 	public String getUserID() {
 		return userID;
@@ -37,28 +35,20 @@ public class User {
 		this.longitude = longitude;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getLocationName() {
+		return locationName;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
 	}
 
-	public String getRegID() {
-		return regID;
+	public String getPriority() {
+		return priority;
 	}
 
-	public void setRegID(String regID) {
-		this.regID = regID;
-	}
-
-	public String getDistance() {
-		return distance;
-	}
-
-	public void setDistance(String distance) {
-		this.distance = distance;
+	public void setPriority(String priority) {
+		this.priority = priority;
 	}
 	
 }

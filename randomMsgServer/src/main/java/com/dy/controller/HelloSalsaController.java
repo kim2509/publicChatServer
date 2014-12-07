@@ -55,6 +55,7 @@ public class HelloSalsaController {
 		return res;
 	}
 	
+	/*
 	@RequestMapping( value ="/login.do")
 	public @ResponseBody UserResponse login( ModelMap model, @RequestBody String bodyString )
 	{
@@ -83,6 +84,7 @@ public class HelloSalsaController {
 		
 		return res;
 	}
+	*/
 	
 	@RequestMapping( value ="/mainInfo.do")
 	public @ResponseBody MainInfoResponse mainInfo( ModelMap model, @RequestBody String bodyString )

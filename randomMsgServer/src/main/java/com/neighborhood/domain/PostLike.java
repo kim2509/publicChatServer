@@ -5,6 +5,7 @@ public class PostLike {
 	private String likeID;
 	private String postID;
 	private String userID;
+	private String userName;
 	private String createDate;
 	public String getLikeID() {
 		return likeID;
@@ -29,5 +30,11 @@ public class PostLike {
 	}
 	public void setCreateDate(String createDate) {
 		this.createDate = createDate;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 }

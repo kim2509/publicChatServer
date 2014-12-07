@@ -4,7 +4,7 @@
 
 <mapper namespace="com.tessoft.neighborhood">
 
-    <select id="getAllPosts" resultType="com.neighborhood.domain.Post"
+	<select id="getAllPosts" resultType="com.neighborhood.domain.Post"
 		parameterType="com.neighborhood.domain.User">
 		<![CDATA[
 		SELECT * FROM (
@@ -25,14 +25,21 @@
 		LIMIT 0 , 20;
 		]]>
 	</select>
-	
-    <update id="updateUserLocation" parameterType="com.neighborhood.domain.User">
+
+	<update id="updateUserRegID" parameterType="com.neighborhood.domain.User">
 		UPDATE
-		USER_LOCATION SET latitude=#{latitude}, longitude=#{longitude} where
+		USER SET regID=#{regID} where
 		userID=#{userID}
 	</update>
 	
-    <select id="getPostDetail" resultType="com.neighborhood.domain.Post"
+	<update id="updateUserLocation" parameterType="com.neighborhood.domain.User">
+		UPDATE
+		USER_LOCATION SET latitude=#{latitude}, longitude=#{longitude} where
+		userID=#{userID}
+		and locationName='현재위치'
+	</update>
+
+	<select id="getPostDetail" resultType="com.neighborhood.domain.Post"
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
 		SELECT P.*,U.userName 
@@ -41,20 +48,135 @@
 		WHERE postID=#{postID}
 		]]>
 	</select>
-	
+
 	<select id="getPostLikes" resultType="com.neighborhood.domain.PostLike"
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
-		SELECT * FROM POST_LIKE
+		SELECT *,U.userName FROM POST_LIKE PL
+		LEFT OUTER JOIN USER U on PL.userID=U.userID
 		WHERE postID=#{postID}
 		]]>
 	</select>
-	
+
 	<select id="getPostReplies" resultType="com.neighborhood.domain.PostReply"
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
-		SELECT * FROM POST_REPLY
+		SELECT *,U.userName FROM POST_REPLY PR
+		LEFT OUTER JOIN USER U on PR.userID=U.userID
 		WHERE postID=#{postID}
+		]]>
+	</select>
+
+	<insert id="addPostReply" parameterType="com.neighborhood.domain.PostReply">
+		INSERT INTO POST_REPLY(
+		postID, userID, message, createDate )
+		VALUES( #{postID}, #{userID},
+		#{message}, NOW() );
+	</insert>
+
+	<insert id="addPostLike" parameterType="com.neighborhood.domain.PostLike">
+		INSERT INTO POST_LIKE(
+		postID, userID, createDate )
+		VALUES( #{postID}, #{userID}, NOW() );
+	</insert>
+
+	<insert id="addPost" parameterType="com.neighborhood.domain.Post">
+		INSERT INTO POST( userID,
+		message, latitude, longitude, createDate )
+		VALUES( #{userID},
+		#{message}, #{latitude}, #{longitude}, NOW() );
+		<selectKey keyProperty="postID" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="getUser" resultType="com.neighborhood.domain.User"
+		parameterType="com.neighborhood.domain.User">
+		<![CDATA[
+		SELECT * FROM USER
+		WHERE userID=#{userID}
+		]]>
+	</select>
+
+	<insert id="insertUser" parameterType="com.neighborhood.domain.User">
+		INSERT INTO USER( userID,
+		userName, regID, createDate )
+		VALUES( #{userID},#{userName},#{regID},
+		NOW() );
+	</insert>
+
+	<insert id="insertUserLocation" parameterType="com.neighborhood.domain.UserLocation">
+		INSERT INTO
+		USER_LOCATION( userID, latitude, longitude, locationName, priority )
+		VALUES( #{userID},#{latitude},#{longitude},#{locationName},
+		#{priority} );
+	</insert>
+
+	<select id="getNearUsers" resultType="com.neighborhood.domain.User"
+		parameterType="com.neighborhood.domain.Post">
+		<![CDATA[
+		SELECT * FROM (
+			SELECT *, TRUNCATE((
+    			6371 * acos ( cos ( radians( #{latitude} ) )
+	      		* cos( radians( latitude ) )
+  	 	   		* cos( radians( longitude ) - radians( #{longitude} ) )
+   		   		+ sin ( radians( #{latitude} ) )
+   		   		* sin( radians( latitude ) )
+   		 		)
+  				) , 1)  AS distance
+			FROM (
+				select UL.*, U.userName, U.regID from USER_LOCATION UL
+					LEFT OUTER JOIN USER U ON UL.userID=U.userID
+				where locationName='현재위치'
+			) A
+			WHERE latitude is not null
+			and longitude is not null
+			ORDER BY distance
+		) A
+		WHERE A.distance <= 1
+		LIMIT 0 , 100;
+		]]>
+	</select>
+
+	<select id="getPostAuthor" parameterType="com.neighborhood.domain.PostReply"
+	    resultType="com.neighborhood.domain.User">
+	    <![CDATA[
+		select P.userID,U.userName, U.regID from POST P
+		LEFT OUTER JOIN USER U on P.userID=U.userID
+		where postID=#{postID}
+		and P.userID <> #{userID}
+		]]>
+	</select>
+	
+	<select id="getPostAuthor2" parameterType="com.neighborhood.domain.PostLike"
+	    resultType="com.neighborhood.domain.User">
+	    <![CDATA[
+		select P.userID,U.userName, U.regID from POST P
+		LEFT OUTER JOIN USER U on P.userID=U.userID
+		where postID=#{postID}
+		and P.userID <> #{userID}
+		]]>
+	</select>
+
+	<select id="getPostReplyUsers" parameterType="com.neighborhood.domain.PostReply"
+	    resultType="com.neighborhood.domain.User">
+	    <![CDATA[
+		select P.userID,U.userName, U.regID from POST_REPLY P
+		LEFT OUTER JOIN USER U on P.userID=U.userID
+		where postID=#{postID}
+		group by P.userID
+		]]>
+	</select>
+	
+	<select id="getAllUsers" resultType="com.neighborhood.domain.User">
+		<![CDATA[
+		SELECT * FROM USER;
+		]]>
+	</select>
+	
+	<select id="getAllUserLocation" resultType="com.neighborhood.domain.UserLocation">
+		<![CDATA[
+		SELECT * FROM USER_LOCATION;
 		]]>
 	</select>
 	
