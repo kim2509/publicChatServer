@@ -16,25 +16,25 @@
       		* sin( radians( latitude ) )
     		)
   			) , 1)  AS distance
-			FROM POST
+			FROM post
 			WHERE latitude is not null
 			and longitude is not null
 			ORDER BY distance
 		) A
-		WHERE A.distance <= 10
+		WHERE A.distance <= 100
 		LIMIT 0 , 20;
 		]]>
 	</select>
 
 	<update id="updateUserRegID" parameterType="com.neighborhood.domain.User">
 		UPDATE
-		USER SET regID=#{regID} where
+		user SET regID=#{regID} where
 		userID=#{userID}
 	</update>
 	
 	<update id="updateUserLocation" parameterType="com.neighborhood.domain.User">
 		UPDATE
-		USER_LOCATION SET latitude=#{latitude}, longitude=#{longitude} where
+		user_location SET latitude=#{latitude}, longitude=#{longitude} where
 		userID=#{userID}
 		and locationName='현재위치'
 	</update>
@@ -43,8 +43,8 @@
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
 		SELECT P.*,U.userName 
-		from POST P
-			LEFT OUTER JOIN USER U on P.userID=U.userID
+		from post P
+			LEFT OUTER JOIN user U on P.userID=U.userID
 		WHERE postID=#{postID}
 		]]>
 	</select>
@@ -52,8 +52,8 @@
 	<select id="getPostLikes" resultType="com.neighborhood.domain.PostLike"
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
-		SELECT *,U.userName FROM POST_LIKE PL
-		LEFT OUTER JOIN USER U on PL.userID=U.userID
+		SELECT *,U.userName FROM post_like PL
+		LEFT OUTER JOIN user U on PL.userID=U.userID
 		WHERE postID=#{postID}
 		]]>
 	</select>
@@ -61,27 +61,27 @@
 	<select id="getPostReplies" resultType="com.neighborhood.domain.PostReply"
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
-		SELECT *,U.userName FROM POST_REPLY PR
-		LEFT OUTER JOIN USER U on PR.userID=U.userID
+		SELECT *,U.userName FROM post_reply PR
+		LEFT OUTER JOIN user U on PR.userID=U.userID
 		WHERE postID=#{postID}
 		]]>
 	</select>
 
 	<insert id="addPostReply" parameterType="com.neighborhood.domain.PostReply">
-		INSERT INTO POST_REPLY(
+		INSERT INTO post_reply(
 		postID, userID, message, createDate )
 		VALUES( #{postID}, #{userID},
 		#{message}, NOW() );
 	</insert>
 
 	<insert id="addPostLike" parameterType="com.neighborhood.domain.PostLike">
-		INSERT INTO POST_LIKE(
+		INSERT INTO post_like(
 		postID, userID, createDate )
 		VALUES( #{postID}, #{userID}, NOW() );
 	</insert>
 
 	<insert id="addPost" parameterType="com.neighborhood.domain.Post">
-		INSERT INTO POST( userID,
+		INSERT INTO post( userID,
 		message, latitude, longitude, createDate )
 		VALUES( #{userID},
 		#{message}, #{latitude}, #{longitude}, NOW() );
@@ -93,13 +93,13 @@
 	<select id="getUser" resultType="com.neighborhood.domain.User"
 		parameterType="com.neighborhood.domain.User">
 		<![CDATA[
-		SELECT * FROM USER
+		SELECT * FROM user
 		WHERE userID=#{userID}
 		]]>
 	</select>
 
 	<insert id="insertUser" parameterType="com.neighborhood.domain.User">
-		INSERT INTO USER( userID,
+		INSERT INTO user( userID,
 		userName, regID, createDate )
 		VALUES( #{userID},#{userName},#{regID},
 		NOW() );
@@ -107,7 +107,7 @@
 
 	<insert id="insertUserLocation" parameterType="com.neighborhood.domain.UserLocation">
 		INSERT INTO
-		USER_LOCATION( userID, latitude, longitude, locationName, priority )
+		user_location( userID, latitude, longitude, locationName, priority )
 		VALUES( #{userID},#{latitude},#{longitude},#{locationName},
 		#{priority} );
 	</insert>
@@ -125,7 +125,7 @@
    		 		)
   				) , 1)  AS distance
 			FROM (
-				select UL.*, U.userName, U.regID from USER_LOCATION UL
+				select UL.*, U.userName, U.regID from user_location UL
 					LEFT OUTER JOIN USER U ON UL.userID=U.userID
 				where locationName='현재위치'
 			) A
@@ -141,8 +141,8 @@
 	<select id="getPostAuthor" parameterType="com.neighborhood.domain.PostReply"
 	    resultType="com.neighborhood.domain.User">
 	    <![CDATA[
-		select P.userID,U.userName, U.regID from POST P
-		LEFT OUTER JOIN USER U on P.userID=U.userID
+		select P.userID,U.userName, U.regID from post P
+		LEFT OUTER JOIN user U on P.userID=U.userID
 		where postID=#{postID}
 		and P.userID <> #{userID}
 		]]>
@@ -151,8 +151,8 @@
 	<select id="getPostAuthor2" parameterType="com.neighborhood.domain.PostLike"
 	    resultType="com.neighborhood.domain.User">
 	    <![CDATA[
-		select P.userID,U.userName, U.regID from POST P
-		LEFT OUTER JOIN USER U on P.userID=U.userID
+		select P.userID,U.userName, U.regID from post P
+		LEFT OUTER JOIN user U on P.userID=U.userID
 		where postID=#{postID}
 		and P.userID <> #{userID}
 		]]>
@@ -161,8 +161,8 @@
 	<select id="getPostReplyUsers" parameterType="com.neighborhood.domain.PostReply"
 	    resultType="com.neighborhood.domain.User">
 	    <![CDATA[
-		select P.userID,U.userName, U.regID from POST_REPLY P
-		LEFT OUTER JOIN USER U on P.userID=U.userID
+		select P.userID,U.userName, U.regID from post_reply P
+		LEFT OUTER JOIN user U on P.userID=U.userID
 		where postID=#{postID}
 		group by P.userID
 		]]>
@@ -170,13 +170,13 @@
 	
 	<select id="getAllUsers" resultType="com.neighborhood.domain.User">
 		<![CDATA[
-		SELECT * FROM USER;
+		SELECT * FROM user;
 		]]>
 	</select>
 	
 	<select id="getAllUserLocation" resultType="com.neighborhood.domain.UserLocation">
 		<![CDATA[
-		SELECT * FROM USER_LOCATION;
+		SELECT * FROM user_location;
 		]]>
 	</select>
 	
