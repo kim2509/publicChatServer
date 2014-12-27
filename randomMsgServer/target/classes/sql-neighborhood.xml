@@ -4,6 +4,27 @@
 
 <mapper namespace="com.tessoft.neighborhood">
 
+	<select id="getPostCount" resultType="int"
+		parameterType="com.neighborhood.domain.User">
+		<![CDATA[
+		SELECT count(postID) FROM (
+		SELECT *, TRUNCATE((
+    		6371 * acos ( cos ( radians( #{latitude} ) )
+      		* cos( radians( latitude ) )
+      		* cos( radians( longitude ) - radians( #{longitude} ) )
+      		+ sin ( radians( #{latitude} ) )
+      		* sin( radians( latitude ) )
+    		)
+  			) , 1)  AS distance
+			FROM post
+			WHERE latitude is not null
+			and longitude is not null
+			ORDER BY distance
+		) A
+		WHERE A.distance <= 5;
+		]]>
+	</select>
+	
 	<select id="getAllPosts" resultType="com.neighborhood.domain.Post"
 		parameterType="com.neighborhood.domain.User">
 		<![CDATA[
@@ -21,8 +42,8 @@
 			and longitude is not null
 			ORDER BY distance
 		) A
-		WHERE A.distance <= 100
-		LIMIT 0 , 20;
+		WHERE A.distance <= 5
+		LIMIT 0 , 5;
 		]]>
 	</select>
 

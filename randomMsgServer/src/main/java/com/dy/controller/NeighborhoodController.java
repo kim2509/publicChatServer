@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dy.domain.MainInfo;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
@@ -29,6 +30,33 @@ public class NeighborhoodController {
 	
 	private String GCM_API_KEY = "AIzaSyD_T1vjJnwwOojOjCJW_yQvwckWuY6c6yY";
 	
+	@RequestMapping( value ="/getMainInfo.do")
+	public @ResponseBody MainInfo getMainInfo( ModelMap model, @RequestBody String bodyString )
+	{
+		MainInfo result = new MainInfo();
+		
+		try
+		{			
+			ObjectMapper mapper = new ObjectMapper();
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			int postCount = sqlSession.selectOne("com.tessoft.neighborhood.getPostCount", user );
+			result.setPostCount(postCount);
+			
+			List<Post> lists = sqlSession.selectList("com.tessoft.neighborhood.getAllPosts", user );
+			result.setPostList(lists);
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.neighborhood.getAllUsers" );
+			result.setUserList(userList);
+		}
+		catch( Exception ex )
+		{
+			System.out.println( ex.getMessage() );
+		}
+		
+		return result;
+	}
+	
 	@RequestMapping( value ="/getPosts.do")
 	public @ResponseBody List<Post> getPosts( ModelMap model, @RequestBody String bodyString )
 	{
@@ -37,11 +65,6 @@ public class NeighborhoodController {
 		{			
 			ObjectMapper mapper = new ObjectMapper();
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			
-			/*
-			user.setLatitude("37.484722");
-			user.setLongitude("126.902695");
-			*/
 			
 			lists = sqlSession.selectList("com.tessoft.neighborhood.getAllPosts", user );
 		}
