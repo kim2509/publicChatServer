@@ -2,6 +2,10 @@ package com.neighborhood.domain;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonIgnoreType;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Post {
 
 	private String postID;
