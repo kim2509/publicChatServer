@@ -4,10 +4,10 @@ public class PostReply {
 
 	private String replyID;
 	private String postID;
-	private String userID;
-	private String userName;
 	private String message;
 	private String createDate;
+	private User user;
+	
 	public String getPostID() {
 		return postID;
 	}
@@ -19,12 +19,6 @@ public class PostReply {
 	}
 	public void setReplyID(String replyID) {
 		this.replyID = replyID;
-	}
-	public String getUserID() {
-		return userID;
-	}
-	public void setUserID(String userID) {
-		this.userID = userID;
 	}
 	public String getMessage() {
 		return message;
@@ -38,10 +32,10 @@ public class PostReply {
 	public void setCreateDate(String createDate) {
 		this.createDate = createDate;
 	}
-	public String getUserName() {
-		return userName;
+	public User getUser() {
+		return user;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

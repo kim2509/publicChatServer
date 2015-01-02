@@ -27,6 +27,12 @@ public class NeighborhoodController {
 
 	@Autowired
 	private SqlSession sqlSession;
+	ObjectMapper mapper = null;
+	
+	public NeighborhoodController()
+	{
+		mapper = new ObjectMapper();
+	}
 	
 	private String GCM_API_KEY = "AIzaSyD_T1vjJnwwOojOjCJW_yQvwckWuY6c6yY";
 	
@@ -36,8 +42,9 @@ public class NeighborhoodController {
 		MainInfo result = new MainInfo();
 		
 		try
-		{			
-			ObjectMapper mapper = new ObjectMapper();
+		{
+			System.out.println( "REQUEST:" + bodyString );
+			
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			
 			int postCount = sqlSession.selectOne("com.tessoft.neighborhood.getPostCount", user );
@@ -48,6 +55,8 @@ public class NeighborhoodController {
 			
 			List<User> userList = sqlSession.selectList("com.tessoft.neighborhood.getAllUsers" );
 			result.setUserList(userList);
+			
+			System.out.println( "RESPONSE:" + mapper.writeValueAsString( result ) );
 		}
 		catch( Exception ex )
 		{
@@ -62,11 +71,15 @@ public class NeighborhoodController {
 	{
 		List<Post> lists = null;
 		try
-		{			
-			ObjectMapper mapper = new ObjectMapper();
+		{	
+			System.out.println( "REQUEST:" + bodyString );
+			
+			
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			
 			lists = sqlSession.selectList("com.tessoft.neighborhood.getAllPosts", user );
+			
+			System.out.println( "RESPONSE:" + mapper.writeValueAsString( lists ) );
 		}
 		catch( Exception ex )
 		{
@@ -82,8 +95,10 @@ public class NeighborhoodController {
 		List<User> userList = null;
 		try
 		{			
-			
+			System.out.println( "REQUEST:" + bodyString );
 			userList = sqlSession.selectList("com.tessoft.neighborhood.getAllUsers" );
+			
+			System.out.println( "RESPONSE:" + mapper.writeValueAsString( userList ) );
 		}
 		catch( Exception ex )
 		{
@@ -159,10 +174,12 @@ public class NeighborhoodController {
 	public @ResponseBody Post getPostDetail( ModelMap model, @RequestBody String bodyString )
 	{
 		Post post = null;
+		ObjectMapper mapper = new ObjectMapper();
 		
 		try
 		{			
-			ObjectMapper mapper = new ObjectMapper();
+			System.out.println( "REQUEST:" + bodyString );
+			
 			post = mapper.readValue(bodyString, new TypeReference<Post>(){});
 			
 			post = sqlSession.selectOne("com.tessoft.neighborhood.getPostDetail", post );
@@ -172,11 +189,13 @@ public class NeighborhoodController {
 			
 			List<PostReply> postReplies = sqlSession.selectList("com.tessoft.neighborhood.getPostReplies", post );
 			post.setPostReplies(postReplies);
+			
+			System.out.println( "RESPONSE:" + mapper.writeValueAsString( post ));
 		}
 		catch( Exception ex )
 		{
 			System.out.println( ex.getMessage() );
-		}
+		} 
 		
 		return post;
 	}
@@ -211,20 +230,20 @@ public class NeighborhoodController {
 			ArrayList<String> pushRegIDs = new ArrayList<String>();
 			
 			// 저자가 댓글다는 사람이 아니면
-			if ( author != null && !author.getUserID().equals(postReply.getUserID()) &&
-					!"".equals( author.getRegID() ) )
-				pushRegIDs.add( author.getRegID() );
-			
-			if ( replyUserList != null && replyUserList.size() > 0 )
-			{
-				for ( int i = 0; i < replyUserList.size(); i++ )
-				{
-					// 기존에 댓글을 단 사람들이 지금 댓글 다는 사람이 아니면 추가
-					if ( !replyUserList.get(i).getUserID().equals( postReply.getUserID() ) &&
-							!"".equals( replyUserList.get(i).getRegID() ) )
-						pushRegIDs.add( replyUserList.get(i).getRegID());
-				}
-			}
+//			if ( author != null && !author.getUserID().equals(postReply.getUserID()) &&
+//					!"".equals( author.getRegID() ) )
+//				pushRegIDs.add( author.getRegID() );
+//			
+//			if ( replyUserList != null && replyUserList.size() > 0 )
+//			{
+//				for ( int i = 0; i < replyUserList.size(); i++ )
+//				{
+//					// 기존에 댓글을 단 사람들이 지금 댓글 다는 사람이 아니면 추가
+//					if ( !replyUserList.get(i).getUserID().equals( postReply.getUserID() ) &&
+//							!"".equals( replyUserList.get(i).getRegID() ) )
+//						pushRegIDs.add( replyUserList.get(i).getRegID());
+//				}
+//			}
 
 			//푸시메시지 전송.
 			for ( int i = 0; i < pushRegIDs.size(); i++ )
