@@ -12,6 +12,8 @@ public class User {
 	private String regID;
 	
 	private String distance;
+	
+	private String profileImageURL;
 
 	public String getUserID() {
 		return userID;
@@ -59,6 +61,14 @@ public class User {
 
 	public void setDistance(String distance) {
 		this.distance = distance;
+	}
+
+	public String getProfileImageURL() {
+		return profileImageURL;
+	}
+
+	public void setProfileImageURL(String profileImageURL) {
+		this.profileImageURL = profileImageURL;
 	}
 	
 }

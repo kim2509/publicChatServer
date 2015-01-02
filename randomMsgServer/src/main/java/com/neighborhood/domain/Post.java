@@ -12,9 +12,10 @@ public class Post {
 	private String latitude;
 	private String longitude;
 	private String message;
+	private String content;
 	
-	private String userID;
-	private String userName;
+	private User user;
+	
 	private String distance;
 	private String createDate;
 	
@@ -39,23 +40,17 @@ public class Post {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public String getUserID() {
-		return userID;
+	public User getUser() {
+		return user;
 	}
-	public void setUserID(String userID) {
-		this.userID = userID;
+	public void setUser(User user) {
+		this.user= user;
 	}
 	public String getDistance() {
 		return distance;
 	}
 	public void setDistance(String distance) {
 		this.distance = distance;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 	public String getPostID() {
 		return postID;
@@ -80,5 +75,11 @@ public class Post {
 	}
 	public void setPostReplies(List<PostReply> postReplies) {
 		this.postReplies = postReplies;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
 	}
 }

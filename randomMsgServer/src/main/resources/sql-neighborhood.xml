@@ -63,7 +63,10 @@
 	<select id="getPostDetail" resultType="com.neighborhood.domain.Post"
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
-		SELECT P.*,U.userName 
+		SELECT P.*,
+		U.userID as "user.userID",
+		U.userName as "user.userName",
+		U.profileImageURL as "user.profileImageURL"
 		from post P
 			LEFT OUTER JOIN user U on P.userID=U.userID
 		WHERE postID=#{postID}
