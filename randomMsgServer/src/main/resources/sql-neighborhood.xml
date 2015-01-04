@@ -29,15 +29,20 @@
 		parameterType="com.neighborhood.domain.User">
 		<![CDATA[
 		SELECT * FROM (
-		SELECT *, TRUNCATE((
-    		6371 * acos ( cos ( radians( #{latitude} ) )
-      		* cos( radians( latitude ) )
-      		* cos( radians( longitude ) - radians( #{longitude} ) )
-      		+ sin ( radians( #{latitude} ) )
-      		* sin( radians( latitude ) )
-    		)
-  			) , 1)  AS distance
+		SELECT post.*, 
+			TRUNCATE((
+    			6371 * acos ( cos ( radians( #{latitude} ) )
+      			* cos( radians( latitude ) )
+      			* cos( radians( longitude ) - radians( #{longitude} ) )
+      			+ sin ( radians( #{latitude} ) )
+      			* sin( radians( latitude ) )
+    			)
+  			) , 1)  AS distance,
+  			U.userID as "user.userID",
+			U.userName as "user.userName",
+			U.profileImageURL as "user.profileImageURL"
 			FROM post
+				LEFT OUTER JOIN user U ON post.userID = U.userID
 			WHERE latitude is not null
 			and longitude is not null
 			ORDER BY distance
@@ -86,11 +91,12 @@
 		parameterType="com.neighborhood.domain.Post">
 		<![CDATA[
 		SELECT *,
-		U.userName as "user.userName",
-		U.userID as "user.userID",
-		U.profileImageURL as "user.profileImageURL" 
+			U.userName as "user.userName",
+			U.userID as "user.userID",
+			U.profileImageURL as "user.profileImageURL",
+			PR.distance
 		FROM post_reply PR
-		LEFT OUTER JOIN user U on PR.userID=U.userID
+			LEFT OUTER JOIN user U ON PR.userID=U.userID
 		WHERE postID=#{postID}
 		]]>
 	</select>

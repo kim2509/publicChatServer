@@ -8,6 +8,8 @@ public class PostReply {
 	private String createDate;
 	private User user;
 	
+	private String distance;
+	
 	public String getPostID() {
 		return postID;
 	}
@@ -37,5 +39,11 @@ public class PostReply {
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public String getDistance() {
+		return distance;
+	}
+	public void setDistance(String distance) {
+		this.distance = distance;
 	}
 }
