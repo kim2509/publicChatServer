@@ -1,5 +1,8 @@
 package com.neighborhood.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PostReply {
 
 	private String replyID;

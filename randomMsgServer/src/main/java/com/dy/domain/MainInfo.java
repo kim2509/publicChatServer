@@ -7,6 +7,7 @@ import com.neighborhood.domain.User;
 
 public class MainInfo {
 
+	private User user = null;
 	private List<Post> postList = null;
 	private List<User> userList = null;
 	private int postCount = 0;
@@ -33,6 +34,14 @@ public class MainInfo {
 
 	public void setPostCount(int postCount) {
 		this.postCount = postCount;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 }

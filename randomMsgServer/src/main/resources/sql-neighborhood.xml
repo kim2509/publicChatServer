@@ -104,7 +104,7 @@
 	<insert id="addPostReply" parameterType="com.neighborhood.domain.PostReply">
 		INSERT INTO post_reply(
 		postID, userID, message, createDate )
-		VALUES( #{postID}, #{userID},
+		VALUES( #{postID}, #{user.userID},
 		#{message}, NOW() );
 	</insert>
 
@@ -178,7 +178,7 @@
 		select P.userID,U.userName, U.regID from post P
 		LEFT OUTER JOIN user U on P.userID=U.userID
 		where postID=#{postID}
-		and P.userID <> #{userID}
+		and P.userID <> #{user.userID}
 		]]>
 	</select>
 	

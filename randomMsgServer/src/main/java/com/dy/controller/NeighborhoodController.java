@@ -47,6 +47,9 @@ public class NeighborhoodController {
 			
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			
+			user = sqlSession.selectOne("com.tessoft.neighborhood.getUser", user );
+			result.setUser(user);
+			
 			int postCount = sqlSession.selectOne("com.tessoft.neighborhood.getPostCount", user );
 			result.setPostCount(postCount);
 			
@@ -246,10 +249,10 @@ public class NeighborhoodController {
 //			}
 
 			//푸시메시지 전송.
-			for ( int i = 0; i < pushRegIDs.size(); i++ )
-			{
-				sendPushMessage( pushRegIDs.get(i), postReply.getMessage(), post.getPostID(), post.getLatitude(), post.getLongitude());
-			}
+//			for ( int i = 0; i < pushRegIDs.size(); i++ )
+//			{
+//				sendPushMessage( pushRegIDs.get(i), postReply.getMessage(), post.getPostID(), post.getLatitude(), post.getLongitude());
+//			}
 		}
 		catch( Exception ex )
 		{
