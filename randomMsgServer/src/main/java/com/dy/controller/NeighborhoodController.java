@@ -370,10 +370,15 @@ public class NeighborhoodController {
 		
 		try
 		{			
+			System.out.println( "REQUEST:" + bodyString );
+			
 			ObjectMapper mapper = new ObjectMapper();
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 		
 			sqlSession.update("com.tessoft.neighborhood.updateUserLocation", user);
+			
+			System.out.println( "RESPONSE: true" );
+			
 			return "true";
 	
 		}
