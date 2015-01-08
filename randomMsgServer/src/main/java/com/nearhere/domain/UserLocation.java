@@ -1,4 +1,4 @@
-package com.near.domain;
+package com.nearhere.domain;
 
 public class UserLocation {
 

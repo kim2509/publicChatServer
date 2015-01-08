@@ -1,4 +1,4 @@
-package com.near.domain;
+package com.nearhere.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 

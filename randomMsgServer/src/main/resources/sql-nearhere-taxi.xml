@@ -4,7 +4,7 @@
 
 <mapper namespace="com.tessoft.nearhere.taxi">
 
-	<select id="searchUser" resultType="com.nearhere.domain.User"
+	<select id="searchUsers" resultType="com.nearhere.domain.User"
 		parameterType="com.nearhere.domain.User">
 		<![CDATA[
 		SELECT * FROM (
@@ -18,7 +18,7 @@
   				) , 1)  AS distance
 			FROM (
 				select UL.*, U.userName, U.regID from user_location UL
-					LEFT OUTER JOIN USER U ON UL.userID=U.userID
+					LEFT OUTER JOIN user U ON UL.userID=U.userID
 				where locationName='현재위치'
 			) A
 			WHERE latitude is not null
