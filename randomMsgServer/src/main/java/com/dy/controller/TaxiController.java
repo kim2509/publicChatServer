@@ -26,6 +26,30 @@ public class TaxiController {
 		mapper = new ObjectMapper();
 	}
 	
+	@RequestMapping( value ="/nearhere/taxi/getUserLocation.do")
+	public @ResponseBody String getUserLocation( ModelMap model, @RequestBody String bodyString )
+	{
+		User user = null;
+		
+		try
+		{			
+			System.out.println( "REQUEST:" + bodyString );
+			
+			ObjectMapper mapper = new ObjectMapper();
+			user = mapper.readValue(bodyString, new TypeReference<User>(){});
+		
+			sqlSession.update("com.tessoft.neighborhood.updateUserLocation", user);
+			
+			System.out.println( "RESPONSE: true" );
+			
+			return "true";
+	
+		}
+		catch( Exception ex )
+		{
+			return "false";
+		}
+	}
 	
 	@RequestMapping( value ="/nearhere/taxi/searchUsers.do")
 	public @ResponseBody List<User> searchUsers( ModelMap model, @RequestBody String bodyString )
@@ -49,4 +73,28 @@ public class TaxiController {
 		return userList;
 	}
 	
+	@RequestMapping( value ="/updateUserLocation.do")
+	public @ResponseBody String updateUserLocation( ModelMap model, @RequestBody String bodyString )
+	{
+		User user = null;
+		
+		try
+		{			
+			System.out.println( "REQUEST:" + bodyString );
+			
+			ObjectMapper mapper = new ObjectMapper();
+			user = mapper.readValue(bodyString, new TypeReference<User>(){});
+		
+			sqlSession.update("com.tessoft.neighborhood.updateUserLocation", user);
+			
+			System.out.println( "RESPONSE: true" );
+			
+			return "true";
+	
+		}
+		catch( Exception ex )
+		{
+			return "false";
+		}
+	}
 }
