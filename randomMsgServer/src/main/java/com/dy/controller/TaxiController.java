@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dy.common.Util;
 import com.nearhere.domain.User;
 
 @Controller
@@ -24,6 +25,33 @@ public class TaxiController {
 	public TaxiController()
 	{
 		mapper = new ObjectMapper();
+	}
+	
+	@RequestMapping( value ="/nearhere/taxi/registerUser.do")
+	public @ResponseBody String registerUser( ModelMap model, @RequestBody String bodyString )
+	{
+		User user = null;
+		
+		try
+		{			
+			System.out.println( "REQUEST:" + bodyString );
+			
+			ObjectMapper mapper = new ObjectMapper();
+			user = mapper.readValue(bodyString, new TypeReference<User>(){});
+		
+			user.setPassword( Util.encryptPassword(user.getPassword()) );
+			
+			sqlSession.update("com.tessoft.neighborhood.registerUser", user);
+			
+			System.out.println( "RESPONSE: true" );
+			
+			return "true";
+	
+		}
+		catch( Exception ex )
+		{
+			return "false";
+		}
 	}
 	
 	@RequestMapping( value ="/nearhere/taxi/getUserLocation.do")

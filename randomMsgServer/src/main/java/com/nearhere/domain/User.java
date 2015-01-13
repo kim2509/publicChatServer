@@ -8,6 +8,8 @@ public class User {
 	private String userID;
 	private String userName;
 	
+	private String password;
+	
 	private String latitude;
 	
 	private String longitude;
@@ -72,6 +74,14 @@ public class User {
 
 	public void setProfileImageURL(String profileImageURL) {
 		this.profileImageURL = profileImageURL;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 }

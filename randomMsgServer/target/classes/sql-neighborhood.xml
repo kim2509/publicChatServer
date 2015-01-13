@@ -4,6 +4,11 @@
 
 <mapper namespace="com.tessoft.neighborhood">
 
+	<insert id="insertUser" parameterType="com.neighborhood.domain.User">
+		INSERT INTO user ( userID, userName, password, createdDate )
+		VALUES( #{userID}, #{userName}, #{password}, NOW() );
+	</insert>
+	
 	<select id="getPostCount" resultType="int"
 		parameterType="com.neighborhood.domain.User">
 		<![CDATA[
