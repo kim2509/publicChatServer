@@ -43,7 +43,7 @@ public class TaxiController {
 		return true;
 	}
 	
-	@RequestMapping( value ="/nearhere/taxi/registerUser.do")
+	@RequestMapping( value ="/taxi/registerUser.do")
 	public @ResponseBody APIResponse registerUser( ModelMap model, @RequestBody String bodyString )
 	{
 		User user = null;
@@ -91,7 +91,7 @@ public class TaxiController {
 		}
 	}
 	
-	@RequestMapping( value ="/nearhere/taxi/getTermsContent.do")
+	@RequestMapping( value ="/taxi/getTermsContent.do")
 	public @ResponseBody APIResponse getTermsContent( ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -117,7 +117,7 @@ public class TaxiController {
 		return response;
 	}
 	
-	@RequestMapping( value ="/nearhere/taxi/insertTermsAgreement.do")
+	@RequestMapping( value ="/taxi/insertTermsAgreement.do")
 	public @ResponseBody APIResponse insertTermsAgreement( ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -144,7 +144,7 @@ public class TaxiController {
 		return response;
 	}
 	
-	@RequestMapping( value ="/nearhere/taxi/updateUserLocation.do")
+	@RequestMapping( value ="/taxi/updateUserLocation.do")
 	public @ResponseBody APIResponse updateUserLocation( ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -173,7 +173,7 @@ public class TaxiController {
 		return response;
 	}
 
-	@RequestMapping( value ="/nearhere/taxi/insertPost.do")
+	@RequestMapping( value ="/taxi/insertPost.do")
 	public @ResponseBody APIResponse insertPost( ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -200,7 +200,7 @@ public class TaxiController {
 		return response;
 	}
 	
-	@RequestMapping( value ="/nearhere/taxi/getPostsNearHere.do")
+	@RequestMapping( value ="/taxi/getPostsNearHere.do")
 	public @ResponseBody APIResponse getPostsNearHere( ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -228,7 +228,7 @@ public class TaxiController {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping( value ="/nearhere/taxi/getUserInfo.do")
+	@RequestMapping( value ="/taxi/getUserInfo.do")
 	public @ResponseBody APIResponse getUserInfo( ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
