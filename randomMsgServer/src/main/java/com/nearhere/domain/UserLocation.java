@@ -2,7 +2,8 @@ package com.nearhere.domain;
 
 public class UserLocation {
 
-	private String userID;
+	private User user;
+	
 	private String locationName;
 	
 	private String latitude;
@@ -10,14 +11,6 @@ public class UserLocation {
 	private String longitude;
 	
 	private String priority;
-
-	public String getUserID() {
-		return userID;
-	}
-
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
 
 	public String getLatitude() {
 		return latitude;
@@ -49,6 +42,14 @@ public class UserLocation {
 
 	public void setPriority(String priority) {
 		this.priority = priority;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 }

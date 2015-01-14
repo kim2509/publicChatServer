@@ -16,9 +16,9 @@ import com.dy.domain.MainInfo;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
-import com.neighborhood.domain.Post;
-import com.neighborhood.domain.PostLike;
-import com.neighborhood.domain.PostReply;
+import com.nearhere.domain.Post;
+import com.nearhere.domain.PostLike;
+import com.nearhere.domain.PostReply;
 import com.neighborhood.domain.User;
 import com.neighborhood.domain.UserLocation;
 

@@ -50,6 +50,56 @@
 		VALUES( #{userID}, #{userName}, #{password}, NOW() );
 	</insert>
 	
+	<select id="insertPost" resultType="com.nearhere.domain.Post"
+		parameterType="com.nearhere.domain.User">
+		insert into post( userID, type, message, content, fromLatitude, fromLongitude, latitude, longitude, createdDate)
+		values(#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude}, #{latitude}, #{longitude}, NOW() );
+	</select>
+	
+	<select id="getPostsNearHere" resultType="com.nearhere.domain.Post"
+		parameterType="java.util.HashMap">
+		<![CDATA[
+		SELECT 
+			*
+		FROM (
+			SELECT P.postID, userID, type, message, content, fromLatitude, fromLongitude, fromAddress, 
+				latitude, longitude, toAddress, reward, createdDate, userID as 'user.userID', 
+				TRUNCATE((
+    			6371 * acos ( cos ( radians( #{latitude} ) )
+	      		* cos( radians( fromLatitude ) )
+  	 	   		* cos( radians( fromLongitude ) - radians( #{longitude} ) )
+   		   		+ sin ( radians( #{latitude} ) )
+   		   		* sin( radians( fromLatitude ) )
+   		 		)
+  				) , 1)  AS distance, PR.cnt as "replyCount"
+			FROM post P
+				left outer join (select count(replyID) as 'cnt', postID from post_reply) PR on P.postID=PR.postID
+			WHERE fromLatitude is not null
+			and fromLongitude is not null
+			and type='taxi'
+			ORDER BY distance
+		) A
+		WHERE A.distance <= #{distance}
+		LIMIT 0 , 100;
+		]]>
+	</select>
+	
+	<select id="selectUserPost" resultType="com.nearhere.domain.Post"
+		parameterType="com.nearhere.domain.User">
+		<![CDATA[
+		select * from post where userID=#{userID} and type='taxi';
+		]]>
+	</select>
+	
+	<select id="selectPostsUserReplied" parameterType="com.nearhere.domain.User" 
+		resultType="com.nearhere.domain.Post">
+		select * from post
+		where postID in (
+  			select postID from post_reply where userID=#{userID}
+		)
+		and type='taxi';
+	</select>
+	
 	<select id="searchUsers" resultType="com.nearhere.domain.User"
 		parameterType="com.nearhere.domain.User">
 		<![CDATA[

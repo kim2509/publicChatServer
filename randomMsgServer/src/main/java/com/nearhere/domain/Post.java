@@ -1,16 +1,25 @@
-package com.neighborhood.domain;
+package com.nearhere.domain;
 
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonIgnoreType;
 
+import com.neighborhood.domain.User;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Post {
 
 	private String postID;
+	
+	private String fromLatitude;
+	private String fromLongitude;
+	private String fromAddress;
+	
 	private String latitude;
 	private String longitude;
+	private String toAddress;
+	
 	private String message;
 	private String content;
 	
@@ -23,6 +32,8 @@ public class Post {
 	
 	private List<PostLike> postLikes;
 	private List<PostReply> postReplies;
+	
+	private int replyCount = 0;
 	
 	public String getLatitude() {
 		return latitude;
@@ -89,5 +100,35 @@ public class Post {
 	}
 	public void setReward(String reward) {
 		this.reward = reward;
+	}
+	public String getFromLatitude() {
+		return fromLatitude;
+	}
+	public void setFromLatitude(String fromLatitude) {
+		this.fromLatitude = fromLatitude;
+	}
+	public String getFromLongitude() {
+		return fromLongitude;
+	}
+	public void setFromLongitude(String fromLongitude) {
+		this.fromLongitude = fromLongitude;
+	}
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	public String getFromAddress() {
+		return fromAddress;
+	}
+	public void setFromAddress(String fromAddress) {
+		this.fromAddress = fromAddress;
+	}
+	public String getToAddress() {
+		return toAddress;
+	}
+	public void setToAddress(String toAddress) {
+		this.toAddress = toAddress;
 	}
 }

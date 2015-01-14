@@ -2,7 +2,7 @@ package com.dy.domain;
 
 import java.util.List;
 
-import com.neighborhood.domain.Post;
+import com.nearhere.domain.Post;
 import com.neighborhood.domain.User;
 
 public class MainInfo {

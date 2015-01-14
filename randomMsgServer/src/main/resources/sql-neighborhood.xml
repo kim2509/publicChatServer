@@ -25,7 +25,7 @@
 		]]>
 	</select>
 	
-	<select id="getAllPosts" resultType="com.neighborhood.domain.Post"
+	<select id="getAllPosts" resultType="com.nearhere.domain.Post"
 		parameterType="com.neighborhood.domain.User">
 		<![CDATA[
 		SELECT * FROM (
@@ -65,8 +65,8 @@
 		and locationName='현재위치'
 	</update>
 
-	<select id="getPostDetail" resultType="com.neighborhood.domain.Post"
-		parameterType="com.neighborhood.domain.Post">
+	<select id="getPostDetail" resultType="com.nearhere.domain.Post"
+		parameterType="com.nearhere.domain.Post">
 		<![CDATA[
 		SELECT P.*,
 		U.userID as "user.userID",
@@ -78,8 +78,8 @@
 		]]>
 	</select>
 
-	<select id="getPostLikes" resultType="com.neighborhood.domain.PostLike"
-		parameterType="com.neighborhood.domain.Post">
+	<select id="getPostLikes" resultType="com.nearhere.domain.PostLike"
+		parameterType="com.nearhere.domain.Post">
 		<![CDATA[
 		SELECT *,U.userName FROM post_like PL
 		LEFT OUTER JOIN user U on PL.userID=U.userID
@@ -87,8 +87,8 @@
 		]]>
 	</select>
 
-	<select id="getPostReplies" resultType="com.neighborhood.domain.PostReply"
-		parameterType="com.neighborhood.domain.Post">
+	<select id="getPostReplies" resultType="com.nearhere.domain.PostReply"
+		parameterType="com.nearhere.domain.Post">
 		<![CDATA[
 		SELECT *,
 			U.userName as "user.userName",
@@ -101,20 +101,20 @@
 		]]>
 	</select>
 
-	<insert id="addPostReply" parameterType="com.neighborhood.domain.PostReply">
+	<insert id="addPostReply" parameterType="com.nearhere.domain.PostReply">
 		INSERT INTO post_reply(
 		postID, userID, message, createDate )
 		VALUES( #{postID}, #{user.userID},
 		#{message}, NOW() );
 	</insert>
 
-	<insert id="addPostLike" parameterType="com.neighborhood.domain.PostLike">
+	<insert id="addPostLike" parameterType="com.nearhere.domain.PostLike">
 		INSERT INTO post_like(
 		postID, userID, createDate )
 		VALUES( #{postID}, #{userID}, NOW() );
 	</insert>
 
-	<insert id="addPost" parameterType="com.neighborhood.domain.Post">
+	<insert id="addPost" parameterType="com.nearhere.domain.Post">
 		INSERT INTO post( userID,
 		message, latitude, longitude, createDate )
 		VALUES( #{userID},
@@ -147,7 +147,7 @@
 	</insert>
 
 	<select id="getNearUsers" resultType="com.neighborhood.domain.User"
-		parameterType="com.neighborhood.domain.Post">
+		parameterType="com.nearhere.domain.Post">
 		<![CDATA[
 		SELECT * FROM (
 			SELECT *, TRUNCATE((
@@ -172,7 +172,7 @@
 		]]>
 	</select>
 
-	<select id="getPostAuthor" parameterType="com.neighborhood.domain.PostReply"
+	<select id="getPostAuthor" parameterType="com.nearhere.domain.PostReply"
 	    resultType="com.neighborhood.domain.User">
 	    <![CDATA[
 		select P.userID,U.userName, U.regID from post P
@@ -182,7 +182,7 @@
 		]]>
 	</select>
 	
-	<select id="getPostAuthor2" parameterType="com.neighborhood.domain.PostLike"
+	<select id="getPostAuthor2" parameterType="com.nearhere.domain.PostLike"
 	    resultType="com.neighborhood.domain.User">
 	    <![CDATA[
 		select P.userID,U.userName, U.regID from post P
@@ -192,7 +192,7 @@
 		]]>
 	</select>
 
-	<select id="getPostReplyUsers" parameterType="com.neighborhood.domain.PostReply"
+	<select id="getPostReplyUsers" parameterType="com.nearhere.domain.PostReply"
 	    resultType="com.neighborhood.domain.User">
 	    <![CDATA[
 		select P.userID,U.userName, U.regID from post_reply P

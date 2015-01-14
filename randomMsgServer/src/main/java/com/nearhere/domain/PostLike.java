@@ -1,4 +1,4 @@
-package com.neighborhood.domain;
+package com.nearhere.domain;
 
 public class PostLike {
 
