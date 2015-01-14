@@ -3,6 +3,7 @@ package com.dy.controller;
 import java.util.*;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class TaxiController {
 	@Autowired
 	private SqlSession sqlSession;
 	ObjectMapper mapper = null;
+	protected static Logger logger = Logger.getLogger(TaxiController.class.getName());
 	
 	public TaxiController()
 	{
@@ -51,7 +53,7 @@ public class TaxiController {
 		
 		try
 		{			
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			ObjectMapper mapper = new ObjectMapper();
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
@@ -78,7 +80,7 @@ public class TaxiController {
 			
 			response.setData( user );
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 			
 			return response;
 	
@@ -98,14 +100,14 @@ public class TaxiController {
 		
 		try
 		{
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			HashMap termsVersion = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectTermsVersion");
 			HashMap termsContent = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectTermsContent", termsVersion);
 			
 			response.setData(termsContent);
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -124,7 +126,7 @@ public class TaxiController {
 		
 		try
 		{
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
@@ -132,7 +134,7 @@ public class TaxiController {
 			
 			response.setData( result );
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -151,7 +153,7 @@ public class TaxiController {
 		
 		try
 		{
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			UserLocation location = mapper.readValue(bodyString, new TypeReference<UserLocation>(){});
 			
@@ -161,7 +163,7 @@ public class TaxiController {
 			
 			response.setData( result + "|" + result2 );
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -180,7 +182,7 @@ public class TaxiController {
 		
 		try
 		{
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
 			
@@ -188,7 +190,7 @@ public class TaxiController {
 			
 			response.setData( result );
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -207,7 +209,7 @@ public class TaxiController {
 		
 		try
 		{
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			HashMap request = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
@@ -215,7 +217,7 @@ public class TaxiController {
 			
 			response.setData(postList);
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -235,7 +237,7 @@ public class TaxiController {
 		
 		try
 		{
-			System.out.println( "REQUEST:" + bodyString );
+			logger.info( "REQUEST:" + bodyString );
 			
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			
@@ -252,7 +254,7 @@ public class TaxiController {
 			
 			response.setData(hash);
 			
-			System.out.println( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
