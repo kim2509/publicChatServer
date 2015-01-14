@@ -32,13 +32,13 @@
 	
 	<delete id="deleteUserLocation" parameterType="com.nearhere.domain.UserLocation">
 		delete from user_location
-		where userID=#{userID}
+		where userID=#{user.userID}
 		and locationName=#{locationName}
 	</delete>
 	
 	<insert id="insertUserLocation" parameterType="com.nearhere.domain.UserLocation">
 		insert into user_location( userID, locationName, latitude, longitude, createdDate )
-		values ( #{userID}, #{locationName} , #{latitude}, #{longitude}, NOW() )
+		values ( #{user.userID}, #{locationName} , #{latitude}, #{longitude}, NOW() )
 	</insert>
 	
 	<select id="selectUser" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">

@@ -53,6 +53,7 @@ public class TaxiController {
 		
 		try
 		{			
+			logger.info( "REQUEST URL:" + "/taxi/registerUser.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			ObjectMapper mapper = new ObjectMapper();
@@ -89,6 +90,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
+			logger.error( ex );
 			return response;
 		}
 	}
@@ -100,6 +102,7 @@ public class TaxiController {
 		
 		try
 		{
+			logger.info( "REQUEST URL:" + "/taxi/getTermsContent.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			HashMap termsVersion = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectTermsVersion");
@@ -113,7 +116,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
-			ex.printStackTrace();
+			logger.error( ex );
 		}
 		
 		return response;
@@ -126,6 +129,7 @@ public class TaxiController {
 		
 		try
 		{
+			logger.info( "REQUEST URL:" + "/taxi/insertTermsAgreement.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
@@ -140,7 +144,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
-			ex.printStackTrace();
+			logger.error( ex );
 		}
 		
 		return response;
@@ -153,6 +157,7 @@ public class TaxiController {
 		
 		try
 		{
+			logger.info( "REQUEST URL:" + "/taxi/updateUserLocation.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			UserLocation location = mapper.readValue(bodyString, new TypeReference<UserLocation>(){});
@@ -169,7 +174,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
-			ex.printStackTrace();
+			logger.error( ex );
 		}
 		
 		return response;
@@ -182,6 +187,7 @@ public class TaxiController {
 		
 		try
 		{
+			logger.info( "REQUEST URL:" + "/taxi/insertPost.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
@@ -196,7 +202,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
-			ex.printStackTrace();
+			logger.error( ex );
 		}
 		
 		return response;
@@ -209,6 +215,7 @@ public class TaxiController {
 		
 		try
 		{
+			logger.info( "REQUEST URL:" + "/taxi/getPostsNearHere.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			HashMap request = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
@@ -223,7 +230,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
-			ex.printStackTrace();
+			logger.error( ex );
 		}
 		
 		return response;
@@ -237,6 +244,7 @@ public class TaxiController {
 		
 		try
 		{
+			logger.info( "REQUEST URL:" + "/taxi/getUserInfo.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
@@ -260,7 +268,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg(ex.getMessage());
-			ex.printStackTrace();
+			logger.error( ex );
 		}
 		
 		return response;
