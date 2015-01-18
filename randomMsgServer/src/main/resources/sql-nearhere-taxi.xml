@@ -62,8 +62,11 @@
 		SELECT 
 			*
 		FROM (
-			SELECT P.postID, userID, type, message, content, fromLatitude, fromLongitude, fromAddress, 
-				latitude, longitude, toAddress, reward, createdDate, userID as 'user.userID', 
+			SELECT P.postID, P.userID, type, message, content, fromLatitude, fromLongitude, fromAddress, 
+				latitude, longitude, toAddress, reward, P.createdDate, 
+				P.userID as 'user.userID', U.profileImageURL as 'user.profileImageURL',
+				U.userName as 'user.userName',
+				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age',
 				TRUNCATE((
     			6371 * acos ( cos ( radians( #{latitude} ) )
 	      		* cos( radians( fromLatitude ) )
@@ -74,6 +77,7 @@
   				) , 1)  AS distance, PR.cnt as "replyCount"
 			FROM post P
 				left outer join (select count(replyID) as 'cnt', postID from post_reply) PR on P.postID=PR.postID
+				left outer join user U on P.userID=U.userID
 			WHERE fromLatitude is not null
 			and fromLongitude is not null
 			and type='taxi'
@@ -81,6 +85,49 @@
 		) A
 		WHERE A.distance <= #{distance}
 		LIMIT 0 , 100;
+		]]>
+	</select>
+	
+	<select id="getPostDetail" resultType="com.nearhere.domain.Post"
+		parameterType="com.nearhere.domain.Post">
+		<![CDATA[
+		SELECT 
+			P.*,
+			U.userID as "user.userID",
+			U.userName as "user.userName",
+			U.profileImageURL as "user.profileImageURL"
+		FROM post P
+				left outer join user U on P.userID=U.userID
+		where type='taxi'
+		and postID=#{postID};
+		]]>
+	</select>
+	
+	<select id="insertPostReply" parameterType="com.nearhere.domain.PostReply">
+		insert into post_reply( postID, userID, message, latitude, longitude, createdDate, type )
+		values(#{postID}, #{user.userID}, #{message}, #{latitude}, #{longitude}, NOW(), 'taxi' );
+	</select>
+	
+	<select id="getPostReplies" resultType="com.nearhere.domain.PostReply"
+		parameterType="com.nearhere.domain.Post">
+		<![CDATA[
+		SELECT 
+			PR.*,
+			U.userID as "user.userID",
+			U.userName as "user.userName",
+			U.profileImageURL as "user.profileImageURL",
+			TRUNCATE((
+    			6371 * acos ( cos ( radians( #{fromLatitude} ) )
+	      		* cos( radians( latitude ) )
+  	 	   		* cos( radians( longitude ) - radians( #{fromLongitude} ) )
+   		   		+ sin ( radians( #{fromLatitude} ) )
+   		   		* sin( radians( latitude ) )
+   		 		)
+  				) , 1)  AS distance
+		FROM post_reply PR
+			left outer join user U on PR.userID=U.userID
+		where PR.postID=#{postID}
+		order by PR.createdDate;
 		]]>
 	</select>
 	

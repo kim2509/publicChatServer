@@ -10,10 +10,13 @@ public class PostReply {
 	private String replyID;
 	private String postID;
 	private String message;
-	private String createDate;
+	private String createdDate;
 	private User user;
 	
 	private String distance;
+	
+	private String latitude;
+	private String longitude;
 	
 	public String getPostID() {
 		return postID;
@@ -33,11 +36,11 @@ public class PostReply {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public String getCreateDate() {
-		return createDate;
+	public String getCreatedDate() {
+		return createdDate;
 	}
-	public void setCreateDate(String createDate) {
-		this.createDate = createDate;
+	public void setCreateDate(String createdDate) {
+		this.createdDate = createdDate;
 	}
 	public User getUser() {
 		return user;
@@ -50,5 +53,17 @@ public class PostReply {
 	}
 	public void setDistance(String distance) {
 		this.distance = distance;
+	}
+	public String getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+	public String getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
 	}
 }

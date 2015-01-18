@@ -17,6 +17,7 @@ import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.Post;
+import com.nearhere.domain.PostReply;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserLocation;
 
@@ -223,6 +224,65 @@ public class TaxiController {
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostsNearHere", request);
 			
 			response.setData(postList);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getPostDetail.do")
+	public @ResponseBody APIResponse getPostDetail( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getPostDetail.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
+			
+			post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", post);
+			
+			List<PostReply> replies = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostReplies", post );
+			post.setPostReplies(replies);
+			
+			response.setData(post);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/insertPostReply.do")
+	public @ResponseBody APIResponse insertPostReply( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/insertPostReply.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			PostReply post = mapper.readValue(bodyString, new TypeReference<PostReply>(){});
+			
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostReply", post );
+			
+			response.setData( result );
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}

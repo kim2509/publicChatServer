@@ -1,6 +1,7 @@
 package com.dy.common;
 
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.Formatter;
 
 public class Util {
@@ -34,4 +35,21 @@ public class Util {
 	    return result;
 	}
 	
+//	public static String getDateDiffFromNow( String dateString )
+//	{
+//		String dateStart = "11/03/14 09:29:58";
+//		String dateStop = "11/03/14 09:33:43";
+//
+//		// Custom date format
+//		SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm:ss");  
+//
+//		Date d1 = null;
+//		Date d2 = null;
+//		try {
+//		    d1 = format.parse(dateStart);
+//		    d2 = format.parse(dateStop);
+//		} catch (ParseException e) {
+//		    e.printStackTrace();
+//		}    
+//	}
 }

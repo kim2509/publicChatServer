@@ -5,8 +5,6 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonIgnoreType;
 
-import com.neighborhood.domain.User;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Post {
 
@@ -26,7 +24,7 @@ public class Post {
 	private User user;
 	
 	private String distance;
-	private String createDate;
+	private String createdDate;
 	
 	private String reward;
 	
@@ -71,11 +69,11 @@ public class Post {
 	public void setPostID(String postID) {
 		this.postID = postID;
 	}
-	public String getCreateDate() {
-		return createDate;
+	public String getCreatedDate() {
+		return createdDate;
 	}
-	public void setCreateDate(String createDate) {
-		this.createDate = createDate;
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
 	}
 	public List<PostLike> getPostLikes() {
 		return postLikes;
