@@ -1,3 +1,4 @@
 *.class
 target/
 randomMsgServer/target/m2e-wtp/web-resources/META-INF/maven/randomMsgServer/randomMsgServer/pom.properties
+randomMsgServer/target/m2e-wtp/web-resources/META-INF/maven/randomMsgServer/randomMsgServer/pom.properties

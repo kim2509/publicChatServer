@@ -37,8 +37,8 @@
 	</delete>
 	
 	<insert id="insertUserLocation" parameterType="com.nearhere.domain.UserLocation">
-		insert into user_location( userID, locationName, latitude, longitude, createdDate )
-		values ( #{user.userID}, #{locationName} , #{latitude}, #{longitude}, NOW() )
+		insert into user_location( userID, locationName, latitude, longitude, address, createdDate )
+		values ( #{user.userID}, #{locationName} , #{latitude}, #{longitude}, #{address}, NOW() )
 	</insert>
 	
 	<select id="selectUser" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">
@@ -52,8 +52,10 @@
 	
 	<select id="insertPost" resultType="com.nearhere.domain.Post"
 		parameterType="com.nearhere.domain.User">
-		insert into post( userID, type, message, content, fromLatitude, fromLongitude, latitude, longitude, createdDate)
-		values(#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude}, #{latitude}, #{longitude}, NOW() );
+		insert into post( userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
+		latitude, longitude, toAddress, createdDate)
+		values(#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude},
+		#{fromAddress}, #{latitude}, #{longitude}, #{toAddress}, NOW() );
 	</select>
 	
 	<select id="getPostsNearHere" resultType="com.nearhere.domain.Post"
@@ -134,7 +136,13 @@
 	<select id="selectUserPost" resultType="com.nearhere.domain.Post"
 		parameterType="com.nearhere.domain.User">
 		<![CDATA[
-		select * from post where userID=#{userID} and type='taxi';
+		select P.*,
+			U.userID as 'user.userID',
+			U.userName as 'user.userName',
+			U.profileImageURL as 'user.profileImageURL' 
+		from post P
+			left outer join user U on P.userID=U.userID
+		where P.userID=#{userID} and P.type='taxi';
 		]]>
 	</select>
 	
@@ -173,4 +181,19 @@
 		]]>
 	</select>
 	
+	<select id="selectUserLocation" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserLocation">
+		select *
+		from user_location
+		where userID=#{userID}
+	</select>
+	
+	<select id="updateUserSex" parameterType="com.nearhere.domain.User">
+		update user set sex=#{sex}
+		where userID=#{userID};
+	</select>
+	
+	<select id="updateUserJobTitle" parameterType="com.nearhere.domain.User">
+		update user set jobTitle=#{jobTitle}
+		where userID=#{userID};
+	</select>
 </mapper>

@@ -311,16 +311,75 @@ public class TaxiController {
 			
 			user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
 			
+			List<UserLocation> locationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserLocation", user);
+			
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserPost", user);
 			
 			List<Post> postsUserReplied = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsUserReplied", user);
 			
 			HashMap hash = new HashMap();
 			hash.put("user", user);
+			hash.put("locationList", locationList);
 			hash.put("userPost", postList);
 			hash.put("postsUserReplied", postsUserReplied);
 			
 			response.setData(hash);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/updateUserSex.do")
+	public @ResponseBody APIResponse updateUserSex( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/updateUserSex.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserSex", user );
+			
+			response.setData( result );
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/updateUserJobTitle.do")
+	public @ResponseBody APIResponse updateUserJobTitle( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/updateUserJobTitle.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserJobTitle", user );
+			
+			response.setData( result );
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
