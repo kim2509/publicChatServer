@@ -392,4 +392,32 @@ public class TaxiController {
 		
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/updateUserBirthday.do")
+	public @ResponseBody APIResponse updateUserBirthday( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/updateUserBirthday.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserBirthday", user );
+			
+			response.setData( result );
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }
