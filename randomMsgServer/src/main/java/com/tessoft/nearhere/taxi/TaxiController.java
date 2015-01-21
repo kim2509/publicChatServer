@@ -420,4 +420,38 @@ public class TaxiController {
 		
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/getNoticeList.do")
+	public @ResponseBody APIResponse getNoticeList( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getNoticeList.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			List<UserLocation> locationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserLocation", user);
+			
+//			HashMap hash = new HashMap();
+//			hash.put("user", user);
+//			hash.put("locationList", locationList);
+//			hash.put("userPost", postList);
+//			hash.put("postsUserReplied", postsUserReplied);
+			
+//			response.setData(hash);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }
