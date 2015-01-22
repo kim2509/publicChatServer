@@ -202,23 +202,91 @@
 		where userID=#{userID};
 	</update>
 	
-	<select id="selectNoticeList">
+	<select id="selectNoticeList" resultType="com.nearhere.domain.Notice">
 		select * from
-		notice_list;
+		notice_list
+		order by createdDate desc;
 	</select>
 	
-	<select id="selectUserMessage">
-		select *
-		from user_message;
+	<select id="selectUserMessageList" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserMessage">
+		select A.userID as 'user.userID', U.userName as 'user.userName', U.profileImageURL as 'user.profileImageURL', 
+			A.message, A.createdDate, A.isRead
+		from (
+			select fromUserID as 'userID', message, createdDate,
+				(
+	          		CASE is_read
+          				WHEN 'Y' THEN 'true'
+          				WHEN 'N' THEN 'false'
+          			END
+       			)AS isRead 
+			from user_message
+			where toUserID=#{userID}
+			union all 
+			select toUserID as 'userID', message, createdDate, 
+				(
+	          		CASE is_read
+          				WHEN 'Y' THEN 'true'
+          				WHEN 'N' THEN 'false'
+          			END
+       			)AS 'isRead' 
+			from user_message
+			where fromUserID=#{userID}
+		) A
+			left outer join user U on A.userID=U.userID
+		order by A.createdDate desc;
 	</select>
 	
-	<select id="selectUserPushMessage">
-		select *
-		from user_push_message;
+	<select id="selectUserMessage" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserMessage">
+		select 
+			UM.messageID,
+			UM.fromUserID as 'fromUser.userID',
+			U.userName as 'fromUser.userName',
+			U.profileImageURL as 'fromUser.profileImageURL',
+			UM.toUserID as 'toUser.userID',
+			U2.userName as 'toUser.userName',
+			U2.profileImageURL as 'toUser.profileImageURL',
+			UM.message,
+			(
+          		CASE UM.is_read
+          			WHEN 'Y' THEN 'true'
+          			WHEN 'N' THEN 'false'
+          		END
+       		)AS isRead,
+			UM.createdDate
+		from user_message UM
+			left outer join user U on UM.fromUserID=U.userID
+			left outer join user U2 on UM.toUserID=U2.userID
+		where UM.toUserID=#{userID}
+		order by UM.createdDate desc
+		limit 0,100;
 	</select>
 	
-	<select id="selectUserSetting">
+	<select id="selectUserPushMessage" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserPushMessage">
 		select *
-		from user_setting;
+		from user_push_message
+		where toUserID=#{userID}
+		order by createdDate desc;
 	</select>
+	
+	<select id="selectUserSetting" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserSetting">
+		select * 
+		from user_setting
+		where userID=#{userID}
+	</select>
+	
+	<insert id="insertUserSetting" parameterType="com.nearhere.domain.UserSetting">
+		insert into user_setting( userID, settingName, settingValue, createdDate )
+		values (#{userID}, #{settingName}, #{settingValue}, NOW() );
+	</insert>
+	
+	<delete id="deleteUserSetting" parameterType="com.nearhere.domain.User">
+		delete from user_setting
+		where userID=#{userID}
+	</delete>
+	
+	<delete id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
+		update user_setting
+		set settingValue=#{settingValue}
+		where userID=#{userID} and settingName=#{settingName};
+	</delete>
 </mapper>
