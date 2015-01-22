@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.Notice;
 import com.nearhere.domain.Post;
 import com.nearhere.domain.PostReply;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserLocation;
+import com.nearhere.domain.UserMessage;
+import com.nearhere.domain.UserSetting;
 
 @Controller
 public class TaxiController {
@@ -78,6 +81,8 @@ public class TaxiController {
 			
 			sqlSession.insert("com.tessoft.nearhere.taxi.insertUser", user);
 			
+			initializeUserSetting(user);
+			
 			user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
 			
 			response.setData( user );
@@ -94,6 +99,27 @@ public class TaxiController {
 			logger.error( ex );
 			return response;
 		}
+	}
+
+	private void initializeUserSetting(User user) {
+		
+		sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserSetting", user);
+		
+		UserSetting setting = new UserSetting();
+		setting.setUserID(user.getUserID());
+		setting.setSettingName("쪽지알림 받기");
+		setting.setSettingValue("Y");
+		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserSetting", setting);
+		setting = new UserSetting();
+		setting.setUserID(user.getUserID());
+		setting.setSettingName("댓글알림 받기");
+		setting.setSettingValue("Y");
+		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserSetting", setting);
+		setting = new UserSetting();
+		setting.setUserID(user.getUserID());
+		setting.setSettingName("추천알림 받기");
+		setting.setSettingValue("Y");
+		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserSetting", setting);
 	}
 	
 	@RequestMapping( value ="/taxi/getTermsContent.do")
@@ -408,6 +434,191 @@ public class TaxiController {
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserBirthday", user );
 			
 			response.setData( result );
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getNoticeList.do")
+	public @ResponseBody APIResponse getNoticeList( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getNoticeList.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			List<Notice> noticeList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectNoticeList");
+			
+			response.setData(noticeList);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUserMessageList.do")
+	public @ResponseBody APIResponse getUserMessageList( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getUserMessageList.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessageList", user );
+			
+			HashMap hash = new HashMap();
+
+			// 동일한 user 는 제외
+			for ( int i = 0; i < messageList.size(); i++ )
+			{
+				if ( hash.containsKey( messageList.get(i).getUser().getUserID() ) )
+				{
+					messageList.remove(i);
+					i--;
+				}
+				else
+					hash.put( messageList.get(i).getUser().getUserID(), "" );
+			}
+			
+			response.setData(messageList);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUserMessage.do")
+	public @ResponseBody APIResponse getUserMessage( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getUserMessage.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", user );
+			response.setData(messageList);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUserPushMessage.do")
+	public @ResponseBody APIResponse getUserPushMessage( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/selectUserPushMessage.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserPushMessage", user );
+			response.setData(messageList);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUserSetting.do")
+	public @ResponseBody APIResponse getUserSetting( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getUserSetting.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			List<UserSetting> settingsList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserSetting", user );
+			
+			if ( settingsList == null || settingsList.size() == 0 )
+			{
+				// 없으면 기본값 insert
+				initializeUserSetting( user );
+				settingsList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserSetting", user );
+			}
+			
+			response.setData(settingsList);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/updateUserSetting.do")
+	public @ResponseBody APIResponse updateUserSetting( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/updateUserSetting.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			UserSetting setting = mapper.readValue(bodyString, new TypeReference<UserSetting>(){});
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserSetting", setting );
+			
+			response.setData(result);
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}

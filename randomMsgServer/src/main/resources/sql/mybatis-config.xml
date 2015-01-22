@@ -8,7 +8,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	</settings-->
 	<mappers>
 		<mapper resource="sql-mapper.xml"/>
-		<mapper resource="sql-salsa.xml"/>
 		<mapper resource="sql-neighborhood.xml"/>
 		<mapper resource="sql-nearhere-taxi.xml"/>
 	</mappers>
