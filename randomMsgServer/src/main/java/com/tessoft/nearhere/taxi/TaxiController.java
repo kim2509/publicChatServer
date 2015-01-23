@@ -525,9 +525,9 @@ public class TaxiController {
 			logger.info( "REQUEST URL:" + "/taxi/getUserMessage.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
-			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			HashMap messageInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", user );
+			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", messageInfo );
 			response.setData(messageList);
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
@@ -619,6 +619,40 @@ public class TaxiController {
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserSetting", setting );
 			
 			response.setData(result);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/sendUserMessage.do")
+	public @ResponseBody APIResponse sendUserMessage( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/sendUserMessage.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			UserMessage message = mapper.readValue(bodyString, new TypeReference<UserMessage>(){});
+			
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserMessage", message );
+			
+			HashMap messageInfo = new HashMap();
+			
+			messageInfo.put("userID", message.getFromUser().getUserID());
+			messageInfo.put("fromUserID", message.getToUser().getUserID());
+			
+			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", messageInfo );
+			response.setData(messageList);
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}

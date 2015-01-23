@@ -1,5 +1,8 @@
 package com.nearhere.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserMessage {
 
 	private String messageID;
