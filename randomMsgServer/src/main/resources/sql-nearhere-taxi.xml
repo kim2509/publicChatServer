@@ -214,7 +214,7 @@
 		from (
 			select fromUserID as 'userID', message, createdDate,
 				(
-	          		CASE is_read
+	          		CASE isRead
           				WHEN 'Y' THEN 'true'
           				WHEN 'N' THEN 'false'
           			END
@@ -224,7 +224,7 @@
 			union all 
 			select toUserID as 'userID', message, createdDate, 
 				(
-	          		CASE is_read
+	          		CASE isRead
           				WHEN 'Y' THEN 'true'
           				WHEN 'N' THEN 'false'
           			END
@@ -236,7 +236,7 @@
 		order by A.createdDate desc;
 	</select>
 	
-	<select id="selectUserMessage" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserMessage">
+	<select id="selectUserMessage" parameterType="java.util.HashMap" resultType="com.nearhere.domain.UserMessage">
 		select 
 			UM.messageID,
 			UM.fromUserID as 'fromUser.userID',
@@ -247,18 +247,28 @@
 			U2.profileImageURL as 'toUser.profileImageURL',
 			UM.message,
 			(
-          		CASE UM.is_read
+          		CASE UM.isRead
           			WHEN 'Y' THEN 'true'
           			WHEN 'N' THEN 'false'
           		END
        		)AS isRead,
 			UM.createdDate
-		from user_message UM
+		from 
+		(
+			select messageID, fromUserID, toUserID, message, isRead, createdDate
+			from user_message
+			where toUserID=#{userID}
+			and fromUserID=#{fromUserID}
+			union all
+			select messageID, fromUserID, toUserID, message, isRead, createdDate
+			from user_message
+			where toUserID=#{fromUserID}
+			and fromUserID=#{userID}
+			order by createdDate desc limit 0,100
+		) UM
 			left outer join user U on UM.fromUserID=U.userID
 			left outer join user U2 on UM.toUserID=U2.userID
-		where UM.toUserID=#{userID}
-		order by UM.createdDate desc
-		limit 0,100;
+		order by UM.createdDate
 	</select>
 	
 	<select id="selectUserPushMessage" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserPushMessage">
@@ -289,4 +299,9 @@
 		set settingValue=#{settingValue}
 		where userID=#{userID} and settingName=#{settingName};
 	</delete>
+	
+	<insert id="insertUserMessage" parameterType="com.nearhere.domain.UserMessage">
+		insert into user_message( fromUserID, toUserID, message, isRead, createdDate )
+		values(#{fromUser.userID},#{toUser.userID}, #{message}, 'N', NOW());
+	</insert>
 </mapper>
