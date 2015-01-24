@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Result;
+import com.google.android.gcm.server.Sender;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.Notice;
 import com.nearhere.domain.Post;
@@ -22,6 +25,7 @@ import com.nearhere.domain.PostReply;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserLocation;
 import com.nearhere.domain.UserMessage;
+import com.nearhere.domain.UserPushMessage;
 import com.nearhere.domain.UserSetting;
 
 @Controller
@@ -273,9 +277,9 @@ public class TaxiController {
 			logger.info( "REQUEST URL:" + "/taxi/getPostDetail.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
-			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", post);
+			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", hash);
 			
 			List<PostReply> replies = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostReplies", post );
 			post.setPostReplies(replies);
@@ -309,6 +313,10 @@ public class TaxiController {
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostReply", post );
 			
 			response.setData( result );
+			
+			List<User> usersToSendPush = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersForPost", post );
+			for ( int i = 0; i < usersToSendPush.size(); i++ )
+				sendPushMessage( usersToSendPush.get(i), "postReply", post.getMessage(), post.getPostID());
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
@@ -632,6 +640,34 @@ public class TaxiController {
 		return response;
 	}
 	
+	@RequestMapping( value ="/taxi/updateUserRegID.do")
+	public @ResponseBody APIResponse updateUserRegID( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/updateUserRegID.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			
+			response.setData(result);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/taxi/sendUserMessage.do")
 	public @ResponseBody APIResponse sendUserMessage( ModelMap model, @RequestBody String bodyString )
 	{
@@ -645,6 +681,8 @@ public class TaxiController {
 			UserMessage message = mapper.readValue(bodyString, new TypeReference<UserMessage>(){});
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserMessage", message );
+			
+			sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID() );
 			
 			HashMap messageInfo = new HashMap();
 			
@@ -664,5 +702,59 @@ public class TaxiController {
 		}
 		
 		return response;
+	}
+	
+	private String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
+	private int push_retry_cnt = 5;
+	private void sendPushMessage( User receiver, String type, String msg, String param ) throws Exception
+	{
+		try
+		{
+			logger.info( "sendPushMessage: " + mapper.writeValueAsString(receiver) );
+			
+			receiver = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", receiver);
+			
+			UserPushMessage pushMessage = new UserPushMessage();
+			pushMessage.setToUserID( receiver.getUserID() );
+			pushMessage.setType(type);
+			if ( "message".equals( type ) )
+				pushMessage.setMessage("메시지가 도착하였습니다.");
+			if ( "postReply".equals( type ) )
+				pushMessage.setMessage("댓글이 등록되었습니다.");
+			
+			pushMessage.setParam1(param);
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
+			
+			logger.info( "insertUserPushMessage result : " + result );
+			
+			Sender sender = new Sender(GCM_API_KEY);
+			
+			Message message = null;
+			
+			if ( "message".equals( type ) )
+			{
+				message = new Message.Builder().addData("title", pushMessage.getMessage() )
+						.addData("message",  msg )
+						.addData("type",  type )
+						.addData("fromUserID",  param )
+						.build();	
+			}
+			else if ( "postReply".equals( type ) )
+			{
+				message = new Message.Builder().addData("title", pushMessage.getMessage() )
+						.addData("message",  msg )
+						.addData("type",  type )
+						.addData("postID",  param )
+						.build();	
+			}
+			
+	        Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
+	        
+	        logger.info( "push result:" + pushResult.toString() );	
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );;
+		}
 	}
 }

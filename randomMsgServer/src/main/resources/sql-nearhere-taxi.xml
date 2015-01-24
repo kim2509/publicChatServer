@@ -83,18 +83,26 @@
 			WHERE fromLatitude is not null
 			and fromLongitude is not null
 			and type='taxi'
-			ORDER BY distance
 		) A
 		WHERE A.distance <= #{distance}
+		order by createdDate desc
 		LIMIT 0 , 100;
 		]]>
 	</select>
 	
 	<select id="getPostDetail" resultType="com.nearhere.domain.Post"
-		parameterType="com.nearhere.domain.Post">
+		parameterType="java.util.HashMap">
 		<![CDATA[
 		SELECT 
 			P.*,
+			TRUNCATE((
+    			6371 * acos ( cos ( radians( #{latitude} ) )
+	      		* cos( radians( fromLatitude ) )
+  	 	   		* cos( radians( fromLongitude ) - radians( #{longitude} ) )
+   		   		+ sin ( radians( #{latitude} ) )
+   		   		* sin( radians( fromLatitude ) )
+   		 		)
+  				) , 1)  AS distance,
 			U.userID as "user.userID",
 			U.userName as "user.userName",
 			U.profileImageURL as "user.profileImageURL"
@@ -294,14 +302,41 @@
 		where userID=#{userID}
 	</delete>
 	
-	<delete id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
+	<update id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
 		update user_setting
 		set settingValue=#{settingValue}
 		where userID=#{userID} and settingName=#{settingName};
-	</delete>
+	</update>
+	
+	<update id="updateUserRegID" parameterType="com.nearhere.domain.User">
+		update user
+		set regID=#{regID}
+		where userID=#{userID};
+	</update>
 	
 	<insert id="insertUserMessage" parameterType="com.nearhere.domain.UserMessage">
 		insert into user_message( fromUserID, toUserID, message, isRead, createdDate )
 		values(#{fromUser.userID},#{toUser.userID}, #{message}, 'N', NOW());
 	</insert>
+	
+	<insert id="insertUserPushMessage" parameterType="com.nearhere.domain.UserMessage">
+		insert into user_push_message( toUserID, message, isRead, type, param1, createdDate )
+		values(#{toUserID},#{message}, 'N', #{type}, #{param1}, NOW());
+	</insert>
+	
+	<select id="selectUsersForPost" parameterType="com.nearhere.domain.Post" resultType="com.nearhere.domain.User">
+		<![CDATA[
+			select U.userID, U.regID
+			from (
+				select userID from post where postID=#{postID}
+				union
+				select userID from post_reply
+				where postID=#{postID}
+			) A
+				left outer join user U on A.userID=U.userID
+			where A.userID <> #{user.userID}
+			and U.regID is not null;
+		]]>
+	</select>
+	
 </mapper>
