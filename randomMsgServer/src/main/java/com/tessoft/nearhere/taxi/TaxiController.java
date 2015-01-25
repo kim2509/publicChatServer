@@ -64,7 +64,6 @@ public class TaxiController {
 			logger.info( "REQUEST URL:" + "/taxi/registerUser.do" );
 			logger.info( "REQUEST:" + bodyString );
 			
-			ObjectMapper mapper = new ObjectMapper();
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 		
 			if ( isValidateForRegister( user, response ) == false )
@@ -210,7 +209,70 @@ public class TaxiController {
 		
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/login.do")
+	public @ResponseBody APIResponse login( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/login.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			HashMap request = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			request.put("password", Util.encryptPassword( request.get("password").toString() ) );
+			User user = sqlSession.selectOne("com.tessoft.nearhere.taxi.login", request);
+			
+			if ( user == null || "".equals( user.getUserID() ) )
+			{
+				response.setResCode( ErrorCode.INVALID_PASSWORD );
+				response.setResMsg("아이디 혹은 암호가 올바르지 않습니다.");
+			}
+			
+			response.setData(user);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 
+	@RequestMapping( value ="/taxi/logout.do")
+	public @ResponseBody APIResponse logout( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/login.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			user.setRegID(null);
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			
+			response.setData(result);
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/taxi/insertPost.do")
 	public @ResponseBody APIResponse insertPost( ModelMap model, @RequestBody String bodyString )
 	{
@@ -225,7 +287,46 @@ public class TaxiController {
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
 			
+			HashMap distanceInfo = new HashMap();
+			distanceInfo.put("latitude", post.getFromLatitude());
+			distanceInfo.put("longitude", post.getFromLongitude());
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", distanceInfo);
+			if ( userList != null && userList.size() > 0 )
+			{
+				for ( int i = 0; i < userList.size(); i++ )
+				{
+					sendPushMessage(userList.get(i), "newPostByDistance", "500미터 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
+				}				
+			}
+			
 			response.setData( result );
+			
+			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUsersNearHere.do")
+	public @ResponseBody APIResponse getUsersNearHere( ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logger.info( "REQUEST URL:" + "/taxi/getUsersNearHere.do" );
+			logger.info( "REQUEST:" + bodyString );
+			
+			HashMap request = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", request);
+			response.setData(userList);
 			
 			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 		}
@@ -721,6 +822,8 @@ public class TaxiController {
 				pushMessage.setMessage("메시지가 도착하였습니다.");
 			if ( "postReply".equals( type ) )
 				pushMessage.setMessage("댓글이 등록되었습니다.");
+			else if ("newPostByDistance".equals( type ) )
+				pushMessage.setMessage( msg );
 			
 			pushMessage.setParam1(param);
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
@@ -743,6 +846,14 @@ public class TaxiController {
 			{
 				message = new Message.Builder().addData("title", pushMessage.getMessage() )
 						.addData("message",  msg )
+						.addData("type",  type )
+						.addData("postID",  param )
+						.build();	
+			}
+			else if ( "newPostByDistance".equals( type ) )
+			{
+				message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+						.addData("message",  pushMessage.getMessage() )
 						.addData("type",  type )
 						.addData("postID",  param )
 						.build();	

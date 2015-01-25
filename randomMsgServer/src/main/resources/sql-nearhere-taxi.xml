@@ -41,6 +41,10 @@
 		values ( #{user.userID}, #{locationName} , #{latitude}, #{longitude}, #{address}, NOW() )
 	</insert>
 	
+	<select id="login" parameterType="java.util.HashMap" resultType="com.nearhere.domain.User">
+		select * FROM user where userID = #{userID} and password = #{password};
+	</select>
+	
 	<select id="selectUser" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">
 		select * FROM user where userID = #{userID};
 	</select>
@@ -50,13 +54,15 @@
 		VALUES( #{userID}, #{userName}, #{password}, NOW() );
 	</insert>
 	
-	<select id="insertPost" resultType="com.nearhere.domain.Post"
-		parameterType="com.nearhere.domain.User">
+	<insert id="insertPost" parameterType="com.nearhere.domain.Post" useGeneratedKeys="true" keyProperty="postID" keyColumn="postID">
 		insert into post( userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
 		latitude, longitude, toAddress, createdDate)
 		values(#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude},
 		#{fromAddress}, #{latitude}, #{longitude}, #{toAddress}, NOW() );
-	</select>
+		<selectKey keyProperty="postID" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
 	
 	<select id="getPostsNearHere" resultType="com.nearhere.domain.Post"
 		parameterType="java.util.HashMap">
@@ -163,8 +169,7 @@
 		and type='taxi';
 	</select>
 	
-	<select id="searchUsers" resultType="com.nearhere.domain.User"
-		parameterType="com.nearhere.domain.User">
+	<select id="searchUsers" parameterType="java.util.HashMap" resultType="com.nearhere.domain.User">
 		<![CDATA[
 		SELECT * FROM (
 			SELECT *, TRUNCATE((
@@ -184,7 +189,8 @@
 			and longitude is not null
 			ORDER BY distance
 		) A
-		WHERE A.distance <= 1
+		WHERE A.distance <= 0.5
+		and A.regID is not null
 		LIMIT 0 , 100;
 		]]>
 	</select>
