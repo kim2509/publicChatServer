@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
@@ -39,6 +40,13 @@ public class TaxiController {
 	public TaxiController()
 	{
 		mapper = new ObjectMapper();
+	}
+	
+	@RequestMapping( value ="/taxi")
+	public ModelAndView index ()
+	{
+		String message = "Hello World, Spring 3.0!";           
+        return new ModelAndView("index", "message", message);
 	}
 	
 	private boolean isValidateForRegister( User user, APIResponse response )
@@ -98,7 +106,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 			return response;
 		}
@@ -145,7 +153,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -203,7 +211,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -237,7 +245,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -266,7 +274,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("로그아웃 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -307,7 +315,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -333,7 +341,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -361,7 +369,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -392,7 +400,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -424,7 +432,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -465,7 +473,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -493,7 +501,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -521,7 +529,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -549,7 +557,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -575,7 +583,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -617,7 +625,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -644,7 +652,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -671,7 +679,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -706,7 +714,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -734,7 +742,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -762,7 +770,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
@@ -798,7 +806,7 @@ public class TaxiController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg(ex.getMessage());
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 		
