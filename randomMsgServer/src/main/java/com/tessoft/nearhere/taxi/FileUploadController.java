@@ -23,7 +23,7 @@ public class FileUploadController {
 
 	protected static Logger logger = Logger.getLogger(FileUploadController.class.getName());
 	
-	@RequestMapping(value = "/uploadUserProfilePhoto.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/taxi/uploadUserProfilePhoto.do", method = RequestMethod.POST)
     public String uploadUserProfilePhoto(FileDTO dto) {
         MultipartFile uploadfile = dto.getFile();
         if (uploadfile != null) {
@@ -48,7 +48,7 @@ public class FileUploadController {
             } // try - catch
         } // if
         // 데이터 베이스 처리를 현재 위치에서 처리
-        return "true"; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
+        return "index"; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
     }
 	
 	/**
