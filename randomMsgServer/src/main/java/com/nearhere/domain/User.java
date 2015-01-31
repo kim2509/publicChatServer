@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
+	private String userNo;
 	private String userID;
 	private String userName;
 	private String password;
@@ -17,6 +18,14 @@ public class User {
 	private String birthday;
 	private String jobTitle;
 	private String sex;
+
+	public String getUserNo() {
+		return userNo;
+	}
+
+	public void setUserNo(String userNo) {
+		this.userNo = userNo;
+	}
 
 	public String getUserID() {
 		return userID;

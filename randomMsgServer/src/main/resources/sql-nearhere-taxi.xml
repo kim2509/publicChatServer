@@ -24,6 +24,11 @@
 		WHERE A.PK=B.PK
 	</select>
 	
+	<insert id="deleteUserTermsAgreement" parameterType="java.util.HashMap">
+		delete from user_terms_agreement
+		where userID = #{userID} and common_ver=#{common_ver} and location_ver = #{location_ver};
+	</insert>
+	
 	<insert id="insertUserTermsAgreement" parameterType="java.util.HashMap">
 		insert into 
 		user_terms_agreement ( userID, common_ver, common, location_ver, location, createdDate )
@@ -45,20 +50,32 @@
 		select * FROM user where userID = #{userID} and password = #{password};
 	</select>
 	
+	<select id="selectUserByUserNo" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">
+		select * FROM user where userNo = #{userNo};
+	</select>
+	
 	<select id="selectUser" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">
 		select * FROM user where userID = #{userID};
 	</select>
 	
-	<insert id="insertUser" parameterType="com.nearhere.domain.User">
+	<insert id="insertUser" parameterType="com.nearhere.domain.User" useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
 		INSERT INTO user ( userID, userName, password, createdDate )
 		VALUES( #{userID}, #{userName}, #{password}, NOW() );
+		<selectKey keyProperty="userNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
 	</insert>
+	
+	<update id="updateUserID" parameterType="com.nearhere.domain.User">
+		update user set userID=#{userID}
+		where userNo=#{userNo};
+	</update>
 	
 	<insert id="insertPost" parameterType="com.nearhere.domain.Post" useGeneratedKeys="true" keyProperty="postID" keyColumn="postID">
 		insert into post( userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
-		latitude, longitude, toAddress, createdDate)
+		latitude, longitude, toAddress, sexInfo, numOfUsers, departureDateTime, createdDate)
 		values(#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude},
-		#{fromAddress}, #{latitude}, #{longitude}, #{toAddress}, NOW() );
+		#{fromAddress}, #{latitude}, #{longitude}, #{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDateTime}, NOW() );
 		<selectKey keyProperty="postID" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
@@ -82,7 +99,8 @@
    		   		+ sin ( radians( #{latitude} ) )
    		   		* sin( radians( fromLatitude ) )
    		 		)
-  				) , 1)  AS distance, PR.cnt as "replyCount"
+  				) , 1)  AS distance, PR.cnt as "replyCount",
+  				sexInfo, numOfUsers, departureDateTime
 			FROM post P
 				left outer join (select count(replyID) as 'cnt', postID from post_reply) PR on P.postID=PR.postID
 				left outer join user U on P.userID=U.userID

@@ -3,7 +3,6 @@ package com.nearhere.domain;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonIgnoreType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Post {
@@ -27,6 +26,10 @@ public class Post {
 	private String createdDate;
 	
 	private String reward;
+	
+	private String sexInfo;
+	private String numOfUsers;
+	private String departureDateTime;
 	
 	private List<PostLike> postLikes;
 	private List<PostReply> postReplies;
@@ -128,5 +131,23 @@ public class Post {
 	}
 	public void setToAddress(String toAddress) {
 		this.toAddress = toAddress;
+	}
+	public String getSexInfo() {
+		return sexInfo;
+	}
+	public void setSexInfo(String sexInfo) {
+		this.sexInfo = sexInfo;
+	}
+	public String getNumOfUsers() {
+		return numOfUsers;
+	}
+	public void setNumOfUsers(String numOfUsers) {
+		this.numOfUsers = numOfUsers;
+	}
+	public String getDepartureDateTime() {
+		return departureDateTime;
+	}
+	public void setDepartureDateTime(String departureDateTime) {
+		this.departureDateTime = departureDateTime;
 	}
 }
