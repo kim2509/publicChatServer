@@ -24,12 +24,14 @@ public class Post {
 	
 	private String distance;
 	private String createdDate;
+	private String deletedDate;
 	
 	private String reward;
 	
 	private String sexInfo;
 	private String numOfUsers;
-	private String departureDateTime;
+	private String departureDate;
+	private String departureTime;
 	
 	private List<PostLike> postLikes;
 	private List<PostReply> postReplies;
@@ -144,10 +146,22 @@ public class Post {
 	public void setNumOfUsers(String numOfUsers) {
 		this.numOfUsers = numOfUsers;
 	}
-	public String getDepartureDateTime() {
-		return departureDateTime;
+	public String getDeletedDate() {
+		return deletedDate;
 	}
-	public void setDepartureDateTime(String departureDateTime) {
-		this.departureDateTime = departureDateTime;
+	public void setDeletedDate(String deletedDate) {
+		this.deletedDate = deletedDate;
+	}
+	public String getDepartureDate() {
+		return departureDate;
+	}
+	public void setDepartureDate(String departureDate) {
+		this.departureDate = departureDate;
+	}
+	public String getDepartureTime() {
+		return departureTime;
+	}
+	public void setDepartureTime(String departureTime) {
+		this.departureTime = departureTime;
 	}
 }
