@@ -11,6 +11,7 @@ public class PostReply {
 	private String postID;
 	private String message;
 	private String createdDate;
+	private String deletedDate;
 	private User user;
 	
 	private String distance;
@@ -65,5 +66,11 @@ public class PostReply {
 	}
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
+	}
+	public String getDeletedDate() {
+		return deletedDate;
+	}
+	public void setDeletedDate(String deletedDate) {
+		this.deletedDate = deletedDate;
 	}
 }

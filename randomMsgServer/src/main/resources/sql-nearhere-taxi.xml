@@ -93,6 +93,11 @@
 		where postID=#{postID}
 	</update>
 	
+	<update id="updatePostReplyAsDeleted" parameterType="com.nearhere.domain.PostReply">
+		update post_reply set deletedDate=NOW()
+		where replyID=#{replyID}
+	</update>
+	
 	<select id="getPostsNearHere" resultType="com.nearhere.domain.Post"
 		parameterType="java.util.HashMap">
 		<![CDATA[
@@ -114,7 +119,7 @@
   				) , 1)  AS distance, PR.cnt as "replyCount",
   				sexInfo, numOfUsers, departureDate, departureTime
 			FROM post P
-				left outer join (select count(replyID) as 'cnt', postID from post_reply) PR on P.postID=PR.postID
+				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null ) PR on P.postID=PR.postID
 				left outer join user U on P.userID=U.userID
 			WHERE fromLatitude is not null
 			and fromLongitude is not null
@@ -174,6 +179,7 @@
 		FROM post_reply PR
 			left outer join user U on PR.userID=U.userID
 		where PR.postID=#{postID}
+		and PR.deletedDate is null
 		order by PR.createdDate;
 		]]>
 	</select>
@@ -201,7 +207,7 @@
 		from post P
 			left outer join user U on P.userID=U.userID
 		where postID in (
-  			select postID from post_reply where userID=#{userID}
+  			select postID from post_reply where userID=#{userID} and deletedDate is null
 		)
 		and P.type='taxi'
 		and P.deletedDate is null;
@@ -354,6 +360,12 @@
 		where userID=#{userID};
 	</update>
 	
+	<update id="updateUserRegIDAsNull" parameterType="com.nearhere.domain.User">
+		update user
+		set regID=NULL
+		where regID=#{regID};
+	</update>
+	
 	<insert id="insertUserMessage" parameterType="com.nearhere.domain.UserMessage">
 		insert into user_message( fromUserID, toUserID, message, isRead, createdDate )
 		values(#{fromUser.userID},#{toUser.userID}, #{message}, 'N', NOW());
@@ -372,6 +384,7 @@
 				union
 				select userID from post_reply
 				where postID=#{postID}
+				and deletedDate is null
 			) A
 				left outer join user U on A.userID=U.userID
 			where A.userID <> #{user.userID}
@@ -400,5 +413,9 @@
 	
 	<update id="updatePushMessageAsRead2" parameterType="java.util.HashMap">
 		update user_push_message set isRead='Y' where toUserID=#{userID} and param1=#{fromUserID};
+	</update>
+	
+	<update id="updatePushMessageAsRead3" parameterType="java.util.HashMap">
+		update user_push_message set isRead='Y' where toUserID=#{userID} and param1=#{postID};
 	</update>
 </mapper>

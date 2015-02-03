@@ -490,6 +490,10 @@ public class TaxiController {
 
 			response.setData(post);
 
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead3", hash );
+			
+			response.setData2( result );
+			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
@@ -852,9 +856,11 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegIDAsNull", user );
+			
+			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
 
-			response.setData(result);
+			response.setData(result + "|" + result2);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -1060,6 +1066,33 @@ public class TaxiController {
 			UserPushMessage message = mapper.readValue(bodyString, new TypeReference<UserPushMessage>(){});
 
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead", message );
+			response.setData(result);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/deletePostReply.do")
+	public @ResponseBody APIResponse deletePostReply( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			PostReply postReply = mapper.readValue(bodyString, new TypeReference<PostReply>(){});
+
+			int result = sqlSession.delete("com.tessoft.nearhere.taxi.updatePostReplyAsDeleted", postReply );
+
 			response.setData(result);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
