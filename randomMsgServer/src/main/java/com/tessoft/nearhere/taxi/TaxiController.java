@@ -124,7 +124,7 @@ public class TaxiController {
 
 			response.setData( user );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
 			return response;
 
@@ -174,7 +174,7 @@ public class TaxiController {
 
 			response.setData( user );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
 			return response;
 
@@ -189,9 +189,20 @@ public class TaxiController {
 	}
 
 	private String requestLogging(HttpServletRequest request, String bodyString) {
-		String logIdentifier = getLogIdentifier();
-		logger.info( "REQUEST URL [" + request.getRemoteAddr() + "][" + logIdentifier + "]:" + makeUrl( request ) );
-		logger.info( "REQUEST[" + logIdentifier + "]:" + bodyString );
+		
+		String logIdentifier = "";
+		
+		try
+		{
+			logIdentifier = getLogIdentifier();
+			logger.info( "REQUEST URL [" + request.getRemoteAddr() + "][" + logIdentifier + "]:" + makeUrl( request ) );
+			logger.info( "REQUEST[" + logIdentifier + "]:" + bodyString );	
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
 		return logIdentifier;
 	}
 
@@ -230,7 +241,7 @@ public class TaxiController {
 
 			response.setData(termsContent);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -258,7 +269,7 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -287,7 +298,7 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -320,7 +331,7 @@ public class TaxiController {
 
 			response.setData(user);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -348,7 +359,7 @@ public class TaxiController {
 
 			response.setData(result);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -376,6 +387,7 @@ public class TaxiController {
 			HashMap distanceInfo = new HashMap();
 			distanceInfo.put("latitude", post.getFromLatitude());
 			distanceInfo.put("longitude", post.getFromLongitude());
+			distanceInfo.put("userID", post.getUser().getUserID());
 
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", distanceInfo);
 			if ( userList != null && userList.size() > 0 )
@@ -388,7 +400,7 @@ public class TaxiController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -418,7 +430,7 @@ public class TaxiController {
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", requestData);
 			response.setData(userList);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -444,8 +456,11 @@ public class TaxiController {
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostsNearHere", requestData);
 
 			response.setData(postList);
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", requestData);
+			response.setData2( userList.size() );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -475,7 +490,11 @@ public class TaxiController {
 
 			response.setData(post);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead3", hash );
+			
+			response.setData2( result );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -503,10 +522,13 @@ public class TaxiController {
 			response.setData( result );
 
 			List<User> usersToSendPush = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersForPost", post );
+			
+			logger.info( "usersToSendPush: " + mapper.writeValueAsString(usersToSendPush) );
+			
 			for ( int i = 0; i < usersToSendPush.size(); i++ )
 				sendPushMessage( usersToSendPush.get(i), "postReply", post.getMessage(), post.getPostID());
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -546,7 +568,7 @@ public class TaxiController {
 
 			response.setData(hash);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -573,7 +595,7 @@ public class TaxiController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -600,7 +622,7 @@ public class TaxiController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -627,7 +649,7 @@ public class TaxiController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -652,7 +674,7 @@ public class TaxiController {
 
 			response.setData(noticeList);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -693,7 +715,7 @@ public class TaxiController {
 
 			response.setData(messageList);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -718,8 +740,13 @@ public class TaxiController {
 
 			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", messageInfo );
 			response.setData(messageList);
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserMessageAsRead", messageInfo );
+			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead2", messageInfo );
+			
+			response.setData2( result + "|" + result2 );
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -745,7 +772,7 @@ public class TaxiController {
 			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserPushMessage", user );
 			response.setData(messageList);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -779,7 +806,7 @@ public class TaxiController {
 
 			response.setData(settingsList);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -806,7 +833,7 @@ public class TaxiController {
 
 			response.setData(result);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -829,11 +856,13 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegIDAsNull", user );
+			
+			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
 
-			response.setData(result);
+			response.setData(result + "|" + result2);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -868,7 +897,7 @@ public class TaxiController {
 			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", messageInfo );
 			response.setData(messageList);
 
-			logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
@@ -942,5 +971,139 @@ public class TaxiController {
 		{
 			logger.error( ex );;
 		}
+	}
+	
+	@RequestMapping( value ="/taxi/modifyPost.do")
+	public @ResponseBody APIResponse modifyPost( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
+
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePost", post );
+
+			response.setData(result);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/deletePost.do")
+	public @ResponseBody APIResponse deletePost( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
+
+			int result = sqlSession.delete("com.tessoft.nearhere.taxi.updatePostAsDeleted", post );
+
+			response.setData(result);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUnreadCount.do")
+	public @ResponseBody APIResponse getUnreadCount( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			HashMap countInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getUnreadCount", info );
+
+			response.setData(countInfo);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/updatePushMessageAsRead.do")
+	public @ResponseBody APIResponse updatePushMessageAsRead( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			UserPushMessage message = mapper.readValue(bodyString, new TypeReference<UserPushMessage>(){});
+
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead", message );
+			response.setData(result);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/deletePostReply.do")
+	public @ResponseBody APIResponse deletePostReply( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			PostReply postReply = mapper.readValue(bodyString, new TypeReference<PostReply>(){});
+
+			int result = sqlSession.delete("com.tessoft.nearhere.taxi.updatePostReplyAsDeleted", postReply );
+
+			response.setData(result);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
 	}
 }
