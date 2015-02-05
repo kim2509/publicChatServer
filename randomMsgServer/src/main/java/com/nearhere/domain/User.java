@@ -18,6 +18,7 @@ public class User {
 	private String birthday;
 	private String jobTitle;
 	private String sex;
+	private String profilePoint;
 
 	public String getUserNo() {
 		return userNo;
@@ -121,6 +122,14 @@ public class User {
 
 	public void setSex(String sex) {
 		this.sex = sex;
+	}
+
+	public String getProfilePoint() {
+		return profilePoint;
+	}
+
+	public void setProfilePoint(String profilePoint) {
+		this.profilePoint = profilePoint;
 	}
 	
 }

@@ -4,8 +4,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
+import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dy.common.FileDTO;
+import com.nearhere.domain.APIResponse;
 
 /**
  * Handles requests for the application file upload requests
@@ -23,8 +28,21 @@ public class FileUploadController {
 
 	protected static Logger logger = Logger.getLogger(FileUploadController.class.getName());
 	
+	@Autowired
+	private SqlSession sqlSession;
+	ObjectMapper mapper = null;
+	
+	public FileUploadController() {
+		// TODO Auto-generated constructor stub
+		mapper = new ObjectMapper();
+	}
+	
 	@RequestMapping(value = "/taxi/uploadUserProfilePhoto.do", method = RequestMethod.POST)
-    public String uploadUserProfilePhoto(FileDTO dto) {
+    public @ResponseBody APIResponse uploadUserProfilePhoto(FileDTO dto) {
+		
+		logger.info("uploadUserProfilePhoto.do start");
+		APIResponse response = new APIResponse();
+		
         MultipartFile uploadfile = dto.getFile();
         if (uploadfile != null) {
             String fileName = uploadfile.getOriginalFilename();
@@ -35,20 +53,36 @@ public class FileUploadController {
                 // FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
                 // output.write(fileData);
                  
-            	String rootPath = System.getProperty("catalina.home");
-				File dir = new File(rootPath + File.separator + "tmpFiles");
+            	String rootPath = "E:\\wamp\\www";
+				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
 					dir.mkdirs();
 				
                 // 2. File 사용
                 File file = new File( dir.getAbsolutePath() + File.separator + fileName);
                 uploadfile.transferTo(file);
+                
+                String userID = fileName.replaceAll(".png", "");
+                HashMap hash = new HashMap();
+                hash.put("userID", userID );
+                hash.put("profileImageURL", userID + ".png" );
+                
+                int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserProfileImage", hash );
+                
+                response.setData( result );
+                
+                logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+                
             } catch (IOException e) {
+            	logger.error( e );
                 e.printStackTrace();
             } // try - catch
         } // if
         // 데이터 베이스 처리를 현재 위치에서 처리
-        return "index"; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
+        
+        logger.info("uploadUserProfilePhoto.do end");
+        
+        return response; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
     }
 	
 	/**

@@ -120,8 +120,6 @@ public class TaxiController {
 				user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
 			}
 
-			initializeUserSetting(user);
-
 			response.setData( user );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
@@ -168,8 +166,6 @@ public class TaxiController {
 
 			sqlSession.insert("com.tessoft.nearhere.taxi.insertUser", user);
 
-			initializeUserSetting(user);
-
 			user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
 
 			response.setData( user );
@@ -206,27 +202,6 @@ public class TaxiController {
 		return logIdentifier;
 	}
 
-	private void initializeUserSetting(User user) {
-
-		sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserSetting", user);
-
-		UserSetting setting = new UserSetting();
-		setting.setUserID(user.getUserID());
-		setting.setSettingName("쪽지알림 받기");
-		setting.setSettingValue("Y");
-		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserSetting", setting);
-		setting = new UserSetting();
-		setting.setUserID(user.getUserID());
-		setting.setSettingName("댓글알림 받기");
-		setting.setSettingValue("Y");
-		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserSetting", setting);
-		setting = new UserSetting();
-		setting.setUserID(user.getUserID());
-		setting.setSettingName("추천알림 받기");
-		setting.setSettingValue("Y");
-		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserSetting", setting);
-	}
-
 	@RequestMapping( value ="/taxi/getTermsContent.do")
 	public @ResponseBody APIResponse getTermsContent( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
@@ -251,6 +226,22 @@ public class TaxiController {
 		}
 
 		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getUserTerms.do")
+	public String getUserTerms( HttpServletRequest request, String version )
+	{
+		try
+		{
+			String logIdentifier = requestLogging(request, version );
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + "user_terms_" + version );
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+
+		return "user_terms_" + version;
 	}
 
 	@RequestMapping( value ="/taxi/insertTermsAgreement.do")
@@ -394,7 +385,11 @@ public class TaxiController {
 			{
 				for ( int i = 0; i < userList.size(); i++ )
 				{
-					sendPushMessage(userList.get(i), "newPostByDistance", "500미터 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
+					UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userList.get(i) );
+
+					// 추천 알림받기 여부 체크
+					if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
+						sendPushMessage(userList.get(i), "newPostByDistance", "500미터 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
 				}				
 			}
 
@@ -526,7 +521,12 @@ public class TaxiController {
 			logger.info( "usersToSendPush: " + mapper.writeValueAsString(usersToSendPush) );
 			
 			for ( int i = 0; i < usersToSendPush.size(); i++ )
-				sendPushMessage( usersToSendPush.get(i), "postReply", post.getMessage(), post.getPostID());
+			{
+				User user = usersToSendPush.get(i);
+				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
+				if ( setting == null || !"N".equals( setting.getReplyPushReceiveYN() ) )
+					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID());
+			}
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -553,6 +553,10 @@ public class TaxiController {
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
 			user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			if ( profilePoint == null || "".equals( profilePoint ) )
+				profilePoint = "0";
+			user.setProfilePoint(profilePoint);
 
 			List<UserLocation> locationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserLocation", user);
 
@@ -795,16 +799,9 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			List<UserSetting> settingsList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserSetting", user );
+			UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
 
-			if ( settingsList == null || settingsList.size() == 0 )
-			{
-				// 없으면 기본값 insert
-				initializeUserSetting( user );
-				settingsList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserSetting", user );
-			}
-
-			response.setData(settingsList);
+			response.setData(setting);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -887,15 +884,20 @@ public class TaxiController {
 
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserMessage", message );
 
-			sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID() );
+			User user = new User();
+			user.setUserID(message.getToUser().getUserID());
+			UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
+			
+			if ( setting == null || !"N".equals( setting.getMessagePushReceiveYN() ))
+				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID() );
 
 			HashMap messageInfo = new HashMap();
-
 			messageInfo.put("userID", message.getFromUser().getUserID());
 			messageInfo.put("fromUserID", message.getToUser().getUserID());
 
 			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserMessage", messageInfo );
 			response.setData(messageList);
+			response.setData2(result);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -1094,6 +1096,33 @@ public class TaxiController {
 			int result = sqlSession.delete("com.tessoft.nearhere.taxi.updatePostReplyAsDeleted", postReply );
 
 			response.setData(result);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/updateUserInfo.do")
+	public @ResponseBody APIResponse updateUserInfo( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserInfo", user );
+
+			response.setData( result );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
