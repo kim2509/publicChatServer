@@ -4,35 +4,10 @@
 
 <mapper namespace="com.tessoft.nearhere.taxi">
 
-	<select id="selectCommonValues" resultType="java.util.HashMap">
-		select * from common_values;
-	</select>
-	
-	<select id="selectTermsVersion" resultType="java.util.HashMap">
-		select A.commonTermsVersion, B.locationTermsVersion
-		FROM 
-    		(SELECT 1 AS 'PK', value AS 'commonTermsVersion' FROM common_values where name='COMMON_TERMS_VERSION') A,
-    		(SELECT 1 AS 'PK', value AS 'locationTermsVersion' FROM common_values where name='LOCATION_TERMS_VERSION') B
-		WHERE A.PK=B.PK
-	</select>
-	
-	<select id="selectTermsContent" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		select A.COMMON, B.LOCATION, #{commonTermsVersion} as 'commonTermsVersion', #{locationTermsVersion} as 'locationTermsVersion'
-		FROM 
-    		(SELECT 1 AS 'PK', content AS 'COMMON' FROM terms_content where type='common' and ver=#{commonTermsVersion}) A,
-    		(SELECT 1 AS 'PK', content AS 'LOCATION' FROM terms_content where type='location' and ver=#{locationTermsVersion}) B
-		WHERE A.PK=B.PK
-	</select>
-	
-	<insert id="deleteUserTermsAgreement" parameterType="java.util.HashMap">
-		delete from user_terms_agreement
-		where userID = #{userID} and common_ver=#{common_ver} and location_ver = #{location_ver};
-	</insert>
-	
 	<insert id="insertUserTermsAgreement" parameterType="java.util.HashMap">
-		insert into 
-		user_terms_agreement ( userID, common_ver, common, location_ver, location, createdDate )
-		values (#{userID}, #{common_ver}, #{common}, #{location_ver}, #{location}, NOW()); 
+		replace into 
+		user_terms_agreement ( userID, nearhere_ver, personal_ver, location_ver, createdDate )
+		values (#{userID}, #{nearhere_ver}, #{personal_ver}, #{location_ver}, NOW()); 
 	</insert>
 	
 	<delete id="deleteUserLocation" parameterType="com.nearhere.domain.UserLocation">

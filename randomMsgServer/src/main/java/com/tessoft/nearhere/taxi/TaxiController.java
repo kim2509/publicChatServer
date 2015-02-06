@@ -202,46 +202,31 @@ public class TaxiController {
 		return logIdentifier;
 	}
 
-	@RequestMapping( value ="/taxi/getTermsContent.do")
-	public @ResponseBody APIResponse getTermsContent( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
-	{
-		APIResponse response = new APIResponse();
-
-		try
-		{
-			String logIdentifier = requestLogging(request, bodyString);
-
-			HashMap termsVersion = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectTermsVersion");
-			HashMap termsContent = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectTermsContent", termsVersion);
-
-			response.setData(termsContent);
-
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
-		}
-		catch( Exception ex )
-		{
-			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
-			logger.error( ex );
-		}
-
-		return response;
-	}
-	
 	@RequestMapping( value ="/taxi/getUserTerms.do")
-	public String getUserTerms( HttpServletRequest request, String version )
+	public String getUserTerms( HttpServletRequest request, String version, String type )
 	{
+		String view = "";
 		try
 		{
 			String logIdentifier = requestLogging(request, version );
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + "user_terms_" + version );
+			
+			if ("nearhere".equals( type ) )
+				view = "legal_terms/nearhere_terms_" + version;
+			else if ("personal".equals( type ) )
+				view = "legal_terms/personal_terms_" + version;
+			else if ("location".equals( type ) )
+				view = "legal_terms/location_terms_" + version;
+			else
+				view = "user_terms_" + version;
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + view );
 		}
 		catch( Exception ex )
 		{
 			logger.error( ex );
 		}
 
-		return "user_terms_" + version;
+		return view;
 	}
 
 	@RequestMapping( value ="/taxi/insertTermsAgreement.do")
@@ -255,10 +240,9 @@ public class TaxiController {
 
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
-			int result = sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserTermsAgreement", hash );
-			int result2 = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserTermsAgreement", hash );
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserTermsAgreement", hash );
 
-			response.setData( result + "|" + result2 );
+			response.setData( result );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
