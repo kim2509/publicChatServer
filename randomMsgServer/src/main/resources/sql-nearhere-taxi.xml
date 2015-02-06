@@ -4,35 +4,10 @@
 
 <mapper namespace="com.tessoft.nearhere.taxi">
 
-	<select id="selectCommonValues" resultType="java.util.HashMap">
-		select * from common_values;
-	</select>
-	
-	<select id="selectTermsVersion" resultType="java.util.HashMap">
-		select A.commonTermsVersion, B.locationTermsVersion
-		FROM 
-    		(SELECT 1 AS 'PK', value AS 'commonTermsVersion' FROM common_values where name='COMMON_TERMS_VERSION') A,
-    		(SELECT 1 AS 'PK', value AS 'locationTermsVersion' FROM common_values where name='LOCATION_TERMS_VERSION') B
-		WHERE A.PK=B.PK
-	</select>
-	
-	<select id="selectTermsContent" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		select A.COMMON, B.LOCATION, #{commonTermsVersion} as 'commonTermsVersion', #{locationTermsVersion} as 'locationTermsVersion'
-		FROM 
-    		(SELECT 1 AS 'PK', content AS 'COMMON' FROM terms_content where type='common' and ver=#{commonTermsVersion}) A,
-    		(SELECT 1 AS 'PK', content AS 'LOCATION' FROM terms_content where type='location' and ver=#{locationTermsVersion}) B
-		WHERE A.PK=B.PK
-	</select>
-	
-	<insert id="deleteUserTermsAgreement" parameterType="java.util.HashMap">
-		delete from user_terms_agreement
-		where userID = #{userID} and common_ver=#{common_ver} and location_ver = #{location_ver};
-	</insert>
-	
 	<insert id="insertUserTermsAgreement" parameterType="java.util.HashMap">
-		insert into 
-		user_terms_agreement ( userID, common_ver, common, location_ver, location, createdDate )
-		values (#{userID}, #{common_ver}, #{common}, #{location_ver}, #{location}, NOW()); 
+		replace into 
+		user_terms_agreement ( userID, nearhere_ver, personal_ver, location_ver, createdDate )
+		values (#{userID}, #{nearhere_ver}, #{personal_ver}, #{location_ver}, NOW()); 
 	</insert>
 	
 	<delete id="deleteUserLocation" parameterType="com.nearhere.domain.UserLocation">
@@ -107,7 +82,7 @@
 			SELECT P.postID, P.userID, type, message, content, fromLatitude, fromLongitude, fromAddress, 
 				latitude, longitude, toAddress, reward, P.createdDate, 
 				P.userID as 'user.userID', U.profileImageURL as 'user.profileImageURL',
-				U.userName as 'user.userName',
+				U.userName as 'user.userName', U.sex as 'user.sex',
 				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age',
 				TRUNCATE((
     			6371 * acos ( cos ( radians( #{latitude} ) )
@@ -147,7 +122,8 @@
   				) , 1)  AS distance,
 			U.userID as "user.userID",
 			U.userName as "user.userName",
-			U.profileImageURL as "user.profileImageURL"
+			U.profileImageURL as "user.profileImageURL",
+			U.sex as "user.sex"
 		FROM post P
 				left outer join user U on P.userID=U.userID
 		where type='taxi'
@@ -338,21 +314,10 @@
 		where userID=#{userID}
 	</select>
 	
-	<insert id="insertUserSetting" parameterType="com.nearhere.domain.UserSetting">
-		insert into user_setting( userID, settingName, settingValue, createdDate )
-		values (#{userID}, #{settingName}, #{settingValue}, NOW() );
+	<insert id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
+		replace into user_setting( userID, messagePushReceiveYN, replyPushReceiveYN, recommendPushReceiveYN, createdDate )
+		values (#{userID}, #{messagePushReceiveYN}, #{replyPushReceiveYN}, #{recommendPushReceiveYN}, NOW() );
 	</insert>
-	
-	<delete id="deleteUserSetting" parameterType="com.nearhere.domain.User">
-		delete from user_setting
-		where userID=#{userID}
-	</delete>
-	
-	<update id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
-		update user_setting
-		set settingValue=#{settingValue}
-		where userID=#{userID} and settingName=#{settingName};
-	</update>
 	
 	<update id="updateUserRegID" parameterType="com.nearhere.domain.User">
 		update user
@@ -418,4 +383,34 @@
 	<update id="updatePushMessageAsRead3" parameterType="java.util.HashMap">
 		update user_push_message set isRead='Y' where toUserID=#{userID} and param1=#{postID};
 	</update>
+	
+	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
+		update user set sex=#{sex}, userName=#{userName}
+		where userID=#{userID};
+	</update>
+	
+	<update id="updateUserProfileImage" parameterType="java.util.HashMap">
+		update user set profileImageURL=#{profileImageURL}
+		where userID=#{userID};
+	</update>
+	
+	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User" resultType="String">
+		select sum( credit ) as 'profilePoint' from (
+    		select 30 as 'credit' from user where userID=#{userID} and profileImageURL is not null
+		    union all
+    		select 15 as 'credit' from user where userID=#{userID} and birthday is not null
+    		union all
+		    select 20 as 'credit' from user 
+        		left outer join user_location ul on user.userID=ul.userID and ul.locationName='집'
+    		where user.userID=#{userID}
+    		and ul.userID is not null
+    		union all
+    		select 20 as 'credit' from user 
+        		left outer join user_location ul on user.userID=ul.userID and ul.locationName='직장'
+    		where user.userID=#{userID}
+    		and ul.userID is not null
+   			union all
+    		select 15 as 'credit' from user where userID=#{userID} and jobTitle is not null
+		) A
+	</select>
 </mapper>
