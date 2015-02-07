@@ -462,7 +462,7 @@ public class TaxiController {
 
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
-			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", hash);
+			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostsNearHere", hash);
 
 			List<PostReply> replies = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostReplies", post );
 			post.setPostReplies(replies);
