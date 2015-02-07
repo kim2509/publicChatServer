@@ -5,108 +5,181 @@
 <mapper namespace="com.tessoft.nearhere.taxi">
 
 	<insert id="insertUserTermsAgreement" parameterType="java.util.HashMap">
-		replace into 
-		user_terms_agreement ( userID, nearhere_ver, personal_ver, location_ver, createdDate )
-		values (#{userID}, #{nearhere_ver}, #{personal_ver}, #{location_ver}, NOW()); 
+		replace into
+		user_terms_agreement ( userID, nearhere_ver, personal_ver,
+		location_ver, createdDate )
+		values (#{userID}, #{nearhere_ver},
+		#{personal_ver}, #{location_ver}, NOW());
 	</insert>
-	
+
 	<delete id="deleteUserLocation" parameterType="com.nearhere.domain.UserLocation">
-		delete from user_location
+		delete from
+		user_location
 		where userID=#{user.userID}
-		and locationName=#{locationName}
+		and
+		locationName=#{locationName}
 	</delete>
-	
+
 	<insert id="insertUserLocation" parameterType="com.nearhere.domain.UserLocation">
-		insert into user_location( userID, locationName, latitude, longitude, address, createdDate )
-		values ( #{user.userID}, #{locationName} , #{latitude}, #{longitude}, #{address}, NOW() )
+		insert into
+		user_location( userID, locationName, latitude, longitude, address,
+		createdDate )
+		values ( #{user.userID}, #{locationName} , #{latitude},
+		#{longitude}, #{address}, NOW() )
 	</insert>
-	
+
 	<select id="login" parameterType="java.util.HashMap" resultType="com.nearhere.domain.User">
-		select * FROM user where userID = #{userID} and password = #{password};
+		select * FROM user where userID = #{userID} and password =
+		#{password};
 	</select>
-	
-	<select id="selectUserByUserNo" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">
+
+	<select id="selectUserByUserNo" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.User">
 		select * FROM user where userNo = #{userNo};
 	</select>
-	
-	<select id="selectUser" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.User">
+
+	<select id="selectUser" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.User">
 		select * FROM user where userID = #{userID};
 	</select>
-	
-	<insert id="insertUser" parameterType="com.nearhere.domain.User" useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
+
+	<insert id="insertUser" parameterType="com.nearhere.domain.User"
+		useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
 		INSERT INTO user ( userID, userName, password, createdDate )
-		VALUES( #{userID}, #{userName}, #{password}, NOW() );
+		VALUES(
+		#{userID}, #{userName}, #{password}, NOW() );
 		<selectKey keyProperty="userNo" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
 	</insert>
-	
+
 	<update id="updateUserID" parameterType="com.nearhere.domain.User">
-		update user set userID=#{userID}
+		update user set
+		userID=#{userID}
 		where userNo=#{userNo};
 	</update>
-	
-	<insert id="insertPost" parameterType="com.nearhere.domain.Post" useGeneratedKeys="true" keyProperty="postID" keyColumn="postID">
-		insert into post( userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
-		latitude, longitude, toAddress, sexInfo, numOfUsers, departureDate, departureTime, createdDate)
-		values(#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude},
-		#{fromAddress}, #{latitude}, #{longitude}, #{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate}, #{departureTime}, NOW() );
+
+	<insert id="insertPost" parameterType="com.nearhere.domain.Post"
+		useGeneratedKeys="true" keyProperty="postID" keyColumn="postID">
+		insert into post( userID, type, message, content, fromLatitude,
+		fromLongitude, fromAddress,
+		latitude, longitude, toAddress, sexInfo,
+		numOfUsers, departureDate, departureTime, createdDate)
+		values(#{user.userID}, 'taxi', #{message}, #{content},
+		#{fromLatitude}, #{fromLongitude},
+		#{fromAddress}, #{latitude},
+		#{longitude}, #{toAddress}, #{sexInfo}, #{numOfUsers},
+		#{departureDate}, #{departureTime}, NOW() );
 		<selectKey keyProperty="postID" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
 	</insert>
-	
+
 	<update id="updatePost" parameterType="com.nearhere.domain.Post">
-		replace into post( postID, userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
-		latitude, longitude, toAddress, sexInfo, numOfUsers, departureDate, departureTime, createdDate)
-		values( #{postID}, #{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude}, #{fromLongitude},
-		#{fromAddress}, #{latitude}, #{longitude}, #{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate}, #{departureTime}, NOW() );
+		replace into post( postID,
+		userID, type, message, content, fromLatitude, fromLongitude,
+		fromAddress,
+		latitude, longitude, toAddress, sexInfo, numOfUsers,
+		departureDate, departureTime, createdDate)
+		values( #{postID},
+		#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude},
+		#{fromLongitude},
+		#{fromAddress}, #{latitude}, #{longitude},
+		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
+		#{departureTime}, NOW() );
 	</update>
-	
+
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">
-		update post set deletedDate=NOW()
+		update post set
+		deletedDate=NOW()
 		where postID=#{postID}
 	</update>
-	
+
 	<update id="updatePostReplyAsDeleted" parameterType="com.nearhere.domain.PostReply">
-		update post_reply set deletedDate=NOW()
+		update
+		post_reply set deletedDate=NOW()
 		where replyID=#{replyID}
 	</update>
-	
+
 	<select id="getPostsNearHere" resultType="com.nearhere.domain.Post"
 		parameterType="java.util.HashMap">
-		<![CDATA[
-		SELECT 
-			*
+		SELECT
+		*
 		FROM (
-			SELECT P.postID, P.userID, type, message, content, fromLatitude, fromLongitude, fromAddress, 
-				latitude, longitude, toAddress, reward, P.createdDate, 
-				P.userID as 'user.userID', U.profileImageURL as 'user.profileImageURL',
-				U.userName as 'user.userName', U.sex as 'user.sex',
-				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age',
-				TRUNCATE((
-    			6371 * acos ( cos ( radians( #{latitude} ) )
-	      		* cos( radians( fromLatitude ) )
-  	 	   		* cos( radians( fromLongitude ) - radians( #{longitude} ) )
-   		   		+ sin ( radians( #{latitude} ) )
-   		   		* sin( radians( fromLatitude ) )
-   		 		)
-  				) , 1)  AS distance, PR.cnt as "replyCount",
-  				sexInfo, numOfUsers, departureDate, departureTime
-			FROM post P
-				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null ) PR on P.postID=PR.postID
-				left outer join user U on P.userID=U.userID
-			WHERE fromLatitude is not null
-			and fromLongitude is not null
-			and type='taxi'
-			and deletedDate is null
+		SELECT P.postID, P.userID, type, message, content,
+		fromLatitude,
+		fromLongitude, fromAddress,
+		latitude, longitude,
+		toAddress, reward, P.createdDate,
+		P.userID as 'user.userID',
+		U.profileImageURL as 'user.profileImageURL',
+		U.userName as
+		'user.userName', U.sex as 'user.sex',
+		YEAR(NOW())-YEAR(U.birthday)+1 as
+		'user.age'
+		, PR.cnt as "replyCount",
+		sexInfo, numOfUsers, departureDate,
+		departureTime
+		<if test="fromLatitude != null and fromLongitude != null">
+			,TRUNCATE((
+			6371 * acos ( cos ( radians( #{fromLatitude} ) )
+			* cos( radians( fromLatitude ) )
+			* cos( radians( fromLongitude ) - radians( #{fromLongitude} ) )
+			+ sin ( radians( #{fromLatitude} ) )
+			* sin( radians( fromLatitude ) )
+			)
+			) , 1) AS fromDistance
+		</if>
+		<if test="toLatitude != null and toLongitude != null">
+			,TRUNCATE((
+			6371 * acos ( cos ( radians( #{toLatitude} ) )
+			* cos( radians( latitude ) )
+			* cos( radians( longitude ) - radians( #{toLongitude} ) )
+			+ sin ( radians( #{toLatitude} ) )
+			* sin( radians( latitude ) )
+			)
+			) , 1) AS toDistance
+		</if>
+		,status
+		FROM post P
+		left outer join (select count(replyID) as 'cnt', postID
+		from post_reply
+		where deletedDate is null ) PR on P.postID=PR.postID
+		left outer join user U on P.userID=U.userID
+		WHERE fromLatitude is not null
+		and fromLongitude is not null
+		and type='taxi'
+		and deletedDate is null
 		) A
-		WHERE A.distance <= #{distance}
-		order by createdDate desc
+		WHERE 1=1
+		<if test="postID != null">
+		and postID=#{postID}
+		</if>
+		<if test="fromLatitude != null and fromLongitude != null and fromDistance != null">
+		AND A.fromDistance &lt;= #{fromDistance}
+		</if>
+		<if test="toLatitude != null and toLongitude != null and toDistance != null">
+		AND A.toDistance &lt;= #{toDistance}
+		</if>
+		<if test="status != null">
+		AND A.status = #{status}
+		</if>
+		<choose>
+			<when test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
+				order by toDistance, fromDistance, createdDate desc
+			</when>
+			<when test="fromLatitude != null and fromLongitude != null">
+				order by fromDistance, createdDate desc
+			</when>
+			<when test="toLatitude != null and toLongitude != null">
+				order by toDistance,
+				createdDate desc
+			</when>
+			<otherwise>order by createdDate desc</otherwise>
+		</choose>
 		LIMIT 0 , 100;
-		]]>
 	</select>
-	
+
 	<select id="getPostDetail" resultType="com.nearhere.domain.Post"
 		parameterType="java.util.HashMap">
 		<![CDATA[
@@ -130,12 +203,15 @@
 		and postID=#{postID};
 		]]>
 	</select>
-	
+
 	<select id="insertPostReply" parameterType="com.nearhere.domain.PostReply">
-		insert into post_reply( postID, userID, message, latitude, longitude, createdDate, type )
-		values(#{postID}, #{user.userID}, #{message}, #{latitude}, #{longitude}, NOW(), 'taxi' );
+		insert into
+		post_reply( postID, userID, message, latitude, longitude, createdDate,
+		type )
+		values(#{postID}, #{user.userID}, #{message}, #{latitude},
+		#{longitude}, NOW(), 'taxi' );
 	</select>
-	
+
 	<select id="getPostReplies" resultType="com.nearhere.domain.PostReply"
 		parameterType="com.nearhere.domain.Post">
 		<![CDATA[
@@ -159,7 +235,7 @@
 		order by PR.createdDate;
 		]]>
 	</select>
-	
+
 	<select id="selectUserPost" resultType="com.nearhere.domain.Post"
 		parameterType="com.nearhere.domain.User">
 		<![CDATA[
@@ -173,23 +249,26 @@
 		and P.deletedDate is null;
 		]]>
 	</select>
-	
-	<select id="selectPostsUserReplied" parameterType="com.nearhere.domain.User" 
+
+	<select id="selectPostsUserReplied" parameterType="com.nearhere.domain.User"
 		resultType="com.nearhere.domain.Post">
 		select P.*,
-			U.userID as 'user.userID',
-			U.userName as 'user.userName',
-			U.profileImageURL as 'user.profileImageURL' 
+		U.userID as 'user.userID',
+		U.userName as
+		'user.userName',
+		U.profileImageURL as 'user.profileImageURL'
 		from post P
-			left outer join user U on P.userID=U.userID
+		left outer join user U on P.userID=U.userID
 		where postID in (
-  			select postID from post_reply where userID=#{userID} and deletedDate is null
+		select
+		postID from post_reply where userID=#{userID} and deletedDate is null
 		)
 		and P.type='taxi'
 		and P.deletedDate is null;
 	</select>
-	
-	<select id="searchUsers" parameterType="java.util.HashMap" resultType="com.nearhere.domain.User">
+
+	<select id="searchUsers" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.User">
 		<![CDATA[
 		SELECT * FROM (
 			SELECT *, TRUNCATE((
@@ -216,132 +295,163 @@
 		LIMIT 0 , 100;
 		]]>
 	</select>
-	
-	<select id="selectUserLocation" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserLocation">
+
+	<select id="selectUserLocation" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.UserLocation">
 		select *
 		from user_location
 		where userID=#{userID}
 	</select>
-	
+
 	<update id="updateUserSex" parameterType="com.nearhere.domain.User">
-		update user set sex=#{sex}
+		update user set
+		sex=#{sex}
 		where userID=#{userID};
 	</update>
-	
+
 	<update id="updateUserJobTitle" parameterType="com.nearhere.domain.User">
-		update user set jobTitle=#{jobTitle}
+		update user set
+		jobTitle=#{jobTitle}
 		where userID=#{userID};
 	</update>
-	
+
 	<update id="updateUserBirthday" parameterType="com.nearhere.domain.User">
-		update user set birthday=#{birthday}
+		update user set
+		birthday=#{birthday}
 		where userID=#{userID};
 	</update>
-	
+
 	<select id="selectNoticeList" resultType="com.nearhere.domain.Notice">
 		select * from
 		notice_list
 		order by createdDate desc;
 	</select>
-	
-	<select id="selectUserMessageList" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserMessage">
-		select A.userID as 'user.userID', U.userName as 'user.userName', U.profileImageURL as 'user.profileImageURL', 
-			A.message, A.createdDate, A.isRead
+
+	<select id="selectUserMessageList" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.UserMessage">
+		select A.userID as 'user.userID', U.userName as
+		'user.userName', U.profileImageURL as 'user.profileImageURL',
+		A.message, A.createdDate, A.isRead
 		from (
-			select fromUserID as 'userID', message, createdDate,
-				(
-	          		CASE isRead
-          				WHEN 'Y' THEN 'true'
-          				WHEN 'N' THEN 'false'
-          			END
-       			)AS isRead 
-			from user_message
-			where toUserID=#{userID}
-			union all 
-			select toUserID as 'userID', message, createdDate, 'true' AS 'isRead' 
-			from user_message
-			where fromUserID=#{userID}
+		select fromUserID as 'userID',
+		message, createdDate,
+		(
+		CASE isRead
+		WHEN 'Y' THEN 'true'
+		WHEN 'N' THEN
+		'false'
+		END
+		)AS isRead
+		from user_message
+		where toUserID=#{userID}
+		union all
+		select toUserID as 'userID', message, createdDate, 'true' AS 'isRead'
+		from user_message
+		where fromUserID=#{userID}
 		) A
-			left outer join user U on A.userID=U.userID
+		left outer join user U
+		on A.userID=U.userID
 		order by A.createdDate desc;
 	</select>
-	
-	<select id="selectUserMessage" parameterType="java.util.HashMap" resultType="com.nearhere.domain.UserMessage">
-		select 
-			UM.messageID,
-			UM.fromUserID as 'fromUser.userID',
-			U.userName as 'fromUser.userName',
-			U.profileImageURL as 'fromUser.profileImageURL',
-			UM.toUserID as 'toUser.userID',
-			U2.userName as 'toUser.userName',
-			U2.profileImageURL as 'toUser.profileImageURL',
-			UM.message,
-			(
-          		CASE UM.isRead
-          			WHEN 'Y' THEN 'true'
-          			WHEN 'N' THEN 'false'
-          		END
-       		)AS isRead,
-			UM.createdDate
-		from 
+
+	<select id="selectUserMessage" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.UserMessage">
+		select
+		UM.messageID,
+		UM.fromUserID as 'fromUser.userID',
+		U.userName as 'fromUser.userName',
+		U.profileImageURL as
+		'fromUser.profileImageURL',
+		UM.toUserID as 'toUser.userID',
+		U2.userName
+		as 'toUser.userName',
+		U2.profileImageURL as 'toUser.profileImageURL',
+		UM.message,
 		(
-			select messageID, fromUserID, toUserID, message, isRead, createdDate
-			from user_message
-			where toUserID=#{userID}
-			and fromUserID=#{fromUserID}
-			union all
-			select messageID, fromUserID, toUserID, message, isRead, createdDate
-			from user_message
-			where toUserID=#{fromUserID}
-			and fromUserID=#{userID}
-			order by createdDate desc limit 0,100
+		CASE UM.isRead
+		WHEN 'Y' THEN 'true'
+		WHEN 'N' THEN 'false'
+		END
+		)AS isRead,
+		UM.createdDate
+		from
+		(
+		select messageID, fromUserID,
+		toUserID, message, isRead, createdDate
+		from user_message
+		where
+		toUserID=#{userID}
+		and fromUserID=#{fromUserID}
+		union all
+		select
+		messageID, fromUserID, toUserID, message, isRead, createdDate
+		from
+		user_message
+		where toUserID=#{fromUserID}
+		and fromUserID=#{userID}
+		order
+		by createdDate desc limit 0,100
 		) UM
-			left outer join user U on UM.fromUserID=U.userID
-			left outer join user U2 on UM.toUserID=U2.userID
+		left outer join user U on
+		UM.fromUserID=U.userID
+		left outer join user U2 on UM.toUserID=U2.userID
 		order by UM.createdDate
 	</select>
-	
-	<select id="selectUserPushMessage" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserPushMessage">
+
+	<select id="selectUserPushMessage" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.UserPushMessage">
 		select *
 		from user_push_message
 		where toUserID=#{userID}
 		order by createdDate desc;
 	</select>
-	
-	<select id="selectUserSetting" parameterType="com.nearhere.domain.User" resultType="com.nearhere.domain.UserSetting">
-		select * 
+
+	<select id="selectUserSetting" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.UserSetting">
+		select *
 		from user_setting
 		where userID=#{userID}
 	</select>
-	
+
 	<insert id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
-		replace into user_setting( userID, messagePushReceiveYN, replyPushReceiveYN, recommendPushReceiveYN, createdDate )
-		values (#{userID}, #{messagePushReceiveYN}, #{replyPushReceiveYN}, #{recommendPushReceiveYN}, NOW() );
+		replace into
+		user_setting( userID, messagePushReceiveYN, replyPushReceiveYN,
+		recommendPushReceiveYN, createdDate )
+		values (#{userID},
+		#{messagePushReceiveYN}, #{replyPushReceiveYN},
+		#{recommendPushReceiveYN}, NOW() );
 	</insert>
-	
+
 	<update id="updateUserRegID" parameterType="com.nearhere.domain.User">
 		update user
-		set regID=#{regID}
+		set
+		regID=#{regID}
 		where userID=#{userID};
 	</update>
-	
+
 	<update id="updateUserRegIDAsNull" parameterType="com.nearhere.domain.User">
 		update user
-		set regID=NULL
+		set
+		regID=NULL
 		where regID=#{regID};
 	</update>
-	
+
 	<insert id="insertUserMessage" parameterType="com.nearhere.domain.UserMessage">
-		insert into user_message( fromUserID, toUserID, message, isRead, createdDate )
+		insert into
+		user_message( fromUserID, toUserID, message, isRead, createdDate )
 		values(#{fromUser.userID},#{toUser.userID}, #{message}, 'N', NOW());
 	</insert>
-	
+
 	<insert id="insertUserPushMessage" parameterType="com.nearhere.domain.UserMessage">
-		insert into user_push_message( toUserID, message, isRead, type, param1, createdDate )
-		values(#{toUserID},#{message}, 'N', #{type}, #{param1}, NOW());
+		insert into
+		user_push_message( toUserID, message, isRead, type, param1,
+		createdDate )
+		values(#{toUserID},#{message}, 'N', #{type}, #{param1},
+		NOW());
 	</insert>
-	
-	<select id="selectUsersForPost" parameterType="com.nearhere.domain.Post" resultType="com.nearhere.domain.User">
+
+	<select id="selectUsersForPost" parameterType="com.nearhere.domain.Post"
+		resultType="com.nearhere.domain.User">
 		<![CDATA[
 			select U.userID, U.regID
 			from (
@@ -356,8 +466,9 @@
 			and U.regID is not null;
 		]]>
 	</select>
-	
-	<select id="getUnreadCount" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+
+	<select id="getUnreadCount" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
 		<![CDATA[
 			select sum(messageCount) as 'messageCount', sum(pushCount) as 'pushCount' 
 			from (
@@ -367,50 +478,73 @@
   			) A;
 		]]>
 	</select>
-	
+
 	<update id="updatePushMessageAsRead" parameterType="com.nearhere.domain.UserPushMessage">
-		update user_push_message set isRead='Y' where pushNo=#{pushNo};
+		update
+		user_push_message set isRead='Y' where pushNo=#{pushNo};
 	</update>
-	
+
 	<update id="updateUserMessageAsRead" parameterType="java.util.HashMap">
-		update user_message set isRead='Y' where toUserID=#{userID} and fromUserID=#{fromUserID};
+		update
+		user_message set isRead='Y' where toUserID=#{userID} and
+		fromUserID=#{fromUserID};
 	</update>
-	
+
 	<update id="updatePushMessageAsRead2" parameterType="java.util.HashMap">
-		update user_push_message set isRead='Y' where toUserID=#{userID} and param1=#{fromUserID};
+		update
+		user_push_message set isRead='Y' where toUserID=#{userID} and
+		param1=#{fromUserID};
 	</update>
-	
+
 	<update id="updatePushMessageAsRead3" parameterType="java.util.HashMap">
-		update user_push_message set isRead='Y' where toUserID=#{userID} and param1=#{postID};
+		update
+		user_push_message set isRead='Y' where toUserID=#{userID} and
+		param1=#{postID};
 	</update>
-	
+
 	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
-		update user set sex=#{sex}, userName=#{userName}
+		update user set
+		sex=#{sex}, userName=#{userName}
 		where userID=#{userID};
 	</update>
-	
+
 	<update id="updateUserProfileImage" parameterType="java.util.HashMap">
-		update user set profileImageURL=#{profileImageURL}
+		update user
+		set profileImageURL=#{profileImageURL}
 		where userID=#{userID};
 	</update>
-	
-	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User" resultType="String">
+
+	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User"
+		resultType="String">
 		select sum( credit ) as 'profilePoint' from (
-    		select 30 as 'credit' from user where userID=#{userID} and profileImageURL is not null
-		    union all
-    		select 15 as 'credit' from user where userID=#{userID} and birthday is not null
-    		union all
-		    select 20 as 'credit' from user 
-        		left outer join user_location ul on user.userID=ul.userID and ul.locationName='집'
-    		where user.userID=#{userID}
-    		and ul.userID is not null
-    		union all
-    		select 20 as 'credit' from user 
-        		left outer join user_location ul on user.userID=ul.userID and ul.locationName='직장'
-    		where user.userID=#{userID}
-    		and ul.userID is not null
-   			union all
-    		select 15 as 'credit' from user where userID=#{userID} and jobTitle is not null
-		) A
+		select 30 as
+		'credit' from user where userID=#{userID} and profileImageURL
+		is not
+		null
+		union all
+		select 15 as 'credit' from user where userID=#{userID}
+		and birthday is not
+		null
+		union all
+		select 20 as 'credit' from user
+		left
+		outer join user_location ul on user.userID=ul.userID and
+		ul.locationName='집'
+		where user.userID=#{userID}
+		and ul.userID is not
+		null
+		union all
+		select 20 as 'credit' from user
+		left outer join
+		user_location ul on user.userID=ul.userID and
+		ul.locationName='직장'
+		where user.userID=#{userID}
+		and ul.userID is not null
+		union all
+		select 15
+		as 'credit' from user where userID=#{userID} and jobTitle is not
+		null
+		)
+		A
 	</select>
 </mapper>

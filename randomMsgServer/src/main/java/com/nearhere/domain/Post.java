@@ -22,7 +22,6 @@ public class Post {
 	
 	private User user;
 	
-	private String distance;
 	private String createdDate;
 	private String deletedDate;
 	
@@ -32,6 +31,10 @@ public class Post {
 	private String numOfUsers;
 	private String departureDate;
 	private String departureTime;
+	
+	private String fromDistance;
+	private String toDistance;
+	private String status;
 	
 	private List<PostLike> postLikes;
 	private List<PostReply> postReplies;
@@ -61,12 +64,6 @@ public class Post {
 	}
 	public void setUser(User user) {
 		this.user= user;
-	}
-	public String getDistance() {
-		return distance;
-	}
-	public void setDistance(String distance) {
-		this.distance = distance;
 	}
 	public String getPostID() {
 		return postID;
@@ -163,5 +160,23 @@ public class Post {
 	}
 	public void setDepartureTime(String departureTime) {
 		this.departureTime = departureTime;
+	}
+	public String getFromDistance() {
+		return fromDistance;
+	}
+	public void setFromDistance(String fromDistance) {
+		this.fromDistance = fromDistance;
+	}
+	public String getToDistance() {
+		return toDistance;
+	}
+	public void setToDistance(String toDistance) {
+		this.toDistance = toDistance;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }
