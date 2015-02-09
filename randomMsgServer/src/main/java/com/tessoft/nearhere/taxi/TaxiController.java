@@ -92,6 +92,10 @@ public class TaxiController {
 					user.setUserNo(null);
 					logger.info( "[" + logIdentifier + "]: userNo set null.");
 				}
+				else
+				{
+					user = tempUser;
+				}
 			}
 			
 			if ( user.getUserNo() == null || user.getUserNo().isEmpty())
