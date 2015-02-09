@@ -83,6 +83,14 @@ public class TaxiController {
 
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
+			if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
+			{
+				logger.info( "[" + logIdentifier + "]: userNo is not null.");
+				User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
+				if ( tempUser == null || tempUser.getUserID() == null || tempUser.getUserID().isEmpty() )
+					user.setUserNo(null);
+			}
+			
 			if ( user.getUserNo() == null || user.getUserNo().isEmpty())
 			{
 				logger.info( "[" + logIdentifier + "]: userNo is null.");
@@ -113,11 +121,6 @@ public class TaxiController {
 				
 				// 임시 userID 생성완료. userID db 업데이트
 				sqlSession.update("com.tessoft.nearhere.taxi.updateUserID", user);
-			}
-			else
-			{
-				logger.info( "[" + logIdentifier + "]: userNo is not null.");
-				user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
 			}
 
 			response.setData( user );
