@@ -277,6 +277,14 @@ public class TaxiController {
 
 			UserLocation location = mapper.readValue(bodyString, new TypeReference<UserLocation>(){});
 
+			if ( location != null && 
+					(Util.isEmptyString( location.getLatitude() ) || Util.isEmptyString( location.getLongitude() )) )
+			{
+				logger.info( "[" + logIdentifier + "]: location's latitude and longitude is null.");
+				response.setData("0|0");
+				return response;
+			}
+			
 			int result = sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserLocation", location );
 
 			int result2 = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserLocation", location );
@@ -1113,6 +1121,13 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			if ( Util.isEmptyString( user.getUserName() ) || 
+					Util.isEmptyString( user.getSex() ) || Util.isEmptyString( user.getMobileNo() ) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("입력값이 올바르지 않습니다.\r\n다시 확인해 주십시오.");
+			}
 
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserInfo", user );
 

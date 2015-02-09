@@ -504,7 +504,7 @@
 
 	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
 		update user set
-		sex=#{sex}, userName=#{userName}
+		sex=#{sex}, userName=#{userName}, mobileNo=#{mobileNo}
 		where userID=#{userID};
 	</update>
 
@@ -517,12 +517,12 @@
 	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User"
 		resultType="String">
 		select sum( credit ) as 'profilePoint' from (
-		select 30 as
+		select 25 as
 		'credit' from user where userID=#{userID} and profileImageURL
 		is not
 		null
 		union all
-		select 15 as 'credit' from user where userID=#{userID}
+		select 10 as 'credit' from user where userID=#{userID}
 		and birthday is not
 		null
 		union all
@@ -543,6 +543,10 @@
 		union all
 		select 15
 		as 'credit' from user where userID=#{userID} and jobTitle is not
+		null
+		union all
+		select 10
+		as 'credit' from user where userID=#{userID} and mobileNo is not
 		null
 		)
 		A
