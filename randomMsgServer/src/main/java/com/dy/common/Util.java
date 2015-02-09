@@ -35,6 +35,13 @@ public class Util {
 	    return result;
 	}
 	
+	public static boolean isEmptyString( String str )
+	{
+		if ( str == null ) return true;
+		if ( "".equals(str.trim())) return true;
+		return false;
+	}
+	
 //	public static String getDateDiffFromNow( String dateString )
 //	{
 //		String dateStart = "11/03/14 09:29:58";
