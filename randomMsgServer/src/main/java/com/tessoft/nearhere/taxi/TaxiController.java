@@ -88,7 +88,10 @@ public class TaxiController {
 				logger.info( "[" + logIdentifier + "]: userNo is not null.");
 				User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
 				if ( tempUser == null || tempUser.getUserID() == null || tempUser.getUserID().isEmpty() )
+				{
 					user.setUserNo(null);
+					logger.info( "[" + logIdentifier + "]: userNo set null.");
+				}
 			}
 			
 			if ( user.getUserNo() == null || user.getUserNo().isEmpty())
