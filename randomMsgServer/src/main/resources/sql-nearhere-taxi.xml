@@ -166,13 +166,13 @@
 		</if>
 		<choose>
 			<when test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
-				order by toDistance, fromDistance, createdDate desc
+				order by A.status desc, toDistance, fromDistance, createdDate desc
 			</when>
 			<when test="fromLatitude != null and fromLongitude != null">
-				order by fromDistance, createdDate desc
+				order by A.status desc, fromDistance, createdDate desc
 			</when>
 			<when test="toLatitude != null and toLongitude != null">
-				order by toDistance,
+				order by A.status desc, toDistance,
 				createdDate desc
 			</when>
 			<otherwise>order by createdDate desc</otherwise>
