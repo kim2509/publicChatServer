@@ -144,7 +144,7 @@
 		FROM post P
 		left outer join (select count(replyID) as 'cnt', postID
 		from post_reply
-		where deletedDate is null ) PR on P.postID=PR.postID
+		where deletedDate is null group by postID ) PR on P.postID=PR.postID
 		left outer join user U on P.userID=U.userID
 		WHERE fromLatitude is not null
 		and fromLongitude is not null
