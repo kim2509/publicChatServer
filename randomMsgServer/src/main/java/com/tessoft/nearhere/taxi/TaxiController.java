@@ -71,6 +71,22 @@ public class TaxiController {
 		return true;
 	}
 
+	@RequestMapping( value ="/taxi/getRandomIDV2.do")
+	public @ResponseBody APIResponse getRandomIDV2( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		try
+		{
+			requestLogging(request, bodyString);
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			bodyString = mapper.writeValueAsString( hash.get("user") );
+			return getRandomID(request, bodyString);
+		}
+		catch( Exception ex )
+		{
+			return getRandomID(request, bodyString);
+		}
+	}
+	
 	@RequestMapping( value ="/taxi/getRandomID.do")
 	public @ResponseBody APIResponse getRandomID( HttpServletRequest request, @RequestBody String bodyString )
 	{
@@ -374,7 +390,7 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
-
+			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
 
 			HashMap distanceInfo = new HashMap();
@@ -691,7 +707,7 @@ public class TaxiController {
 
 		return response;
 	}
-
+	
 	@RequestMapping( value ="/taxi/getUserMessageList.do")
 	public @ResponseBody APIResponse getUserMessageList( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
@@ -1043,6 +1059,9 @@ public class TaxiController {
 			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
 			HashMap countInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getUnreadCount", info );
+			
+			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUnreadNoticeCount", info );
+			countInfo.put("noticeCount", count );
 
 			response.setData(countInfo);
 

@@ -326,6 +326,17 @@
 		notice_list
 		order by createdDate desc;
 	</select>
+	
+	<select id="selectUnreadNoticeCount" parameterType="java.util.HashMap" resultType="Integer">
+		select count(noticeID) from
+		notice_list
+		<choose>
+			<when test="lastNoticeID == null or lastNoticeID == ''">
+				where noticeID > 0;
+			</when>
+			<otherwise>where noticeID > #{lastNoticeID};</otherwise>
+		</choose>
+	</select>
 
 	<select id="selectUserMessageList" parameterType="com.nearhere.domain.User"
 		resultType="com.nearhere.domain.UserMessage">
