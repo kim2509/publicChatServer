@@ -86,7 +86,13 @@ public class TaxiController {
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
 			if ( hash.containsKey("UUID") )
+			{
+				// 기존 UUID 가 있는지 검사
+//				String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
+//				if ( !Util.isEmptyString( userNo ) )
+//					user.setUserNo(userNo);
 				user.setUuid( hash.get("UUID").toString() );
+			}
 			
 			getRandomIDCommon(user, response, logIdentifier);
 
@@ -1087,6 +1093,15 @@ public class TaxiController {
 			countInfo.put("noticeCount", count );
 
 			response.setData(countInfo);
+
+			if ( info.containsKey("UUID") )
+			{
+				logger.info( "[" + logIdentifier + "] uuid is not null.");
+				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserUUID", info );
+				response.setData2( result );
+			}
+			else
+				logger.info( "[" + logIdentifier + "] uuid is null.");
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
