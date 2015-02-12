@@ -300,7 +300,7 @@
 			and longitude is not null
 			ORDER BY distance
 		) A
-		WHERE A.distance <= 0.5
+		WHERE A.distance <= 1
 		and A.regID is not null
 		and A.userID <> #{userID}
 		LIMIT 0 , 100;
