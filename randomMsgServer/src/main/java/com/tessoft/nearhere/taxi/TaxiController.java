@@ -436,7 +436,7 @@ public class TaxiController {
 
 					// 추천 알림받기 여부 체크
 					if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
-						sendPushMessage(userList.get(i), "newPostByDistance", "500미터 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
+						sendPushMessage(userList.get(i), "newPostByDistance", "1km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
 				}				
 			}
 
