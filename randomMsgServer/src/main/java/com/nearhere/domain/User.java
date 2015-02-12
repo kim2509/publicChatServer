@@ -20,6 +20,7 @@ public class User {
 	private String sex;
 	private String profilePoint;
 	private String mobileNo;
+	private String uuid;
 
 	public String getUserNo() {
 		return userNo;
@@ -140,5 +141,12 @@ public class User {
 	public void setMobileNo(String mobileNo) {
 		this.mobileNo = mobileNo;
 	}
-	
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}	
 }
