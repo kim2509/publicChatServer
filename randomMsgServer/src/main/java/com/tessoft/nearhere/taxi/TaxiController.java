@@ -88,9 +88,14 @@ public class TaxiController {
 			if ( hash.containsKey("UUID") )
 			{
 				// 기존 UUID 가 있는지 검사
-//				String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
-//				if ( !Util.isEmptyString( userNo ) )
-//					user.setUserNo(userNo);
+				if ( "ffffffff-cf61-8f83-23cf-387f485472b4".equals( hash.get("UUID") ))
+				{
+					// 김대용 휴대폰이면
+					String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
+					if ( !Util.isEmptyString( userNo ) )
+						user.setUserNo(userNo);	
+				}
+				
 				user.setUuid( hash.get("UUID").toString() );
 			}
 			
