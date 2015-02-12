@@ -45,9 +45,9 @@
 
 	<insert id="insertUser" parameterType="com.nearhere.domain.User"
 		useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
-		INSERT INTO user ( userID, userName, password, createdDate )
+		INSERT INTO user ( userID, userName, password, uuid, createdDate )
 		VALUES(
-		#{userID}, #{userName}, #{password}, NOW() );
+		#{userID}, #{userName}, #{password}, #{uuid}, NOW() );
 		<selectKey keyProperty="userNo" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>

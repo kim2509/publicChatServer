@@ -74,17 +74,87 @@ public class TaxiController {
 	@RequestMapping( value ="/taxi/getRandomIDV2.do")
 	public @ResponseBody APIResponse getRandomIDV2( HttpServletRequest request, @RequestBody String bodyString )
 	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
 		try
-		{
-			requestLogging(request, bodyString);
+		{	
+			String logIdentifier = requestLogging(request, bodyString);
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
 			bodyString = mapper.writeValueAsString( hash.get("user") );
-			return getRandomID(request, bodyString);
+			user = mapper.readValue(bodyString, new TypeReference<User>(){});
+
+			if ( hash.containsKey("UUID") )
+				user.setUuid( hash.get("UUID").toString() );
+			
+			getRandomIDCommon(user, response, logIdentifier);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
 		}
 		catch( Exception ex )
 		{
-			return getRandomID(request, bodyString);
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+			return response;
 		}
+	}
+
+	private void getRandomIDCommon(User user, APIResponse response,
+			String logIdentifier) {
+		
+		if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
+		{
+			logger.info( "[" + logIdentifier + "]: userNo is not null.");
+			User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
+			if ( tempUser == null || tempUser.getUserID() == null || tempUser.getUserID().isEmpty() )
+			{
+				user.setUserNo(null);
+				logger.info( "[" + logIdentifier + "]: userNo set null.");
+			}
+			else
+			{
+				user = tempUser;
+			}
+		}
+		
+		if ( user.getUserNo() == null || user.getUserNo().isEmpty())
+		{
+			logger.info( "[" + logIdentifier + "]: userNo is null.");
+
+			// 신규 user 생성해서 리턴된 userNo 앞에 'user' 를 붙여서 userID 로 사용.
+			sqlSession.insert("com.tessoft.nearhere.taxi.insertUser", user);
+			user.setUserID( "user" + user.getUserNo() );
+
+			logger.info( "[" + logIdentifier + "]: new userID:" + user.getUserID() );
+			
+			// 해당 userID 가 있는지 검사.
+			User existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+
+			// 해당 userID 가 이미 존재하면, userID 를 랜덤하게 다르게 변경해서 다시 검사. 5회
+			int retryCount = 0; 
+			while ( existingUser != null && !"".equals( existingUser.getUserID() ) )
+			{
+				if ( retryCount == 5 ) break;
+
+				Random rand = new Random();
+				int  n = rand.nextInt(99998) + 1;
+				user.setUserID("user" + n );
+				existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+				retryCount++;
+			}
+
+			logger.info( "[" + logIdentifier + "]: retryCount:" + retryCount );
+			
+			// 임시 userID 생성완료. userID db 업데이트
+			sqlSession.update("com.tessoft.nearhere.taxi.updateUserID", user);
+		}
+
+		response.setData( user );
 	}
 	
 	@RequestMapping( value ="/taxi/getRandomID.do")
@@ -99,54 +169,7 @@ public class TaxiController {
 
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
-			{
-				logger.info( "[" + logIdentifier + "]: userNo is not null.");
-				User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
-				if ( tempUser == null || tempUser.getUserID() == null || tempUser.getUserID().isEmpty() )
-				{
-					user.setUserNo(null);
-					logger.info( "[" + logIdentifier + "]: userNo set null.");
-				}
-				else
-				{
-					user = tempUser;
-				}
-			}
-			
-			if ( user.getUserNo() == null || user.getUserNo().isEmpty())
-			{
-				logger.info( "[" + logIdentifier + "]: userNo is null.");
-
-				// 신규 user 생성해서 리턴된 userNo 앞에 'user' 를 붙여서 userID 로 사용.
-				sqlSession.insert("com.tessoft.nearhere.taxi.insertUser", user);
-				user.setUserID( "user" + user.getUserNo() );
-
-				logger.info( "[" + logIdentifier + "]: new userID:" + user.getUserID() );
-				
-				// 해당 userID 가 있는지 검사.
-				User existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
-
-				// 해당 userID 가 이미 존재하면, userID 를 랜덤하게 다르게 변경해서 다시 검사. 5회
-				int retryCount = 0; 
-				while ( existingUser != null && !"".equals( existingUser.getUserID() ) )
-				{
-					if ( retryCount == 5 ) break;
-
-					Random rand = new Random();
-					int  n = rand.nextInt(99998) + 1;
-					user.setUserID("user" + n );
-					existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
-					retryCount++;
-				}
-
-				logger.info( "[" + logIdentifier + "]: retryCount:" + retryCount );
-				
-				// 임시 userID 생성완료. userID db 업데이트
-				sqlSession.update("com.tessoft.nearhere.taxi.updateUserID", user);
-			}
-
-			response.setData( user );
+			getRandomIDCommon(user, response, logIdentifier);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
