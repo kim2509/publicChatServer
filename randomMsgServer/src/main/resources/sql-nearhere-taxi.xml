@@ -91,13 +91,13 @@
 		userID, type, message, content, fromLatitude, fromLongitude,
 		fromAddress,
 		latitude, longitude, toAddress, sexInfo, numOfUsers,
-		departureDate, departureTime, createdDate)
+		departureDate, departureTime, status, createdDate)
 		values( #{postID},
 		#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude},
 		#{fromLongitude},
 		#{fromAddress}, #{latitude}, #{longitude},
 		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
-		#{departureTime}, NOW() );
+		#{departureTime}, #{status}, NOW() );
 	</update>
 
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">
@@ -538,39 +538,26 @@
 
 	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User"
 		resultType="String">
-		select sum( credit ) as 'profilePoint' from (
-		select 25 as
-		'credit' from user where userID=#{userID} and profileImageURL
-		is not
-		null
-		union all
-		select 10 as 'credit' from user where userID=#{userID}
-		and birthday is not
-		null
-		union all
-		select 20 as 'credit' from user
-		left
-		outer join user_location ul on user.userID=ul.userID and
-		ul.locationName='집'
-		where user.userID=#{userID}
-		and ul.userID is not
-		null
-		union all
-		select 20 as 'credit' from user
-		left outer join
-		user_location ul on user.userID=ul.userID and
-		ul.locationName='직장'
-		where user.userID=#{userID}
-		and ul.userID is not null
-		union all
-		select 15
-		as 'credit' from user where userID=#{userID} and jobTitle is not
-		null
-		union all
-		select 10
-		as 'credit' from user where userID=#{userID} and mobileNo is not
-		null
-		)
-		A
+		select sum( credit ) as 'profilePoint' 
+		from (
+			select 30 as
+			'credit' from user where userID=#{userID} and profileImageURL
+			is not null
+			union all
+			select 15 as 'credit' from user where userID=#{userID}
+			and birthday is not null
+			union all
+			select 20 as 'credit' from user
+				left outer join user_location ul on user.userID=ul.userID and ul.locationName='집'
+			where user.userID=#{userID}
+			and ul.userID is not null
+			union all
+			select 20 as 'credit' from user
+				left outer join user_location ul on user.userID=ul.userID and ul.locationName='직장'
+			where user.userID=#{userID}
+			and ul.userID is not null
+			union all
+			select 15 as 'credit' from user where userID=#{userID} and jobTitle is not null
+		) A
 	</select>
 </mapper>
