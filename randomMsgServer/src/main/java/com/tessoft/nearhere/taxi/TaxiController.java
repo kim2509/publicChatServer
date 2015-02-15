@@ -1207,4 +1207,20 @@ public class TaxiController {
 
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/statistics.do")
+	public @ResponseBody APIResponse leave( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		try
+		{
+			requestLogging(request, bodyString);
+
+		}
+		catch( Exception ex )
+		{
+		}
+		
+		return response;
+	}
 }
