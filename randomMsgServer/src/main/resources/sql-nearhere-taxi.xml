@@ -64,9 +64,9 @@
 		where userNo=#{userNo};
 	</update>
 	
-	<update id="updateUserUUID" parameterType="java.util.HashMap">
+	<update id="updateUserSysInfo" parameterType="java.util.HashMap">
 		update user set
-		uuid=#{UUID}
+		appVersion=#{AppVersion}, osVersion = #{OSVersion}, uuid=#{UUID}
 		where userID=#{userID};
 	</update>
 
