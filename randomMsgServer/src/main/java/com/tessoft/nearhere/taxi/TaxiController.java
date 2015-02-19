@@ -1102,7 +1102,7 @@ public class TaxiController {
 			if ( info.containsKey("UUID") )
 			{
 				logger.info( "[" + logIdentifier + "] uuid is not null.");
-				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserUUID", info );
+				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserSysInfo", info );
 				response.setData2( result );
 			}
 			else
