@@ -283,10 +283,10 @@
 		<![CDATA[
 		SELECT * FROM (
 			SELECT *, TRUNCATE((
-    			6371 * acos ( cos ( radians( #{latitude} ) )
+    			6371 * acos ( cos ( radians( #{fromLatitude} ) )
 	      		* cos( radians( latitude ) )
-  	 	   		* cos( radians( longitude ) - radians( #{longitude} ) )
-   		   		+ sin ( radians( #{latitude} ) )
+  	 	   		* cos( radians( longitude ) - radians( #{fromLongitude} ) )
+   		   		+ sin ( radians( #{fromLatitude} ) )
    		   		* sin( radians( latitude ) )
    		 		)
   				) , 1)  AS distance
@@ -300,8 +300,7 @@
 			and longitude is not null
 			ORDER BY distance
 		) A
-		WHERE A.distance <= 1
-		and A.regID is not null
+		WHERE A.distance <= 10
 		and A.userID <> #{userID}
 		LIMIT 0 , 100;
 		]]>
@@ -336,6 +335,12 @@
 		select * from
 		notice_list
 		order by createdDate desc;
+	</select>
+	
+	<select id="selectNotice" resultType="com.nearhere.domain.Notice" parameterType="String">
+		select * from
+		notice_list
+		where noticeID=#{value}
 	</select>
 	
 	<select id="selectUnreadNoticeCount" parameterType="java.util.HashMap" resultType="Integer">
@@ -464,14 +469,18 @@
 		values(#{fromUser.userID},#{toUser.userID}, #{message}, 'N', NOW());
 	</insert>
 
-	<insert id="insertUserPushMessage" parameterType="com.nearhere.domain.UserMessage">
+	<insert id="insertUserPushMessage" parameterType="com.nearhere.domain.UserMessage"
+	useGeneratedKeys="true" keyProperty="pushNo" keyColumn="pushNo">
 		insert into
 		user_push_message( toUserID, message, isRead, type, param1,
 		createdDate )
 		values(#{toUserID},#{message}, 'N', #{type}, #{param1},
 		NOW());
+		<selectKey keyProperty="pushNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
 	</insert>
-
+	
 	<select id="selectUsersForPost" parameterType="com.nearhere.domain.Post"
 		resultType="com.nearhere.domain.User">
 		<![CDATA[
@@ -559,5 +568,32 @@
 			union all
 			select 15 as 'credit' from user where userID=#{userID} and jobTitle is not null
 		) A
+	</select>
+	
+	<select id="selectUsersToSendPush" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.User">
+		select * from user
+		where regID is not null
+		and appVersion >= '1.33'
+	</select>
+	
+	<select id="selectUsersWithUserID"
+		resultType="com.nearhere.domain.User">
+		select * from user
+		where userID in
+		<foreach item="item" index="index" collection="list"
+      		open="(" separator="," close=")">
+        	#{item}
+  		</foreach>
+  		and appVersion >= '1.33'
+  		and regID is not null
+	</select>
+	
+	<select id="selectUserWithPushNo" parameterType="String"
+		resultType="com.nearhere.domain.User">
+		select u.* 
+		from user_push_message upm
+			left outer join user u on u.userID=upm.toUserID
+		where upm.pushNo=#{value}
 	</select>
 </mapper>
