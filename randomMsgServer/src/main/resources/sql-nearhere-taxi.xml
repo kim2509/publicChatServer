@@ -37,7 +37,7 @@
 		resultType="com.nearhere.domain.User">
 		select * FROM user where userNo = #{userNo};
 	</select>
-	
+
 	<select id="selectUserNoByUUID" parameterType="java.util.HashMap"
 		resultType="String">
 		select userNo FROM user where uuid = #{UUID};
@@ -63,11 +63,12 @@
 		userID=#{userID}
 		where userNo=#{userNo};
 	</update>
-	
+
 	<update id="updateUserSysInfo" parameterType="java.util.HashMap">
 		update user set
 		appVersion=#{AppVersion}, osVersion = #{OSVersion}, uuid=#{UUID}
-		where userID=#{userID};
+		where
+		userID=#{userID};
 	</update>
 
 	<insert id="insertPost" parameterType="com.nearhere.domain.Post"
@@ -133,11 +134,14 @@
 		departureTime
 		<if test="fromLatitude != null and fromLongitude != null">
 			,TRUNCATE((
-			6371 * acos ( cos ( radians( #{fromLatitude} ) )
+			6371 * acos ( cos ( radians( #{fromLatitude} )
+			)
 			* cos( radians( fromLatitude ) )
-			* cos( radians( fromLongitude ) - radians( #{fromLongitude} ) )
+			* cos( radians( fromLongitude ) -
+			radians( #{fromLongitude} ) )
 			+ sin ( radians( #{fromLatitude} ) )
-			* sin( radians( fromLatitude ) )
+			*
+			sin( radians( fromLatitude ) )
 			)
 			) , 1) AS fromDistance
 		</if>
@@ -145,42 +149,52 @@
 			,TRUNCATE((
 			6371 * acos ( cos ( radians( #{toLatitude} ) )
 			* cos( radians( latitude ) )
-			* cos( radians( longitude ) - radians( #{toLongitude} ) )
+			* cos( radians( longitude ) - radians(
+			#{toLongitude} ) )
 			+ sin ( radians( #{toLatitude} ) )
-			* sin( radians( latitude ) )
+			* sin( radians(
+			latitude ) )
 			)
 			) , 1) AS toDistance
 		</if>
 		,status
 		FROM post P
-		left outer join (select count(replyID) as 'cnt', postID
+		left outer join (select count(replyID) as 'cnt',
+		postID
 		from post_reply
-		where deletedDate is null group by postID ) PR on P.postID=PR.postID
+		where deletedDate is null group by postID ) PR on
+		P.postID=PR.postID
 		left outer join user U on P.userID=U.userID
-		WHERE fromLatitude is not null
+		WHERE
+		fromLatitude is not null
 		and fromLongitude is not null
 		and type='taxi'
 		and deletedDate is null
 		) A
 		WHERE 1=1
 		<if test="postID != null">
-		and postID=#{postID}
+			and postID=#{postID}
 		</if>
-		<if test="fromLatitude != null and fromLongitude != null and fromDistance != null">
-		AND A.fromDistance &lt;= #{fromDistance}
+		<if
+			test="fromLatitude != null and fromLongitude != null and fromDistance != null">
+			AND A.fromDistance &lt;= #{fromDistance}
 		</if>
-		<if test="toLatitude != null and toLongitude != null and toDistance != null">
-		AND A.toDistance &lt;= #{toDistance}
+		<if
+			test="toLatitude != null and toLongitude != null and toDistance != null">
+			AND A.toDistance &lt;= #{toDistance}
 		</if>
 		<if test="status != null">
-		AND A.status = #{status}
+			AND A.status = #{status}
 		</if>
 		<choose>
-			<when test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
-				order by toDistance, fromDistance, A.status desc, createdDate desc
+			<when
+				test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
+				order by toDistance, fromDistance, A.status desc, createdDate
+				desc
 			</when>
 			<when test="fromLatitude != null and fromLongitude != null">
-				order by fromDistance, A.status desc, createdDate desc
+				order by fromDistance, A.status desc, createdDate
+				desc
 			</when>
 			<when test="toLatitude != null and toLongitude != null">
 				order by toDistance, A.status desc,
@@ -278,7 +292,36 @@
 		and P.deletedDate is null;
 	</select>
 
-	<select id="searchUsers" parameterType="java.util.HashMap"
+	<select id="searchUserCountByDistance" parameterType="java.util.HashMap"
+		resultType="Integer">
+		<![CDATA[
+		SELECT count(userID) FROM (
+			SELECT *, TRUNCATE((
+    			6371 * acos ( cos ( radians( #{fromLatitude} ) )
+	      		* cos( radians( latitude ) )
+  	 	   		* cos( radians( longitude ) - radians( #{fromLongitude} ) )
+   		   		+ sin ( radians( #{fromLatitude} ) )
+   		   		* sin( radians( latitude ) )
+   		 		)
+  				) , 1)  AS distance
+			FROM (
+				select UL.*, U.userName
+				from user_location UL
+					LEFT OUTER JOIN user U ON UL.userID=U.userID
+				where locationName='현재위치'
+			) A
+			WHERE latitude is not null
+			and longitude is not null
+			ORDER BY distance
+		) A
+		WHERE A.distance <= #{distance}
+		and A.userID <> #{userID}
+		and A.userID <> 'admin'
+		and A.userName is not null;
+		]]>
+	</select>
+	
+	<select id="searchUsersForNewPost" parameterType="java.util.HashMap"
 		resultType="com.nearhere.domain.User">
 		<![CDATA[
 		SELECT * FROM (
@@ -300,11 +343,48 @@
 			and longitude is not null
 			ORDER BY distance
 		) A
-		WHERE A.distance <= 10
+		WHERE A.distance <= #{distance}
 		and A.userID <> #{userID}
-		LIMIT 0 , 100;
+		and A.userID <> 'admin'
+		and A.userName is not null;
 		]]>
 	</select>
+	
+	<select id="searchUsers" parameterType="java.util.HashMap"
+		resultMap="userWithPoint">
+		<![CDATA[
+		SELECT * FROM (
+			SELECT *, TRUNCATE((
+    			6371 * acos ( cos ( radians( #{fromLatitude} ) )
+	      		* cos( radians( latitude ) )
+  	 	   		* cos( radians( longitude ) - radians( #{fromLongitude} ) )
+   		   		+ sin ( radians( #{fromLatitude} ) )
+   		   		* sin( radians( latitude ) )
+   		 		)
+  				) , 1)  AS distance
+			FROM (
+				select UL.*, U.userName, U.userID as 'profileID', U.regID, U.profileImageURL, YEAR(NOW())-YEAR(U.birthday)+1 as 'age' 
+				from user_location UL
+					LEFT OUTER JOIN user U ON UL.userID=U.userID
+				where locationName='현재위치'
+			) A
+			WHERE latitude is not null
+			and longitude is not null
+			ORDER BY distance
+		) A
+		WHERE A.distance <= #{distance}
+		and A.userID <> #{userID}
+		and A.userID <> 'admin'
+		and A.userName is not null
+		order by A.distance
+		LIMIT #{pageStart} , #{pageSize};
+		]]>
+	</select>
+
+	<resultMap id="userWithPoint" type="com.nearhere.domain.User">
+		<association property="profilePoint" column="profileID"
+			javaType="String" select="selectProfilePoint" />
+	</resultMap>
 
 	<select id="selectUserLocation" parameterType="com.nearhere.domain.User"
 		resultType="com.nearhere.domain.UserLocation">
@@ -336,14 +416,16 @@
 		notice_list
 		order by createdDate desc;
 	</select>
-	
-	<select id="selectNotice" resultType="com.nearhere.domain.Notice" parameterType="String">
+
+	<select id="selectNotice" resultType="com.nearhere.domain.Notice"
+		parameterType="String">
 		select * from
 		notice_list
 		where noticeID=#{value}
 	</select>
-	
-	<select id="selectUnreadNoticeCount" parameterType="java.util.HashMap" resultType="Integer">
+
+	<select id="selectUnreadNoticeCount" parameterType="java.util.HashMap"
+		resultType="Integer">
 		select count(noticeID) from
 		notice_list
 		<choose>
@@ -470,7 +552,7 @@
 	</insert>
 
 	<insert id="insertUserPushMessage" parameterType="com.nearhere.domain.UserMessage"
-	useGeneratedKeys="true" keyProperty="pushNo" keyColumn="pushNo">
+		useGeneratedKeys="true" keyProperty="pushNo" keyColumn="pushNo">
 		insert into
 		user_push_message( toUserID, message, isRead, type, param1,
 		createdDate )
@@ -480,7 +562,7 @@
 			select LAST_INSERT_ID();
 		</selectKey>
 	</insert>
-	
+
 	<select id="selectUsersForPost" parameterType="com.nearhere.domain.Post"
 		resultType="com.nearhere.domain.User">
 		<![CDATA[
@@ -536,7 +618,8 @@
 	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
 		update user set
 		sex=#{sex}, userName=#{userName}, mobileNo=#{mobileNo}
-		where userID=#{userID};
+		where
+		userID=#{userID};
 	</update>
 
 	<update id="updateUserProfileImage" parameterType="java.util.HashMap">
@@ -547,53 +630,58 @@
 
 	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User"
 		resultType="String">
-		select sum( credit ) as 'profilePoint' 
+		select sum( credit ) as 'profilePoint'
 		from (
-			select 30 as
-			'credit' from user where userID=#{userID} and profileImageURL
-			is not null
-			union all
-			select 15 as 'credit' from user where userID=#{userID}
-			and birthday is not null
-			union all
-			select 20 as 'credit' from user
-				left outer join user_location ul on user.userID=ul.userID and ul.locationName='집'
-			where user.userID=#{userID}
-			and ul.userID is not null
-			union all
-			select 20 as 'credit' from user
-				left outer join user_location ul on user.userID=ul.userID and ul.locationName='직장'
-			where user.userID=#{userID}
-			and ul.userID is not null
-			union all
-			select 15 as 'credit' from user where userID=#{userID} and jobTitle is not null
+		select 30 as
+		'credit' from user where userID=#{userID} and profileImageURL
+		is not null
+		union all
+		select 15 as 'credit' from user where userID=#{userID}
+		and birthday is not null
+		union all
+		select 20 as 'credit' from user
+		left outer join user_location ul on user.userID=ul.userID and
+		ul.locationName='집'
+		where user.userID=#{userID}
+		and ul.userID is not null
+		union all
+		select 20 as 'credit' from user
+		left outer join user_location ul on user.userID=ul.userID and
+		ul.locationName='직장'
+		where user.userID=#{userID}
+		and ul.userID is not null
+		union all
+		select 15 as 'credit' from user where userID=#{userID} and jobTitle is not
+		null
+		union all
+		select 0 as 'credit'
 		) A
 	</select>
-	
+
 	<select id="selectUsersToSendPush" parameterType="java.util.HashMap"
 		resultType="com.nearhere.domain.User">
 		select * from user
 		where regID is not null
-		and appVersion >= '1.33'
+		and appVersion >=
+		'1.33'
 	</select>
-	
-	<select id="selectUsersWithUserID"
-		resultType="com.nearhere.domain.User">
+
+	<select id="selectUsersWithUserID" resultType="com.nearhere.domain.User">
 		select * from user
 		where userID in
-		<foreach item="item" index="index" collection="list"
-      		open="(" separator="," close=")">
-        	#{item}
-  		</foreach>
-  		and appVersion >= '1.33'
-  		and regID is not null
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		and appVersion >= '1.33'
+		and regID is not null
 	</select>
-	
+
 	<select id="selectUserWithPushNo" parameterType="String"
 		resultType="com.nearhere.domain.User">
-		select u.* 
+		select u.*
 		from user_push_message upm
-			left outer join user u on u.userID=upm.toUserID
+		left outer join user u on u.userID=upm.toUserID
 		where upm.pushNo=#{value}
 	</select>
 </mapper>

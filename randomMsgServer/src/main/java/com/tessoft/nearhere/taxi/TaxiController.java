@@ -431,8 +431,9 @@ public class TaxiController {
 			distanceInfo.put("fromLatitude", post.getFromLatitude());
 			distanceInfo.put("fromLongitude", post.getFromLongitude());
 			distanceInfo.put("userID", post.getUser().getUserID());
+			distanceInfo.put("distance", "5");
 
-			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", distanceInfo);
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsersForNewPost", distanceInfo);
 			if ( userList != null && userList.size() > 0 )
 			{
 				for ( int i = 0; i < userList.size(); i++ )
@@ -443,7 +444,7 @@ public class TaxiController {
 
 					// 추천 알림받기 여부 체크
 					if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
-						sendPushMessage(userList.get(i), "newPostByDistance", "1km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
+						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
 				}				
 			}
 
@@ -476,9 +477,38 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			HashMap requestData = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			if ( !requestData.containsKey("distance"))
+				requestData.put("distance", "10");
+			
+			int pageNo = 1;
+			int pageStart = 0;
+			int pageSize = 20;
+			
+			if ( requestData.containsKey("pageNo") && requestData.get("pageNo") != null )
+			{
+				pageNo = Integer.parseInt( requestData.get("pageNo").toString() );
+				if ( pageNo > 1 )
+				{
+					pageStart = (pageSize * (pageNo-1));
+				}
+			}
+			
+			requestData.put("pageStart", pageStart );
+			requestData.put("pageSize", pageSize);
+			
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", requestData);
+			
 			response.setData(userList);
-
+			
+			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
+			
+			if ( count > pageSize * pageNo )
+				response.setData2("true");
+			else
+				response.setData2("false");
+			
+			response.setData3(count);
+			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
@@ -506,8 +536,12 @@ public class TaxiController {
 
 			response.setData(postList);
 			
-			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", requestData);
-			response.setData2( userList.size() );
+			requestData.put("distance", "5");
+			requestData.put("pageStart", 0 );
+			requestData.put("pageEnd", 100 );
+			
+			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
+			response.setData2( count );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
