@@ -88,7 +88,8 @@ public class TaxiController {
 			if ( hash.containsKey("UUID") )
 			{
 				// 기존 UUID 가 있는지 검사
-				if ( "ffffffff-cf61-8f83-23cf-387f485472b4".equals( hash.get("UUID") ))
+				if ( "ffffffff-cf61-8f83-23cf-387f485472b4".equals( hash.get("UUID") ) ||
+						"00000000-3cdb-d0ac-9c1c-96300033c587".equals( hash.get("UUID") ))
 				{
 					// 김대용 휴대폰이면
 					String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
@@ -503,11 +504,9 @@ public class TaxiController {
 			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
 			
 			if ( count > pageSize * pageNo )
-				response.setData2("true");
+				response.setData2("true|" + count);
 			else
-				response.setData2("false");
-			
-			response.setData3(count);
+				response.setData2("false|" + count);
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
