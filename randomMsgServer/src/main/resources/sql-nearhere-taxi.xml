@@ -662,8 +662,7 @@
 		resultType="com.nearhere.domain.User">
 		select * from user
 		where regID is not null
-		and appVersion >=
-		'1.33'
+		and appVersion > '1.33'
 	</select>
 
 	<select id="selectUsersWithUserID" resultType="com.nearhere.domain.User">
