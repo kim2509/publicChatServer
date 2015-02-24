@@ -21,6 +21,7 @@ public class User {
 	private String profilePoint;
 	private String mobileNo;
 	private String uuid;
+	private String address;
 
 	public String getUserNo() {
 		return userNo;
@@ -148,5 +149,13 @@ public class User {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}	
 }
