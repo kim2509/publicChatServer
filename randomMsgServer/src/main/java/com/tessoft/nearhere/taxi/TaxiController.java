@@ -497,7 +497,7 @@ public class TaxiController {
 			requestData.put("pageStart", pageStart );
 			requestData.put("pageSize", pageSize);
 			
-			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", requestData);
+			ArrayList userList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsers", requestData);
 			
 			response.setData(userList);
 			

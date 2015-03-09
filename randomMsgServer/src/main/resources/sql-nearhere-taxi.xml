@@ -34,8 +34,8 @@
 	</select>
 
 	<select id="selectUserByUserNo" parameterType="com.nearhere.domain.User"
-		resultType="com.nearhere.domain.User">
-		select * FROM user where userNo = #{userNo};
+		resultMap="userWithPoint">
+		select *, userID as 'profileID' FROM user where userNo = #{userNo};
 	</select>
 
 	<select id="selectUserNoByUUID" parameterType="java.util.HashMap"
@@ -245,6 +245,8 @@
 			U.userID as "user.userID",
 			U.userName as "user.userName",
 			U.profileImageURL as "user.profileImageURL",
+			latitude,
+			longitude,
 			TRUNCATE((
     			6371 * acos ( cos ( radians( #{fromLatitude} ) )
 	      		* cos( radians( latitude ) )
@@ -353,7 +355,12 @@
 	<select id="searchUsers" parameterType="java.util.HashMap"
 		resultMap="userWithPoint">
 		<![CDATA[
-		SELECT * FROM (
+		SELECT U.userName, 
+			U.userID as 'profileID', 
+			U.regID, U.profileImageURL, 
+			YEAR(NOW())-YEAR(U.birthday)+1 as 'age', 
+			U.sex as 'sex', A.*
+		FROM (
 			SELECT *, TRUNCATE((
     			6371 * acos ( cos ( radians( #{fromLatitude} ) )
 	      		* cos( radians( latitude ) )
@@ -363,7 +370,7 @@
    		 		)
   				) , 1)  AS distance
 			FROM (
-				select UL.*, U.userName, U.userID as 'profileID', U.regID, U.profileImageURL, YEAR(NOW())-YEAR(U.birthday)+1 as 'age' 
+				select UL.*
 				from user_location UL
 					LEFT OUTER JOIN user U ON UL.userID=U.userID
 				where locationName='현재위치'
@@ -372,10 +379,11 @@
 			and longitude is not null
 			ORDER BY distance
 		) A
+			left outer join user U on A.userID=U.userID
 		WHERE A.distance <= #{distance}
 		and A.userID <> #{userID}
 		and A.userID <> 'admin'
-		and A.userName is not null
+		and U.userName is not null
 		order by A.distance
 		LIMIT #{pageStart} , #{pageSize};
 		]]>
