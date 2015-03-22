@@ -387,6 +387,39 @@ public class TaxiController {
 
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/login_bg.do")
+	public @ResponseBody APIResponse login_bg( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			bodyString = mapper.writeValueAsString( hash.get("user") );
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			user = selectUser(user);
+			
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			if ( profilePoint == null || "".equals( profilePoint ) )
+				profilePoint = "0";
+			user.setProfilePoint(profilePoint);
+
+			response.setData(user);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
 
 	@RequestMapping( value ="/taxi/logout.do")
 	public @ResponseBody APIResponse logout( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
