@@ -22,6 +22,7 @@ public class User {
 	private String mobileNo;
 	private String uuid;
 	private String address;
+	private String appVersion;
 
 	public String getUserNo() {
 		return userNo;
@@ -157,5 +158,13 @@ public class User {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getAppVersion() {
+		return appVersion;
+	}
+
+	public void setAppVersion(String appVersion) {
+		this.appVersion = appVersion;
 	}	
 }

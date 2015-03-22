@@ -1,10 +1,14 @@
 package com.tessoft.nearhere.taxi;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -27,64 +31,107 @@ import com.nearhere.domain.APIResponse;
 public class FileUploadController {
 
 	protected static Logger logger = Logger.getLogger(FileUploadController.class.getName());
-	
+
 	@Autowired
 	private SqlSession sqlSession;
 	ObjectMapper mapper = null;
-	
+
 	public FileUploadController() {
 		// TODO Auto-generated constructor stub
 		mapper = new ObjectMapper();
 	}
-	
+
 	@RequestMapping(value = "/taxi/uploadUserProfilePhoto.do", method = RequestMethod.POST)
-    public @ResponseBody APIResponse uploadUserProfilePhoto(FileDTO dto) {
-		
+	public @ResponseBody APIResponse uploadUserProfilePhoto(FileDTO dto) {
+
 		logger.info("uploadUserProfilePhoto.do start");
 		APIResponse response = new APIResponse();
-		
-        MultipartFile uploadfile = dto.getFile();
-        if (uploadfile != null) {
-            String fileName = uploadfile.getOriginalFilename();
-            dto.setFileName(fileName);
-            try {
-                // 1. FileOutputStream �용
-                // byte[] fileData = file.getBytes();
-                // FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
-                // output.write(fileData);
-                 
+
+		MultipartFile uploadfile = dto.getFile();
+		if (uploadfile != null) {
+			String fileName = uploadfile.getOriginalFilename();
+			dto.setFileName(fileName);
+			try {
+				// 1. FileOutputStream ъ슜
+				// byte[] fileData = file.getBytes();
+				// FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
+				// output.write(fileData);
+
             	String rootPath = "/var/lib/tomcat7/webapps/ROOT";// System.getProperty("catalina.home");
 				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
 					dir.mkdirs();
+
+				// 2. File ъ슜
+				File file = new File( dir.getAbsolutePath() + File.separator + fileName);
+				uploadfile.transferTo(file);
+
+				String userID = fileName.replaceAll(".png", "");
+				HashMap hash = new HashMap();
+				hash.put("userID", userID );
+				hash.put("profileImageURL", userID + ".png" );
+
+				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserProfileImage", hash );
+
+				response.setData( result );
+
+				logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+
+				BufferedImage originalImage = ImageIO.read( file );
+				int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+				BufferedImage thumbnailImage = resizeImage(originalImage, 320, type);
 				
-                // 2. File �용
-                File file = new File( dir.getAbsolutePath() + File.separator + fileName);
-                uploadfile.transferTo(file);
-                
-                String userID = fileName.replaceAll(".png", "");
-                HashMap hash = new HashMap();
-                hash.put("userID", userID );
-                hash.put("profileImageURL", userID + ".png" );
-                
-                int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserProfileImage", hash );
-                
-                response.setData( result );
-                
-                logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
-                
-            } catch (IOException e) {
-            	logger.error( e );
-                e.printStackTrace();
-            } // try - catch
-        } // if
-        // �이베이처리륄재 �치�서 처리
-        
-        logger.info("uploadUserProfilePhoto.do end");
-        
-        return response; // 리스�청�로 보내�하�데 �단 �외�고 구현
-    }
+				File dirTh = new File(rootPath + File.separator + "thumbnail");
+				if (!dirTh.exists())
+					dirTh.mkdirs();
+				
+				ImageIO.write(thumbnailImage, "png", 
+						new File(rootPath + File.separator + "thumbnail" + File.separator + fileName )); 
+
+			} catch (IOException e) {
+				logger.error( e );
+				e.printStackTrace();
+			} // try - catch
+		} // if
+		// 곗씠踰좎씠泥섎━瑜꾩옱 꾩튂먯꽌 泥섎━
+
+		logger.info("uploadUserProfilePhoto.do end");
+
+		return response; // 由ъ뒪붿껌쇰줈 蹂대궡쇳븯붾뜲 쇰떒 쒖쇅섍퀬 援ы쁽
+	}
 	
+	private BufferedImage resizeImage(BufferedImage originalImage, int maxResolution, int type){
+		
+		int iWidth = originalImage.getWidth();
+		int iHeight = originalImage.getHeight();
+		
+		int newWidth = iWidth ;
+		int newHeight = iHeight ;
+		float rate = 0.0f;
+
+		//대吏媛濡몃줈 鍮꾩쑉留욊쾶 議곗젅
+		if(iWidth > iHeight ){
+			if(maxResolution < iWidth ){ 
+				rate = maxResolution / (float) iWidth ; 
+				newHeight = (int) (iHeight * rate); 
+				newWidth = maxResolution; 
+			}
+		}else{
+			if(maxResolution < iHeight ){
+				rate = maxResolution / (float) iHeight ; 
+				newWidth = (int) (iWidth * rate);
+				newHeight = maxResolution;
+			}
+		}
+		
+		BufferedImage resizedImage = new BufferedImage( newWidth , newHeight, type);
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+		g.dispose();
+
+		return resizedImage;
+	}
+
 	/**
 	 * Upload single file using Spring Controller
 	 */

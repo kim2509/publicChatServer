@@ -37,6 +37,12 @@
 				var phone3 = document.fm.phone3.value;
 				document.fm.phoneNo.value = phone1 + '-' + phone2 + '-' + phone3;
 				
+				if ( phone2.length == 0 )
+				{
+					alert('전화번호가 올바르지 않습니다.\n다시 입력해 주십시오.');
+					return;	
+				}
+				
 				$.ajax({
 					url : "eventInput.do",
 			        type: "post",
