@@ -52,17 +52,17 @@ public class FileUploadController {
 			String fileName = uploadfile.getOriginalFilename();
 			dto.setFileName(fileName);
 			try {
-				// 1. FileOutputStream ъ슜
+				// 1. FileOutputStream 사용
 				// byte[] fileData = file.getBytes();
 				// FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
 				// output.write(fileData);
 
-            	String rootPath = "/var/lib/tomcat7/webapps/ROOT";// System.getProperty("catalina.home");
+				String rootPath = "/var/lib/tomcat7/webapps/ROOT";// System.getProperty("catalina.home");
 				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
 					dir.mkdirs();
 
-				// 2. File ъ슜
+				// 2. File 사용
 				File file = new File( dir.getAbsolutePath() + File.separator + fileName);
 				uploadfile.transferTo(file);
 
@@ -93,11 +93,11 @@ public class FileUploadController {
 				e.printStackTrace();
 			} // try - catch
 		} // if
-		// 곗씠踰좎씠泥섎━瑜꾩옱 꾩튂먯꽌 泥섎━
+		// 데이터 베이스 처리를 현재 위치에서 처리
 
 		logger.info("uploadUserProfilePhoto.do end");
 
-		return response; // 由ъ뒪붿껌쇰줈 蹂대궡쇳븯붾뜲 쇰떒 쒖쇅섍퀬 援ы쁽
+		return response; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
 	}
 	
 	private BufferedImage resizeImage(BufferedImage originalImage, int maxResolution, int type){
@@ -109,7 +109,7 @@ public class FileUploadController {
 		int newHeight = iHeight ;
 		float rate = 0.0f;
 
-		//대吏媛濡몃줈 鍮꾩쑉留욊쾶 議곗젅
+		//이미지의 가로 세로 비율에 맞게 조절
 		if(iWidth > iHeight ){
 			if(maxResolution < iWidth ){ 
 				rate = maxResolution / (float) iWidth ; 
