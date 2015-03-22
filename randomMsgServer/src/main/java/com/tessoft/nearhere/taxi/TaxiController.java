@@ -578,7 +578,6 @@ public class TaxiController {
 		return response;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/taxi/getPostsNearHereV2.do")
 	public @ResponseBody APIResponseV2 getPostsNearHereV2( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
