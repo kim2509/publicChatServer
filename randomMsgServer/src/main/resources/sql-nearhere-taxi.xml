@@ -776,6 +776,7 @@
 		from user_push_message
 		where type='inquiryUser'
 		and param1 = #{userID}
+		and toUserID= #{userIDToInquiry}
 		and date( createdDate ) = date(now())
 	</select>
 </mapper>
