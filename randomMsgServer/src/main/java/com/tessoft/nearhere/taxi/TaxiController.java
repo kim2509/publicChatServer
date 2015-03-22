@@ -793,7 +793,7 @@ public class TaxiController {
 			if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && pushMessage == null )
 			{
 				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userToInquiry );
-				if ( setting != null && !"N".equals( setting.getInquiryUserPushReceiveYN()))
+				if ( setting == null || !"N".equals( setting.getInquiryUserPushReceiveYN()))
 					sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, true );
 				else
 					sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, false );
@@ -1206,7 +1206,7 @@ public class TaxiController {
 	{
 		try
 		{
-			logger.info( "sendPushMessage: " + mapper.writeValueAsString(receiver) );
+			logger.info( "sendPushMessage[" + bSendPush + "]: " + mapper.writeValueAsString(receiver) );
 
 			receiver = selectUser(receiver);
 
