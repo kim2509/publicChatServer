@@ -24,6 +24,7 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.APIResponseV2;
 import com.nearhere.domain.Notice;
 import com.nearhere.domain.Post;
 import com.nearhere.domain.PostReply;
@@ -227,7 +228,7 @@ public class TaxiController {
 
 			sqlSession.insert("com.tessoft.nearhere.taxi.insertUser", user);
 
-			user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+			user = selectUser(user);
 
 			response.setData( user );
 
@@ -445,7 +446,9 @@ public class TaxiController {
 
 					// 추천 알림받기 여부 체크
 					if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
-						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID());
+						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), true );
+					else
+						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), false );
 				}				
 			}
 
@@ -531,6 +534,27 @@ public class TaxiController {
 
 			HashMap requestData = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
+			int pageNo = 1;
+			int pageStart = 0;
+			int pageSize = 20;
+			
+			if ( requestData.containsKey("pageNo") && requestData.get("pageNo") != null )
+			{
+				pageNo = Integer.parseInt( requestData.get("pageNo").toString() );
+				if ( pageNo > 1 )
+				{
+					pageStart = (pageSize * (pageNo-1));
+				}
+			}
+			else
+			{
+				pageStart = 0;
+				pageSize = 100;
+			}
+			
+			requestData.put("pageStart", pageStart );
+			requestData.put("pageSize", pageSize);
+			
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostsNearHere", requestData);
 
 			response.setData(postList);
@@ -541,6 +565,67 @@ public class TaxiController {
 			
 			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
 			response.setData2( count );
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/taxi/getPostsNearHereV2.do")
+	public @ResponseBody APIResponseV2 getPostsNearHereV2( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponseV2 response = new APIResponseV2();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap requestData = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			int pageNo = 1;
+			int pageStart = 0;
+			int pageSize = 20;
+			
+			if ( requestData.containsKey("pageNo") && requestData.get("pageNo") != null )
+			{
+				pageNo = Integer.parseInt( requestData.get("pageNo").toString() );
+				if ( pageNo > 1 )
+				{
+					pageStart = (pageSize * (pageNo-1));
+				}
+			}
+			else
+			{
+				pageStart = 0;
+				pageSize = 100;
+			}
+			
+			requestData.put("pageStart", pageStart );
+			requestData.put("pageSize", pageSize);
+			
+			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostsNearHere", requestData);
+
+			response.setData(postList);
+			
+			requestData.put("distance", "5");
+			
+			int postCount = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostCountNearHere", requestData);
+			
+			if ( postCount > pageSize * pageNo )
+				response.setData2("true|" + postCount);
+			else
+				response.setData2("false|" + postCount);
+			
+			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
+			response.setData3( count );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -565,8 +650,18 @@ public class TaxiController {
 
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
+			hash.put("pageStart", 0 );
+			hash.put("pageSize", 1);
+			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostsNearHere", hash);
 
+			if ( post == null )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("삭제된 합승내역입니다.");
+				return response;
+			}
+			
 			List<PostReply> replies = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostReplies", post );
 			post.setPostReplies(replies);
 
@@ -587,7 +682,7 @@ public class TaxiController {
 
 		return response;
 	}
-
+	
 	@RequestMapping( value ="/taxi/insertPostReply.do")
 	public @ResponseBody APIResponse insertPostReply( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
@@ -612,7 +707,11 @@ public class TaxiController {
 				User user = usersToSendPush.get(i);
 				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
 				if ( setting == null || !"N".equals( setting.getReplyPushReceiveYN() ) )
-					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID());
+				{
+					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), true);
+				}
+				else
+					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), false );
 			}
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
@@ -626,8 +725,92 @@ public class TaxiController {
 
 		return response;
 	}
+	
+	@SuppressWarnings({ "rawtypes" })
+	@RequestMapping( value ="/taxi/getUserInfoV2.do")
+	public @ResponseBody APIResponse getUserInfoV2( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			User userToInquiry = new User();
+			userToInquiry.setUserID( hash.get("userIDToInquiry").toString() );
+
+			userToInquiry = selectUser(userToInquiry);
+			HashMap resHash = getUserInfoCommon(userToInquiry);
+
+			response.setData(resHash);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			
+			String userID = hash.get("userID").toString();
+			
+			User user = new User();
+			user.setUserID( userID );
+			user = selectUser(user);
+			
+			// A 가 B 프로필을 여러번 조회할 경우 푸쉬 하루에 한번만 보내게끔 보낸 이력 조회
+			UserPushMessage pushMessage = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectInquiryUserPushToday", hash );
+			
+			// 1.35 버전부터 inquiryUser 푸시 적용
+			if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && pushMessage == null )
+			{
+				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userToInquiry );
+				if ( setting != null && !"N".equals( setting.getInquiryUserPushReceiveYN()))
+					sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, true );
+				else
+					sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, false );
+			}
+				
+
+			HashMap temp = new HashMap();
+			temp.put("userID", userID);
+			temp.put("fromUserID", userToInquiry.getUserID());
+			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead4", temp );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+
+	private User selectUser(User user) {
+		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		return user;
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private HashMap getUserInfoCommon(User user) {
+		
+		String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+		if ( profilePoint == null || "".equals( profilePoint ) )
+			profilePoint = "0";
+		user.setProfilePoint(profilePoint);
+
+		List<UserLocation> locationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserLocation", user);
+
+		List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserPost", user);
+
+		List<Post> postsUserReplied = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsUserReplied", user);
+
+		HashMap resHash = new HashMap();
+		resHash.put("user", user);
+		resHash.put("locationList", locationList);
+		resHash.put("userPost", postList);
+		resHash.put("postsUserReplied", postsUserReplied);
+		return resHash;
+	}
+
+	@SuppressWarnings({ "rawtypes"})
 	@RequestMapping( value ="/taxi/getUserInfo.do")
 	public @ResponseBody APIResponse getUserInfo( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
@@ -639,25 +822,10 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) )
-				profilePoint = "0";
-			user.setProfilePoint(profilePoint);
+			user = selectUser(user);
+			HashMap resHash = getUserInfoCommon(user);
 
-			List<UserLocation> locationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserLocation", user);
-
-			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserPost", user);
-
-			List<Post> postsUserReplied = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsUserReplied", user);
-
-			HashMap hash = new HashMap();
-			hash.put("user", user);
-			hash.put("locationList", locationList);
-			hash.put("userPost", postList);
-			hash.put("postsUserReplied", postsUserReplied);
-
-			response.setData(hash);
+			response.setData(resHash);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -976,7 +1144,9 @@ public class TaxiController {
 			UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
 			
 			if ( setting == null || !"N".equals( setting.getMessagePushReceiveYN() ))
-				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID() );
+				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID(), true );
+			else
+				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID(), false );
 
 			HashMap messageInfo = new HashMap();
 			messageInfo.put("userID", message.getFromUser().getUserID());
@@ -1000,13 +1170,13 @@ public class TaxiController {
 
 	private String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	private int push_retry_cnt = 5;
-	private void sendPushMessage( User receiver, String type, String msg, String param ) throws Exception
+	private void sendPushMessage( User receiver, String type, String msg, String param, boolean bSendPush ) throws Exception
 	{
 		try
 		{
 			logger.info( "sendPushMessage: " + mapper.writeValueAsString(receiver) );
 
-			receiver = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", receiver);
+			receiver = selectUser(receiver);
 
 			UserPushMessage pushMessage = new UserPushMessage();
 			pushMessage.setToUserID( receiver.getUserID() );
@@ -1021,56 +1191,72 @@ public class TaxiController {
 				pushMessage.setMessage( msg );
 			else if ("eventssl".equals( type ) )
 				pushMessage.setMessage( msg );
+			else if ("inquiryUser".equals( type ) )
+				pushMessage.setMessage( msg );
 
 			pushMessage.setParam1(param);
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
 
 			logger.info( "insertUserPushMessage result : " + result );
 
-			Sender sender = new Sender(GCM_API_KEY);
-
-			Message message = null;
-
-			if ( "message".equals( type ) )
+			if ( bSendPush )
 			{
-				message = new Message.Builder().addData("title", pushMessage.getMessage() )
-						.addData("message",  msg )
-						.addData("type",  type )
-						.addData("toUserID",  receiver.getUserID() )
-						.addData("fromUserID",  param )
-						.build();	
-			}
-			else if ( "postReply".equals( type ) )
-			{
-				message = new Message.Builder().addData("title", pushMessage.getMessage() )
-						.addData("message",  msg )
-						.addData("type",  type )
-						.addData("postID",  param )
-						.build();	
-			}
-			else if ( "newPostByDistance".equals( type ) )
-			{
-				message = new Message.Builder().addData("title", "신규 합승정보 알림" )
-						.addData("message",  pushMessage.getMessage() )
-						.addData("type",  type )
-						.addData("postID",  param )
-						.build();	
-			}
-			else if ( "event".equals( type ) || "eventssl".equals( type ) )
-			{
-				message = new Message.Builder().addData("title", "이벤트")
-						.addData("message",  pushMessage.getMessage() )
-						.addData("type",  type )
-						.addData("eventSeq",  param )
-						.addData("pushNo",  pushMessage.getPushNo() )
-						.addData("sound", "on")
-						.addData("vibrate", "on")
-						.build();
-			}
+				Sender sender = new Sender(GCM_API_KEY);
 
-			Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
+				Message message = null;
 
-			logger.info( "push result:" + pushResult.toString() );	
+				
+				if ( "message".equals( type ) )
+				{
+					message = new Message.Builder().addData("title", pushMessage.getMessage() )
+							.addData("message",  msg )
+							.addData("type",  type )
+							.addData("toUserID",  receiver.getUserID() )
+							.addData("fromUserID",  param )
+							.build();	
+				}
+				else if ( "postReply".equals( type ) )
+				{
+					message = new Message.Builder().addData("title", pushMessage.getMessage() )
+							.addData("message",  msg )
+							.addData("type",  type )
+							.addData("postID",  param )
+							.build();	
+				}
+				else if ( "newPostByDistance".equals( type ) )
+				{
+					message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+							.addData("message",  pushMessage.getMessage() )
+							.addData("type",  type )
+							.addData("postID",  param )
+							.build();	
+				}
+				else if ( "event".equals( type ) || "eventssl".equals( type ) )
+				{
+					message = new Message.Builder().addData("title", "이벤트")
+							.addData("message",  pushMessage.getMessage() )
+							.addData("type",  type )
+							.addData("eventSeq",  param )
+							.addData("pushNo",  pushMessage.getPushNo() )
+							.addData("sound", "on")
+							.addData("vibrate", "on")
+							.build();
+				}
+				else if ( "inquiryUser".equals( type ) )
+				{
+					message = new Message.Builder().addData("title", "프로필 조회 알림")
+							.addData("message",  pushMessage.getMessage() )
+							.addData("type",  type )
+							.addData("userID",  param )
+							.addData("pushNo",  pushMessage.getPushNo() )
+							.build();
+				}
+
+				Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
+
+				logger.info( "push result:" + pushResult.toString() );		
+			}
+			
 		}
 		catch( Exception ex )
 		{
@@ -1298,7 +1484,7 @@ public class TaxiController {
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "event", "[이벤트] 이마트 상품권을 쏩니다!!", "1" );	
+				sendPushMessage(userList.get(i), "event", "[이벤트] 이마트 상품권을 쏩니다!!", "1", true );	
 			}
 			
 			response.setData(userList);
@@ -1330,7 +1516,7 @@ public class TaxiController {
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 이마트 상품권 이벤트에 당첨되셨습니다.", "1Result" );
+				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 이마트 상품권 이벤트에 당첨되셨습니다.", "1Result", true );
 			}
 			
 			response.setData(userList);

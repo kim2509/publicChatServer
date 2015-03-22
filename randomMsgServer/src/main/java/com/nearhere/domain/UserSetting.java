@@ -1,10 +1,16 @@
 package com.nearhere.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserSetting {
 	private String userID;
 	private String messagePushReceiveYN;
 	private String replyPushReceiveYN;
 	private String recommendPushReceiveYN;
+	private String inquiryUserPushReceiveYN;
+	private String newUserPushReceiveYN;
+	
 	private String createdDate;
 	public String getUserID() {
 		return userID;
@@ -35,5 +41,24 @@ public class UserSetting {
 	}
 	public void setCreatedDate(String createdDate) {
 		this.createdDate = createdDate;
+	}
+	public String getInquiryUserPushReceiveYN() {
+		if ( inquiryUserPushReceiveYN == null )
+			inquiryUserPushReceiveYN = "Y";
+		
+		return inquiryUserPushReceiveYN;
+	}
+	public void setInquiryUserPushReceiveYN(String inquiryUserPushReceiveYN) {
+		this.inquiryUserPushReceiveYN = inquiryUserPushReceiveYN;
+	}
+	public String getNewUserPushReceiveYN() {
+		
+		if ( newUserPushReceiveYN == null )
+			newUserPushReceiveYN = "Y";
+		
+		return newUserPushReceiveYN;
+	}
+	public void setNewUserPushReceiveYN(String newUserPushReceiveYN) {
+		this.newUserPushReceiveYN = newUserPushReceiveYN;
 	}
 }

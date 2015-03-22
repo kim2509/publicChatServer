@@ -57,7 +57,7 @@ public class FileUploadController {
 				// FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
 				// output.write(fileData);
 
-				String rootPath = "E:\\wamp\\www";
+				String rootPath = "C:\\Apache24\\htdocs";
 				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
 					dir.mkdirs();

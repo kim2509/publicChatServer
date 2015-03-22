@@ -202,7 +202,78 @@
 			</when>
 			<otherwise>order by A.status desc, createdDate desc</otherwise>
 		</choose>
-		LIMIT 0 , 100;
+		LIMIT #{pageStart} , #{pageSize};
+	</select>
+	
+	<select id="getPostCountNearHere" resultType="Integer"
+		parameterType="java.util.HashMap">
+		SELECT
+			count(postID)
+		FROM (
+		SELECT P.postID, P.userID, type, message, content,
+		fromLatitude,
+		fromLongitude, fromAddress,
+		latitude, longitude,
+		toAddress, reward, P.createdDate,
+		P.userID as 'user.userID',
+		U.profileImageURL as 'user.profileImageURL',
+		U.userName as
+		'user.userName', U.sex as 'user.sex',
+		YEAR(NOW())-YEAR(U.birthday)+1 as
+		'user.age'
+		, PR.cnt as "replyCount",
+		sexInfo, numOfUsers, departureDate,
+		departureTime
+		<if test="fromLatitude != null and fromLongitude != null">
+			,TRUNCATE((
+			6371 * acos ( cos ( radians( #{fromLatitude} )
+			)
+			* cos( radians( fromLatitude ) )
+			* cos( radians( fromLongitude ) -
+			radians( #{fromLongitude} ) )
+			+ sin ( radians( #{fromLatitude} ) )
+			*
+			sin( radians( fromLatitude ) )
+			)
+			) , 1) AS fromDistance
+		</if>
+		<if test="toLatitude != null and toLongitude != null">
+			,TRUNCATE((
+			6371 * acos ( cos ( radians( #{toLatitude} ) )
+			* cos( radians( latitude ) )
+			* cos( radians( longitude ) - radians(
+			#{toLongitude} ) )
+			+ sin ( radians( #{toLatitude} ) )
+			* sin( radians(
+			latitude ) )
+			)
+			) , 1) AS toDistance
+		</if>
+		,status
+		FROM post P
+			left outer join (select count(replyID) as 'cnt',
+				postID
+				from post_reply
+				where deletedDate is null group by postID ) PR on P.postID=PR.postID
+			left outer join user U on P.userID=U.userID
+		WHERE
+		fromLatitude is not null
+		and fromLongitude is not null
+		and type='taxi'
+		and deletedDate is null
+		) A
+		WHERE 1=1
+		<if
+			test="fromLatitude != null and fromLongitude != null and fromDistance != null">
+			AND A.fromDistance &lt;= #{fromDistance}
+		</if>
+		<if
+			test="toLatitude != null and toLongitude != null and toDistance != null">
+			AND A.toDistance &lt;= #{toDistance}
+		</if>
+		<if test="status != null">
+			AND A.status = #{status}
+		</if>
 	</select>
 
 	<select id="getPostDetail" resultType="com.nearhere.domain.Post"
@@ -533,10 +604,10 @@
 	<insert id="updateUserSetting" parameterType="com.nearhere.domain.UserSetting">
 		replace into
 		user_setting( userID, messagePushReceiveYN, replyPushReceiveYN,
-		recommendPushReceiveYN, createdDate )
+		recommendPushReceiveYN, inquiryUserPushReceiveYN, newUserPushReceiveYN, createdDate )
 		values (#{userID},
 		#{messagePushReceiveYN}, #{replyPushReceiveYN},
-		#{recommendPushReceiveYN}, NOW() );
+		#{recommendPushReceiveYN}, #{inquiryUserPushReceiveYN}, #{newUserPushReceiveYN}, NOW() );
 	</insert>
 
 	<update id="updateUserRegID" parameterType="com.nearhere.domain.User">
@@ -622,6 +693,13 @@
 		user_push_message set isRead='Y' where toUserID=#{userID} and
 		param1=#{postID};
 	</update>
+	
+	<update id="updatePushMessageAsRead4" parameterType="java.util.HashMap">
+		update
+		user_push_message set isRead='Y' where toUserID=#{userID}
+		and type='inquiryUser' 
+		and param1=#{fromUserID};
+	</update>
 
 	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
 		update user set
@@ -690,5 +768,14 @@
 		from user_push_message upm
 		left outer join user u on u.userID=upm.toUserID
 		where upm.pushNo=#{value}
+	</select>
+	
+	<select id="selectInquiryUserPushToday" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.UserPushMessage">
+		select *
+		from user_push_message
+		where type='inquiryUser'
+		and param1 = #{userID}
+		and date( createdDate ) = date(now())
 	</select>
 </mapper>

@@ -42,6 +42,20 @@ public class Util {
 		return false;
 	}
 	
+	public static double getDouble( String val )
+	{
+		if ( isEmptyString( val ) ) return 0.0;
+		
+		try
+		{
+			return Double.parseDouble( val );	
+		}
+		catch( Exception ex )
+		{
+			return 0.0;
+		}
+	}
+	
 //	public static String getDateDiffFromNow( String dateString )
 //	{
 //		String dateStart = "11/03/14 09:29:58";
