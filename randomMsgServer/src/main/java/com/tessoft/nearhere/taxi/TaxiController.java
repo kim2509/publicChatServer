@@ -788,10 +788,10 @@ public class TaxiController {
 			user = selectUser(user);
 			
 			// A 가 B 프로필을 여러번 조회할 경우 푸쉬 하루에 한번만 보내게끔 보낸 이력 조회
-			UserPushMessage pushMessage = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectInquiryUser", hash );
+			List<UserPushMessage> pushMessageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectInquiryUser", hash );
 			
 			// 1.35 버전부터 inquiryUser 푸시 적용
-			if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && pushMessage == null )
+			if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && (pushMessageList == null || pushMessageList.size() == 0 ) )
 			{
 				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userToInquiry );
 				if ( setting == null || !"N".equals( setting.getInquiryUserPushReceiveYN()))
