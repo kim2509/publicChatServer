@@ -770,13 +770,12 @@
 		where upm.pushNo=#{value}
 	</select>
 	
-	<select id="selectInquiryUserPushToday" parameterType="java.util.HashMap"
+	<select id="selectInquiryUser" parameterType="java.util.HashMap"
 		resultType="com.nearhere.domain.UserPushMessage">
 		select *
 		from user_push_message
 		where type='inquiryUser'
 		and param1 = #{userID}
 		and toUserID= #{userIDToInquiry}
-		and date( createdDate ) = date(now())
 	</select>
 </mapper>
