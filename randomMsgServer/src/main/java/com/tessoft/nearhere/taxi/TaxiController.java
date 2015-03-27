@@ -90,7 +90,8 @@ public class TaxiController {
 			{
 				// 기존 UUID 가 있는지 검사
 				if ( "ffffffff-cf61-8f83-23cf-387f485472b4".equals( hash.get("UUID") ) ||
-						"00000000-3cdb-d0ac-9c1c-96300033c587".equals( hash.get("UUID") ))
+						"00000000-3cdb-d0ac-9c1c-96300033c587".equals( hash.get("UUID") ) ||
+						"00000000-60a6-9d2e-ffff-ffff99d603a9".equals( hash.get("UUID") ))
 				{
 					// 김대용 휴대폰이면
 					String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
@@ -787,7 +788,7 @@ public class TaxiController {
 			user = selectUser(user);
 			
 			// A 가 B 프로필을 여러번 조회할 경우 푸쉬 하루에 한번만 보내게끔 보낸 이력 조회
-			UserPushMessage pushMessage = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectInquiryUserPushToday", hash );
+			UserPushMessage pushMessage = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectInquiryUser", hash );
 			
 			// 1.35 버전부터 inquiryUser 푸시 적용
 			if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && pushMessage == null )
