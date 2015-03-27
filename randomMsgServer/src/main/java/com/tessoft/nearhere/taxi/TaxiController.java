@@ -712,9 +712,16 @@ public class TaxiController {
 				User user = new User();
 				user.setUserID( hash.get("userID").toString() );
 				user = selectUser(user);
-				sqlSession.insert("com.tessoft.nearhere.taxi.insertPostReadHistory", hash );
-				sendPushMessage( post.getUser() , "inquiryUser", 
-						user.getUserName() + "님이 고객님의 합승내역을 조회했습니다.", user.getUserID(), true );
+				
+				User writer = selectUser( post.getUser() );
+				
+				// 1.34 버전 이후부터 수신가능
+				if ( Util.getDouble( writer.getAppVersion() ) > 1.34 )
+				{
+					sqlSession.insert("com.tessoft.nearhere.taxi.insertPostReadHistory", hash );
+					sendPushMessage( writer , "inquiryUser", 
+							user.getUserName() + "님이 고객님의 합승내역을 조회했습니다.", user.getUserID(), true );	
+				}
 			}
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
