@@ -1254,56 +1254,62 @@ public class TaxiController {
 
 				Message message = null;
 
-				
-				if ( "message".equals( type ) )
+				if ( !Util.isEmptyString( receiver.getRegID() ) )
 				{
-					message = new Message.Builder().addData("title", pushMessage.getMessage() )
-							.addData("message",  msg )
-							.addData("type",  type )
-							.addData("toUserID",  receiver.getUserID() )
-							.addData("fromUserID",  param )
-							.build();	
-				}
-				else if ( "postReply".equals( type ) )
-				{
-					message = new Message.Builder().addData("title", pushMessage.getMessage() )
-							.addData("message",  msg )
-							.addData("type",  type )
-							.addData("postID",  param )
-							.build();	
-				}
-				else if ( "newPostByDistance".equals( type ) )
-				{
-					message = new Message.Builder().addData("title", "신규 합승정보 알림" )
-							.addData("message",  pushMessage.getMessage() )
-							.addData("type",  type )
-							.addData("postID",  param )
-							.build();	
-				}
-				else if ( "event".equals( type ) || "eventssl".equals( type ) )
-				{
-					message = new Message.Builder().addData("title", "이벤트")
-							.addData("message",  pushMessage.getMessage() )
-							.addData("type",  type )
-							.addData("eventSeq",  param )
-							.addData("pushNo",  pushMessage.getPushNo() )
-							.addData("sound", "on")
-							.addData("vibrate", "on")
-							.build();
-				}
-				else if ( "inquiryUser".equals( type ) )
-				{
-					message = new Message.Builder().addData("title", "프로필 조회 알림")
-							.addData("message",  pushMessage.getMessage() )
-							.addData("type",  type )
-							.addData("userID",  param )
-							.addData("pushNo",  pushMessage.getPushNo() )
-							.build();
-				}
+					if ( "message".equals( type ) )
+					{
+						message = new Message.Builder().addData("title", pushMessage.getMessage() )
+								.addData("message",  msg )
+								.addData("type",  type )
+								.addData("toUserID",  receiver.getUserID() )
+								.addData("fromUserID",  param )
+								.build();	
+					}
+					else if ( "postReply".equals( type ) )
+					{
+						message = new Message.Builder().addData("title", pushMessage.getMessage() )
+								.addData("message",  msg )
+								.addData("type",  type )
+								.addData("postID",  param )
+								.build();	
+					}
+					else if ( "newPostByDistance".equals( type ) )
+					{
+						message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+								.addData("message",  pushMessage.getMessage() )
+								.addData("type",  type )
+								.addData("postID",  param )
+								.build();	
+					}
+					else if ( "event".equals( type ) || "eventssl".equals( type ) )
+					{
+						message = new Message.Builder().addData("title", "이벤트")
+								.addData("message",  pushMessage.getMessage() )
+								.addData("type",  type )
+								.addData("eventSeq",  param )
+								.addData("pushNo",  pushMessage.getPushNo() )
+								.addData("sound", "on")
+								.addData("vibrate", "on")
+								.build();
+					}
+					else if ( "inquiryUser".equals( type ) )
+					{
+						message = new Message.Builder().addData("title", "프로필 조회 알림")
+								.addData("message",  pushMessage.getMessage() )
+								.addData("type",  type )
+								.addData("userID",  param )
+								.addData("pushNo",  pushMessage.getPushNo() )
+								.build();
+					}
 
-				Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
+					Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
 
-				logger.info( "push result:" + pushResult.toString() );		
+					logger.info( "push result:" + pushResult.toString() );		
+				}
+				else
+				{
+					logger.info( "push regID is null." );		
+				}
 			}
 			
 		}
