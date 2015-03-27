@@ -778,4 +778,17 @@
 		and param1 = #{userID}
 		and toUserID= #{userIDToInquiry}
 	</select>
+	
+	<insert id="insertPostReadHistory" parameterType="java.util.HashMap" >
+		insert into post_read_history( postID, userID, createdDate )
+		values(#{postID}, #{userID}, NOW() )
+	</insert>
+	
+	<select id="selectPostReadHistory" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select *
+		from post_read_history
+		where postID=#{postID}
+		and userID= #{userID}
+	</select>
 </mapper>
