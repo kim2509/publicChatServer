@@ -706,7 +706,8 @@ public class TaxiController {
 			
 			List<HashMap> postReadHistory = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostReadHistory", hash );
 			
-			if ( postReadHistory == null || postReadHistory.size() == 0 )
+			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) &&
+					!hash.get("userID").toString().equals( post.getUser().getUserID() ))
 			{
 				User user = new User();
 				user.setUserID( hash.get("userID").toString() );
