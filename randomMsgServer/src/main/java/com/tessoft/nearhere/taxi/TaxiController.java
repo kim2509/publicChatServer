@@ -787,19 +787,22 @@ public class TaxiController {
 			user.setUserID( userID );
 			user = selectUser(user);
 			
-			// A 가 B 프로필을 여러번 조회할 경우 푸쉬 하루에 한번만 보내게끔 보낸 이력 조회
-			List<UserPushMessage> pushMessageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectInquiryUser", hash );
-			
-			// 1.35 버전부터 inquiryUser 푸시 적용
-			if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && (pushMessageList == null || pushMessageList.size() == 0 ) )
+			if ( !userToInquiry.getUserID().equals( user.getUserID() ) )
 			{
-				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userToInquiry );
-				if ( setting == null || !"N".equals( setting.getInquiryUserPushReceiveYN()))
-					sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, true );
-				else
-					sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, false );
-			}
+				// 본인이 아닐 경우에만 푸쉬 전송
+				// A 가 B 프로필을 여러번 조회할 경우 푸쉬 하루에 한번만 보내게끔 보낸 이력 조회
+				List<UserPushMessage> pushMessageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectInquiryUser", hash );
 				
+				// 1.35 버전부터 inquiryUser 푸시 적용
+				if ( Util.getDouble( userToInquiry.getAppVersion() ) > 1.34 && (pushMessageList == null || pushMessageList.size() == 0 ) )
+				{
+					UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userToInquiry );
+					if ( setting == null || !"N".equals( setting.getInquiryUserPushReceiveYN()))
+						sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, true );
+					else
+						sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, false );
+				}				
+			}
 
 			HashMap temp = new HashMap();
 			temp.put("userID", userID);
