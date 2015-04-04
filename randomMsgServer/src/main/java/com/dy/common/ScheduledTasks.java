@@ -2,6 +2,8 @@ package com.dy.common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -10,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.nearhere.domain.NewUser;
 import com.nearhere.domain.User;
 import com.tessoft.nearhere.taxi.TaxiController;
 
-@EnableScheduling
 public class ScheduledTasks {
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -28,9 +30,12 @@ public class ScheduledTasks {
 	public ScheduledTasks() {
 		// TODO Auto-generated constructor stub
 		mapper = new ObjectMapper();
+		
+		logger.info( "ScheduledTasks created." );
 	}
 	
-	@Scheduled(fixedRate = 60000)
+	/*
+	@Scheduled(fixedRate = 10000)
 	public void sendPushMessageByNewPost() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
 		
@@ -44,6 +49,69 @@ public class ScheduledTasks {
 			logger.info( "query: " + mapper.writeValueAsString(existingUser) );
 			
 			logger.info( "sendPushMessageByNewPost ended !!!!!!!!!!!!!!!!" );
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+	}
+	*/
+	
+	public static boolean bExecuting = false;
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Scheduled(initialDelay=5000,fixedDelay = 100000)
+	public void notifyNewUserToNearUsers() {
+//		System.out.println("The time is now " + dateFormat.format(new Date()));
+		
+		try
+		{
+			if ( ScheduledTasks.bExecuting ) return;
+			
+			ScheduledTasks.bExecuting = true;
+			logger.info( "notifyNewUserToNearUsers start !!!!!!!!!!!!!!!!" );
+			
+			int maxUserNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectLastNewUser");
+					
+			logger.info( "maxUserNo:" + maxUserNo );
+			
+			HashMap hash = new HashMap();
+			hash.put("maxUserNo", maxUserNo);
+			
+			int resultCount = sqlSession.insert("com.tessoft.nearhere.taxi.insertNewUsers", hash);
+			
+			logger.info( "resultCount:" + resultCount );
+			
+			if ( resultCount > 0 )
+			{
+				List<NewUser> newUsers = sqlSession.selectList("com.tessoft.nearhere.taxi.selectNewUsers");
+				
+				for ( int i = 0; i < newUsers.size() ; i++ )
+				{
+					NewUser user = newUsers.get(i);
+					
+					List<HashMap> usersToSend = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersNearNewUser", user );
+					
+					logger.info( "usersToSend count:" + usersToSend.size() );
+					
+					for ( int j = 0; j < usersToSend.size(); j++ )
+					{
+						
+					}
+					
+					logger.info( "sent successfully" );
+					
+					int updateResult = sqlSession.update("com.tessoft.nearhere.taxi.updateNewUserChecked", user );
+					
+					logger.info( "userNo:" + user.getUserNo() + " updateResult:" + updateResult );
+					
+				}
+			}
+			
+			Thread.sleep(2000);
+			ScheduledTasks.bExecuting = false;
+			
+			logger.info( "notifyNewUserToNearUsers end !!!!!!!!!!!!!!!!" );
 		}
 		catch( Exception ex )
 		{
