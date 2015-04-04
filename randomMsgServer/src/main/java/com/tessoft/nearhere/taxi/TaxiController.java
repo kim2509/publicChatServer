@@ -807,6 +807,7 @@ public class TaxiController {
 			user.setUserID( userID );
 			user = selectUser(user);
 			
+			/* 프로필 조회 푸쉬 없앰
 			if ( !userToInquiry.getUserID().equals( user.getUserID() ) )
 			{
 				// 본인이 아닐 경우에만 푸쉬 전송
@@ -828,6 +829,7 @@ public class TaxiController {
 			temp.put("userID", userID);
 			temp.put("fromUserID", userToInquiry.getUserID());
 			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead4", temp );
+			*/
 		}
 		catch( Exception ex )
 		{
