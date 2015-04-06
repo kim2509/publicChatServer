@@ -704,6 +704,10 @@ public class TaxiController {
 			
 			response.setData2( result );
 			
+			boolean bProgressing = true;
+			if ( "종료됨".equals(post.getStatus() ) )
+				bProgressing = false;
+			
 			List<HashMap> postReadHistory = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostReadHistory", hash );
 			
 			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) &&
@@ -719,8 +723,12 @@ public class TaxiController {
 				if ( Util.getDouble( writer.getAppVersion() ) > 1.34 )
 				{
 					sqlSession.insert("com.tessoft.nearhere.taxi.insertPostReadHistory", hash );
-					sendPushMessage( writer , "inquiryUser", 
-							user.getUserName() + "님이 고객님의 합승내역을 조회했습니다.", user.getUserID(), true );	
+					
+					if ( bProgressing )
+					{
+						sendPushMessage( writer , "inquiryUser", 
+								user.getUserName() + "님이 고객님의 합승내역을 조회했습니다.", user.getUserID(), true );						
+					}
 				}
 			}
 			
@@ -824,12 +832,12 @@ public class TaxiController {
 						sendPushMessage( userToInquiry, "inquiryUser", user.getUserName() + "님이 고객님의 프로필를 조회했습니다.", userID, false );
 				}
 			}
-
+			*/
+			
 			HashMap temp = new HashMap();
 			temp.put("userID", userID);
 			temp.put("fromUserID", userToInquiry.getUserID());
 			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead4", temp );
-			*/
 		}
 		catch( Exception ex )
 		{
