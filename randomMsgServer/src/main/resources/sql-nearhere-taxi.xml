@@ -76,12 +76,12 @@
 		insert into post( userID, type, message, content, fromLatitude,
 		fromLongitude, fromAddress,
 		latitude, longitude, toAddress, sexInfo,
-		numOfUsers, departureDate, departureTime, createdDate)
+		numOfUsers, departureDate, departureTime, departureDateTime, createdDate)
 		values(#{user.userID}, 'taxi', #{message}, #{content},
 		#{fromLatitude}, #{fromLongitude},
 		#{fromAddress}, #{latitude},
 		#{longitude}, #{toAddress}, #{sexInfo}, #{numOfUsers},
-		#{departureDate}, #{departureTime}, NOW() );
+		#{departureDate}, #{departureTime}, #{departureDateTime}, #{createdDate} );
 		<selectKey keyProperty="postID" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
@@ -701,6 +701,20 @@
 		and param1=#{fromUserID};
 	</update>
 
+	<update id="updateUserMobileNo" parameterType="com.nearhere.domain.User">
+		update user set
+		mobileNo=#{mobileNo}
+		where
+		userID=#{userID};
+	</update>
+	
+	<update id="updateUserName" parameterType="com.nearhere.domain.User">
+		update user set
+		userName=#{userName}
+		where
+		userID=#{userID};
+	</update>
+	
 	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
 		update user set
 		sex=#{sex}, userName=#{userName}, mobileNo=#{mobileNo}

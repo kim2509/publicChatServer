@@ -32,6 +32,8 @@ public class Post {
 	private String departureDate;
 	private String departureTime;
 	
+	private String departureDateTime;
+	
 	private String fromDistance;
 	private String toDistance;
 	private String status;
@@ -178,5 +180,11 @@ public class Post {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public String getDepartureDateTime() {
+		return departureDateTime;
+	}
+	public void setDepartureDateTime(String departureDateTime) {
+		this.departureDateTime = departureDateTime;
 	}
 }
