@@ -701,6 +701,20 @@
 		and param1=#{fromUserID};
 	</update>
 
+	<update id="updateUserMobileNo" parameterType="com.nearhere.domain.User">
+		update user set
+		mobileNo=#{mobileNo}
+		where
+		userID=#{userID};
+	</update>
+	
+	<update id="updateUserName" parameterType="com.nearhere.domain.User">
+		update user set
+		userName=#{userName}
+		where
+		userID=#{userID};
+	</update>
+	
 	<update id="updateUserInfo" parameterType="com.nearhere.domain.User">
 		update user set
 		sex=#{sex}, userName=#{userName}, mobileNo=#{mobileNo}
