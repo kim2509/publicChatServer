@@ -1,7 +1,9 @@
 package com.dy.common;
 
 import java.security.MessageDigest;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Formatter;
 
 public class Util {
@@ -54,6 +56,30 @@ public class Util {
 		{
 			return 0.0;
 		}
+	}
+	
+	public static Date getDateFromString( String dateString, String format ) throws Exception
+	{
+		if ( dateString == null || "".equals( dateString ) ) return null;
+
+		DateFormat sdf = new SimpleDateFormat( format );
+		Date date = sdf.parse(dateString);
+		return date;
+	}
+	
+	public static String getDateStringFromDate( Date date, String format )
+	{
+		if ( date == null ) return "";
+
+		DateFormat sdf = new SimpleDateFormat(format);
+		String tempDate = sdf.format(date);
+		return tempDate;
+	}
+	
+	public static String getNow( String format )
+	{
+		Date d = new Date();
+		return getDateStringFromDate(d, format);
 	}
 	
 //	public static String getDateDiffFromNow( String dateString )

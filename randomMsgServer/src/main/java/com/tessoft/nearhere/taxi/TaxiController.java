@@ -461,6 +461,30 @@ public class TaxiController {
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
 			
+			Date dDepartureDateTime = null;
+			Date dCreatedDateTime = new Date();
+			Date temp = null;
+			
+			post.setCreatedDate( Util.getDateStringFromDate( dCreatedDateTime, "yyyy-MM-dd HH:mm:ss") );
+			
+			// 출발일자 설정
+			if (post.getDepartureDate().indexOf("오늘") >= 0)
+				dDepartureDateTime = dCreatedDateTime;
+			else
+				dDepartureDateTime = Util.getDateFromString(post.getDepartureDate(), "yyyy-MM-dd");
+									
+			if ( post.getDepartureTime().indexOf( "지금" ) >= 0)
+				temp = dCreatedDateTime;
+			else
+				temp = Util.getDateFromString( post.getDepartureTime(), "HH:mm");
+									
+			// 출발시간 설정
+			dDepartureDateTime.setHours(temp.getHours());
+			dDepartureDateTime.setMinutes(temp.getMinutes());
+			dDepartureDateTime.setSeconds(0);
+			
+			post.setDepartureDateTime( Util.getDateStringFromDate( dDepartureDateTime, "yyyy-MM-dd HH:mm:ss"));
+			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
 
 			HashMap distanceInfo = new HashMap();
