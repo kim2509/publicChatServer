@@ -4,8 +4,11 @@
 
 <mapper namespace="com.tessoft.nearhere.taxi.admin">
 
-	<select id="getAllUsers" parameterType="java.util.HashMap" resultType="com.nearhere.domain.User">
-		select * FROM user
+	<select id="getAllPosts" parameterType="java.util.HashMap" resultType="com.nearhere.domain.Post">
+		select * from post
 	</select>
 
+	<update id="updatePostDepartureDateTime" parameterType="com.nearhere.domain.Post">
+		update post set departureDateTime=#{departureDateTime} where postID=#{postID}
+	</update>
 </mapper>

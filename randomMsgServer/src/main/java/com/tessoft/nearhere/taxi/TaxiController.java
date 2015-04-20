@@ -467,23 +467,31 @@ public class TaxiController {
 			
 			post.setCreatedDate( Util.getDateStringFromDate( dCreatedDateTime, "yyyy-MM-dd HH:mm:ss") );
 			
+			logger.info( "debug[" + logIdentifier + "] createdDateTime: " + post.getCreatedDate() );
+			
 			// 출발일자 설정
 			if (post.getDepartureDate().indexOf("오늘") >= 0)
 				dDepartureDateTime = dCreatedDateTime;
 			else
 				dDepartureDateTime = Util.getDateFromString(post.getDepartureDate(), "yyyy-MM-dd");
+			
+			logger.info( "debug[" + logIdentifier + "] dDepartureDateTime: " + dDepartureDateTime );
 									
 			if ( post.getDepartureTime().indexOf( "지금" ) >= 0)
 				temp = dCreatedDateTime;
 			else
 				temp = Util.getDateFromString( post.getDepartureTime(), "HH:mm");
-									
+						
+			logger.info( "debug[" + logIdentifier + "] temp: " + temp );
+			
 			// 출발시간 설정
 			dDepartureDateTime.setHours(temp.getHours());
 			dDepartureDateTime.setMinutes(temp.getMinutes());
 			dDepartureDateTime.setSeconds(0);
 			
 			post.setDepartureDateTime( Util.getDateStringFromDate( dDepartureDateTime, "yyyy-MM-dd HH:mm:ss"));
+			
+			logger.info( "debug[" + logIdentifier + "] post departureDateTime: " + post.getDepartureDateTime() );
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
 
@@ -493,20 +501,23 @@ public class TaxiController {
 			distanceInfo.put("userID", post.getUser().getUserID());
 			distanceInfo.put("distance", "5");
 
-			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsersForNewPost", distanceInfo);
-			if ( userList != null && userList.size() > 0 )
+			if ( post.isbPushOff() == false )
 			{
-				for ( int i = 0; i < userList.size(); i++ )
+				List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsersForNewPost", distanceInfo);
+				if ( userList != null && userList.size() > 0 )
 				{
-					if ( Util.isEmptyString( userList.get(i).getRegID() ) ) continue;
-					
-					UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userList.get(i) );
+					for ( int i = 0; i < userList.size(); i++ )
+					{
+						if ( Util.isEmptyString( userList.get(i).getRegID() ) ) continue;
+						
+						UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userList.get(i) );
 
-					// 추천 알림받기 여부 체크
-					if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
-						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), true );
-					else
-						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), false );
+						// 추천 알림받기 여부 체크
+						if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
+							sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), true );
+						else
+							sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), false );
+					}				
 				}				
 			}
 

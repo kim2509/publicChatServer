@@ -38,6 +38,8 @@ public class Post {
 	private String toDistance;
 	private String status;
 	
+	private boolean bPushOff;
+	
 	private List<PostLike> postLikes;
 	private List<PostReply> postReplies;
 	
@@ -186,5 +188,11 @@ public class Post {
 	}
 	public void setDepartureDateTime(String departureDateTime) {
 		this.departureDateTime = departureDateTime;
+	}
+	public boolean isbPushOff() {
+		return bPushOff;
+	}
+	public void setbPushOff(boolean bPushOff) {
+		this.bPushOff = bPushOff;
 	}
 }
