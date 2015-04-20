@@ -501,20 +501,23 @@ public class TaxiController {
 			distanceInfo.put("userID", post.getUser().getUserID());
 			distanceInfo.put("distance", "5");
 
-			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsersForNewPost", distanceInfo);
-			if ( userList != null && userList.size() > 0 )
+			if ( post.isbPushOff() == false )
 			{
-				for ( int i = 0; i < userList.size(); i++ )
+				List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.searchUsersForNewPost", distanceInfo);
+				if ( userList != null && userList.size() > 0 )
 				{
-					if ( Util.isEmptyString( userList.get(i).getRegID() ) ) continue;
-					
-					UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userList.get(i) );
+					for ( int i = 0; i < userList.size(); i++ )
+					{
+						if ( Util.isEmptyString( userList.get(i).getRegID() ) ) continue;
+						
+						UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", userList.get(i) );
 
-					// 추천 알림받기 여부 체크
-					if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
-						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), true );
-					else
-						sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), false );
+						// 추천 알림받기 여부 체크
+						if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
+							sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), true );
+						else
+							sendPushMessage(userList.get(i), "newPostByDistance", "5km 내의 새로운 합승 정보가 등록되었습니다.", post.getPostID(), false );
+					}				
 				}				
 			}
 
