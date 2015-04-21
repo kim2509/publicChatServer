@@ -60,17 +60,18 @@ public class ScheduledTasks {
 	public static boolean bExecuting = false;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Scheduled(initialDelay=5000,fixedDelay = 100000)
+	//@Scheduled(initialDelay=5000,fixedDelay = 5000)
 	public void notifyNewUserToNearUsers() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
 		
 		try
 		{
-			if ( ScheduledTasks.bExecuting ) return;
+//			if ( ScheduledTasks.bExecuting ) return;
 			
 			ScheduledTasks.bExecuting = true;
 			logger.info( "notifyNewUserToNearUsers start !!!!!!!!!!!!!!!!" );
-			
+		
+			/*
 			int maxUserNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectLastNewUser");
 					
 			logger.info( "maxUserNo:" + maxUserNo );
@@ -110,6 +111,7 @@ public class ScheduledTasks {
 			
 			Thread.sleep(2000);
 			ScheduledTasks.bExecuting = false;
+			*/
 			
 			logger.info( "notifyNewUserToNearUsers end !!!!!!!!!!!!!!!!" );
 		}
