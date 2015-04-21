@@ -13,10 +13,10 @@
 	xmlns:task="http://www.springframework.org/schema/task">
 
 
-	<bean id="pushService" class="com.dy.common.ScheduledTasks" />
+	<!-- bean id="pushService" class="com.dy.common.ScheduledTasks" />
 	<task:executor id="executor" pool-size="5" />
 	<task:scheduler id="scheduler" pool-size="5" />
 	<task:annotation-driven scheduler="scheduler"
-		executor="executor" />
+		executor="executor" /-->
 
 </beans>

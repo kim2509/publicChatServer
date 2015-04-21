@@ -60,7 +60,7 @@ public class ScheduledTasks {
 	public static boolean bExecuting = false;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Scheduled(initialDelay=5000,fixedDelay = 5000)
+	//@Scheduled(initialDelay=5000,fixedDelay = 5000)
 	public void notifyNewUserToNearUsers() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
 		
