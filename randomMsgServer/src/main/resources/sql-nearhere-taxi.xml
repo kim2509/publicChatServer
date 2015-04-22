@@ -92,13 +92,13 @@
 		userID, type, message, content, fromLatitude, fromLongitude,
 		fromAddress,
 		latitude, longitude, toAddress, sexInfo, numOfUsers,
-		departureDate, departureTime, status, createdDate)
+		departureDate, departureTime, status, departureDateTime, updatedDate, createdDate )
 		values( #{postID},
 		#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude},
 		#{fromLongitude},
 		#{fromAddress}, #{latitude}, #{longitude},
 		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
-		#{departureTime}, #{status}, NOW() );
+		#{departureTime}, #{status}, #{departureDateTime}, NOW(), #{createdDate} );
 	</update>
 
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">
