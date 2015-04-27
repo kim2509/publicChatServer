@@ -106,6 +106,12 @@
 		deletedDate=NOW()
 		where postID=#{postID}
 	</update>
+	
+	<update id="updatePostDepartureDateTime" parameterType="com.nearhere.domain.Post">
+		update post set
+		departureDateTime=#{departureDateTime}
+		where postID=#{postID}
+	</update>
 
 	<update id="updatePostReplyAsDeleted" parameterType="com.nearhere.domain.PostReply">
 		update
@@ -850,5 +856,11 @@
 		update new_user set
 		checked='Y'
 		where userNo=#{userNo};
+	</update>
+	
+	<update id="updateUserAsDeleted" parameterType="com.nearhere.domain.User">
+		update user set
+		isDeleted='Y'
+		where userID=#{userID};
 	</update>
 </mapper>

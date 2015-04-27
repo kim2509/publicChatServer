@@ -1328,6 +1328,19 @@ public class TaxiController {
 
 					logger.info( "push result[" + receiver.getRegID() + "]:" + pushResult.toString() + 
 							" errorCode:[" + pushResult.getErrorCodeName() + "]");
+					
+					try
+					{
+						if ( "NotRegistered".equalsIgnoreCase( pushResult.getErrorCodeName() ) )
+						{
+							sqlSession.update("com.tessoft.nearhere.taxi.updateUserAsDeleted", receiver );
+							logger.info( "update user as deleted.[" + receiver.getUserID() + "]");
+						}
+					}
+					catch( Exception ex )
+					{
+						logger.error( new Exception("update user as deleted error", ex ));
+					}
 				}
 				else
 				{

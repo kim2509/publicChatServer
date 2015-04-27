@@ -12,19 +12,20 @@
 		update post set departureDateTime=#{departureDateTime} where postID=#{postID}
 	</update>
 	
-	<select id="getPostsNotYetFinished" resultType="com.nearhere.domain.Post" parameterType="String">
+	<select id="getPostsNotYetFinished" resultType="com.nearhere.domain.Post">
 		<![CDATA[
-			select * from post where status <> '종료됨'
+			select * from post 
+			where status <> '종료됨'
 			and message not like '%매일%'
 			and deletedDate is null
-			where postID > #{value}
+			and type='taxi'
 			order by postID desc
-			limit 0, 30;
+			limit 0, 50;
 		]]> 	
 	</select>
 	
 	<update id="updatePostAsFinished" parameterType="java.util.List" >
-		update post set status='종료됨', updatedDate=NOW()
+		update post set status='종료됨', finishedBySystem='Y'
 		where postID in (
 		<foreach item="Post" collection="list" open="" close=""
 			separator=",">

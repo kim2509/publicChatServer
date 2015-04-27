@@ -120,7 +120,7 @@ public class ScheduledTasks {
 		}
 	}
 	
-	@Scheduled(cron="0 * * * * ?") // 오전 10시
+	@Scheduled(cron="* 0 21 * * ?") // 밤 9시 정각에 실행
 	public void updatePostAsFinished() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
 		
@@ -148,14 +148,22 @@ public class ScheduledTasks {
 					for ( int i = postList.size() - 1 ; i >= 0 ; i-- )
 					{
 						Post post = postList.get(i);
-						Util.setPostDepartureDateTime(logger, "", post);
+						
+						if ( Util.isEmptyString( post.getDepartureDateTime() ) )
+						{
+							Util.setPostDepartureDateTime(logger, "", post);
+							
+							// departureDateTime update
+							sqlSession.update("com.tessoft.nearhere.taxi.updatePostDepartureDateTime", post );	
+						}
+						
 						Date dDepartureDateTime = Util.getDateFromString(post.getDepartureDateTime(), "yyyy-MM-dd HH:mm:ss");
 						
 						long diff = now.getTime() - dDepartureDateTime.getTime();
 						long diffDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 						if ( diffDays <= 1 )
 						{
-							// 출발일이 2일이상 지난 것만 삭제하기 위해 남겨둠
+							// 출발일이 2일이내 인 것은 삭제목록에서 제거
 							postList.remove(i);
 						}
 					}
@@ -170,7 +178,7 @@ public class ScheduledTasks {
 		}
 		catch( Exception ex )
 		{
-			logger.error( ex );
+			logger.error( new Exception("scheduledTask", ex ) );
 		}
 	}
 }
