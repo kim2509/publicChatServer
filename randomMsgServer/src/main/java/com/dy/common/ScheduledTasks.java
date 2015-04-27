@@ -120,7 +120,7 @@ public class ScheduledTasks {
 		}
 	}
 	
-	@Scheduled(cron="0 0 22 * * ?") // 밤 9시 정각에 실행
+	@Scheduled(cron="0 0 5,17 * * ?") // 오전 오후 5시 정각에 실행
 	public void updatePostAsFinished() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
 		
