@@ -120,7 +120,7 @@ public class ScheduledTasks {
 		}
 	}
 	
-	@Scheduled(cron="* 0 21 * * ?") // 밤 9시 정각에 실행
+	@Scheduled(cron="0 0 22 * * ?") // 밤 9시 정각에 실행
 	public void updatePostAsFinished() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
 		
@@ -168,8 +168,12 @@ public class ScheduledTasks {
 						}
 					}
 					
+					logger.info( "final postList size: " + postList.size() );
+					
 					// 남은 postList 는 모두 종료처리
-					result = sqlSession.update("com.tessoft.nearhere.taxi.admin.updatePostAsFinished", postList );
+					if ( postList.size() > 0 )
+						result = sqlSession.update("com.tessoft.nearhere.taxi.admin.updatePostAsFinished", postList );
+					
 					logger.info( "update result : " + result );
 				}
 			}

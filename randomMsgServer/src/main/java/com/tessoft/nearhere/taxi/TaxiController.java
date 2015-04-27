@@ -94,9 +94,19 @@ public class TaxiController {
 						"00000000-60a6-9d2e-ffff-ffff99d603a9".equals( hash.get("UUID") ))
 				{
 					// 김대용 휴대폰이면
-					String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
-					if ( !Util.isEmptyString( userNo ) )
-						user.setUserNo(userNo);	
+					String userNo = "";
+					
+					try
+					{
+						userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
+						if ( !Util.isEmptyString( userNo ) )
+							user.setUserNo(userNo);	
+					}
+					catch( Exception ex )
+					{
+						logger.error("error while getRandomIDV2", ex );
+					}
+					
 				}
 				
 				user.setUuid( hash.get("UUID").toString() );
@@ -715,7 +725,7 @@ public class TaxiController {
 			
 			List<HashMap> postReadHistory = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostReadHistory", hash );
 			
-			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) &&
+			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) && hash.get("userID") != null &&
 					!hash.get("userID").toString().equals( post.getUser().getUserID() ))
 			{
 				User user = new User();
