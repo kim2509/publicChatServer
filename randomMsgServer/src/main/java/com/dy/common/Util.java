@@ -6,6 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
 
+import org.apache.log4j.Logger;
+
+import com.nearhere.domain.Post;
+
 public class Util {
 
 	public  static String encryptPassword(String password)
@@ -80,6 +84,55 @@ public class Util {
 	{
 		Date d = new Date();
 		return getDateStringFromDate(d, format);
+	}
+	
+	public static void setPostDepartureDateTime( Logger logger, String logIdentifier, Post post) {
+		Date dDepartureDateTime = null;
+		Date dCreatedDateTime = new Date();
+		Date temp = null;
+		
+		try
+		{
+			// 수정할 경우에는 createdDate 가 존재함
+			if ( Util.isEmptyString( post.getCreatedDate() ) )
+				post.setCreatedDate( Util.getDateStringFromDate( dCreatedDateTime, "yyyy-MM-dd HH:mm:ss") );
+			
+			if ( logger != null )
+				logger.info( "debug[" + logIdentifier + "] createdDateTime: " + post.getCreatedDate() );
+			
+			// 출발일자 설정
+			if (post.getDepartureDate().indexOf("오늘") >= 0)
+				dDepartureDateTime = dCreatedDateTime;
+			else
+				dDepartureDateTime = Util.getDateFromString(post.getDepartureDate(), "yyyy-MM-dd");
+			
+			if ( logger != null )
+				logger.info( "debug[" + logIdentifier + "] dDepartureDateTime: " + dDepartureDateTime );
+									
+			if ( post.getDepartureTime().indexOf( "지금" ) >= 0)
+				temp = dCreatedDateTime;
+			else
+				temp = Util.getDateFromString( post.getDepartureTime(), "HH:mm");
+				
+			if ( logger != null )
+				logger.info( "debug[" + logIdentifier + "] temp: " + temp );
+			
+			// 출발시간 설정
+			dDepartureDateTime.setHours(temp.getHours());
+			dDepartureDateTime.setMinutes(temp.getMinutes());
+			dDepartureDateTime.setSeconds(0);
+			
+			post.setDepartureDateTime( Util.getDateStringFromDate( dDepartureDateTime, "yyyy-MM-dd HH:mm:ss"));
+			
+			if ( logger != null )
+				logger.info( "debug[" + logIdentifier + "] post departureDateTime: " + post.getDepartureDateTime() );
+			
+		}
+		catch( Exception ex )
+		{
+			if ( logger != null )
+				logger.error("error while setPostDepartureDateTime : " + ex.getMessage() );
+		}
 	}
 	
 //	public static String getDateDiffFromNow( String dateString )

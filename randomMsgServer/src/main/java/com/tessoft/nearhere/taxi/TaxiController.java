@@ -94,9 +94,19 @@ public class TaxiController {
 						"00000000-60a6-9d2e-ffff-ffff99d603a9".equals( hash.get("UUID") ))
 				{
 					// 김대용 휴대폰이면
-					String userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
-					if ( !Util.isEmptyString( userNo ) )
-						user.setUserNo(userNo);	
+					String userNo = "";
+					
+					try
+					{
+						userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
+						if ( !Util.isEmptyString( userNo ) )
+							user.setUserNo(userNo);	
+					}
+					catch( Exception ex )
+					{
+						logger.error("error while getRandomIDV2", ex );
+					}
+					
 				}
 				
 				user.setUuid( hash.get("UUID").toString() );
@@ -461,45 +471,7 @@ public class TaxiController {
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
 			
-			Date dDepartureDateTime = null;
-			Date dCreatedDateTime = new Date();
-			Date temp = null;
-			
-			post.setCreatedDate( Util.getDateStringFromDate( dCreatedDateTime, "yyyy-MM-dd HH:mm:ss") );
-
-			try
-			{
-				logger.info( "debug[" + logIdentifier + "] createdDateTime: " + post.getCreatedDate() );
-				
-				// 출발일자 설정
-				if (post.getDepartureDate().indexOf("오늘") >= 0)
-					dDepartureDateTime = dCreatedDateTime;
-				else
-					dDepartureDateTime = Util.getDateFromString(post.getDepartureDate(), "yyyy-MM-dd");
-				
-				logger.info( "debug[" + logIdentifier + "] dDepartureDateTime: " + dDepartureDateTime );
-										
-				if ( post.getDepartureTime().indexOf( "지금" ) >= 0)
-					temp = dCreatedDateTime;
-				else
-					temp = Util.getDateFromString( post.getDepartureTime(), "HH:mm");
-							
-				logger.info( "debug[" + logIdentifier + "] temp: " + temp );
-				
-				// 출발시간 설정
-				dDepartureDateTime.setHours(temp.getHours());
-				dDepartureDateTime.setMinutes(temp.getMinutes());
-				dDepartureDateTime.setSeconds(0);
-				
-				post.setDepartureDateTime( Util.getDateStringFromDate( dDepartureDateTime, "yyyy-MM-dd HH:mm:ss"));
-				
-				logger.info( "debug[" + logIdentifier + "] post departureDateTime: " + post.getDepartureDateTime() );
-				
-			}
-			catch( Exception ex )
-			{
-				logger.error("error while inserting post" + ex.getMessage() );
-			}
+			Util.setPostDepartureDateTime( logger, logIdentifier, post);
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
 
@@ -753,7 +725,7 @@ public class TaxiController {
 			
 			List<HashMap> postReadHistory = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostReadHistory", hash );
 			
-			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) &&
+			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) && hash.get("userID") != null &&
 					!hash.get("userID").toString().equals( post.getUser().getUserID() ))
 			{
 				User user = new User();
@@ -1364,7 +1336,21 @@ public class TaxiController {
 
 					Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
 
-					logger.info( "push result:" + pushResult.toString() );		
+					logger.info( "push result[" + receiver.getRegID() + "]:" + pushResult.toString() + 
+							" errorCode:[" + pushResult.getErrorCodeName() + "]");
+					
+					try
+					{
+						if ( "NotRegistered".equalsIgnoreCase( pushResult.getErrorCodeName() ) )
+						{
+							sqlSession.update("com.tessoft.nearhere.taxi.updateUserAsDeleted", receiver );
+							logger.info( "update user as deleted.[" + receiver.getUserID() + "]");
+						}
+					}
+					catch( Exception ex )
+					{
+						logger.error( new Exception("update user as deleted error", ex ));
+					}
 				}
 				else
 				{
@@ -1390,6 +1376,8 @@ public class TaxiController {
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
 
+			Util.setPostDepartureDateTime( logger, logIdentifier, post);
+			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePost", post );
 
 			response.setData(result);

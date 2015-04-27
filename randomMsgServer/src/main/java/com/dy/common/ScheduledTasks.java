@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.nearhere.domain.NewUser;
+import com.nearhere.domain.Post;
 import com.nearhere.domain.User;
 import com.tessoft.nearhere.taxi.TaxiController;
 
@@ -57,8 +59,6 @@ public class ScheduledTasks {
 	}
 	*/
 	
-	public static boolean bExecuting = false;
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	//@Scheduled(initialDelay=5000,fixedDelay = 5000)
 	public void notifyNewUserToNearUsers() {
@@ -68,7 +68,6 @@ public class ScheduledTasks {
 		{
 //			if ( ScheduledTasks.bExecuting ) return;
 			
-			ScheduledTasks.bExecuting = true;
 			logger.info( "notifyNewUserToNearUsers start !!!!!!!!!!!!!!!!" );
 		
 			/*
@@ -118,6 +117,72 @@ public class ScheduledTasks {
 		catch( Exception ex )
 		{
 			logger.error( ex );
+		}
+	}
+	
+	@Scheduled(cron="0 0 22 * * ?") // 밤 9시 정각에 실행
+	public void updatePostAsFinished() {
+//		System.out.println("The time is now " + dateFormat.format(new Date()));
+		
+		try
+		{
+			logger.info( "updatePostAsFinished start !!!!!!!!!!!!!!!!" );
+			
+			// 30개씩
+			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getPostsNotYetFinished");
+			
+			if ( postList == null )
+			{
+				logger.info( "postList is null.");
+			}
+			else
+			{
+				logger.info( "postList.size : " + postList.size() );
+				
+				int result = 0;
+				
+				Date now = new Date();
+				
+				if ( postList != null && postList.size() > 0 )
+				{
+					for ( int i = postList.size() - 1 ; i >= 0 ; i-- )
+					{
+						Post post = postList.get(i);
+						
+						if ( Util.isEmptyString( post.getDepartureDateTime() ) )
+						{
+							Util.setPostDepartureDateTime(logger, "", post);
+							
+							// departureDateTime update
+							sqlSession.update("com.tessoft.nearhere.taxi.updatePostDepartureDateTime", post );	
+						}
+						
+						Date dDepartureDateTime = Util.getDateFromString(post.getDepartureDateTime(), "yyyy-MM-dd HH:mm:ss");
+						
+						long diff = now.getTime() - dDepartureDateTime.getTime();
+						long diffDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+						if ( diffDays <= 1 )
+						{
+							// 출발일이 2일이내 인 것은 삭제목록에서 제거
+							postList.remove(i);
+						}
+					}
+					
+					logger.info( "final postList size: " + postList.size() );
+					
+					// 남은 postList 는 모두 종료처리
+					if ( postList.size() > 0 )
+						result = sqlSession.update("com.tessoft.nearhere.taxi.admin.updatePostAsFinished", postList );
+					
+					logger.info( "update result : " + result );
+				}
+			}
+			
+			logger.info( "updatePostAsFinished end !!!!!!!!!!!!!!!!" );
+		}
+		catch( Exception ex )
+		{
+			logger.error( new Exception("scheduledTask", ex ) );
 		}
 	}
 }

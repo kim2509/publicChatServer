@@ -92,18 +92,24 @@
 		userID, type, message, content, fromLatitude, fromLongitude,
 		fromAddress,
 		latitude, longitude, toAddress, sexInfo, numOfUsers,
-		departureDate, departureTime, status, createdDate)
+		departureDate, departureTime, status, departureDateTime, updatedDate, createdDate )
 		values( #{postID},
 		#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude},
 		#{fromLongitude},
 		#{fromAddress}, #{latitude}, #{longitude},
 		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
-		#{departureTime}, #{status}, NOW() );
+		#{departureTime}, #{status}, #{departureDateTime}, NOW(), #{createdDate} );
 	</update>
 
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">
 		update post set
 		deletedDate=NOW()
+		where postID=#{postID}
+	</update>
+	
+	<update id="updatePostDepartureDateTime" parameterType="com.nearhere.domain.Post">
+		update post set
+		departureDateTime=#{departureDateTime}
 		where postID=#{postID}
 	</update>
 
@@ -850,5 +856,11 @@
 		update new_user set
 		checked='Y'
 		where userNo=#{userNo};
+	</update>
+	
+	<update id="updateUserAsDeleted" parameterType="com.nearhere.domain.User">
+		update user set
+		isDeleted='Y'
+		where userID=#{userID};
 	</update>
 </mapper>
