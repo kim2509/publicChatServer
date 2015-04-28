@@ -161,7 +161,7 @@ public class ScheduledTasks {
 						
 						long diff = now.getTime() - dDepartureDateTime.getTime();
 						long diffDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-						if ( diffDays <= 1 )
+						if ( diffDays <= 1 || post.getMessage().indexOf("매일") >= 0 )
 						{
 							// 출발일이 2일이내 인 것은 삭제목록에서 제거
 							postList.remove(i);

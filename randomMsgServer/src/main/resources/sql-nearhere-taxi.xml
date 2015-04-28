@@ -98,7 +98,7 @@
 		#{fromLongitude},
 		#{fromAddress}, #{latitude}, #{longitude},
 		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
-		#{departureTime}, #{status}, #{departureDateTime}, NOW(), #{createdDate} );
+		#{departureTime}, #{status}, #{departureDateTime}, NOW(), NOW() );
 	</update>
 
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">

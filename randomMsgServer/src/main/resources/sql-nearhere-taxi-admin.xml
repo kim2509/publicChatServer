@@ -16,7 +16,6 @@
 		<![CDATA[
 			select * from post 
 			where status <> '종료됨'
-			and message not like '%매일%'
 			and deletedDate is null
 			and type='taxi'
 			order by postID desc

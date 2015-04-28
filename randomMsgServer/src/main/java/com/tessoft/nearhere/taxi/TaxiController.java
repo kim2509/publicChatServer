@@ -3,6 +3,7 @@ package com.tessoft.nearhere.taxi;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -475,6 +476,26 @@ public class TaxiController {
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
 
+			sendPushMessageOnNewPost(post);
+
+			response.setData( result );
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+
+	private void sendPushMessageOnNewPost(Post post){
+		
+		try
+		{
 			HashMap distanceInfo = new HashMap();
 			distanceInfo.put("fromLatitude", post.getFromLatitude());
 			distanceInfo.put("fromLongitude", post.getFromLongitude());
@@ -500,19 +521,16 @@ public class TaxiController {
 					}				
 				}				
 			}
-
-			response.setData( result );
-
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			else
+			{
+				logger.info( "push offed!!!");
+			}
 		}
 		catch( Exception ex )
 		{
-			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
-			logger.error( ex );
+			logger.error("error in sendPushMessageOnNewPost", ex );
 		}
-
-		return response;
+		
 	}
 
 	public static String makeUrl(HttpServletRequest request)
@@ -1382,6 +1400,24 @@ public class TaxiController {
 
 			response.setData(result);
 
+			// 새 글 푸쉬 메시지를 전송한다.
+			try
+			{
+				Date createdDate = Util.getDateFromString(post.getCreatedDate(), "yyyy-MM-dd HH:mm:ss");
+				Date departureDateTime = Util.getDateFromString(post.getDepartureDateTime(), "yyyy-MM-dd HH:mm:ss");
+				
+				long diff = departureDateTime.getTime() - createdDate.getTime();
+				long diffMinutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+				
+				// 등록한 시간에 비해서 30분 이상 차이 나면 푸쉬 전송
+				if ( diffMinutes >= 30)
+					sendPushMessageOnNewPost( post );
+			}
+			catch( Exception ex )
+			{
+				
+			}
+			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
