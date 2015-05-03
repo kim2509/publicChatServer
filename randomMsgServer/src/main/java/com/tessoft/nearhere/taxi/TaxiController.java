@@ -54,7 +54,7 @@ public class TaxiController {
 		return new BigInteger(130, random).toString(32);
 	}
 
-	@RequestMapping( value ="/taxi")
+	@RequestMapping( value ="/")
 	public ModelAndView index ()
 	{
 		String message = "Hello World, Spring 3.0!";           
@@ -1393,7 +1393,8 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
-
+			Post postBeforeModified = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", post );
+			
 			Util.setPostDepartureDateTime( logger, logIdentifier, post);
 			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePost", post );
@@ -1403,15 +1404,23 @@ public class TaxiController {
 			// 새 글 푸쉬 메시지를 전송한다.
 			try
 			{
-				Date createdDate = Util.getDateFromString(post.getCreatedDate(), "yyyy-MM-dd HH:mm:ss");
+				Date now = new Date();
 				Date departureDateTime = Util.getDateFromString(post.getDepartureDateTime(), "yyyy-MM-dd HH:mm:ss");
 				
-				long diff = departureDateTime.getTime() - createdDate.getTime();
+				long diff = departureDateTime.getTime() - now.getTime();
 				long diffMinutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+				
+				if ( diffMinutes > 0 && "종료됨".equals( postBeforeModified.getStatus() ) )
+				{
+					post.setStatus("진행중");
+					sqlSession.update("com.tessoft.nearhere.taxi.updatePostStatus", post );
+				}
 				
 				// 등록한 시간에 비해서 30분 이상 차이 나면 푸쉬 전송
 				if ( diffMinutes >= 30)
+				{
 					sendPushMessageOnNewPost( post );
+				}
 			}
 			catch( Exception ex )
 			{
@@ -1716,5 +1725,33 @@ public class TaxiController {
 		}
 		
 		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/getMainInfo.do")
+	public @ResponseBody APIResponse getMainInfo( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			List<HashMap> info = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
+
+			response.setData( info );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+			return response;
+		}
 	}
 }

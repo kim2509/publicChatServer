@@ -28,6 +28,7 @@ public class AdminController {
 		
 		try
 		{
+			/*
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getAllPosts" );
 			
 			if ( postList == null )
@@ -71,7 +72,10 @@ public class AdminController {
 				post.setDepartureDateTime( Util.getDateStringFromDate( dDepartureDateTime, "yyyy-MM-dd HH:mm:ss"));
 				
 				sqlSession.update("com.tessoft.nearhere.taxi.admin.updatePostDepartureDateTime", post );
+				
 			}
+			
+			*/
 		}
 		catch(Exception ex )
 		{

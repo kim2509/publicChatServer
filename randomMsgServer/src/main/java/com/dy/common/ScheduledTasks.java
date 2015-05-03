@@ -36,29 +36,6 @@ public class ScheduledTasks {
 		logger.info( "ScheduledTasks created." );
 	}
 	
-	/*
-	@Scheduled(fixedRate = 10000)
-	public void sendPushMessageByNewPost() {
-//		System.out.println("The time is now " + dateFormat.format(new Date()));
-		
-		try
-		{
-			logger.info( "sendPushMessageByNewPost start !!!!!!!!!!!!!!!!" );
-			User user = new User();
-			user.setUserID("kim2509");
-			User existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
-			
-			logger.info( "query: " + mapper.writeValueAsString(existingUser) );
-			
-			logger.info( "sendPushMessageByNewPost ended !!!!!!!!!!!!!!!!" );
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-	}
-	*/
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	//@Scheduled(initialDelay=5000,fixedDelay = 5000)
 	public void notifyNewUserToNearUsers() {
@@ -128,8 +105,8 @@ public class ScheduledTasks {
 		{
 			logger.info( "updatePostAsFinished start !!!!!!!!!!!!!!!!" );
 			
-			// 30개씩
-			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getPostsNotYetFinished");
+			// 50개씩
+			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getPostsNotYetFinished");
 			
 			if ( postList == null )
 			{
@@ -172,7 +149,7 @@ public class ScheduledTasks {
 					
 					// 남은 postList 는 모두 종료처리
 					if ( postList.size() > 0 )
-						result = sqlSession.update("com.tessoft.nearhere.taxi.admin.updatePostAsFinished", postList );
+						result = sqlSession.update("com.tessoft.nearhere.taxi.background.updatePostAsFinished", postList );
 					
 					logger.info( "update result : " + result );
 				}
@@ -183,6 +160,41 @@ public class ScheduledTasks {
 		catch( Exception ex )
 		{
 			logger.error( new Exception("scheduledTask", ex ) );
+		}
+	}
+	
+	@Scheduled(fixedRate = 1000 * 60 * 60 ) // 1시간마다
+	public void updatePostResgion() {
+		
+		try
+		{
+			logger.info( "updatePostResgion start !!!!!!!!!!!!!!!!" );
+			
+			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.selectPostsRegionNull" );
+			
+			int result = 0;
+			
+			for ( int i = 0; i < postList.size(); i++ )
+			{
+				Post post = postList.get(i);
+				
+				String regionName = Util.getRegionName( post.getToAddress() );
+				
+				if ( !Util.isEmptyString( regionName ) )
+				{
+					String region = sqlSession.selectOne("com.tessoft.nearhere.taxi.background.selectRegionNo", regionName );
+					post.setRegion( region );
+					result += sqlSession.update("com.tessoft.nearhere.taxi.background.updatePostRegion", post );
+				}
+			}
+			
+			logger.info( "update total count:" + result );
+			
+			logger.info( "updatePostResgion ended !!!!!!!!!!!!!!!!" );
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
 		}
 	}
 }
