@@ -718,6 +718,7 @@ public class TaxiController {
 
 			hash.put("pageStart", 0 );
 			hash.put("pageSize", 1);
+			hash.remove("status");
 			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostsNearHere", hash);
 
