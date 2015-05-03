@@ -107,6 +107,12 @@
 		where postID=#{postID}
 	</update>
 	
+	<update id="updatePostStatus" parameterType="com.nearhere.domain.Post">
+		update post set
+		status=#{status}
+		where postID=#{postID}
+	</update>
+	
 	<update id="updatePostDepartureDateTime" parameterType="com.nearhere.domain.Post">
 		update post set
 		departureDateTime=#{departureDateTime}
@@ -863,4 +869,14 @@
 		isDeleted='Y'
 		where userID=#{userID};
 	</update>
+	
+	<select id="getMainInfo" parameterType="com.nearhere.domain.User"
+		resultType="java.util.HashMap">
+		select region.regionName as region, count(region) as count from post
+			left outer join region on post.region=region.regionNo
+		where region is not null
+		and type='taxi'
+		group by region.regionName
+		order by region.priority;
+	</select>
 </mapper>

@@ -135,21 +135,70 @@ public class Util {
 		}
 	}
 	
-//	public static String getDateDiffFromNow( String dateString )
-//	{
-//		String dateStart = "11/03/14 09:29:58";
-//		String dateStop = "11/03/14 09:33:43";
-//
-//		// Custom date format
-//		SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm:ss");  
-//
-//		Date d1 = null;
-//		Date d2 = null;
-//		try {
-//		    d1 = format.parse(dateStart);
-//		    d2 = format.parse(dateStop);
-//		} catch (ParseException e) {
-//		    e.printStackTrace();
-//		}    
-//	}
+	public static String getRegionName( String address )
+	{
+		if ( address.indexOf("강북구") >= 0 )
+			return "강북구";
+		else if ( address.indexOf("양천구") >= 0 )
+			return "양천구";
+		else if ( address.indexOf("관악구") >= 0 )
+			return "관악구";
+		else if ( address.indexOf("성동구") >= 0 )
+			return "성동구";
+		else if ( address.indexOf("성북구") >= 0 )
+			return "성북구";
+		else if ( address.indexOf("광진구") >= 0 )
+			return "광진구";
+		else if ( address.indexOf("송파구") >= 0 )
+			return "송파구";
+		else if ( address.indexOf("종로구") >= 0 )
+			return "종로구";
+		else if ( address.indexOf("동작구") >= 0 )
+			return "동작구";
+		else if ( address.indexOf("영등포구") >= 0 )
+			return "영등포구";
+		else if ( address.indexOf("강남구") >= 0 )
+			return "강남구";
+		else if ( address.indexOf("서초구") >= 0 )
+			return "서초구";
+		else if ( address.indexOf("용산구") >= 0 )
+			return "용산구";
+		else if ( address.indexOf("구로구") >= 0 )
+			return "구로구";
+		else if ( address.indexOf("마포구") >= 0 )
+			return "마포구";
+		else if ( address.indexOf("금천구") >= 0 )
+			return "금천구";
+		else if ( address.indexOf("중구") >= 0 )
+			return "중구";
+		else if ( address.startsWith("경기") )
+			return "경기도";
+		else if ( address.startsWith("부산") )
+			return "부산광역시";
+		else if ( address.startsWith("인천") )
+			return "인천광역시";
+		else if ( address.startsWith("대전") )
+			return "대전광역시";
+		else if ( address.startsWith("대구") )
+			return "대구광역시";
+		else if ( address.startsWith("광주광") )
+			return "광주광역시";
+		else if ( address.startsWith("강원") )
+			return "강원도";
+		else if ( address.startsWith("충청북") )
+			return "충청북도";
+		else if ( address.startsWith("충청남") )
+			return "충청남도";
+		else if ( address.startsWith("경상북") )
+			return "경상북도";
+		else if ( address.startsWith("경상남") )
+			return "경상남도";
+		else if ( address.startsWith("전라북") )
+			return "전라북도";
+		else if ( address.startsWith("전라남") )
+			return "전라남도";
+		else if ( address.startsWith("제주") )
+			return "제주도";
+		return "";
+	}
 }

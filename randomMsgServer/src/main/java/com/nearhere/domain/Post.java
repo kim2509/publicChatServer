@@ -16,6 +16,7 @@ public class Post {
 	private String latitude;
 	private String longitude;
 	private String toAddress;
+	private String region;
 	
 	private String message;
 	private String content;
@@ -194,5 +195,11 @@ public class Post {
 	}
 	public void setbPushOff(boolean bPushOff) {
 		this.bPushOff = bPushOff;
+	}
+	public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
 	}
 }
