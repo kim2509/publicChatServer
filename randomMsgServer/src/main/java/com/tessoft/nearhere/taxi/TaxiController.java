@@ -54,7 +54,7 @@ public class TaxiController {
 		return new BigInteger(130, random).toString(32);
 	}
 
-	@RequestMapping( value ="/")
+	@RequestMapping( value ="/taxi/index.do")
 	public ModelAndView index ()
 	{
 		String message = "Hello World, Spring 3.0!";           
