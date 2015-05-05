@@ -870,13 +870,48 @@
 		where userID=#{userID};
 	</update>
 	
-	<select id="getMainInfo" parameterType="com.nearhere.domain.User"
+	<select id="getMainInfo" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap">
-		select region.regionName as region, count(region) as count from post
+		select countInfo, count from (
+		select region.regionName as countInfo, count(region) as count from post
 			left outer join region on post.region=region.regionNo
 		where region is not null
 		and type='taxi'
 		group by region.regionName
-		order by region.priority;
+		order by region.priority
+		) A
+		union all
+		select '현재진행중' as countInfo, count(postID) as count from post
+		where type='taxi'
+		and status='진행중'
+		and deletedDate is null
+		union all
+		select '내합승내역' as countInfo, count(postID) as count from post
+		where userID=#{admin}
+		and type='taxi'
+		and deletedDate is null
+		union all
+		SELECT '1주일' as countInfo, count(postID) as count from post
+		where departureDateTime >= DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
+		and deletedDate is null;
+	</select>
+	
+	<select id="selectNewUsersCount" resultType="String">
+		select count(userNo) as count
+		from user u
+		where u.createdDate > DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
+		and userName is not null
+		and u.sex is not null;
+	</select>
+	
+	<select id="selectNewlyRegisteredUsers" resultType="java.util.HashMap">
+		select userNo, u.userID, userName, profileImageURL, u.sex, 
+			DATE_FORMAT(u.createdDate,'%m-%d') as createdDate, address  from user u
+			left outer join user_location ul on u.userID=ul.userID and ul.locationName='현재위치'
+		where u.createdDate > DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
+		and userName is not null
+		and u.sex is not null
+		order by u.createdDate desc
+		limit 0,5;
 	</select>
 </mapper>

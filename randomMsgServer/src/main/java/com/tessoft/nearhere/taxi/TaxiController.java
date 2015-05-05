@@ -87,6 +87,7 @@ public class TaxiController {
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
+			/*
 			if ( hash.containsKey("UUID") )
 			{
 				// 기존 UUID 가 있는지 검사
@@ -112,6 +113,7 @@ public class TaxiController {
 				
 				user.setUuid( hash.get("UUID").toString() );
 			}
+			*/
 			
 			getRandomIDCommon(user, response, logIdentifier);
 
@@ -1738,9 +1740,25 @@ public class TaxiController {
 		{			
 			String logIdentifier = requestLogging(request, bodyString);
 
-			List<HashMap> info = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			List<HashMap> info = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo", requestInfo);
+			List<HashMap> newUsers = sqlSession.selectList("com.tessoft.nearhere.taxi.selectNewlyRegisteredUsers");
+			String newUserCount = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectNewUsersCount");
+			
+			for ( int i = 0; i < newUsers.size(); i++ )
+			{
+				HashMap hash = newUsers.get(i);
+				if ( hash.get("address") != null && !Util.isEmptyString( hash.get("address").toString() ) )
+					hash.put("address", Util.getRegionName(hash.get("address").toString() ) );
+			}
+			
+			HashMap newUserInfo = new HashMap();
+			newUserInfo.put("userList", newUsers );
+			newUserInfo.put("newUserCount", newUserCount );
 
 			response.setData( info );
+			response.setData2( newUserInfo );
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
