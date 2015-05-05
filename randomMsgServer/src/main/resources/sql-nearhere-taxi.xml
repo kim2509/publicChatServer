@@ -887,7 +887,7 @@
 		and deletedDate is null
 		union all
 		select '내합승내역' as countInfo, count(postID) as count from post
-		where userID=#{admin}
+		where userID=#{userID}
 		and type='taxi'
 		and deletedDate is null
 		union all
