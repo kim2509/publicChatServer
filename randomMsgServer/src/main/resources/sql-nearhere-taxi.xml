@@ -917,10 +917,13 @@
 	
 	<select id="selectProgressingPosts" resultType="java.util.HashMap">
 		<![CDATA[
-			select * from post
-			where type='taxi'
-			and status='진행중'
-			and deletedDate is null
+			select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
+				u.userName, u.profileImageURL
+			from post p
+				left outer join user u on p.userID=u.userID
+			where p.type='taxi'
+			and p.status='진행중'
+			and p.deletedDate is null
 		]]>
 	</select>
 	

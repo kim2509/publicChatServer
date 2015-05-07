@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.dy.common.Constants;
 import com.dy.domain.Chat;
 import com.dy.domain.ChatMessage;
-import com.dy.domain.User;
 import com.dy.domain.UserProfileKeyword;
 import com.dy.domain.UserProfileKeywordDic;
 
@@ -62,87 +61,6 @@ public class BaseController implements BeanFactoryAware {
 		return userList;
 	}
 	*/
-	
-	@RequestMapping( value ="/registerAsRandomID.do", method = RequestMethod.POST)
-	public @ResponseBody User registerAsRandomID(ModelMap model, @RequestBody String bodyString ) {
-		
-		User user = null;
-		
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			
-			user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			
-			if ( user.getUserNo() == 0 )
-			{
-				sqlSession.insert("com.dy.mapper.insertUser", user );
-				sqlSession.insert("com.dy.mapper.insertUserLocation", user );
-				user = sqlSession.selectOne( "com.dy.mapper.getUser",  user.getUserNo() );
-			}
-			else
-			{
-				user = sqlSession.selectOne( "com.dy.mapper.getUser",  user.getUserNo() );
-				sqlSession.update("com.dy.mapper.updateUserLocation", user );
-			}
-		}
-		catch( Exception ex )
-		{
-			ex.printStackTrace();
-		}
-		
-		return user;
-	}
-	
-	@RequestMapping( value ="/saveUserSex.do", method = RequestMethod.POST)
-	public @ResponseBody User saveUserSex(ModelMap model, @RequestBody String bodyString ) {
-		
-		User user = null;
-		
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			
-			user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			
-			sqlSession.update("com.dy.mapper.updateUserSex", user );
-			
-			user = sqlSession.selectOne( "com.dy.mapper.getUser",  user.getUserNo() );
-		}
-		catch( Exception ex )
-		{
-			ex.printStackTrace();
-		}
-		
-		return user;
-	}
-	
-	@RequestMapping( value ="/saveBirthYearAndGetUserProfileKeywords.do", method = RequestMethod.POST)
-	public @ResponseBody List<UserProfileKeywordDic> saveBirthYearAndGetUserProfileKeywords(ModelMap model, @RequestBody String bodyString ) {
-		
-		List<UserProfileKeywordDic> arResult = null;
-		
-		User user = null;
-		
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			
-			user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			
-			sqlSession.update("com.dy.mapper.updateUserAge", user );
-			
-			arResult = sqlSession.selectList("com.dy.mapper.getUserProfileKeywordDic");
-			
-			
-		}
-		catch( Exception ex )
-		{
-			ex.printStackTrace();
-		}
-		
-		return arResult;
-	}
 	
 	@RequestMapping( value ="/saveUserKeywords.do", method = RequestMethod.POST)
 	public @ResponseBody String saveUserKeywords(ModelMap model, @RequestBody String bodyString ) {
@@ -260,52 +178,6 @@ public class BaseController implements BeanFactoryAware {
 		}
 		
 		return null;
-	}
-	
-	@RequestMapping( value ="/chatList.do", method = RequestMethod.POST)
-	public @ResponseBody List<Chat> chatList( ModelMap model, @RequestBody String bodyString )
-	{
-		List<Chat> chatList = null;
-		
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			chatList = sqlSession.selectList("com.dy.mapper.chatList", user );
-			
-			for ( Chat chat : chatList )
-			{
-				HashMap<String, String> hash = sqlSession.selectOne("com.dy.mapper.lastChatPerUser", chat );
-				chat.setLastMessage( hash.get("msg") );
-				Object tp = hash.get("createDate");
-				chat.setDateTime( tp.toString() );
-			}
-		}
-		catch( Exception ex )
-		{
-			ex.printStackTrace();
-		}
-		
-		return chatList;
-	}
-
-	@RequestMapping( value ="/hometownUserList.do", method = RequestMethod.POST)
-	public @ResponseBody List<HashMap<String,String>> hometownUserList( ModelMap model, @RequestBody String bodyString )
-	{
-		List<HashMap<String,String>> hometownUserList = null;
-		
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			hometownUserList = sqlSession.selectList("com.dy.mapper.hometownUserList", user );
-		}
-		catch( Exception ex )
-		{
-			ex.printStackTrace();
-		}
-		
-		return hometownUserList;
 	}
 	
 	@RequestMapping( value ="/getMetaInfo.do", method = RequestMethod.POST)
