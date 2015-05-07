@@ -914,4 +914,39 @@
 		order by u.createdDate desc
 		limit 0,5;
 	</select>
+	
+	<select id="selectProgressingPosts" resultType="java.util.HashMap">
+		<![CDATA[
+			select * from post
+			where type='taxi'
+			and status='진행중'
+			and deletedDate is null
+		]]>
+	</select>
+	
+	<select id="selectMyPosts" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+			select '내합승내역' as countInfo, count(postID) as count from post
+			where userID=#{userID}
+			and type='taxi'
+			and deletedDate is null
+		]]>
+	</select>
+	
+	<select id="selectPostsWithin1Week" resultType="java.util.HashMap">
+		<![CDATA[
+			SELECT '1주일' as countInfo, count(postID) as count from post
+			where departureDateTime >= DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
+			and deletedDate is null;
+		]]>
+	</select>
+	
+	<select id="selectsPostsNearHereV2" resultType="java.util.HashMap">
+		<![CDATA[
+			select * from post
+			where type='taxi'
+			and status='진행중'
+			and deletedDate is null
+		]]>
+	</select>
 </mapper>
