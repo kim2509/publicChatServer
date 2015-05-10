@@ -1,8 +1,6 @@
 package com.dy.common;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -10,17 +8,11 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.nearhere.domain.NewUser;
 import com.nearhere.domain.Post;
-import com.nearhere.domain.User;
-import com.tessoft.nearhere.taxi.TaxiController;
 
 public class ScheduledTasks {
-
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
 	protected static Logger logger = Logger.getLogger(ScheduledTasks.class.getName());
 	
@@ -36,7 +28,6 @@ public class ScheduledTasks {
 		logger.info( "ScheduledTasks created." );
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	//@Scheduled(initialDelay=5000,fixedDelay = 5000)
 	public void notifyNewUserToNearUsers() {
 //		System.out.println("The time is now " + dateFormat.format(new Date()));
@@ -138,9 +129,9 @@ public class ScheduledTasks {
 						
 						long diff = now.getTime() - dDepartureDateTime.getTime();
 						long diffDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-						if ( diffDays < 1 || post.getMessage().indexOf("매일") >= 0 )
+						if ( diffDays <= 1 || post.getMessage().indexOf("매일") >= 0 )
 						{
-							// 출발일이 1일이내 인 것은 삭제목록에서 제거
+							// 출발일이 2일이내 인 것은 삭제목록에서 제거
 							postList.remove(i);
 						}
 					}
