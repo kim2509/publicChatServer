@@ -14,10 +14,12 @@
 	<style type="text/css">
 		table, td{margin:0px;}
 		#wrapper{margin-top:15px;padding:0px;padding-bottom:20px;}
-		.countItem{height:30px;}
 		.region tr{height:40px;}
 		.region td{padding-left:5px;padding-right:5px;text-align:center;font-size:14px;}
+		.countItem { clear:both;margin-top:10px; }
 		#divCountPerResion {margin-top:10px}
+		#progressingPostItems {margin-top:10px;margin-bottom:10px;}
+		.postItem{ clear:both;height:60px;margin-top:5px;margin-bottom:5px; }
 	</style>
 	
 	<script language="javascript">
@@ -34,6 +36,8 @@
 	
 	function getCountInfo( userID )
 	{
+		userID='user27';
+		
 		jQuery.ajax({
 			type : "POST",
 			url : "/nearhere/taxi/getMainInfo.do",
@@ -44,6 +48,10 @@
 				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
 				// TODO
 				try {
+					
+					console.log( JSON.stringify( data ) );
+
+					displayPosts( data );
 					
 					displayCountInfo( data );
 					
@@ -61,6 +69,24 @@
 				alert("에러발생");
 			}
 		});
+	}
+	
+	function displayPosts( data )
+	{
+		var source   = $('#postT').html();
+		var template = Handlebars.compile(source);
+		var html = template(data.data2);
+		$('#progressingPostItems').html(html);
+
+		source   = $('#myPostT').html();
+		template = Handlebars.compile(source);
+		html = template(data.data2);
+		$('#myPostItems').html(html);
+		
+		source   = $('#within1WeekPostT').html();
+		template = Handlebars.compile(source);
+		html = template(data.data2);
+		$('#postsWithin1Week').html(html);
 	}
 	
 	function displayCountInfo( data )
@@ -85,8 +111,6 @@
 	
 	function displayNewUsers( data )
 	{
-		console.log( JSON.stringify( data ) );
-		
 		var source   = $('#userT').html();
 		var template = Handlebars.compile(source);
 		var html = template(data.data2);
@@ -117,16 +141,49 @@
 		<div class="countItem">
 			<span>현재 진행중인 합승내역</span>
 			<span style="float:right" id='curItems'></span>
+			<div id="progressingPostItems">
+			</div>
 		</div>
+		
+		<script id="postT" type="text/x-handlebars-template">
+		{{#each progressingPosts}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+		
 		<div class="countItem">이근처 합승내역</div>
 		<div class="countItem">
 			<span>내가 등록한 합승내역</span>
 			<span style="float:right" id='myItems'></span>
+			<div id="myPostItems">
+			</div>
 		</div>
+		<script id="myPostT" type="text/x-handlebars-template">
+		{{#each myPosts}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+		
 		<div class="countItem">
 			<span>최근 1주일내 합승내역</span>
 			<span style="float:right" id='recentItems'></span>
+			<div id="postsWithin1Week">
+			</div>
 		</div>
+		<script id="within1WeekPostT" type="text/x-handlebars-template">
+		{{#each postsWithin1Week}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
 	</div>
 	
 	<div style="margin-top:20px;">
