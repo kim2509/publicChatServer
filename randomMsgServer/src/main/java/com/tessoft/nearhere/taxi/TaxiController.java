@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -126,7 +128,7 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
-			logger.error( ex );
+			logger.error( new Exception("회원가입 도중 오류가 발생했습니다.", ex ) );
 			return response;
 		}
 	}
@@ -1753,12 +1755,15 @@ public class TaxiController {
 					hash.put("address", Util.getRegionName(hash.get("address").toString() ) );
 			}
 			
-			HashMap newUserInfo = new HashMap();
-			newUserInfo.put("userList", newUsers );
-			newUserInfo.put("newUserCount", newUserCount );
+			List<HashMap> progressingPosts = sqlSession.selectList("com.tessoft.nearhere.taxi.selectProgressingPosts", requestInfo);
+			
+			HashMap additionalData = new HashMap();
+			additionalData.put("progressingPosts", progressingPosts );
+			additionalData.put("userList", newUsers );
+			additionalData.put("newUserCount", newUserCount );
 
 			response.setData( info );
-			response.setData2( newUserInfo );
+			response.setData2( additionalData );
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
