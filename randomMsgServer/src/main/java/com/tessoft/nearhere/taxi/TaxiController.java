@@ -1755,10 +1755,20 @@ public class TaxiController {
 					hash.put("address", Util.getRegionName(hash.get("address").toString() ) );
 			}
 			
-			List<HashMap> progressingPosts = sqlSession.selectList("com.tessoft.nearhere.taxi.selectProgressingPosts", requestInfo);
-			
 			HashMap additionalData = new HashMap();
+			
+			List<HashMap> progressingPosts = sqlSession.selectList("com.tessoft.nearhere.taxi.selectProgressingPosts", requestInfo);
 			additionalData.put("progressingPosts", progressingPosts );
+			
+			List<HashMap> myPosts = sqlSession.selectList("com.tessoft.nearhere.taxi.selectMyPosts", requestInfo);
+			additionalData.put("myPosts", myPosts );
+			
+			List<HashMap> postsWithin1Week = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsWithin1Week", requestInfo);
+			additionalData.put("postsWithin1Week", postsWithin1Week );
+			
+			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectsPostsNearHereV2", requestInfo);
+			additionalData.put("postsNearHere", postsNearHere );
+			
 			additionalData.put("userList", newUsers );
 			additionalData.put("newUserCount", newUserCount );
 

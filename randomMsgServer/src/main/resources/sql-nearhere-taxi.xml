@@ -929,27 +929,37 @@
 	
 	<select id="selectMyPosts" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
-			select '내합승내역' as countInfo, count(postID) as count from post
-			where userID=#{userID}
-			and type='taxi'
-			and deletedDate is null
+			select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
+				u.userName, u.profileImageURL
+			from post p
+				left outer join user u on p.userID=u.userID
+			where p.userID=#{userID}
+			and p.type='taxi'
+			and p.deletedDate is null
 		]]>
 	</select>
 	
 	<select id="selectPostsWithin1Week" resultType="java.util.HashMap">
 		<![CDATA[
-			SELECT '1주일' as countInfo, count(postID) as count from post
-			where departureDateTime >= DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
-			and deletedDate is null;
+			select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
+				u.userName, u.profileImageURL
+			from post p
+				left outer join user u on p.userID=u.userID
+			where p.departureDateTime >= DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
+			and p.type='taxi'
+			and p.deletedDate is null;
 		]]>
 	</select>
 	
 	<select id="selectsPostsNearHereV2" resultType="java.util.HashMap">
 		<![CDATA[
-			select * from post
-			where type='taxi'
-			and status='진행중'
-			and deletedDate is null
+			select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
+				u.userName, u.profileImageURL
+			from post p
+				left outer join user u on p.userID=u.userID
+			where p.type='taxi'
+			and p.status='진행중'
+			and p.deletedDate is null
 		]]>
 	</select>
 </mapper>
