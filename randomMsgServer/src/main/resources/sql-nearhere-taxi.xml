@@ -947,7 +947,8 @@
 				left outer join user u on p.userID=u.userID
 			where p.departureDateTime >= DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
 			and p.type='taxi'
-			and p.deletedDate is null;
+			and p.deletedDate is null
+			order by p.createdDate desc;
 		]]>
 	</select>
 	
