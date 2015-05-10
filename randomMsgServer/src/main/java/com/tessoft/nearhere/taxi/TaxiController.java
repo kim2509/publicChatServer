@@ -492,7 +492,7 @@ public class TaxiController {
 			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
-
+		
 		return response;
 	}
 
@@ -529,6 +529,12 @@ public class TaxiController {
 			{
 				logger.info( "push offed!!!");
 			}
+			
+			User daeyong = new User();
+			daeyong.setUserID("user27");
+			daeyong.setUserNo("27");
+			daeyong = selectUser( daeyong );
+			sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
 		}
 		catch( Exception ex )
 		{
