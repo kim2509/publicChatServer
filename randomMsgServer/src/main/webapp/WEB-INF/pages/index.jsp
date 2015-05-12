@@ -31,10 +31,12 @@
 			return text;
 		});
 		
-		getCountInfo('user27');
+		//getMainInfo('user27');
+		Android.sendEvent('ready');
+		Android.sendEvent('refreshLocation');
 	});
 	
-	function getCountInfo( userID )
+	function getMainInfo( userID )
 	{
 		userID='user27';
 		
@@ -122,6 +124,16 @@
 	function updateCurrentLocation( location )
 	{
 		$('#curLocation').html( location );
+	}
+	
+	function refreshLocation()
+	{
+		Android.sendEvent('refreshLocation');
+	}
+	
+	function viewMoreUsers()
+	{
+		Android.goURL('viewMoreUsers.do', 'slideInFromRight');
 	}
 	
 	</script>
@@ -240,7 +252,7 @@
 		</script>
 
 		<div style="margin-top:10px;">
-			<div style="float:right">더보기<span id="newUserCount"></span></div>
+			<div style="float:right"><a href="javascript:viewMoreUsers();">더보기<span id="newUserCount"></span></a></div>
 			<span>최근에 가입한 회원</span>
 			<div id="newUsers" style="margin-top:10px;">
 			

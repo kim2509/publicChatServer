@@ -56,13 +56,6 @@ public class TaxiController {
 		return new BigInteger(130, random).toString(32);
 	}
 
-	@RequestMapping( value ="/taxi/index.do")
-	public ModelAndView index ()
-	{
-		String message = "Hello World, Spring 3.0!";           
-		return new ModelAndView("index", "message", message);
-	}
-
 	private boolean isValidateForRegister( User user, APIResponse response )
 	{
 		if ( user.getUserID() == null || "".equals( user.getUserID() ) )
@@ -1780,6 +1773,57 @@ public class TaxiController {
 
 			response.setData( info );
 			response.setData2( additionalData );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+			return response;
+		}
+	}
+	
+	@RequestMapping( value ="/taxi/index.do")
+	public ModelAndView index ()
+	{
+		String message = "Hello World, Spring 3.0!";           
+		return new ModelAndView("index", "message", message);
+	}
+	
+	@RequestMapping( value ="/taxi/viewMoreUsers.do")
+	public ModelAndView viewMoreUsers()
+	{
+		return new ModelAndView("viewMoreUsers");
+	}
+	
+	@RequestMapping( value ="/taxi/getMoreUsers.do")
+	public @ResponseBody APIResponse getMoreUsers( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			List<HashMap> newUsers = sqlSession.selectList("com.tessoft.nearhere.taxi.selectNewlyRegisteredUsersMore");
+			
+			for ( int i = 0; i < newUsers.size(); i++ )
+			{
+				HashMap hash = newUsers.get(i);
+				if ( hash.get("address") != null && !Util.isEmptyString( hash.get("address").toString() ) )
+					hash.put("address", Util.getRegionName(hash.get("address").toString() ) );
+			}
+			
+			HashMap additionalData = new HashMap();
+			additionalData.put("userList", newUsers);
+			
+			response.setData( additionalData );
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
