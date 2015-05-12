@@ -915,6 +915,17 @@
 		limit 0,5;
 	</select>
 	
+	<select id="selectNewlyRegisteredUsersMore" resultType="java.util.HashMap">
+		select userNo, u.userID, userName, profileImageURL, u.sex, 
+			DATE_FORMAT(u.createdDate,'%m-%d') as createdDate, address  from user u
+			left outer join user_location ul on u.userID=ul.userID and ul.locationName='현재위치'
+		where u.createdDate > DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
+		and userName is not null
+		and u.sex is not null
+		order by u.createdDate desc
+		limit 0,50;
+	</select>
+	
 	<select id="selectProgressingPosts" resultType="java.util.HashMap">
 		<![CDATA[
 			select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
