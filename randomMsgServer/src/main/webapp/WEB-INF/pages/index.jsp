@@ -26,10 +26,7 @@
 	
 	jQuery(document).ready(function() {
 
-		Handlebars.registerHelper('printCount', function(text) {
-			if ( text == '' || text == null ) return 0;
-			return text;
-		});
+		Handlebars.registerHelper('printRegion', printRegion );
 		
 		//getMainInfo('user27');
 		Android.sendEvent('ready');
@@ -121,9 +118,45 @@
 		$('#newUserCount').html('(' + data.data2.newUserCount + ')');
 	}
 	
-	function updateCurrentLocation( location )
+	function updateCurrentLocation( latitude, longitude, location )
 	{
 		$('#curLocation').html( location );
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/taxi/getPostsNearHereAjax.do",
+			data : JSON.stringify( {"fromLatitude":latitude, "fromLongitude":longitude, "distance":"5"} ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType:"application/json; charset=UTF-8",
+			success : function(data) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+					
+					console.log( JSON.stringify( data ) );
+
+					displayPostsNearHere( data );
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생");
+			}
+		});
+	}
+	
+	function displayPostsNearHere( data )
+	{
+		var source   = $('#postNearHereT').html();
+		var template = Handlebars.compile(source);
+		var html = template(data.data);
+		$('#postsNearHere').html(html);
 	}
 	
 	function refreshLocation()
@@ -134,6 +167,23 @@
 	function viewMoreUsers()
 	{
 		Android.goURL('viewMoreUsers.do', 'slideInFromRight');
+	}
+	
+	function printRegion(text, regionName ) {
+		if ( text == '' || text == null ) return 0;
+		
+		if ( regionName != null && regionName != '' )
+		{
+			return new Handlebars.SafeString(
+					"<a href='javascript:viewRegion(\"" + regionName + "\");'>" + regionName + "</a>(" + text + ")"
+					);
+		}
+		else return text;
+	}
+	
+	function viewRegion( regionName )
+	{
+		Android.goURL('viewRegion.do', 'slideInFromRight');
 	}
 	
 	</script>
@@ -166,7 +216,20 @@
 		{{/each}}		
 		</script>
 		
-		<div class="countItem">이근처 합승내역</div>
+		<div class="countItem">
+			<span>이근처 합승내역</span>
+			<div id="postsNearHere">
+			</div>
+		</div>
+		<script id="postNearHereT" type="text/x-handlebars-template">
+		{{#each postsNearHere}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+		
 		<div class="countItem">
 			<span>내가 등록한 합승내역</span>
 			<span style="float:right" id='myItems'></span>
@@ -208,45 +271,45 @@
 		<script id="regionT" type="text/x-handlebars-template">
 			<table class="region">
 				<tr>
-					<td>강남구({{printCount 강남구}})</td><td>강북구({{printCount 강북구}})</td>
-					<td>관악구({{printCount 관악구}})</td><td>광진구({{printCount 광진구}})</td>
+					<td>{{printRegion 강남구 "강남구"}}</td><td>{{printRegion 강북구 "강북구"}}</td>
+					<td>{{printRegion 관악구 "관악구"}}</td><td>{{printRegion 광진구 "광진구"}}</td>
 				</tr>
 				<tr>
-					<td>구로구({{printCount 구로구}})</td><td>금천구({{printCount 금천구}})</td>
-					<td>동작구({{printCount 동작구}})</td><td>마포구({{printCount 마포구}})</td>
+					<td>{{printRegion 구로구 "구로구"}}</td><td>{{printRegion 금천구 "금천구"}}</td>
+					<td>{{printRegion 동작구 "동작구"}}</td><td>{{printRegion 마포구 "마포구"}}</td>
 				</tr>
 				<tr>
-					<td>송파구({{printCount 송파구}})</td><td>서초구({{printCount 서초구}})</td>
-					<td>성동구({{printCount 성동구}})</td><td>성북구({{printCount 성북구}})</td>
+					<td>{{printRegion 송파구 "송파구"}}</td><td>{{printRegion 서초구 "서초구"}}</td>
+					<td>{{printRegion 성동구 "성동구"}}</td><td>{{printRegion 성북구 "성북구"}}</td>
 				</tr>
 				<tr>
-					<td>양천구({{printCount 양천구}})</td><td>영등포구({{printCount 영등포구}})</td>
-					<td>용산구({{printCount 용산구}})</td><td>종로구({{printCount 종로구}})</td>
+					<td>{{printRegion 양천구 "양천구"}}</td><td>{{printRegion 영등포구 "영등포구"}}</td>
+					<td>{{printRegion 용산구 "용산구"}}</td><td>{{printRegion 종로구 "종로구"}}</td>
 				</tr>
 				<tr>
-					<td>중구({{printCount 중구}})</td><td> </td><td> </td><td> </td>
+					<td>{{printRegion 중구 "중구"}}</td><td> </td><td> </td><td> </td>
 				</tr>
 			</table>
 
 			<table class="region">
 				<tr>
-					<td>경기도({{printCount 경기도}})</td><td>부산광역시({{부산광역시}})</td>
-					<td>인천광역시({{printCount 인천광역시}})</td>
+					<td>{{printRegion 경기도 "경기도"}}</td><td>{{printRegion 부산광역시 "부산광역시"}}</td>
+					<td>{{printRegion 인천광역시 "인천광역시"}}</td>
 				</tr>
 				<tr>
-					<td>대전광역시({{printCount 대전광역시}})</td><td>대구광역시({{printCount 대구광역시}})</td>
-					<td>광주광역시({{printCount 광주광역시}})</td>
+					<td>{{printRegion 대전광역시 "대전광역시"}}</td><td>{{printRegion 대구광역시 "대구광역시"}}</td>
+					<td>{{printRegion 광주광역시 "광주광역시"}}</td>
 				</tr>
 				<tr>
-					<td>강원도({{printCount 강원도}})</td><td>충청북도({{printCount 충청북도}})</td>
-					<td>충청남도({{printCount 충청남도}})</td>
+					<td>{{printRegion 강원도 "강원도"}}</td><td>{{printRegion 충청북도 "충청북도"}}</td>
+					<td>{{printRegion 충청남도 "충청남도"}}</td>
 				</tr>
 				<tr>
-					<td>경상북도({{printCount 경상북도}})</td><td>경상남도({{printCount 경상남도}})</td>
-					<td>전라북도({{printCount 전라북도}})</td>
+					<td>{{printRegion 경상북도 "경상북도"}}</td><td>{{printRegion 경상남도 "경상남도"}}</td>
+					<td>{{printRegion 전라북도 "전라북도"}}</td>
 				</tr>
 				<tr>
-					<td>전라남도({{printCount 전라남도}})</td><td>제주도({{printCount 제주도}})</td>
+					<td>{{printRegion 전라남도 "전라남도"}}</td><td>{{printRegion 제주도 "제주도"}}</td>
 				</tr>
 			</table>
 		</script>

@@ -1765,9 +1765,6 @@ public class TaxiController {
 			List<HashMap> postsWithin1Week = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsWithin1Week", requestInfo);
 			additionalData.put("postsWithin1Week", postsWithin1Week );
 			
-			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectsPostsNearHereV2", requestInfo);
-			additionalData.put("postsNearHere", postsNearHere );
-			
 			additionalData.put("userList", newUsers );
 			additionalData.put("newUserCount", newUserCount );
 
@@ -1801,6 +1798,12 @@ public class TaxiController {
 		return new ModelAndView("viewMoreUsers");
 	}
 	
+	@RequestMapping( value ="/taxi/viewRegion.do")
+	public ModelAndView viewRegion()
+	{
+		return new ModelAndView("viewRegion");
+	}
+	
 	@RequestMapping( value ="/taxi/getMoreUsers.do")
 	public @ResponseBody APIResponse getMoreUsers( HttpServletRequest request, @RequestBody String bodyString )
 	{
@@ -1823,6 +1826,39 @@ public class TaxiController {
 			HashMap additionalData = new HashMap();
 			additionalData.put("userList", newUsers);
 			
+			response.setData( additionalData );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+			return response;
+		}
+	}
+	
+	@RequestMapping( value ="/taxi/getPostsNearHereAjax.do")
+	public @ResponseBody APIResponse getPostsNearHereAjax( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			HashMap additionalData = new HashMap();
+			
+			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectsPostsNearHereV2", requestInfo);
+			additionalData.put("postsNearHere", postsNearHere );
+
 			response.setData( additionalData );
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
