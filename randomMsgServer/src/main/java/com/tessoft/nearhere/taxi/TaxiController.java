@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.google.android.gcm.server.Message;
@@ -29,6 +30,7 @@ import com.google.android.gcm.server.Sender;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.APIResponseV2;
 import com.nearhere.domain.Notice;
+import com.nearhere.domain.NoticeV2;
 import com.nearhere.domain.Post;
 import com.nearhere.domain.PostReply;
 import com.nearhere.domain.User;
@@ -1271,8 +1273,6 @@ public class TaxiController {
 		return response;
 	}
 
-	private String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
-	private int push_retry_cnt = 5;
 	private void sendPushMessage( User receiver, String type, String msg, String param, boolean bSendPush ) throws Exception
 	{
 		try
@@ -1304,7 +1304,7 @@ public class TaxiController {
 
 			if ( bSendPush )
 			{
-				Sender sender = new Sender(GCM_API_KEY);
+				Sender sender = new Sender( Constants.GCM_API_KEY );
 
 				Message message = null;
 
@@ -1356,7 +1356,7 @@ public class TaxiController {
 								.build();
 					}
 
-					Result pushResult = sender.send(message, receiver.getRegID() , push_retry_cnt);
+					Result pushResult = sender.send(message, receiver.getRegID() , Constants.push_retry_count );
 
 					logger.info( "push result[" + receiver.getRegID() + "]:" + pushResult.toString() + 
 							" errorCode:[" + pushResult.getErrorCodeName() + "]");
@@ -1616,7 +1616,10 @@ public class TaxiController {
 	@RequestMapping( value ="/taxi/getNotice.do")
 	public ModelAndView getNotice( String noticeID )
 	{
-		Notice notice = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectNotice", noticeID );
+		NoticeV2 notice = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectNotice", noticeID );
+		
+		if ( "EVENT".equals( notice.getType() ) )
+			return new ModelAndView( notice.getLandingURL() );
 		
 		return new ModelAndView("notice", "notice", notice);
 	}

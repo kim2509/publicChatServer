@@ -7,5 +7,7 @@ public class Constants {
 	public static String CSS_PATH = "/nearhere/css/";
 	public static String IMAGE_PATH = "/nearhere/image/";
 	public static String JS_PATH = "/nearhere/js/";
+	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
+	public static int push_retry_count = 5;
 	
 }

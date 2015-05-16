@@ -170,7 +170,7 @@
 	}
 	
 	function printRegion(text, regionName ) {
-		if ( text == '' || text == null ) return 0;
+		if ( text == '' || text == null ) text = 0;
 		
 		if ( regionName != null && regionName != '' )
 		{

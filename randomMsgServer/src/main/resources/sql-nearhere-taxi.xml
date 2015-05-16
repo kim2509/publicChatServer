@@ -508,7 +508,7 @@
 		order by createdDate desc;
 	</select>
 
-	<select id="selectNotice" resultType="com.nearhere.domain.Notice"
+	<select id="selectNotice" resultType="com.nearhere.domain.NoticeV2"
 		parameterType="String">
 		select * from
 		notice_list
