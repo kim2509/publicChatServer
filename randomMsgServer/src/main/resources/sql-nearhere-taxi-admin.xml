@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.taxi.admin">
+
+	<select id="selectUsersForEventPush" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.User">
+		select * from user
+		where regID is not null
+		and appVersion > '1.33'
+	</select>
+	
+	<select id="selectAdminForEventPush" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.User">
+		select * from user
+		where userID='user27'
+	</select>
+	
+</mapper>

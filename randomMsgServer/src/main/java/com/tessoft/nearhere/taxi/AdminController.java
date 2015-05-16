@@ -1,88 +1,135 @@
 package com.tessoft.nearhere.taxi;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
 import com.dy.common.Util;
-import com.nearhere.domain.Post;
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Result;
+import com.google.android.gcm.server.Sender;
+import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
+import com.nearhere.domain.UserPushMessage;
 
 @Controller
-public class AdminController {
+public class AdminController extends BaseController{
 
-	@Autowired
-	public SqlSession sqlSession;
-	protected static Logger logger = Logger.getLogger(AdminController.class.getName());
-	
-	@RequestMapping( value ="/admin")
-	public ModelAndView index ()
+	@RequestMapping( value ="/admin/index.do")
+	public ModelAndView index ( HttpServletRequest request )
 	{
-		String message = "Hello World, Spring 3.0!";
-		
 		try
 		{
-			/*
-			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getAllPosts" );
-			
-			if ( postList == null )
-				message = "null";
-			else
-				message = "not null";
-			
-			logger.info( "postList Size:" + postList.size() );
-
-			for ( int i = 0; i < postList.size(); i++ )
-			{
-				Post post = postList.get(i);
-				
-//				if ( Util.isEmptyString( post.getDepartureDateTime() ) == false ) continue;
-				
-				Date dDepartureDateTime = null;
-				Date dCreatedDateTime = new Date();
-				Date temp = null;
-				
-//				post.setCreatedDate( Util.getDateStringFromDate( dCreatedDateTime, "yyyy-MM-dd HH:mm:ss") );
-				
-				if ( Util.isEmptyString(post.getCreatedDate()) == false )
-					dCreatedDateTime = Util.getDateFromString(post.getCreatedDate(), "yyyy-MM-dd HH:mm:ss");
-				
-				// 출발일자 설정
-				if (post.getDepartureDate().indexOf("오늘") >= 0)
-					dDepartureDateTime = dCreatedDateTime;
-				else
-					dDepartureDateTime = Util.getDateFromString(post.getDepartureDate(), "yyyy-MM-dd");
-										
-				if ( post.getDepartureTime().indexOf( "지금" ) >= 0)
-					temp = dCreatedDateTime;
-				else
-					temp = Util.getDateFromString( post.getDepartureTime(), "HH:mm");
-										
-				// 출발시간 설정
-				dDepartureDateTime.setHours(temp.getHours());
-				dDepartureDateTime.setMinutes(temp.getMinutes());
-				dDepartureDateTime.setSeconds(0);
-				
-				post.setDepartureDateTime( Util.getDateStringFromDate( dDepartureDateTime, "yyyy-MM-dd HH:mm:ss"));
-				
-				sqlSession.update("com.tessoft.nearhere.taxi.admin.updatePostDepartureDateTime", post );
-				
-			}
-			
-			*/
+			ModelAndView mav = new ModelAndView();
+	        mav.setViewName("redirect:login.do");
+			if ( request.getSession().getAttribute("id") == null )
+				return mav;
 		}
 		catch(Exception ex )
 		{
 			
 		}
 		
-		
-		return new ModelAndView("index", "message", message);
+		return new ModelAndView("admin/index");
 	}
+	
+	@RequestMapping( value ="/admin/login.do")
+	public ModelAndView login ( HttpServletRequest request )
+	{
+		try
+		{
+			String id = request.getParameter("id");
+			String pw = request.getParameter("password");
+			
+			if ( "admin".equals( id ) && "fdsa4321".equals( pw ) )
+			{
+				ModelAndView mav = new ModelAndView();
+				request.getSession().setAttribute("id", "admin");
+				mav.setViewName("redirect:index.do");
+				return mav;
+			}
+		}
+		catch(Exception ex )
+		{
+			
+		}
+		
+		return new ModelAndView("admin/login");
+	}
+	
+	@RequestMapping( value ="/admin/sendEventPushToAllUsers.do")
+	public @ResponseBody APIResponse sendEventPushToAllUsers( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectUsersForEventPush");
+			
+			for ( int i = 0; i < userList.size(); i++ )
+			{
+				User receiver = userList.get(i);
+				
+				logger.info( "[sendEventPushToAllUsers] sent to user " + 
+						receiver.getUserID() + " " + receiver.getUserName() );
+				
+				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", "1", true );
+			}
+			
+			response.setData( "success" );
+		}
+		catch(Exception ex )
+		{
+			logger.error( "[sendEventPushToAllUsers]" + ex.getMessage());
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/admin/sendEventPushToAdmin.do")
+	public @ResponseBody APIResponse sendEventPushToAdmin( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectAdminForEventPush");
+			
+			for ( int i = 0; i < userList.size(); i++ )
+			{
+				User receiver = userList.get(i);
+				
+				logger.info( "[sendEventPushToAdmin] sending to user " + 
+						receiver.getUserID() + " " + receiver.getUserName() );
+				
+				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", "1", true );
+			}
+			
+			response.setData( "success" );
+		}
+		catch(Exception ex )
+		{
+			logger.error( "[sendEventPushToAdmin]" + ex.getMessage());
+		}
+		
+		return response;
+	}
+	
 }
