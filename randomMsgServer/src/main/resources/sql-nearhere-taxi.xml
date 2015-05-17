@@ -981,4 +981,17 @@
 			where distance <= 5;
 		]]>
 	</select>
+	
+	<select id="selectPostsInRegion" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+			select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
+				u.userName, u.profileImageURL
+			from post p
+				left outer join user u on p.userID=u.userID
+			where p.toAddress like '%#{regionName}%'
+			and p.type='taxi'
+			and p.deletedDate is null
+			order by p.createdDate desc;
+		]]>
+	</select>
 </mapper>
