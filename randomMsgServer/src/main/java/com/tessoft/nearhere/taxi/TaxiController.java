@@ -1802,8 +1802,12 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/viewRegion.do")
-	public ModelAndView viewRegion()
+	public ModelAndView viewRegion( HttpServletRequest request )
 	{
+		String regionName = request.getParameter("regionName");
+		
+		logger.info( "[viewRegion.do]" + regionName );
+		
 		return new ModelAndView("viewRegion");
 	}
 	
@@ -1893,7 +1897,7 @@ public class TaxiController {
 			HashMap additionalData = new HashMap();
 			
 			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsInRegion", requestInfo);
-			additionalData.put("postsNearHere", postsNearHere );
+			additionalData.put("postsInRegion", postsNearHere );
 
 			response.setData( additionalData );
 			

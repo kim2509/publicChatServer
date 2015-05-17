@@ -4,6 +4,7 @@
 
 <%
 	String regionName= request.getParameter("regionName");
+	System.out.println( regionName );
 %>
 <html>
 
@@ -29,17 +30,21 @@
 	
 	jQuery(document).ready(function() {
 
-		getMoreUsers();
+		alert('<%= regionName %>');
+		getPostsInRegion('<%= regionName %>');
 		
 	});
 	
-	function getMoreUsers()
+	function getPostsInRegion( regionName )
 	{
 		jQuery.ajax({
 			type : "POST",
-			url : "/nearhere/taxi/getMoreUsers.do",
+			url : "/nearhere/taxi/getPostsInRegion.do",
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType:"application/json; charset=UTF-8",
+			data : JSON.stringify({
+				"regionName" : decodeURIComponent(regionName)
+			}),
 			success : function(data) {
 				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
 				// TODO
@@ -47,7 +52,7 @@
 					
 					console.log( JSON.stringify( data ) );
 
-					displayNewUsers( data );
+					displayPosts( data );
 					
 				} catch (ex) {
 					alert(ex.message);
@@ -63,12 +68,12 @@
 		});
 	}
 	
-	function displayNewUsers( data )
+	function displayPosts( data )
 	{
-		var source   = $('#userT').html();
+		var source   = $('#postT').html();
 		var template = Handlebars.compile(source);
 		var html = template(data.data);
-		$('#newUsers').html(html);
+		$('#postsInRegion').html(html);
 	}
 	
 	
@@ -80,25 +85,16 @@
 
 	<div>
 		
-		<div id="newUsers" style="margin-top:10px;">
+		<div id="postsInRegion" style="margin-top:10px;">
 		</div>
 		
-		<script id="userT" type="text/x-handlebars-template">
-		<table style="width:100%">
-		<col width="80">
-  		<col width="80">
-		<col width="80">
-		<col width="80">
-		{{#each userList}}
-			<tr>
-				<td><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></td>
-				<td>{{userName}}</td>
-				<td>{{address}}</td>
-				<td>{{createdDate}}</td>
-			</tr>
-		{{/each}}
-
-		</table>
+		<script id="postT" type="text/x-handlebars-template">
+		{{#each postsInRegion}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
 		</script>
 	</div>
 	
