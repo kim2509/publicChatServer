@@ -1877,4 +1877,37 @@ public class TaxiController {
 			return response;
 		}
 	}
+	
+	@RequestMapping( value ="/taxi/getPostsInRegion.do")
+	public @ResponseBody APIResponse getPostsInRegion( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			HashMap additionalData = new HashMap();
+			
+			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsInRegion", requestInfo);
+			additionalData.put("postsNearHere", postsNearHere );
+
+			response.setData( additionalData );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+			return response;
+		}
+	}
 }

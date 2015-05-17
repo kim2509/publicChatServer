@@ -2,6 +2,9 @@
 <%@ page import="com.nearhere.domain.*" %>
 <%@ page import="com.dy.common.*" %>
 
+<%
+	String regionName= request.getParameter("regionName");
+%>
 <html>
 
 <head>
@@ -93,7 +96,7 @@
 				<td>{{address}}</td>
 				<td>{{createdDate}}</td>
 			</tr>
-		{{/each}}		
+		{{/each}}
 
 		</table>
 		</script>

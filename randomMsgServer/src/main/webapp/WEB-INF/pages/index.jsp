@@ -183,7 +183,7 @@
 	
 	function viewRegion( regionName )
 	{
-		Android.goURL('viewRegion.do', 'slideInFromRight');
+		Android.goURL('viewRegion.do?regionName=' + regionName , 'slideInFromRight');
 	}
 	
 	</script>
