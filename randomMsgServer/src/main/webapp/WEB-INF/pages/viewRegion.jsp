@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.nearhere.domain.*" %>
 <%@ page import="com.dy.common.*" %>
 
@@ -30,7 +30,6 @@
 	
 	jQuery(document).ready(function() {
 
-		alert('<%= regionName %>');
 		getPostsInRegion('<%= regionName %>');
 		
 	});
@@ -43,7 +42,7 @@
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType:"application/json; charset=UTF-8",
 			data : JSON.stringify({
-				"regionName" : decodeURIComponent(regionName)
+				"regionName" : regionName
 			}),
 			success : function(data) {
 				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.

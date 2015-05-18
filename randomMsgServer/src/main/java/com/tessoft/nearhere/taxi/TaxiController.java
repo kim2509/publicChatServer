@@ -1,5 +1,6 @@
 package com.tessoft.nearhere.taxi;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.*;
@@ -1804,6 +1805,14 @@ public class TaxiController {
 	@RequestMapping( value ="/taxi/viewRegion.do")
 	public ModelAndView viewRegion( HttpServletRequest request )
 	{
+		
+		try {
+			request.setCharacterEncoding("utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		String regionName = request.getParameter("regionName");
 		
 		logger.info( "[viewRegion.do]" + regionName );
@@ -1849,6 +1858,7 @@ public class TaxiController {
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/taxi/getPostsNearHereAjax.do")
 	public @ResponseBody APIResponse getPostsNearHereAjax( HttpServletRequest request, @RequestBody String bodyString )
 	{
