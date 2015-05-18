@@ -876,6 +876,7 @@
 		select region.regionName as countInfo, count(region) as count from post
 			left outer join region on post.region=region.regionNo
 		where region is not null
+		and deletedDate is null
 		and type='taxi'
 		group by region.regionName
 		order by region.priority
@@ -988,7 +989,7 @@
 				u.userName, u.profileImageURL
 			from post p
 				left outer join user u on p.userID=u.userID
-			where p.toAddress like '%#{regionName}%'
+			where p.toAddress like CONCAT('%',#{regionName},'%') 
 			and p.type='taxi'
 			and p.deletedDate is null
 			order by p.createdDate desc;

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.nearhere.domain.*" %>
 <%@ page import="com.dy.common.*" %>
 
@@ -28,7 +28,7 @@
 
 		Handlebars.registerHelper('printRegion', printRegion );
 		
-		//getMainInfo('user27');
+		getMainInfo('user27');
 		Android.sendEvent('ready');
 		Android.sendEvent('refreshLocation');
 	});
@@ -183,7 +183,6 @@
 	
 	function viewRegion( regionName )
 	{
-		alert( regionName );
 		Android.goURL('viewRegion.do?regionName=' + encodeURIComponent(regionName) , 'slideInFromRight');
 	}
 	
