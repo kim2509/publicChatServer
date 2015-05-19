@@ -85,6 +85,17 @@ public class TaxiController {
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
+			if ( hash.containsKey("UUID") )
+			{
+				// 기존 UUID 가 있는지 검사
+				if ( "ffffffff-eb06-2ce8-ffff-ffffc6a77bf8".equals( hash.get("UUID") ) )
+				{
+					response.setResCode( ErrorCode.UNKNOWN_ERROR );
+					response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+					return response;
+				}
+			}
+			
 			/*
 			if ( hash.containsKey("UUID") )
 			{
@@ -471,6 +482,13 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
+			
+			if ( "user628".equals( post.getUser().getUserID() ) || "ffffffff-eb06-2ce8-ffff-ffffc6a77bf8".equals(post.getUser().getUuid()) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+				return response;
+			}
 			
 			Util.setPostDepartureDateTime( logger, logIdentifier, post);
 			

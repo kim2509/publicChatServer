@@ -15,59 +15,38 @@
 
 <script language="javascript">
 	function sendEventPushToAdmin() {
-		try {
 
-			jQuery.ajax({
-				type : "POST",
-				url : "sendEventPushToAdmin.do",
-				data : JSON.stringify({
-					"eventID" : "1"
-				}),
-				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
-				contentType : "application/json; charset=UTF-8",
-				success : function(data) {
-					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
-					// TODO
-					try {
-
-						alert(JSON.stringify(data));
-
-					} catch (ex) {
-						alert(ex.message);
-					}
-				},
-				complete : function(data) {
-					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
-					// TODO
-				},
-				error : function(xhr, status, error) {
-					alert("에러발생");
-				}
-			});
-
-		} catch (ex) {
-			alert(ex.message);
-		}
+		if ( confirm("Really?") )
+			sendAjax( "sendEventPushToAdmin.do", {"eventID" : "1"} );
+		
 	}
 
 	function sendEventPushToAllUsers() {
+		
+		if ( confirm("Really?") )
+			sendAjax( "sendEventPushToAllUsers.do",{ "eventID" : "1" } );
+		
+	}
+	
+	function sendEventApplyPushToUser( userID )
+	{
+		
+	}
+	
+	function sendAjax( url, data )
+	{
 		try {
 
 			jQuery.ajax({
 				type : "POST",
-				url : "sendEventPushToAllUsers.do",
-				data : JSON.stringify({
-					"eventID" : "1"
-				}),
+				url : url,
+				data : JSON.stringify(data),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
 				success : function(data) {
 					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
-					// TODO
 					try {
-
 						alert(JSON.stringify(data));
-
 					} catch (ex) {
 						alert(ex.message);
 					}
@@ -85,6 +64,7 @@
 			alert(ex.message);
 		}
 	}
+	
 </script>
 
 </head>
@@ -93,8 +73,14 @@
 	<input type="button" value="관리자에게 이벤트 푸쉬 보내기"
 		onclick="sendEventPushToAdmin();" />
 	<br />
+	<br/>
 	<input type="button" value="전체 유저에게 이벤트 푸쉬 보내기"
 		onclick="sendEventPushToAllUsers();" />
+	
+	<br/><br/><br/>
+	
+	<input type="text" size="20" name="userID" />
+	<input type="button" value="이벤트접수푸쉬" />
 
 </body>
 </html>
