@@ -490,6 +490,16 @@ public class TaxiController {
 				return response;
 			}
 			
+			try
+			{
+				if ( "여자만".equals(post.getSexInfo()) && "M".equals(post.getUser().getSex()))
+					post.setbPushOff(false);
+			}
+			catch( Exception ex )
+			{
+				logger.error( ex );
+			}
+			
 			Util.setPostDepartureDateTime( logger, logIdentifier, post);
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPost", post );
