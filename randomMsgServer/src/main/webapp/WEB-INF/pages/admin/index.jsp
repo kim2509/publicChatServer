@@ -28,9 +28,20 @@
 		
 	}
 	
-	function sendEventApplyPushToUser( userID )
+	function sendEventApplyPushToUser()
 	{
-		
+		try
+		{
+			var userID = $('input[name=userID]').val();
+			
+			var userList = new Array(userID);
+			
+			sendAjax('sendEventResult.do', userList );
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
 	}
 	
 	function sendAjax( url, data )
@@ -79,8 +90,8 @@
 	
 	<br/><br/><br/>
 	
-	<input type="text" size="20" name="userID" />
-	<input type="button" value="이벤트접수푸쉬" />
+	<input type="text" size="20" name="userID" value="user27"/>
+	<input type="button" value="이벤트접수푸쉬" onclick="sendEventApplyPushToUser();"/>
 
 </body>
 </html>

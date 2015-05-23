@@ -1683,38 +1683,6 @@ public class TaxiController {
 		return response;
 	}
 	
-	@RequestMapping( value ="/taxi/sendEventResult.do")
-	public @ResponseBody APIResponse sendEventResult(HttpServletRequest request, @RequestBody String bodyString )
-	{
-		APIResponse response = new APIResponse();
-		
-		try
-		{
-			HashMap hash = new HashMap();
-			
-			String logIdentifier = requestLogging(request, bodyString);
-			
-			Map<String, List<String>> usersToSend = mapper.readValue(bodyString, new TypeReference<Map<String, List<String>>>(){});
-			
-			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersWithUserID", usersToSend.get("userList") );
-			
-			for ( int i = 0; i < userList.size(); i++ )
-			{
-				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 이마트 상품권 이벤트에 당첨되셨습니다.", "1Result", true );
-			}
-			
-			response.setData(userList);
-			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		return response;
-	}
-	
 	@RequestMapping( value ="/taxi/eventDetail.do")
 	public ModelAndView eventDetail( String eventSeq, String pushNo )
 	{
@@ -1732,6 +1700,20 @@ public class TaxiController {
 			User user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserWithPushNo", pushNo );
 			mv.addObject("user", user);
 			
+			HashMap param = new HashMap();
+			param.put("eventSeq", eventSeq);
+			param.put("userID", user.getUserID());
+			
+			List<HashMap> eventAppliedList = sqlSession.selectList("com.tessoft.nearhere.taxi.getEventAppliedInfo", param );
+			
+			if ( eventAppliedList != null && eventAppliedList.size() > 0 )
+				mv.addObject("alreadyAppliedYN", "Y" );
+			else
+			{
+				mv.addObject("alreadyAppliedYN", "N" );
+				mv.addObject("phoneNo", user.getMobileNo());
+			}
+			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead", message );
 		}
 		catch( Exception ex )
@@ -1742,8 +1724,8 @@ public class TaxiController {
 		return mv;
 	}
 	
-	@RequestMapping( value ="/taxi/eventInput.do")
-	public @ResponseBody APIResponse eventInput( HttpServletRequest request, @RequestBody String bodyString )
+	@RequestMapping( value ="/taxi/eventApply.do")
+	public @ResponseBody APIResponse eventApply( HttpServletRequest request, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
 		
@@ -1753,7 +1735,18 @@ public class TaxiController {
 			
 			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 			
-			response.setData( requestInfo );
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertEventApplyInfo", requestInfo );
+			
+			if ( result > 0 )
+				response.setData("success");
+			else
+				response.setResCode("9999");
+			
+			User daeyong = new User();
+			daeyong.setUserID("user27");
+			daeyong.setUserNo("27");
+			daeyong = selectUser( daeyong );
+			sendPushMessage( daeyong, "newPostByDistance", "이벤트 신청알림 " + requestInfo.get("userID"), requestInfo.get("userID") , true );
 		}
 		catch( Exception ex )
 		{
@@ -1901,7 +1894,7 @@ public class TaxiController {
 			
 			HashMap additionalData = new HashMap();
 			
-			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectsPostsNearHereV2", requestInfo);
+			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsNearHereV2", requestInfo);
 			additionalData.put("postsNearHere", postsNearHere );
 
 			response.setData( additionalData );

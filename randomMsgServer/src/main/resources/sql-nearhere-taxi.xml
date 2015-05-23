@@ -964,7 +964,7 @@
 		]]>
 	</select>
 	
-	<select id="selectsPostsNearHereV2" resultType="java.util.HashMap">
+	<select id="selectPostsNearHereV2" resultType="java.util.HashMap">
 		<![CDATA[
 			select * from (
 				select p.postID, p.message, DATE_FORMAT( p.departureDateTime , '%Y-%m-%d %H:%i:%s') as departureDateTime, p.userID,
@@ -995,4 +995,18 @@
 			order by p.createdDate desc;
 		]]>
 	</select>
+	
+	<select id="getEventAppliedInfo" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+			select * from event_apply
+			where eventSeq=#{eventSeq}
+			and userID=#{userID}
+			and deletedDate is null;
+		]]>
+	</select>
+	
+	<insert id="insertEventApplyInfo" parameterType="java.util.HashMap">
+		insert into event_apply( eventSeq, userID, phoneNo, pushNo, param1, createdDate )
+		values(#{eventSeq}, #{userID}, #{phoneNo}, #{pushNo}, #{param1}, NOW());
+	</insert>
 </mapper>
