@@ -2,6 +2,7 @@ package com.tessoft.nearhere.taxi;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -132,4 +133,35 @@ public class AdminController extends BaseController{
 		return response;
 	}
 	
+	@RequestMapping( value ="/admin/sendEventResult.do")
+	public @ResponseBody APIResponse sendEventResult(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap hash = new HashMap();
+			
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			List<String> usersToSend = mapper.readValue(bodyString, new TypeReference<List<String>>(){});
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersWithUserID", usersToSend );
+			
+			for ( int i = 0; i < userList.size(); i++ )
+			{
+				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", "1Result", true );
+			}
+			
+			response.setData(userList);
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

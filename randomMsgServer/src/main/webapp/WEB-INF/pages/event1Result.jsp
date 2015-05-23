@@ -6,6 +6,23 @@
 	User user = (User) request.getAttribute("user");
 	String eventSeq = request.getAttribute("eventSeq").toString();
 	String pushNo = request.getAttribute("pushNo").toString();
+	String alreadyAppliedYN = request.getAttribute("alreadyAppliedYN").toString();
+	
+	String mobileNo1 = "";
+	String mobileNo2 = "";
+	String mobileNo3 = "";
+	
+	if ( !Util.isEmptyString( user.getMobileNo() ) )
+	{
+		String mobileNo = user.getMobileNo().replaceAll("\\D+","");;
+		
+		if ( mobileNo.length() >= 3 )
+			mobileNo1 = user.getMobileNo().substring(0,3);
+		if ( mobileNo.length() >= 7 )
+			mobileNo2 = user.getMobileNo().substring(3,7);
+		if ( mobileNo.length() >= 11 )
+			mobileNo3 = user.getMobileNo().substring(7,11);
+	}
 %>
 
 <html>
@@ -28,6 +45,8 @@
 	
 	<script language="javascript">
 	
+		var alreadyAppliedYN = '<%= alreadyAppliedYN %>';
+		
 		function applyRequest()
 		{
 			try
@@ -43,13 +62,25 @@
 					return;	
 				}
 				
+				if ( $('input[name=prize]:checked', '#fm').val() == '' ||  $('input[name=prize]:checked', '#fm').val() == undefined )
+				{
+					alert('상품을 선택해 주십시오.');
+					return;
+				}
+				
+				var data = { "phoneNo" : document.fm.phoneNo.value, "userID":document.fm.userID.value, 
+						"eventSeq":document.fm.eventSeq.value , "pushNo":document.fm.pushNo.value , 
+						"param1":$('input[name=prize]:checked').val() };
+				
+				if ( confirm('접수 하시겠습니까?') == false ) return;
+				
 				$.ajax({
-					url : "eventInput.do",
+					url : "eventApply.do",
 			        type: "post",
 			        contentType: "application/json",
-			        data : JSON.stringify({ "phoneNo" : document.fm.phoneNo.value, 
-			        	"eventSeq":document.fm.eventSeq.value , "pushNo":document.fm.pushNo.value }),
+			        data : JSON.stringify( data ),
 			        success : function(responseData){
+			        	
 			            if ( responseData.resCode == '0000' )
 			            {
 			            	$('#desc').hide();
@@ -65,7 +96,15 @@
 		}
 		
 		jQuery(document).ready(function(){
-			//alert('ready');
+			$('#phone1').val('<%= mobileNo1 %>');
+			
+			/*
+			var text1 = 'Two';
+			$("select option").filter(function() {
+			    //may want to use $.trim in here
+			    return $(this).text() == text1; 
+			}).prop('selected', true);
+			*/
 		});
 		
 	</script>
@@ -76,22 +115,52 @@
 	
 	<div id="desc" style="text-align:center;">
 
+		<form method="post" name="fm" id="fm" action="event1Result.jsp">
+
+<%
+	if ("N".equals( alreadyAppliedYN ) )
+	{
+%>		
 		<div id="title">축하드립니다! 이벤트에 당첨되셨습니다.</div>
+		
 		<div id="promotionImg">
-			<img src="<%= Constants.IMAGE_PATH %>/emart5000.png"/>
+			<table style="width:100%">
+				<tr>
+					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/cu5000.jpg" width="140"/></td>
+					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/gs5000.jpg" width="140"/></td>
+				</tr>
+				<tr>
+					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
+						<input type="radio" name="prize" value="1" />5천원권</td>
+					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
+						<input type="radio" name="prize" value="2" />5천원권</td>
+				</tr>
+				<tr>
+					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/shinsegye.jpg" width="140"/></td>
+					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/starbucks.jpg" width="140"/></td>
+				</tr>
+				<tr>
+					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
+						<input type="radio" name="prize" value="3" />5천원권</td>
+					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
+						<input type="radio" name="prize" value="4" />스타벅스 아메리카노</td>
+				</tr>
+					<td colspan="2" style="width:50%;text-align:center;font-size:12px;padding-top:20px;" >&lt;4개중 택1&gt;</td>
+				</tr>
+			</table>
 		</div>
 	
-		<div id="subTitle" style="margin-top:20px;font-weight:bold;">축하드립니다. 이마트 상품권(5천원권)에 <br/>당첨되셨습니다.</div>
+		<div id="subTitle" style="margin-top:20px;font-weight:bold;">원하는 상품을 선택해 주십시오.</div>
 	
-		<form method="post" name="fm" action="event1Result.jsp">
+		
 		<input type="hidden" name="phoneNo" value="" />
 		<input type="hidden" name="eventSeq" value="<%= eventSeq %>" />
 		<input type="hidden" name="pushNo" value="<%= pushNo %>" />
+		<input type="hidden" name="userID" value="<%= user.getUserID() %>" />
+
+		<div style="margin-bottom:10px;"><br/>상품권은 MMS 로 발송됩니다.<br/><br/><br/>전송받을 휴대번호를 아래에 입력해 주십시오.</div>
 		
-		<div id="input">
-		<div style="margin-bottom:10px;">상품권은 MMS 로 발송되며,<br/>발송후 서버에서 삭제처리됩니다.<br/><br/><br/>전송받을 휴대번호를 아래에 입력해 주십시오.</div>
-		
-		<select name="phone1">
+		<select name="phone1" id="phone1">
 			<option value="010">010</option>
 			<option value="011">011</option>
 			<option value="016">016</option>
@@ -100,17 +169,24 @@
 			<option value="019">019</option>
 		</select>
 		
-		<input type="text" name="phone2" size="4" maxlength="4"/> - 
-		<input type="text" name="phone3" size="4" maxlength="4"/>
-		
-		<div style="margin-top:30px;"><input type="button" value="보내기" onclick="applyRequest();"/></div>
+		<input type="text" name="phone2" id="phone2" size="4" maxlength="4" value="<%= mobileNo2 %>"/> - 
+		<input type="text" name="phone3" id="phone3" size="4" maxlength="4" value="<%= mobileNo3 %>"/>
+		<input type="button" value="보내기" onclick="applyRequest();"/>
+<%
+	} else {
+%>		
 
-		</div>
+		<div id="title" style="margin-top:30px;">이벤트 신청이 완료되었습니다.<br/>이용해 주셔서 감사합니다.</div>
 
+<%
+	}
+%>
 		</form>
 	</div>
 	
-	<div id="result" style="display:none;text-align:center">접수가 완료되었습니다.<br/><br/>24시간이내에 발송처리될 예정입니다.<br/><br/>감사합니다.</div>
+	<div id="result" style="text-align:center;display:none;">
+		<div id="title" style="margin-top:30px;">이벤트 신청이 완료되었습니다.<br/>이용해 주셔서 감사합니다.</div>
+	</div>
 </div>
 
 </body>
