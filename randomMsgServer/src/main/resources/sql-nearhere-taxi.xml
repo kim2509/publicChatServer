@@ -76,12 +76,12 @@
 		insert into post( userID, type, message, content, fromLatitude,
 		fromLongitude, fromAddress,
 		latitude, longitude, toAddress, sexInfo,
-		numOfUsers, departureDate, departureTime, departureDateTime, createdDate)
+		numOfUsers, departureDate, departureTime, departureDateTime, vehicle, fareOption, repetitiveYN, createdDate)
 		values(#{user.userID}, 'taxi', #{message}, #{content},
 		#{fromLatitude}, #{fromLongitude},
 		#{fromAddress}, #{latitude},
 		#{longitude}, #{toAddress}, #{sexInfo}, #{numOfUsers},
-		#{departureDate}, #{departureTime}, #{departureDateTime}, #{createdDate} );
+		#{departureDate}, #{departureTime}, #{departureDateTime}, #{vehicle}, #{fareOption}, #{repetitiveYN}, #{createdDate} );
 		<selectKey keyProperty="postID" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
@@ -92,13 +92,13 @@
 		userID, type, message, content, fromLatitude, fromLongitude,
 		fromAddress,
 		latitude, longitude, toAddress, sexInfo, numOfUsers,
-		departureDate, departureTime, status, departureDateTime, updatedDate, createdDate )
+		departureDate, departureTime, status, departureDateTime, vehicle, fareOption, repetitiveYN, updatedDate, createdDate )
 		values( #{postID},
 		#{user.userID}, 'taxi', #{message}, #{content}, #{fromLatitude},
 		#{fromLongitude},
 		#{fromAddress}, #{latitude}, #{longitude},
 		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
-		#{departureTime}, #{status}, #{departureDateTime}, NOW(), NOW() );
+		#{departureTime}, #{status}, #{departureDateTime} , #{vehicle}, #{fareOption} , #{repetitiveYN} ,NOW(), NOW() );
 	</update>
 
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">
@@ -124,64 +124,54 @@
 		post_reply set deletedDate=NOW()
 		where replyID=#{replyID}
 	</update>
-
+	
 	<select id="getPostsNearHere" resultType="com.nearhere.domain.Post"
 		parameterType="java.util.HashMap">
 		SELECT
 		*
 		FROM (
-		SELECT P.postID, P.userID, type, message, content,
-		fromLatitude,
-		fromLongitude, fromAddress,
-		latitude, longitude,
-		toAddress, reward, P.createdDate,
-		P.userID as 'user.userID',
-		U.profileImageURL as 'user.profileImageURL',
-		U.userName as
-		'user.userName', U.sex as 'user.sex',
-		YEAR(NOW())-YEAR(U.birthday)+1 as
-		'user.age'
-		, PR.cnt as "replyCount",
-		sexInfo, numOfUsers, departureDate,
-		departureTime, departureDateTime
-		<if test="fromLatitude != null and fromLongitude != null">
-			,TRUNCATE((
-			6371 * acos ( cos ( radians( #{fromLatitude} )
-			)
-			* cos( radians( fromLatitude ) )
-			* cos( radians( fromLongitude ) -
-			radians( #{fromLongitude} ) )
-			+ sin ( radians( #{fromLatitude} ) )
-			*
-			sin( radians( fromLatitude ) )
-			)
-			) , 1) AS fromDistance
-		</if>
-		<if test="toLatitude != null and toLongitude != null">
-			,TRUNCATE((
-			6371 * acos ( cos ( radians( #{toLatitude} ) )
-			* cos( radians( latitude ) )
-			* cos( radians( longitude ) - radians(
-			#{toLongitude} ) )
-			+ sin ( radians( #{toLatitude} ) )
-			* sin( radians(
-			latitude ) )
-			)
-			) , 1) AS toDistance
-		</if>
-		,status
-		FROM post P
-		left outer join (select count(replyID) as 'cnt',
-		postID
-		from post_reply
-		where deletedDate is null group by postID ) PR on
-		P.postID=PR.postID
-		left outer join user U on P.userID=U.userID
-		WHERE
-		fromLatitude is not null
-		and fromLongitude is not null
-		and type='taxi'
-		and deletedDate is null
+			SELECT P.postID, P.userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
+				latitude, longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
+				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex',
+				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
+				departureTime, departureDateTime
+			<if test="fromLatitude != null and fromLongitude != null">
+				,TRUNCATE((
+				6371 * acos ( cos ( radians( #{fromLatitude} )
+				)
+				* cos( radians( fromLatitude ) )
+				* cos( radians( fromLongitude ) -
+				radians( #{fromLongitude} ) )
+				+ sin ( radians( #{fromLatitude} ) )
+				*
+				sin( radians( fromLatitude ) )
+				)
+				) , 1) AS fromDistance
+			</if>
+			<if test="toLatitude != null and toLongitude != null">
+				,TRUNCATE((
+				6371 * acos ( cos ( radians( #{toLatitude} ) )
+				* cos( radians( latitude ) )
+				* cos( radians( longitude ) - radians(
+				#{toLongitude} ) )
+				+ sin ( radians( #{toLatitude} ) )
+				* sin( radians(
+				latitude ) )
+				)
+				) , 1) AS toDistance
+			</if>
+				,status, vehicle, fareOption, repetitiveYN, RC.readCount as readCount
+			FROM post P
+				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null group by postID ) PR 
+					on P.postID=PR.postID
+				left outer join user U on P.userID=U.userID
+				left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
+					on P.postID=RC.postID
+			WHERE
+			fromLatitude is not null
+			and fromLongitude is not null
+			and type='taxi'
+			and deletedDate is null
 		) A
 		WHERE 1=1
 		<if test="postID != null">

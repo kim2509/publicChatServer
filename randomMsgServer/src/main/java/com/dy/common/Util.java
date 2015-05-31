@@ -153,6 +153,8 @@ public class Util {
 			return "송파구";
 		else if ( address.indexOf("종로구") >= 0 )
 			return "종로구";
+		else if ( address.indexOf("노원구") >= 0 )
+			return "노원구";
 		else if ( address.indexOf("동작구") >= 0 )
 			return "동작구";
 		else if ( address.indexOf("영등포구") >= 0 )
@@ -163,6 +165,8 @@ public class Util {
 			return "서초구";
 		else if ( address.indexOf("용산구") >= 0 )
 			return "용산구";
+		else if ( address.indexOf("은평구") >= 0 )
+			return "은평구";
 		else if ( address.indexOf("구로구") >= 0 )
 			return "구로구";
 		else if ( address.indexOf("마포구") >= 0 )
