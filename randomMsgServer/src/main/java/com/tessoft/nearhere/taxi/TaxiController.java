@@ -792,11 +792,12 @@ public class TaxiController {
 				{
 					sqlSession.insert("com.tessoft.nearhere.taxi.insertPostReadHistory", hash );
 					
-					if ( bProgressing )
-					{
-						sendPushMessage( writer , "inquiryUser", 
-								user.getUserName() + "님이 고객님의 합승내역을 조회했습니다.", user.getUserID(), true );						
-					}
+					// 1.36 부터 조회수 가 추가돼서 푸쉬 보내지 않음
+//					if ( bProgressing )
+//					{
+//						sendPushMessage( writer , "inquiryUser", 
+//								user.getUserName() + "님이 고객님의 합승내역을 조회했습니다.", user.getUserID(), true );						
+//					}
 				}
 			}
 			
@@ -1453,6 +1454,14 @@ public class TaxiController {
 				if ( diffMinutes >= 30)
 				{
 					sendPushMessageOnNewPost( post );
+				}
+				else
+				{
+					User daeyong = new User();
+					daeyong.setUserID("user27");
+					daeyong.setUserNo("27");
+					daeyong = selectUser( daeyong );
+					sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
 				}
 			}
 			catch( Exception ex )

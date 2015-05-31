@@ -39,11 +39,16 @@ public class Post {
 	private String toDistance;
 	private String status;
 	
+	private String vehicle;
+	private String fareOption;
+	private String repetitiveYN;
+	
 	private boolean bPushOff;
 	
 	private List<PostLike> postLikes;
 	private List<PostReply> postReplies;
 	
+	private int readCount;
 	private int replyCount = 0;
 	
 	public String getLatitude() {
@@ -201,5 +206,29 @@ public class Post {
 	}
 	public void setRegion(String region) {
 		this.region = region;
+	}
+	public String getVehicle() {
+		return vehicle;
+	}
+	public void setVehicle(String vehicle) {
+		this.vehicle = vehicle;
+	}
+	public String getFareOption() {
+		return fareOption;
+	}
+	public void setFareOption(String fareOption) {
+		this.fareOption = fareOption;
+	}
+	public String getRepetitiveYN() {
+		return repetitiveYN;
+	}
+	public void setRepetitiveYN(String repetitiveYN) {
+		this.repetitiveYN = repetitiveYN;
+	}
+	public int getReadCount() {
+		return readCount;
+	}
+	public void setReadCount(int readCount) {
+		this.readCount = readCount;
 	}
 }
