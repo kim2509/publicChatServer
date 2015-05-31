@@ -1427,6 +1427,12 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			Post post = mapper.readValue(bodyString, new TypeReference<Post>(){});
+			
+			if ( Util.isEmptyString( post.getVehicle() ))
+				post.setVehicle("택시");
+			if ( Util.isEmptyString( post.getFareOption() ))
+				post.setVehicle("나눠서 분담");
+			
 			Post postBeforeModified = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", post );
 			
 			Util.setPostDepartureDateTime( logger, logIdentifier, post);
