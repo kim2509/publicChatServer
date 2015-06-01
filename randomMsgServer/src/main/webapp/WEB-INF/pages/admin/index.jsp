@@ -17,14 +17,14 @@
 	function sendEventPushToAdmin() {
 
 		if ( confirm("Really?") )
-			sendAjax( "sendEventPushToAdmin.do", {"eventID" : "1"} );
+			sendAjax( "sendEventPushToAdmin.do", {"eventID" : "2"} );
 		
 	}
 
 	function sendEventPushToAllUsers() {
 		
 		if ( confirm("Really?") )
-			sendAjax( "sendEventPushToAllUsers.do",{ "eventID" : "1" } );
+			sendAjax( "sendEventPushToAllUsers.do",{ "eventID" : "2" } );
 		
 	}
 	

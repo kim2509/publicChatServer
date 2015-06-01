@@ -80,6 +80,8 @@ public class AdminController extends BaseController{
 		{
 			String logIdentifier = requestLogging(request, bodyString);
 			
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectUsersForEventPush");
 			
 			for ( int i = 0; i < userList.size(); i++ )
@@ -89,7 +91,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", "1", true );
+				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", requestInfo.get("eventID"), true );
 			}
 			
 			response.setData( "success" );
@@ -111,6 +113,8 @@ public class AdminController extends BaseController{
 		{
 			String logIdentifier = requestLogging(request, bodyString);
 			
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectAdminForEventPush");
 			
 			for ( int i = 0; i < userList.size(); i++ )
@@ -120,7 +124,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAdmin] sending to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", "1", true );
+				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", requestInfo.get("eventID"), true );
 			}
 			
 			response.setData( "success" );
@@ -150,7 +154,7 @@ public class AdminController extends BaseController{
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", "1Result", true );
+				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", "2Result", true );
 			}
 			
 			response.setData(userList);
