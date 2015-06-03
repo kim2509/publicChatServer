@@ -126,26 +126,20 @@
 		<div id="promotionImg">
 			<table style="width:100%">
 				<tr>
-					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/cu5000.jpg" width="140"/></td>
-					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/gs5000.jpg" width="140"/></td>
+					<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/culturecoupon5000.jpg" width="80%"/></td>
 				</tr>
 				<tr>
 					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
-						<input type="radio" name="prize" value="1" />5천원권</td>
-					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
-						<input type="radio" name="prize" value="2" />5천원권</td>
+						<input type="radio" name="prize" value="1" />문화상품권 5천원</td>
 				</tr>
 				<tr>
-					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/shinsegye.jpg" width="140"/></td>
-					<td style="width:50%"><img src="<%= Constants.IMAGE_PATH %>/starbucks.jpg" width="140"/></td>
+					<td style="text-align:center;padding-top:10px;"><img src="<%= Constants.IMAGE_PATH %>/starbucks.jpg" width="50%"/></td>
 				</tr>
 				<tr>
 					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
-						<input type="radio" name="prize" value="3" />5천원권</td>
-					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
-						<input type="radio" name="prize" value="4" />스타벅스 아메리카노</td>
+						<input type="radio" name="prize" value="2" />스타벅스 아메리카노</td>
 				</tr>
-					<td colspan="2" style="width:50%;text-align:center;font-size:12px;padding-top:20px;" >&lt;4개중 택1&gt;</td>
+					<td colspan="2" style="width:50%;text-align:center;font-size:12px;padding-top:20px;" >&lt;위 2개중 택1&gt;</td>
 				</tr>
 			</table>
 		</div>
