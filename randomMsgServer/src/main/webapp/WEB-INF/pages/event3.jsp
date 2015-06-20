@@ -22,7 +22,7 @@
 
 <div id="wrapper">
 	<div id="title">합승 등록만 해도 상품권을 쏩니다!</div>
-	<div id="subTitle">(2015-06-20 ~ 2015-06-30)</div>
+	<div id="subTitle">(2015-06-16 ~ 2015-06-30)</div>
 	<div id="promotionImg">
 		<table style="width:100%">
 			<tr>
@@ -40,7 +40,7 @@
 			</tr>
 		</table>
 	</div>
-	<div id="content">* 전체 10명을 추첨하여 상품권을 드립니다.</div>
+	<div id="content">* 전체 20명을 추첨하여 상품권을 드립니다.</div>
 </div>
 
 </body>
