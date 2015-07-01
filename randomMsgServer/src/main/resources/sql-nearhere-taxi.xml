@@ -4,6 +4,12 @@
 
 <mapper namespace="com.tessoft.nearhere.taxi">
 
+	<select id="selectAppInfo" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+		select * from appInfo where os = #{os}
+		]]>
+	</select>
+	
 	<insert id="insertUserTermsAgreement" parameterType="java.util.HashMap">
 		replace into
 		user_terms_agreement ( userID, nearhere_ver, personal_ver,
@@ -50,9 +56,10 @@
 
 	<insert id="insertUser" parameterType="com.nearhere.domain.User"
 		useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
-		INSERT INTO user ( userID, userName, password, uuid, createdDate )
+		INSERT INTO user ( userID, userName, password, uuid, 
+			kakaoID, kakaoThumbnailImageURL, kakaoProfileImageURL, createdDate )
 		VALUES(
-		#{userID}, #{userName}, #{password}, #{uuid}, NOW() );
+		#{userID}, #{userName}, #{password}, #{uuid}, #{kakaoID}, #{kakaoThumbnailImageURL}, #{kakaoProfileImageURL}, NOW() );
 		<selectKey keyProperty="userNo" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>

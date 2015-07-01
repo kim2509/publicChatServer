@@ -59,6 +59,32 @@ public class TaxiController {
 		return new BigInteger(130, random).toString(32);
 	}
 
+	@RequestMapping( value ="/app/appInfo.do")
+	public @ResponseBody APIResponse appInfo( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			HashMap appInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectAppInfo", hash);
+
+			response.setData(appInfo);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
 	private boolean isValidateForRegister( User user, APIResponse response )
 	{
 		if ( user.getUserID() == null || "".equals( user.getUserID() ) )
@@ -71,6 +97,7 @@ public class TaxiController {
 		return true;
 	}
 
+	
 	@RequestMapping( value ="/taxi/getRandomIDV2.do")
 	public @ResponseBody APIResponse getRandomIDV2( HttpServletRequest request, @RequestBody String bodyString )
 	{

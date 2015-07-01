@@ -23,6 +23,9 @@ public class User {
 	private String uuid;
 	private String address;
 	private String appVersion;
+	private String kakaoID;
+	private String kakaoThumbnailImageURL;
+	private String kakaoProfileImageURL;
 
 	public String getUserNo() {
 		return userNo;
@@ -166,5 +169,29 @@ public class User {
 
 	public void setAppVersion(String appVersion) {
 		this.appVersion = appVersion;
+	}
+
+	public String getKakaoID() {
+		return kakaoID;
+	}
+
+	public void setKakaoID(String kakaoID) {
+		this.kakaoID = kakaoID;
+	}
+
+	public String getKakaoThumbnailImageURL() {
+		return kakaoThumbnailImageURL;
+	}
+
+	public void setKakaoThumbnailImageURL(String kakaoThumbnailImageURL) {
+		this.kakaoThumbnailImageURL = kakaoThumbnailImageURL;
+	}
+
+	public String getKakaoProfileImageURL() {
+		return kakaoProfileImageURL;
+	}
+
+	public void setKakaoProfileImageURL(String kakaoProfileImageURL) {
+		this.kakaoProfileImageURL = kakaoProfileImageURL;
 	}	
 }
