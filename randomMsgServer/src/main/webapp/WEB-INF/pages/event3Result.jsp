@@ -167,8 +167,8 @@
 		<input type="text" name="phone3" id="phone3" size="4" maxlength="4" value="<%= mobileNo3 %>"/>
 		<input type="button" value="보내기" onclick="applyRequest();"/>
 		
-		<br/>
-		<div style="margin-bottom:10px;">내 정보에 휴대폰번호를 등록해 두었으면 자동으로 입력됩니다.</div>
+		<br/><br/>
+		<div style="margin-bottom:10px;">내 정보에 휴대폰번호를 등록해 두었으면<br/>자동으로 입력됩니다.</div>
 		
 <%
 	} else {
