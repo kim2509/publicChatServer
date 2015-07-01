@@ -154,7 +154,7 @@ public class AdminController extends BaseController{
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", "2Result", true );
+				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", "3Result", true );
 			}
 			
 			response.setData(userList);
