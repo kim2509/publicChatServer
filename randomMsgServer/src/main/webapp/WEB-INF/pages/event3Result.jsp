@@ -168,7 +168,7 @@
 		<input type="button" value="보내기" onclick="applyRequest();"/>
 		
 		<br/><br/>
-		<div style="margin-bottom:10px;">내 정보에 휴대폰번호를 등록해 두었으면<br/>자동으로 입력됩니다.</div>
+		<div style="margin-bottom:10px;">내 정보에 휴대폰번호를 등록해 두면<br/>자동으로 입력됩니다.</div>
 		
 <%
 	} else {
