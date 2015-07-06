@@ -44,6 +44,21 @@
 		}
 	}
 	
+	function sendLocationUpdateToAllUsers()
+	{
+		try
+		{
+			var userList = [];
+			
+			if ( confirm("Really?") )
+				sendAjax('sendLocationUpdateToAllUsers.do', userList );
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
 	function sendAjax( url, data )
 	{
 		try {
@@ -93,5 +108,10 @@
 	<input type="text" size="20" name="userID" value="user27"/>
 	<input type="button" value="이벤트접수푸쉬" onclick="sendEventApplyPushToUser();"/>
 
+	<br/><br/><br/>
+	
+	<input type="button" value="전체유저 위치 업데이트"
+		onclick="sendLocationUpdateToAllUsers();" />
+		
 </body>
 </html>

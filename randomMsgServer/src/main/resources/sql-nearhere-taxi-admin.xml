@@ -17,4 +17,12 @@
 		where userID='user27'
 	</select>
 	
+	<select id="selectUsersForLocationUpdate" parameterType="java.util.HashMap"
+		resultType="com.nearhere.domain.User">
+		select * from user
+		where regID is not null
+		and isDeleted is null
+		and appVersion > '1.35'
+	</select>
+	
 </mapper>

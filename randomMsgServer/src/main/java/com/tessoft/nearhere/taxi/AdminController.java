@@ -168,4 +168,38 @@ public class AdminController extends BaseController{
 		
 		return response;
 	}
+	
+	
+	@RequestMapping( value ="/admin/sendLocationUpdateToAllUsers.do")
+	public @ResponseBody APIResponse sendLocationUpdateToAllUsers( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectUsersForLocationUpdate");
+			
+			for ( int i = 0; i < userList.size(); i++ )
+			{
+				User receiver = userList.get(i);
+				
+				logger.info( "[sendEventPushToAllUsers] sent to user " + 
+						receiver.getUserID() + " " + receiver.getUserName() );
+				
+				sendPushMessage(receiver, "locationUpdate", "합승 등록 이벤트를 진행합니다!!!", "", true );
+			}
+			
+			response.setData( "success" );
+		}
+		catch(Exception ex )
+		{
+			logger.error( "[sendEventPushToAllUsers]" + ex.getMessage());
+		}
+		
+		return response;
+	}
 }
