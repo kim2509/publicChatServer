@@ -89,6 +89,8 @@ public class BaseController {
 				pushMessage.setMessage( msg );
 			else if ("inquiryUser".equals( type ) )
 				pushMessage.setMessage( msg );
+			else if ("locationUpdate".equals( type ) )
+				pushMessage.setMessage( msg );
 
 			pushMessage.setParam1(param);
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
@@ -140,6 +142,15 @@ public class BaseController {
 								.build();
 					}
 					else if ( "inquiryUser".equals( type ) )
+					{
+						message = new Message.Builder().addData("title", "프로필 조회 알림")
+								.addData("message",  pushMessage.getMessage() )
+								.addData("type",  type )
+								.addData("userID",  param )
+								.addData("pushNo",  pushMessage.getPushNo() )
+								.build();
+					}
+					else if ( "locationUpdate".equals( type ) )
 					{
 						message = new Message.Builder().addData("title", "프로필 조회 알림")
 								.addData("message",  pushMessage.getMessage() )

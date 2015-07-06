@@ -48,7 +48,7 @@
 	{
 		try
 		{
-			var userList = [];
+			var userList = {};
 			
 			if ( confirm("Really?") )
 				sendAjax('sendLocationUpdateToAllUsers.do', userList );
