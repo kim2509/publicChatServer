@@ -22,7 +22,7 @@
 		select * from user
 		where regID is not null
 		and isDeleted is null
-		and appVersion > '1.35'
+		and appVersion > '1.37'
 	</select>
 	
 </mapper>
