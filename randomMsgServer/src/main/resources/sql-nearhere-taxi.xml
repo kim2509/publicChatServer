@@ -6,7 +6,7 @@
 
 	<select id="selectAppInfo" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
-		select * from appInfo where os = #{os}
+		select * from appInfo where os = #{os} and useYN='Y'
 		]]>
 	</select>
 	
