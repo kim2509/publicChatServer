@@ -16,15 +16,19 @@
 <script language="javascript">
 	function sendEventPushToAdmin() {
 
+		var eventSeq = $('input[name=eventSeq]').val();
+		
 		if ( confirm("Really?") )
-			sendAjax( "sendEventPushToAdmin.do", {"eventID" : "4"} );
+			sendAjax( "sendEventPushToAdmin.do", {"eventID" : eventSeq} );
 		
 	}
 
 	function sendEventPushToAllUsers() {
 		
+		var eventSeq = $('input[name=eventSeq]').val();
+		
 		if ( confirm("Really?") )
-			sendAjax( "sendEventPushToAllUsers.do",{ "eventID" : "4" } );
+			sendAjax( "sendEventPushToAllUsers.do",{ "eventID" : eventSeq } );
 		
 	}
 	
@@ -33,10 +37,13 @@
 		try
 		{
 			var userID = $('input[name=userID]').val();
+			var eventSeq = $('input[name=eventSeq]').val();
 			
 			var userList = new Array(userID);
 			
-			sendAjax('sendEventResult.do', userList );
+			var data = {"userList":userList, "eventSeq": eventSeq };
+			
+			sendAjax('sendEventResult.do', data );
 		}
 		catch( ex )
 		{
@@ -91,6 +98,7 @@
 	<br/><br/><br/>
 	
 	<input type="text" size="20" name="userID" value="user27"/>
+	<input type="text" size="10" name="eventSeq" value="5"/>
 	<input type="button" value="이벤트접수푸쉬" onclick="sendEventApplyPushToUser();"/>
 
 </body>
