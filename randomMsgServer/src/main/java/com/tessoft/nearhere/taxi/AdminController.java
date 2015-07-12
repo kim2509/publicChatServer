@@ -148,13 +148,16 @@ public class AdminController extends BaseController{
 			
 			String logIdentifier = requestLogging(request, bodyString);
 			
-			List<String> usersToSend = mapper.readValue(bodyString, new TypeReference<List<String>>(){});
+			HashMap data = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			List<String> usersToSend = (List<String>) data.get("userList");
+			String eventSeq = data.get("eventSeq").toString();
 			
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersWithUserID", usersToSend );
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", "4Result", true );
+				sendPushMessage(userList.get(i), "eventssl", "축하드립니다! 합승등록 이벤트에 당첨되셨습니다.", eventSeq + "Result", true );
 			}
 			
 			response.setData(userList);

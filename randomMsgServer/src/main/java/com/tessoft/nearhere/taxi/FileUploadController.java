@@ -57,7 +57,7 @@ public class FileUploadController {
 				// FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
 				// output.write(fileData);
 
-				String rootPath = "C:\\Apache24\\htdocs";
+				String rootPath = "/var/lib/tomcat7/webapps/ROOT";// System.getProperty("catalina.home");
 				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
 					dir.mkdirs();
