@@ -210,6 +210,8 @@ public class TaxiController {
 				existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
 				retryCount++;
 			}
+			
+			String randomSeed = Util.getRandomSeed();
 
 			logger.info( "[" + logIdentifier + "]: retryCount:" + retryCount );
 			

@@ -93,9 +93,14 @@ public class BaseController {
 				pushMessage.setMessage( msg );
 
 			pushMessage.setParam1(param);
-			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
-
-			logger.info( "insertUserPushMessage result : " + result );
+			
+			int result = 0;
+			
+			if ( !"locationUpdate".equals( type ) )
+			{
+				result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
+				logger.info( "insertUserPushMessage result : " + result );
+			}
 
 			if ( bSendPush )
 			{

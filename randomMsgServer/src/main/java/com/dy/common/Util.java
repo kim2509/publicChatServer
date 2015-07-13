@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -204,5 +205,19 @@ public class Util {
 		else if ( address.startsWith("제주") )
 			return "제주도";
 		return "";
+	}
+	
+	public static String getRandomSeed()
+	{
+		Random rnd = new Random();
+		int n = 100000 + rnd.nextInt(900000);
+		return String.valueOf( n );
+	}
+	
+	public static String getShaHashString( String stringToEncrypt ) throws Exception
+	{
+		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+		messageDigest.update(stringToEncrypt.getBytes());
+		return new String(messageDigest.digest());
 	}
 }
