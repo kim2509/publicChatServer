@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dy.common.Constants;
 import com.dy.common.FileDTO;
 import com.nearhere.domain.APIResponse;
 
@@ -57,7 +58,12 @@ public class FileUploadController {
 				// FileOutputStream output = new FileOutputStream("C:/images/" + fileName);
 				// output.write(fileData);
 
-				String rootPath = "/var/lib/tomcat7/webapps/ROOT";// System.getProperty("catalina.home");
+				String rootPath = "";
+				if ( Constants.bReal )
+					rootPath = "/var/lib/tomcat7/webapps/ROOT";
+				else
+					rootPath = "C:\\Apache24\\htdocs";
+				
 				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
 					dir.mkdirs();

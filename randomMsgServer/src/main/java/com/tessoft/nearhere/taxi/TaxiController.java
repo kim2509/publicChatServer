@@ -168,7 +168,11 @@ public class TaxiController {
 	}
 
 	private void getRandomIDCommon(User user, APIResponse response,
-			String logIdentifier) {
+			String logIdentifier) throws Exception {
+		
+		HashMap addInfo = new HashMap();
+		addInfo.put("alreadyExistsYN", "N");
+		addInfo.put("hash", "");
 		
 		if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
 		{
@@ -182,6 +186,7 @@ public class TaxiController {
 			else
 			{
 				user = tempUser;
+				addInfo.put("alreadyExistsYN", "Y");
 			}
 		}
 		
@@ -212,6 +217,14 @@ public class TaxiController {
 			}
 			
 			String randomSeed = Util.getRandomSeed();
+			String hashString = Util.getShaHashString( user.getUserID() + randomSeed );
+			HashMap userHash = new HashMap();
+			userHash.put("seed", randomSeed );
+			userHash.put("hash", hashString );
+			userHash.put("userID", user.getUserID() );
+			sqlSession.insert("com.tessoft.nearhere.taxi.insertUserToken", userHash );
+			
+			addInfo.put("hash", hashString );
 
 			logger.info( "[" + logIdentifier + "]: retryCount:" + retryCount );
 			
@@ -220,6 +233,7 @@ public class TaxiController {
 		}
 
 		response.setData( user );
+		response.setData2( addInfo );
 	}
 	
 	@RequestMapping( value ="/taxi/getRandomID.do")
@@ -472,6 +486,77 @@ public class TaxiController {
 
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/login_bg2.do")
+	public @ResponseBody APIResponse login_bg2( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap loginInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( !loginInfo.containsKey("hash") && !"".equals( loginInfo.get("hash") ) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("세션키가 올바르지 않습니다.");
+				logger.error( response.getResCode() + " " + response.getResMsg() );
+				return response;
+			}
+			
+			if ( !loginInfo.containsKey("userID") && !"".equals( loginInfo.get("userID") ) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("사용자정보가 올바르지 않습니다.");
+				logger.error( response.getResCode() + " " + response.getResMsg() );
+				return response;
+			}
+			
+			List<HashMap> userToken = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserToken", loginInfo );
+
+			if ( userToken == null || userToken.size() < 1 )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("로그인정보가 올바르지 않습니다.");
+				logger.error( response.getResCode() + " " + response.getResMsg() );
+				return response;
+			}
+			
+			String seed = userToken.get(0).get("seed").toString();
+			
+			String hash = Util.getShaHashString( seed + loginInfo.get("userID") );
+			if ( !userToken.get(0).get("hash").equals( hash ))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("유효한 사용자정보가 아닙니다.");
+				logger.error( response.getResCode() + " " + response.getResMsg() );
+				return response;
+			}
+			
+			User user = new User();
+			user.setUserID( loginInfo.get("userID").toString() );
+			user = selectUser(user);
+			
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			if ( profilePoint == null || "".equals( profilePoint ) )
+				profilePoint = "0";
+			user.setProfilePoint(profilePoint);
+
+			response.setData(user);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
 
 	@RequestMapping( value ="/taxi/logout.do")
 	public @ResponseBody APIResponse logout( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
@@ -488,6 +573,8 @@ public class TaxiController {
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
 
 			response.setData(result);
+			
+			sqlSession.update("com.tessoft.nearhere.taxi.updateUserTokenAsLogout", user );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}

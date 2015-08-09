@@ -1006,4 +1006,17 @@
 		insert into event_apply( eventSeq, userID, phoneNo, pushNo, param1, createdDate )
 		values(#{eventSeq}, #{userID}, #{phoneNo}, #{pushNo}, #{param1}, NOW());
 	</insert>
+	
+	<insert id="insertUserToken" parameterType="java.util.HashMap">
+		insert into user_token( userID, seed, hash, expireDate, activeYN, createdDate )
+		values ( #{userID}, #{seed}, #{hash}, NOW() + INTERVAL 20 DAY, 'Y', NOW() );
+	</insert>
+	
+	<select id="selectUserToken" parameterType="java.util.HashMap">
+		select * from user_token where userID=#{userID} and hash=#{hash} and activeYN='Y';
+	</select>
+	
+	<update id="updateUserTokenAsLogout" parameterType="com.nearhere.domain.User">
+		update user_token set activeYN='N' where userID=#{userID}
+	</update>
 </mapper>
