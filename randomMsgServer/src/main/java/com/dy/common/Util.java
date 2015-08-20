@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.Random;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import com.nearhere.domain.Post;
@@ -218,6 +219,7 @@ public class Util {
 	{
 		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 		messageDigest.update(stringToEncrypt.getBytes());
-		return new String(messageDigest.digest());
+		byte[] data = Base64.encodeBase64( messageDigest.digest() );
+		return new String( data );
 	}
 }
