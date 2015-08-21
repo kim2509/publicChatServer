@@ -50,6 +50,13 @@ public class Util {
 		return false;
 	}
 	
+	public static boolean isEmptyString( Object obj )
+	{
+		if ( obj == null ) return true;
+		if ( "".equals( obj.toString().trim())) return true;
+		return false;
+	}
+	
 	public static double getDouble( String val )
 	{
 		if ( isEmptyString( val ) ) return 0.0;

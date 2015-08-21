@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dy.common.Constants;
 import com.dy.common.FileDTO;
 import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.User;
 
 /**
  * Handles requests for the application file upload requests
@@ -62,7 +63,7 @@ public class FileUploadController {
 				if ( Constants.bReal )
 					rootPath = "/var/lib/tomcat7/webapps/ROOT";
 				else
-					rootPath = "C:\\Apache24\\htdocs";
+					rootPath = "D:\\wamp\\www";
 				
 				File dir = new File(rootPath + File.separator + "image");
 				if (!dir.exists())
@@ -80,6 +81,10 @@ public class FileUploadController {
 				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserProfileImage", hash );
 
 				response.setData( result );
+				User user = new User();
+				user.setUserID( userID );
+				user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+				response.setData2( user );
 
 				logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 

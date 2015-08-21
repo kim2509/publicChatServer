@@ -2,8 +2,6 @@ package com.nearhere.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import com.neighborhood.domain.User;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostReply {
 

@@ -151,7 +151,7 @@ public class TaxiController {
 			}
 			*/
 			
-			getRandomIDCommon(user, response, logIdentifier);
+			getRandomIDCommon( hash, user, response, logIdentifier);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
@@ -167,12 +167,17 @@ public class TaxiController {
 		}
 	}
 
-	private void getRandomIDCommon(User user, APIResponse response,
+	@SuppressWarnings({ "unchecked" })
+	private void getRandomIDCommon( HashMap requestHash, User user, APIResponse response,
 			String logIdentifier) throws Exception {
 		
 		HashMap addInfo = new HashMap();
 		addInfo.put("alreadyExistsYN", "N");
 		addInfo.put("hash", "");
+		
+		double appVersion = 0.0;
+		if ( requestHash != null && requestHash.containsKey("AppVersion") )
+			appVersion = Double.parseDouble( requestHash.get("AppVersion").toString() );
 		
 		if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
 		{
@@ -180,13 +185,16 @@ public class TaxiController {
 			User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByUserNo", user);
 			if ( tempUser == null || tempUser.getUserID() == null || tempUser.getUserID().isEmpty() )
 			{
+				// 신규회원
 				user.setUserNo(null);
 				logger.info( "[" + logIdentifier + "]: userNo set null.");
 			}
 			else
 			{
+				// 기존회원
 				user = tempUser;
 				addInfo.put("alreadyExistsYN", "Y");
+				addInfo.put("registerUserFinished", getRegisterUserFinishedYN(user, appVersion) );
 			}
 		}
 		
@@ -235,6 +243,25 @@ public class TaxiController {
 		response.setData( user );
 		response.setData2( addInfo );
 	}
+
+	private String getRegisterUserFinishedYN(User user, double appVersion) {
+		String registerUserFinished = "Y";
+		
+		HashMap registerUserInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.registerUserFinishedInfo", user);
+		if ( Util.isEmptyString( registerUserInfo.get("sex") ))
+			registerUserFinished = "N";
+		
+		if ( Util.isEmptyString( registerUserInfo.get("userName") ))
+			registerUserFinished = "N";
+		
+		if ( Util.isEmptyString( registerUserInfo.get("agreementUserID") ))
+			registerUserFinished = "N";
+		
+		// 1.39 부터 카카오 ID 적용
+		if ( appVersion > 1.38 && Util.isEmptyString( registerUserInfo.get("kakaoID") ))
+			registerUserFinished = "N";
+		return registerUserFinished;
+	}
 	
 	@RequestMapping( value ="/taxi/getRandomID.do")
 	public @ResponseBody APIResponse getRandomID( HttpServletRequest request, @RequestBody String bodyString )
@@ -248,7 +275,7 @@ public class TaxiController {
 
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			getRandomIDCommon(user, response, logIdentifier);
+			getRandomIDCommon( null, user, response, logIdentifier);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
@@ -487,6 +514,7 @@ public class TaxiController {
 		return response;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/taxi/login_bg2.do")
 	public @ResponseBody APIResponse login_bg2( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
@@ -514,38 +542,49 @@ public class TaxiController {
 				return response;
 			}
 			
-			List<HashMap> userToken = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserToken", loginInfo );
-
-			if ( userToken == null || userToken.size() < 1 )
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("로그인정보가 올바르지 않습니다.");
-				logger.error( response.getResCode() + " " + response.getResMsg() );
-				return response;
-			}
-			
-			String seed = userToken.get(0).get("seed").toString();
-			
-			String hash = Util.getShaHashString( seed + loginInfo.get("userID") );
-			if ( !userToken.get(0).get("hash").equals( hash ))
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("유효한 사용자정보가 아닙니다.");
-				logger.error( response.getResCode() + " " + response.getResMsg() );
-				return response;
-			}
-			
 			User user = new User();
 			user.setUserID( loginInfo.get("userID").toString() );
 			user = selectUser(user);
+			
+			double appVersion = 0.0;
+			if ( loginInfo != null && loginInfo.containsKey("AppVersion") )
+				appVersion = Double.parseDouble( loginInfo.get("AppVersion").toString() );
+
+			HashMap addInfo = new HashMap();
+			String registerUserFinished = getRegisterUserFinishedYN(user, appVersion);
+			addInfo.put("registerUserFinished", registerUserFinished );
+			response.setData2( addInfo );
+			
+			if ( "Y".equals( registerUserFinished ) )
+			{
+				List<HashMap> userToken = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserToken", loginInfo );
+
+				if ( userToken == null || userToken.size() < 1 )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("로그인정보가 올바르지 않습니다.");
+					logger.error( response.getResCode() + " " + response.getResMsg() );
+					return response;
+				}
+				
+				String seed = userToken.get(0).get("seed").toString();
+				
+				String hash = Util.getShaHashString( loginInfo.get("userID") + seed );
+				if ( !userToken.get(0).get("hash").equals( hash ))
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("유효한 사용자정보가 아닙니다.");
+					logger.error( response.getResCode() + " " + response.getResMsg() );
+					return response;
+				}
+			}
 			
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 			if ( profilePoint == null || "".equals( profilePoint ) )
 				profilePoint = "0";
 			user.setProfilePoint(profilePoint);
-
 			response.setData(user);
-
+			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
