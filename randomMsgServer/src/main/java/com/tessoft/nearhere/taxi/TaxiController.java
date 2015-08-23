@@ -557,6 +557,8 @@ public class TaxiController {
 			
 			if ( "Y".equals( registerUserFinished ) )
 			{
+				sqlSession.update("com.tessoft.nearhere.taxi.updateUserTokenAsLogIn", loginInfo );
+				
 				List<HashMap> userToken = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserToken", loginInfo );
 
 				if ( userToken == null || userToken.size() < 1 )

@@ -1020,6 +1020,10 @@
 		update user_token set activeYN='N' where userID=#{userID}
 	</update>
 	
+	<update id="updateUserTokenAsLogIn" parameterType="com.nearhere.domain.User">
+		update user_token set activeYN='Y' where userID=#{userID}
+	</update>
+	
 	<select id="registerUserFinishedInfo" resultType="java.util.HashMap" parameterType="com.nearhere.domain.User">
 		select u.sex , u.userName, u.kakaoID, ua.userID as agreementUserID
 		from user u
