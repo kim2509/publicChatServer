@@ -84,6 +84,12 @@ public class FileUploadController {
 				User user = new User();
 				user.setUserID( userID );
 				user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+				
+				String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+				if ( profilePoint == null || "".equals( profilePoint ) )
+					profilePoint = "0";
+				user.setProfilePoint(profilePoint);
+				
 				response.setData2( user );
 
 				logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );

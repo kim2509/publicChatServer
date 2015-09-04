@@ -179,6 +179,14 @@ public class TaxiController {
 		if ( requestHash != null && requestHash.containsKey("AppVersion") )
 			appVersion = Double.parseDouble( requestHash.get("AppVersion").toString() );
 		
+		// 카카오 회원이 어플 삭제 후 다시 카카오 로그인 했을 경우
+		if ( !Util.isEmptyString( user.getKakaoID() ) )
+		{
+			User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByKakaoID", user);
+			if ( tempUser != null )
+				user = tempUser;
+		}
+		
 		if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
 		{
 			logger.info( "[" + logIdentifier + "]: userNo is not null.");
@@ -192,9 +200,20 @@ public class TaxiController {
 			else
 			{
 				// 기존회원
-				user = tempUser;
 				addInfo.put("alreadyExistsYN", "Y");
-				addInfo.put("registerUserFinished", getRegisterUserFinishedYN(user, appVersion) );
+				addInfo.put("registerUserFinished", getRegisterUserFinishedYN(tempUser, appVersion) );
+				
+				if ( !Util.isEmptyString( user.getKakaoID() ) )
+				{
+					sqlSession.update("com.tessoft.nearhere.taxi.updateKakaoInfo", user);
+				}
+				
+				user = selectUser( tempUser );
+				
+				String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+				if ( profilePoint == null || "".equals( profilePoint ) )
+					profilePoint = "0";
+				user.setProfilePoint(profilePoint);
 			}
 		}
 		
@@ -224,22 +243,23 @@ public class TaxiController {
 				retryCount++;
 			}
 			
-			String randomSeed = Util.getRandomSeed();
-			String hashString = Util.getShaHashString( user.getUserID() + randomSeed );
-			HashMap userHash = new HashMap();
-			userHash.put("seed", randomSeed );
-			userHash.put("hash", hashString );
-			userHash.put("userID", user.getUserID() );
-			sqlSession.insert("com.tessoft.nearhere.taxi.insertUserToken", userHash );
-			
-			addInfo.put("hash", hashString );
-
 			logger.info( "[" + logIdentifier + "]: retryCount:" + retryCount );
 			
 			// 임시 userID 생성완료. userID db 업데이트
 			sqlSession.update("com.tessoft.nearhere.taxi.updateUserID", user);
 		}
 
+		sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserToken", user );
+		String randomSeed = Util.getRandomSeed();
+		String hashString = Util.getShaHashString( user.getUserID() + randomSeed );
+		HashMap userHash = new HashMap();
+		userHash.put("seed", randomSeed );
+		userHash.put("hash", hashString );
+		userHash.put("userID", user.getUserID() );
+		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserToken", userHash );
+		
+		addInfo.put("hash", hashString );
+		
 		response.setData( user );
 		response.setData2( addInfo );
 	}
@@ -260,6 +280,10 @@ public class TaxiController {
 		// 1.39 부터 카카오 ID 적용
 		if ( appVersion > 1.38 && Util.isEmptyString( registerUserInfo.get("kakaoID") ))
 			registerUserFinished = "N";
+		
+		if ( !"Y".equals( registerUserInfo.get("registerUserFinished") ) )
+			registerUserFinished = "N";
+		
 		return registerUserFinished;
 	}
 	
@@ -1785,6 +1809,8 @@ public class TaxiController {
 				result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserSex", user );
 
 			response.setData( result );
+			
+			sqlSession.update("com.tessoft.nearhere.taxi.updateRegisterUserFinished", user );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}

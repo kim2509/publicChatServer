@@ -43,6 +43,11 @@
 		resultMap="userWithPoint">
 		select *, userID as 'profileID' FROM user where userNo = #{userNo};
 	</select>
+	
+	<select id="selectUserByKakaoID" parameterType="com.nearhere.domain.User"
+		resultMap="userWithPoint">
+		select *, userID as 'profileID' FROM user where kakaoID = #{kakaoID};
+	</select>
 
 	<select id="selectUserNoByUUID" parameterType="java.util.HashMap"
 		resultType="String">
@@ -68,6 +73,12 @@
 	<update id="updateUserID" parameterType="com.nearhere.domain.User">
 		update user set
 		userID=#{userID}
+		where userNo=#{userNo};
+	</update>
+	
+	<update id="updateKakaoInfo" parameterType="com.nearhere.domain.User">
+		update user set
+		kakaoID=#{kakaoID}, kakaoThumbnailImageURL = #{kakaoThumbnailImageURL}, kakaoProfileImageURL=#{kakaoProfileImageURL}, userName=#{userName}
 		where userNo=#{userNo};
 	</update>
 
@@ -139,7 +150,7 @@
 		FROM (
 			SELECT P.postID, P.userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
 				latitude, longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
-				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex',
+				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex', U.kakaoID as 'user.kakaoID',
 				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
 				departureTime, departureDateTime
 			<if test="fromLatitude != null and fromLongitude != null">
@@ -710,6 +721,11 @@
 		and param1=#{fromUserID};
 	</update>
 
+	<update id="updateRegisterUserFinished" parameterType="com.nearhere.domain.User">
+		update user set registerUserFinished='Y'
+		where userID=#{userID};
+	</update>
+	
 	<update id="updateUserMobileNo" parameterType="com.nearhere.domain.User">
 		update user set
 		mobileNo=#{mobileNo}
@@ -1012,6 +1028,10 @@
 		values ( #{userID}, #{seed}, #{hash}, NOW() + INTERVAL 20 DAY, 'Y', NOW() );
 	</insert>
 	
+	<delete id="deleteUserToken" parameterType="java.util.HashMap">
+		delete from user_token where userID=#{userID}
+	</delete>
+	
 	<select id="selectUserToken" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		select * from user_token where userID=#{userID} and hash=#{hash} and activeYN='Y';
 	</select>
@@ -1025,7 +1045,7 @@
 	</update>
 	
 	<select id="registerUserFinishedInfo" resultType="java.util.HashMap" parameterType="com.nearhere.domain.User">
-		select u.sex , u.userName, u.kakaoID, ua.userID as agreementUserID
+		select u.sex , u.userName, u.kakaoID, ua.userID as agreementUserID, u.registerUserFinished
 		from user u
 			left outer join user_terms_agreement ua on u.userID=ua.userID
 		where u.userID=#{userID};
