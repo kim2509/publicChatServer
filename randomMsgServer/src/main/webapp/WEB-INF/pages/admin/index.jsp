@@ -16,19 +16,21 @@
 <script language="javascript">
 	function sendEventPushToAdmin() {
 
+		var title = $('input[name=title]').val();
 		var eventSeq = $('input[name=eventSeq]').val();
 		
 		if ( confirm("Really?") )
-			sendAjax( "sendEventPushToAdmin.do", {"eventID" : eventSeq} );
+			sendAjax( "sendEventPushToAdmin.do", {"title": title, "eventID" : eventSeq} );
 		
 	}
 
 	function sendEventPushToAllUsers() {
 		
+		var title = $('input[name=title]').val();
 		var eventSeq = $('input[name=eventSeq]').val();
 		
 		if ( confirm("Really?") )
-			sendAjax( "sendEventPushToAllUsers.do",{ "eventID" : eventSeq } );
+			sendAjax( "sendEventPushToAllUsers.do",{ "title":title, "eventID" : eventSeq } );
 		
 	}
 	
@@ -36,12 +38,13 @@
 	{
 		try
 		{
+			var title = $('input[name=title]').val();
 			var userID = $('input[name=userID]').val();
 			var eventSeq = $('input[name=eventSeq]').val();
 			
 			var userList = new Array(userID);
 			
-			var data = {"userList":userList, "eventSeq": eventSeq };
+			var data = {"title":title, "userList":userList, "eventSeq": eventSeq };
 			
 			sendAjax('sendEventResult.do', data );
 		}
@@ -112,8 +115,9 @@
 	
 	<br/><br/><br/>
 	
+	<input type="text" size="100" name="title" value="카카오톡 연동 이벤트를 진행합니다!!"/><br/>
 	<input type="text" size="20" name="userID" value="user27"/>
-	<input type="text" size="10" name="eventSeq" value="5"/>
+	<input type="text" size="10" name="eventSeq" value="6"/>
 	<input type="button" value="이벤트접수푸쉬" onclick="sendEventApplyPushToUser();"/>
 
 	<br/><br/><br/>
