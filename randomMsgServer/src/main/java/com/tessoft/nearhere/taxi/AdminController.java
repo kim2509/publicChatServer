@@ -91,7 +91,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "event", "합승 등록 이벤트를 진행합니다!!!", requestInfo.get("eventID"), true );
+				sendPushMessage(receiver, "event", requestInfo.get("title"), requestInfo.get("eventID"), true );
 			}
 			
 			response.setData( "success" );
