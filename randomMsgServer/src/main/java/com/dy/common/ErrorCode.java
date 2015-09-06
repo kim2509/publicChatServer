@@ -8,4 +8,5 @@ public class ErrorCode {
 	public final static String INVALID_PASSWORD = "1002";
 	public final static String INVALID_INPUT = "1003";
 	public final static String UNKNOWN_ERROR = "9999";
+	public final static String IMAGE_UPLOAD_ERROR = "9001";
 }

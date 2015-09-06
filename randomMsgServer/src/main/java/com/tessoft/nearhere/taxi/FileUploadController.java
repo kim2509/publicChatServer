@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dy.common.Constants;
+import com.dy.common.ErrorCode;
 import com.dy.common.FileDTO;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
@@ -99,15 +100,20 @@ public class FileUploadController {
 				BufferedImage thumbnailImage = resizeImage(originalImage, 320, type);
 				
 				File dirTh = new File(rootPath + File.separator + "thumbnail");
+				
 				if (!dirTh.exists())
 					dirTh.mkdirs();
 				
 				ImageIO.write(thumbnailImage, "png", 
 						new File(rootPath + File.separator + "thumbnail" + File.separator + fileName )); 
 
-			} catch (IOException e) {
-				logger.error( e );
+			} catch (Exception e) {
+//				logger.error( e );
 				e.printStackTrace();
+				
+				response.setResCode(ErrorCode.IMAGE_UPLOAD_ERROR );
+				response.setResMsg("이미지 업로드중 오류");
+				
 			} // try - catch
 		} // if
 		// 데이터 베이스 처리를 현재 위치에서 처리
