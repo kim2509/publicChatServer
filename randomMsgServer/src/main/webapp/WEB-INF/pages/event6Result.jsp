@@ -144,7 +144,7 @@
 				</tr>
 				<tr>
 					<td style="width:50%;text-align:center;font-size:12px;vertical-align: center;" >
-						<input type="radio" name="prize" value="2" />S-OIL 주유할인권(5천원)</td>
+						<input type="radio" name="prize" value="3" />S-OIL 주유할인권(5천원)</td>
 				</tr>
 					<td colspan="2" style="width:50%;text-align:center;font-size:12px;padding-top:20px;" >&lt;위 3개중 택1&gt;</td>
 				</tr>
