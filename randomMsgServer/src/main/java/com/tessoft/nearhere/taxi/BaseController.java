@@ -165,6 +165,8 @@ public class BaseController {
 								.build();
 					}
 
+					logger.info( "push message[" + receiver.getRegID() + "]:" + message.toString() );
+					
 					Result pushResult = sender.send(message, receiver.getRegID() , Constants.push_retry_count);
 
 					logger.info( "push result[" + receiver.getRegID() + "]:" + pushResult.toString() + 
