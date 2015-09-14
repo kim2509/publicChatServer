@@ -183,13 +183,17 @@ public class AdminController extends BaseController{
 			
 			User user = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.selectUserForLocationUpdate", requestInfo );
 			
+			logger.error( "[sendLocationUpdateToUser]" + user );
+			
 			sendPushMessage( user, "locationUpdate", "합승 등록 이벤트를 진행합니다!!!", "", true );
+			
+			logger.error( "[sendLocationUpdateToUser] finished");
 			
 			response.setData( "success" );
 		}
 		catch(Exception ex )
 		{
-			logger.error( "[sendEventPushToAllUsers]" + ex.getMessage());
+			logger.error( "[sendLocationUpdateToUser]" + ex.getMessage());
 		}
 		
 		return response;
