@@ -161,7 +161,7 @@ public class BaseController {
 								.addData("message",  pushMessage.getMessage() )
 								.addData("type",  type )
 								.addData("userID",  param )
-								.addData("pushNo",  pushMessage.getPushNo() )
+								.addData("pushNo",  pushMessage.getPushNo() == null ? "": pushMessage.getPushNo() )
 								.build();
 					}
 

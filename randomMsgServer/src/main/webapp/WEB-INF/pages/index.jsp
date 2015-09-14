@@ -192,75 +192,6 @@
 
 <div id="wrapper">
 
-	<div>
-		<div class="countItem">
-			<span>현재 위치</span>
-			<span id="curLocation"></span>
-			<span style="float:right;font-size:12px;">
-				<a href="javascript:void(0)" onclick="refreshLocation();" style="text-decoration: none">새로고침</a>
-			</span>
-		</div>
-		<div class="countItem">
-			<span>현재 진행중인 합승내역</span>
-			<span style="float:right" id='curItems'></span>
-			<div id="progressingPostItems">
-			</div>
-		</div>
-		
-		<script id="postT" type="text/x-handlebars-template">
-		{{#each progressingPosts}}
-			<div class='postItem'>
-				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
-				<div style='float:left;width:70%;'>{{message}}</div>
-			</div>
-		{{/each}}		
-		</script>
-		
-		<div class="countItem">
-			<span>이근처 합승내역</span>
-			<div id="postsNearHere">
-			</div>
-		</div>
-		<script id="postNearHereT" type="text/x-handlebars-template">
-		{{#each postsNearHere}}
-			<div class='postItem'>
-				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
-				<div style='float:left;width:70%;'>{{message}}</div>
-			</div>
-		{{/each}}		
-		</script>
-		
-		<div class="countItem">
-			<span>내가 등록한 합승내역</span>
-			<span style="float:right" id='myItems'></span>
-			<div id="myPostItems">
-			</div>
-		</div>
-		<script id="myPostT" type="text/x-handlebars-template">
-		{{#each myPosts}}
-			<div class='postItem'>
-				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
-				<div style='float:left;width:70%;'>{{message}}</div>
-			</div>
-		{{/each}}		
-		</script>
-		
-		<div class="countItem">
-			<span>최근 1주일내 합승내역</span>
-			<span style="float:right" id='recentItems'></span>
-			<div id="postsWithin1Week">
-			</div>
-		</div>
-		<script id="within1WeekPostT" type="text/x-handlebars-template">
-		{{#each postsWithin1Week}}
-			<div class='postItem'>
-				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
-				<div style='float:left;width:70%;'>{{message}}</div>
-			</div>
-		{{/each}}		
-		</script>
-	</div>
-	
 	<div style="margin-top:20px;">
 		<div>목적지별 합승내역조회</div>
 		
@@ -341,6 +272,74 @@
 		</script>
 	</div>
 	
+	<div>
+		<div class="countItem">
+			<span>현재 위치</span>
+			<span id="curLocation"></span>
+			<span style="float:right;font-size:12px;">
+				<a href="javascript:void(0)" onclick="refreshLocation();" style="text-decoration: none">새로고침</a>
+			</span>
+		</div>
+		<div class="countItem">
+			<span>현재 진행중인 합승내역</span>
+			<span style="float:right" id='curItems'></span>
+			<div id="progressingPostItems">
+			</div>
+		</div>
+		
+		<script id="postT" type="text/x-handlebars-template">
+		{{#each progressingPosts}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+		
+		<div class="countItem">
+			<span>이근처 합승내역</span>
+			<div id="postsNearHere">
+			</div>
+		</div>
+		<script id="postNearHereT" type="text/x-handlebars-template">
+		{{#each postsNearHere}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+		
+		<div class="countItem">
+			<span>내가 등록한 합승내역</span>
+			<span style="float:right" id='myItems'></span>
+			<div id="myPostItems">
+			</div>
+		</div>
+		<script id="myPostT" type="text/x-handlebars-template">
+		{{#each myPosts}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+		
+		<div class="countItem">
+			<span>최근 1주일내 합승내역</span>
+			<span style="float:right" id='recentItems'></span>
+			<div id="postsWithin1Week">
+			</div>
+		</div>
+		<script id="within1WeekPostT" type="text/x-handlebars-template">
+		{{#each postsWithin1Week}}
+			<div class='postItem'>
+				<div style='float:left;width:20%;'><img width="60" height="60" src='http://tessoft.synology.me:8090/thumbnail/no_image.png'/></div>
+				<div style='float:left;width:70%;'>{{message}}</div>
+			</div>
+		{{/each}}		
+		</script>
+	</div>
 </div>
 
 </body>
