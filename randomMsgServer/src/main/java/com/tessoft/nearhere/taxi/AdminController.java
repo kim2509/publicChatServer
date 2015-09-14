@@ -179,7 +179,15 @@ public class AdminController extends BaseController{
 		
 		try
 		{
+			logger.error( "[sendLocationUpdateToUser] body String : " + bodyString );
+			
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			logger.error( "[sendLocationUpdateToUser] logIdentifier : " + logIdentifier );
+			
 			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			logger.error( "[sendLocationUpdateToUser] requestInfo : " + requestInfo );
 			
 			User user = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.selectUserForLocationUpdate", requestInfo );
 			
