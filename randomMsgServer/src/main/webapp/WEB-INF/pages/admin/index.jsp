@@ -54,6 +54,21 @@
 		}
 	}
 	
+	function sendLocationUpdateToUser()
+	{
+		try
+		{
+			var userList = {"userID": $('input[name=locationUserID]').val()};
+			
+			if ( confirm("Really?") )
+				sendAjax('sendLocationUpdateToUser.do', userList );
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
 	function sendLocationUpdateToAllUsers()
 	{
 		try
@@ -122,6 +137,10 @@
 
 	<br/><br/><br/>
 	
+	<input type="text" size="20" name="locationUserID" value="user27"/>
+	<input type="button" value="유저 위치 업데이트"
+		onclick="sendLocationUpdateToUser();" />
+		
 	<input type="button" value="전체유저 위치 업데이트"
 		onclick="sendLocationUpdateToAllUsers();" />
 		
