@@ -62,9 +62,9 @@
 	<insert id="insertUser" parameterType="com.nearhere.domain.User"
 		useGeneratedKeys="true" keyProperty="userNo" keyColumn="userNo">
 		INSERT INTO user ( userID, userName, password, uuid, 
-			kakaoID, kakaoThumbnailImageURL, kakaoProfileImageURL, createdDate )
+			kakaoID, kakaoThumbnailImageURL, kakaoProfileImageURL, type, createdDate )
 		VALUES(
-		#{userID}, #{userName}, #{password}, #{uuid}, #{kakaoID}, #{kakaoThumbnailImageURL}, #{kakaoProfileImageURL}, NOW() );
+		#{userID}, #{userName}, #{password}, #{uuid}, #{kakaoID}, #{kakaoThumbnailImageURL}, #{kakaoProfileImageURL}, #{type}, NOW() );
 		<selectKey keyProperty="userNo" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
@@ -148,7 +148,7 @@
 		SELECT
 		*
 		FROM (
-			SELECT P.postID, P.userID, type, message, content, fromLatitude, fromLongitude, fromAddress,
+			SELECT P.postID, P.userID, P.type, message, content, fromLatitude, fromLongitude, fromAddress,
 				latitude, longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
 				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex', U.kakaoID as 'user.kakaoID',
 				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
@@ -188,7 +188,7 @@
 			WHERE
 			fromLatitude is not null
 			and fromLongitude is not null
-			and type='taxi'
+			and P.type='taxi'
 			and deletedDate is null
 		) A
 		WHERE 1=1
@@ -230,7 +230,7 @@
 		SELECT
 			count(postID)
 		FROM (
-		SELECT P.postID, P.userID, type, message, content,
+		SELECT P.postID, P.userID, P.type, message, content,
 		fromLatitude,
 		fromLongitude, fromAddress,
 		latitude, longitude,
@@ -279,7 +279,7 @@
 		WHERE
 		fromLatitude is not null
 		and fromLongitude is not null
-		and type='taxi'
+		and P.type='taxi'
 		and deletedDate is null
 		) A
 		WHERE 1=1
@@ -315,7 +315,7 @@
 			U.sex as "user.sex"
 		FROM post P
 				left outer join user U on P.userID=U.userID
-		where type='taxi'
+		where P.type='taxi'
 		and postID=#{postID};
 		]]>
 	</select>
@@ -524,8 +524,8 @@
 	</select>
 
 	<select id="selectUnreadNoticeCount" parameterType="java.util.HashMap"
-		resultType="Integer">
-		select count(noticeID) from
+		resultType="java.util.HashMap">
+		select count(noticeID) as unreadNoticeCount, (select max(noticeID) from notice_list) as lastNoticeID from
 		notice_list
 		<choose>
 			<when test="lastNoticeID == null or lastNoticeID == ''">
@@ -1042,6 +1042,10 @@
 	
 	<update id="updateUserTokenAsLogIn" parameterType="com.nearhere.domain.User">
 		update user_token set activeYN='Y' where userID=#{userID}
+	</update>
+	
+	<update id="updateUserType" parameterType="com.nearhere.domain.User">
+		update user set type=#{type} where userID=#{userID}
 	</update>
 	
 	<select id="registerUserFinishedInfo" resultType="java.util.HashMap" parameterType="com.nearhere.domain.User">

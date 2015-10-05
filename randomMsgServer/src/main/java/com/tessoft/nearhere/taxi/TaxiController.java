@@ -111,47 +111,40 @@ public class TaxiController {
 			
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			user.setType("Normal");
 
-			if ( hash.containsKey("UUID") )
-			{
-				// 기존 UUID 가 있는지 검사
-				if ( "ffffffff-eb06-2ce8-ffff-ffffc6a77bf8".equals( hash.get("UUID") ) )
-				{
-					response.setResCode( ErrorCode.UNKNOWN_ERROR );
-					response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
-					return response;
-				}
-			}
-			
-			/*
-			if ( hash.containsKey("UUID") )
-			{
-				// 기존 UUID 가 있는지 검사
-				if ( "ffffffff-cf61-8f83-23cf-387f485472b4".equals( hash.get("UUID") ) ||
-						"00000000-3cdb-d0ac-9c1c-96300033c587".equals( hash.get("UUID") ) ||
-						"00000000-60a6-9d2e-ffff-ffff99d603a9".equals( hash.get("UUID") ))
-				{
-					// 김대용 휴대폰이면
-					String userNo = "";
-					
-					try
-					{
-						userNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserNoByUUID", hash );
-						if ( !Util.isEmptyString( userNo ) )
-							user.setUserNo(userNo);	
-					}
-					catch( Exception ex )
-					{
-						logger.error("error while getRandomIDV2", ex );
-					}
-					
-				}
-				
-				user.setUuid( hash.get("UUID").toString() );
-			}
-			*/
-			
 			getRandomIDCommon( hash, user, response, logIdentifier);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( new Exception("회원가입 도중 오류가 발생했습니다.", ex ) );
+			return response;
+		}
+	}
+	
+	@RequestMapping( value ="/taxi/getRandomIDForGuest.do")
+	public @ResponseBody APIResponse getRandomIDForGuest( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{	
+			String logIdentifier = requestLogging(request, bodyString);
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			bodyString = mapper.writeValueAsString( hash.get("user") );
+			user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			user.setType("Guest");
+			
+			getRandomIDCommon( hash, user, response, logIdentifier );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 
@@ -169,11 +162,14 @@ public class TaxiController {
 
 	@SuppressWarnings({ "unchecked" })
 	private void getRandomIDCommon( HashMap requestHash, User user, APIResponse response,
-			String logIdentifier) throws Exception {
+			String logIdentifier ) throws Exception {
 		
 		HashMap addInfo = new HashMap();
 		addInfo.put("alreadyExistsYN", "N");
 		addInfo.put("hash", "");
+		
+		//Guest 로그인 or 카카오로그인
+		String userType = user.getType();
 		
 		double appVersion = 0.0;
 		if ( requestHash != null && requestHash.containsKey("AppVersion") )
@@ -248,7 +244,7 @@ public class TaxiController {
 			// 임시 userID 생성완료. userID db 업데이트
 			sqlSession.update("com.tessoft.nearhere.taxi.updateUserID", user);
 		}
-
+		
 		sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserToken", user );
 		String randomSeed = Util.getRandomSeed();
 		String hashString = Util.getShaHashString( user.getUserID() + randomSeed );
@@ -259,6 +255,9 @@ public class TaxiController {
 		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserToken", userHash );
 		
 		addInfo.put("hash", hashString );
+		
+		user.setType( userType );
+		sqlSession.update("com.tessoft.nearhere.taxi.updateUserType", user );
 		
 		response.setData( user );
 		response.setData2( addInfo );
@@ -640,6 +639,11 @@ public class TaxiController {
 			response.setData(result);
 			
 			sqlSession.update("com.tessoft.nearhere.taxi.updateUserTokenAsLogout", user );
+			
+			user.setType("Guest");
+			sqlSession.update("com.tessoft.nearhere.taxi.updateUserType", user );
+			
+			response.setData2( selectUser( user ) );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -1708,8 +1712,9 @@ public class TaxiController {
 
 			HashMap countInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getUnreadCount", info );
 			
-			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUnreadNoticeCount", info );
-			countInfo.put("noticeCount", count );
+			HashMap noticeInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUnreadNoticeCount", info );
+			countInfo.put("noticeCount", noticeInfo.get("unreadNoticeCount"));
+			countInfo.put("lastNoticeID", noticeInfo.get("lastNoticeID"));
 
 			response.setData(countInfo);
 

@@ -26,6 +26,7 @@ public class User {
 	private String kakaoID;
 	private String kakaoThumbnailImageURL;
 	private String kakaoProfileImageURL;
+	private String type;
 
 	public String getUserNo() {
 		return userNo;
@@ -193,5 +194,13 @@ public class User {
 
 	public void setKakaoProfileImageURL(String kakaoProfileImageURL) {
 		this.kakaoProfileImageURL = kakaoProfileImageURL;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}	
 }
