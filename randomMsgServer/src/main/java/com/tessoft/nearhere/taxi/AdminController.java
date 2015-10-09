@@ -71,6 +71,34 @@ public class AdminController extends BaseController{
 		return new ModelAndView("admin/login");
 	}
 	
+	@RequestMapping( value ="/admin/allUsers.do")
+	public ModelAndView allUsers ( HttpServletRequest request )
+	{
+		ModelAndView mav = new ModelAndView();
+		
+		try
+		{
+			if ( request.getSession().getAttribute("id") == null )
+			{
+				mav.setViewName("redirect:login.do");
+				return mav;
+			}
+			else
+			{
+				mav.setViewName("admin/allUsers");
+				
+				List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectAllUsers");
+				mav.addObject("userList", userList);
+			}
+		}
+		catch(Exception ex )
+		{
+			
+		}
+		
+		return mav;
+	}
+	
 	@RequestMapping( value ="/admin/sendEventPushToAllUsers.do")
 	public @ResponseBody APIResponse sendEventPushToAllUsers( HttpServletRequest request, @RequestBody String bodyString )
 	{
