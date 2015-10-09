@@ -27,6 +27,8 @@ public class User {
 	private String kakaoThumbnailImageURL;
 	private String kakaoProfileImageURL;
 	private String type;
+	private String createdDate;
+	private String isDeleted;
 
 	public String getUserNo() {
 		return userNo;
@@ -202,5 +204,21 @@ public class User {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}	
 }
