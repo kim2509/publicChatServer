@@ -29,6 +29,9 @@ public class User {
 	private String type;
 	private String createdDate;
 	private String isDeleted;
+	private String facebookID;
+	private String facebookProfileImageURL;
+	private String facebookURL;
 
 	public String getUserNo() {
 		return userNo;
@@ -220,5 +223,29 @@ public class User {
 
 	public void setIsDeleted(String isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public String getFacebookID() {
+		return facebookID;
+	}
+
+	public void setFacebookID(String facebookID) {
+		this.facebookID = facebookID;
+	}
+
+	public String getFacebookProfileImageURL() {
+		return facebookProfileImageURL;
+	}
+
+	public void setFacebookProfileImageURL(String facebookProfileImageURL) {
+		this.facebookProfileImageURL = facebookProfileImageURL;
+	}
+
+	public String getFacebookURL() {
+		return facebookURL;
+	}
+
+	public void setFacebookURL(String facebookURL) {
+		this.facebookURL = facebookURL;
 	}	
 }

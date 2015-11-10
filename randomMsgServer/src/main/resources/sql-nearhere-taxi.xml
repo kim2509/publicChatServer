@@ -48,6 +48,11 @@
 		resultMap="userWithPoint">
 		select *, userID as 'profileID' FROM user where kakaoID = #{kakaoID};
 	</select>
+	
+	<select id="selectUserByFacebookID" parameterType="com.nearhere.domain.User"
+		resultMap="userWithPoint">
+		select *, userID as 'profileID' FROM user where facebookID = #{facebookID};
+	</select>
 
 	<select id="selectUserNoByUUID" parameterType="java.util.HashMap"
 		resultType="String">
@@ -79,6 +84,14 @@
 	<update id="updateKakaoInfo" parameterType="com.nearhere.domain.User">
 		update user set
 		kakaoID=#{kakaoID}, kakaoThumbnailImageURL = #{kakaoThumbnailImageURL}, kakaoProfileImageURL=#{kakaoProfileImageURL}, userName=#{userName}
+		where userNo=#{userNo};
+	</update>
+	
+	<update id="updateFacebookInfo" parameterType="com.nearhere.domain.User">
+		update user set
+		facebookID = #{facebookID}, facebookProfileImageURL = #{facebookProfileImageURL} , 
+		sex = #{sex}, facebookURL = #{facebookURL}, userName = #{userName}, type='Normal',
+		registerUserFinished='Y'
 		where userNo=#{userNo};
 	</update>
 
@@ -312,11 +325,16 @@
 			U.userID as "user.userID",
 			U.userName as "user.userName",
 			U.profileImageURL as "user.profileImageURL",
-			U.sex as "user.sex"
+			U.sex as "user.sex",
+			U.kakaoID as "user.kakaoID",
+			U.facebookURL as "user.facebookURL",
+			RC.readCount as readCount
 		FROM post P
 				left outer join user U on P.userID=U.userID
+				left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
+					on P.postID=RC.postID
 		where P.type='taxi'
-		and postID=#{postID};
+		and P.postID=#{postID};
 		]]>
 	</select>
 
@@ -758,27 +776,35 @@
 		select sum( credit ) as 'profilePoint'
 		from (
 		select 30 as
-		'credit' from user where userID=#{userID} and profileImageURL
-		is not null
+		'credit' from user where facebookID is not null and registerUserFinished = 'Y'
 		union all
-		select 15 as 'credit' from user where userID=#{userID}
+		
+		select 20 as
+		'credit' from user where kakaoID is not null and registerUserFinished = 'Y'
+		union all
+		
+		select 10 as 'credit' from user where userID=#{userID}
 		and birthday is not null
 		union all
-		select 20 as 'credit' from user
+		
+		select 15 as 'credit' from user
 		left outer join user_location ul on user.userID=ul.userID and
 		ul.locationName='집'
 		where user.userID=#{userID}
 		and ul.userID is not null
 		union all
-		select 20 as 'credit' from user
+		
+		select 15 as 'credit' from user
 		left outer join user_location ul on user.userID=ul.userID and
 		ul.locationName='직장'
 		where user.userID=#{userID}
 		and ul.userID is not null
 		union all
-		select 15 as 'credit' from user where userID=#{userID} and jobTitle is not
+		
+		select 10 as 'credit' from user where userID=#{userID} and jobTitle is not
 		null
 		union all
+		
 		select 0 as 'credit'
 		) A
 	</select>
@@ -1048,10 +1074,23 @@
 		update user set type=#{type} where userID=#{userID}
 	</update>
 	
+	<update id="updateUserTypeAsNormal" parameterType="com.nearhere.domain.User">
+		update user set type='Normal' where userID=#{userID} and ( kakaoID is not null or facebookURL is not null)
+	</update>
+	
 	<select id="registerUserFinishedInfo" resultType="java.util.HashMap" parameterType="com.nearhere.domain.User">
 		select u.sex , u.userName, u.kakaoID, ua.userID as agreementUserID, u.registerUserFinished
 		from user u
 			left outer join user_terms_agreement ua on u.userID=ua.userID
 		where u.userID=#{userID};
 	</select>
+	
+	<update id="deleteKakaoInfo" parameterType="com.nearhere.domain.User">
+		update user set kakaoID=null, kakaoThumbnailImageURL=null, kakaoProfileImageURL=null, registerUserFinished=null where userID=#{userID}
+	</update>
+	
+	<update id="deleteFacebookInfo" parameterType="com.nearhere.domain.User">
+		update user set facebookID=null, facebookURL=null, facebookProfileImageURL=null, registerUserFinished=null where userID=#{userID}
+	</update>
+	
 </mapper>
