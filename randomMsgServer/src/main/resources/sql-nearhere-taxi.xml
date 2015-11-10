@@ -776,11 +776,11 @@
 		select sum( credit ) as 'profilePoint'
 		from (
 		select 30 as
-		'credit' from user where facebookID is not null and registerUserFinished = 'Y'
+		'credit' from user where facebookID is not null and registerUserFinished = 'Y' and userID=#{userID}
 		union all
 		
 		select 20 as
-		'credit' from user where kakaoID is not null and registerUserFinished = 'Y'
+		'credit' from user where kakaoID is not null and registerUserFinished = 'Y' and userID=#{userID}
 		union all
 		
 		select 10 as 'credit' from user where userID=#{userID}
