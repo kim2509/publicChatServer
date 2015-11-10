@@ -111,7 +111,6 @@ public class TaxiController {
 			
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			user.setType("Normal");
 
 			getRandomIDCommon( hash, user, response, logIdentifier);
 
@@ -170,17 +169,51 @@ public class TaxiController {
 		
 		//Guest 로그인 or 카카오로그인
 		String userType = user.getType();
+		String facebookID = user.getFacebookID();
+		String facebookProfileImageURL = user.getFacebookProfileImageURL();
+		String facebookURL = user.getFacebookURL();
+		String kakaoID = user.getKakaoID();
+		String kakaoThumbnail = user.getKakaoThumbnailImageURL();
+		String kakaoProfileImageURL = user.getKakaoProfileImageURL();
+		String gender = user.getSex();
 		
 		double appVersion = 0.0;
 		if ( requestHash != null && requestHash.containsKey("AppVersion") )
 			appVersion = Double.parseDouble( requestHash.get("AppVersion").toString() );
 		
-		// 카카오 회원이 어플 삭제 후 다시 카카오 로그인 했을 경우
+		// 기존에 카카오 계정 연동을 한 경우.(삭제후 재설치 케이스)
 		if ( !Util.isEmptyString( user.getKakaoID() ) )
 		{
 			User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByKakaoID", user);
 			if ( tempUser != null )
+			{
 				user = tempUser;
+				
+				if ( !Util.isEmptyString( facebookID ) )
+				{
+					user.setFacebookID(facebookID);
+					user.setFacebookProfileImageURL(facebookProfileImageURL);
+					user.setSex(gender);
+					user.setFacebookURL(facebookURL);
+				}
+			}
+		}
+		
+		// 기존에 facebook 계정 연동을 한 경우.(삭제후 재설치 케이스)
+		if ( !Util.isEmptyString( facebookID ) )
+		{
+			User tempUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserByFacebookID", user);
+			if ( tempUser != null )
+			{
+				user = tempUser;
+				
+				if ( !Util.isEmptyString( kakaoID ) )
+				{
+					user.setKakaoID(kakaoID);
+					user.setKakaoThumbnailImageURL(kakaoThumbnail);
+					user.setKakaoProfileImageURL(kakaoProfileImageURL);
+				}
+			}
 		}
 		
 		if ( user.getUserNo() != null && !user.getUserNo().isEmpty())
@@ -199,12 +232,21 @@ public class TaxiController {
 				addInfo.put("alreadyExistsYN", "Y");
 				addInfo.put("registerUserFinished", getRegisterUserFinishedYN(tempUser, appVersion) );
 				
+				// 게스트에서 카카오 연동을 할 경우.
 				if ( !Util.isEmptyString( user.getKakaoID() ) )
 				{
 					sqlSession.update("com.tessoft.nearhere.taxi.updateKakaoInfo", user);
+					userType = "Normal";
 				}
 				
-				user = selectUser( tempUser );
+				// 게스트에서 페이스북 연동을 할 경우.
+				if ( !Util.isEmptyString( user.getFacebookID() ) )
+				{
+					sqlSession.update("com.tessoft.nearhere.taxi.updateFacebookInfo", user);
+					userType = "Normal";
+				}
+				
+				user = selectUser( tempUser, false );
 				
 				String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 				if ( profilePoint == null || "".equals( profilePoint ) )
@@ -213,6 +255,7 @@ public class TaxiController {
 			}
 		}
 		
+		// 신규일 경우.(게스트모드 포함)
 		if ( user.getUserNo() == null || user.getUserNo().isEmpty())
 		{
 			logger.info( "[" + logIdentifier + "]: userNo is null.");
@@ -277,8 +320,8 @@ public class TaxiController {
 			registerUserFinished = "N";
 		
 		// 1.39 부터 카카오 ID 적용
-		if ( appVersion > 1.38 && Util.isEmptyString( registerUserInfo.get("kakaoID") ))
-			registerUserFinished = "N";
+//		if ( appVersion > 1.38 && Util.isEmptyString( registerUserInfo.get("kakaoID") ))
+//			registerUserFinished = "N";
 		
 		if ( !"Y".equals( registerUserInfo.get("registerUserFinished") ) )
 			registerUserFinished = "N";
@@ -344,7 +387,7 @@ public class TaxiController {
 
 			sqlSession.insert("com.tessoft.nearhere.taxi.insertUser", user);
 
-			user = selectUser(user);
+			user = selectUser(user, false);
 
 			response.setData( user );
 
@@ -504,6 +547,7 @@ public class TaxiController {
 		return response;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@RequestMapping( value ="/taxi/login_bg.do")
 	public @ResponseBody APIResponse login_bg( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
@@ -516,7 +560,7 @@ public class TaxiController {
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			user = selectUser(user);
+			user = selectUser(user, false);
 			
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 			if ( profilePoint == null || "".equals( profilePoint ) )
@@ -524,6 +568,17 @@ public class TaxiController {
 			user.setProfilePoint(profilePoint);
 
 			response.setData(user);
+			
+			HashMap registerUserInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.registerUserFinishedInfo", user);
+			
+			String userAgreed = "N";
+			if ( !Util.isEmptyString( registerUserInfo.get("agreementUserID") ))
+				userAgreed = "Y";
+			
+			HashMap<String,String> addInfo = new HashMap<String, String>();
+			addInfo.put("UserAgreed", userAgreed );
+			
+			response.setData2(addInfo);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -567,7 +622,7 @@ public class TaxiController {
 			
 			User user = new User();
 			user.setUserID( loginInfo.get("userID").toString() );
-			user = selectUser(user);
+			user = selectUser(user, false);
 			
 			double appVersion = 0.0;
 			if ( loginInfo != null && loginInfo.containsKey("AppVersion") )
@@ -632,18 +687,21 @@ public class TaxiController {
 			String logIdentifier = requestLogging(request, bodyString);
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
-			user.setRegID(null);
+//			user.setRegID(null);
 
-			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+//			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
 
-			response.setData(result);
+			response.setData(0);
 			
 			sqlSession.update("com.tessoft.nearhere.taxi.updateUserTokenAsLogout", user );
 			
 			user.setType("Guest");
 			sqlSession.update("com.tessoft.nearhere.taxi.updateUserType", user );
 			
-			response.setData2( selectUser( user ) );
+			sqlSession.update("com.tessoft.nearhere.taxi.deleteKakaoInfo", user );
+			sqlSession.update("com.tessoft.nearhere.taxi.deleteFacebookInfo", user );
+			
+			response.setData2( selectUser( user, false ) );
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -742,7 +800,7 @@ public class TaxiController {
 			User daeyong = new User();
 			daeyong.setUserID("user27");
 			daeyong.setUserNo("27");
-			daeyong = selectUser( daeyong );
+			daeyong = selectUser( daeyong , false );
 			sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
 		}
 		catch( Exception ex )
@@ -935,12 +993,15 @@ public class TaxiController {
 
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
-			hash.put("pageStart", 0 );
-			hash.put("pageSize", 1);
-			hash.remove("status");
+			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", hash);
 			
-			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostsNearHere", hash);
-
+			User user = selectUser(post.getUser(), false );
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			if ( profilePoint == null || "".equals( profilePoint ) )
+				profilePoint = "0";
+			user.setProfilePoint(profilePoint);
+			post.setUser( user );
+			
 			if ( post == null )
 			{
 				response.setResCode( ErrorCode.UNKNOWN_ERROR );
@@ -966,11 +1027,11 @@ public class TaxiController {
 			if ( ( postReadHistory == null || postReadHistory.size() == 0 ) && hash.get("userID") != null &&
 					!hash.get("userID").toString().equals( post.getUser().getUserID() ))
 			{
-				User user = new User();
-				user.setUserID( hash.get("userID").toString() );
-				user = selectUser(user);
+//				User user = new User();
+//				user.setUserID( hash.get("userID").toString() );
+//				user = selectUser(user, false );
 				
-				User writer = selectUser( post.getUser() );
+				User writer = selectUser( post.getUser() , false );
 				
 				// 1.34 버전 이후부터 수신가능
 				if ( Util.getDouble( writer.getAppVersion() ) > 1.34 )
@@ -1056,7 +1117,7 @@ public class TaxiController {
 			User userToInquiry = new User();
 			userToInquiry.setUserID( hash.get("userIDToInquiry").toString() );
 
-			userToInquiry = selectUser(userToInquiry);
+			userToInquiry = selectUser(userToInquiry, false );
 			HashMap resHash = getUserInfoCommon(userToInquiry);
 
 			response.setData(resHash);
@@ -1067,7 +1128,7 @@ public class TaxiController {
 			
 			User user = new User();
 			user.setUserID( userID );
-			user = selectUser(user);
+			user = selectUser(user, false );
 			
 			/* 프로필 조회 푸쉬 없앰
 			if ( !userToInquiry.getUserID().equals( user.getUserID() ) )
@@ -1103,8 +1164,12 @@ public class TaxiController {
 		return response;
 	}
 
-	private User selectUser(User user) {
+	private User selectUser(User user, boolean bRequireMobileNo ) {
 		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		
+		if ( bRequireMobileNo == false )
+			user.setMobileNo("");
+		
 		return user;
 	}
 
@@ -1142,7 +1207,7 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			user = selectUser(user);
+			user = selectUser(user, false );
 			HashMap resHash = getUserInfoCommon(user);
 
 			response.setData(resHash);
@@ -1494,7 +1559,7 @@ public class TaxiController {
 		{
 			logger.info( "sendPushMessage[" + bSendPush + "]: " + mapper.writeValueAsString(receiver) );
 
-			receiver = selectUser(receiver);
+			receiver = selectUser(receiver, false );
 
 			UserPushMessage pushMessage = new UserPushMessage();
 			pushMessage.setToUserID( receiver.getUserID() );
@@ -1651,7 +1716,7 @@ public class TaxiController {
 					User daeyong = new User();
 					daeyong.setUserID("user27");
 					daeyong.setUserNo("27");
-					daeyong = selectUser( daeyong );
+					daeyong = selectUser( daeyong, false );
 					sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
 				}
 			}
@@ -1816,6 +1881,20 @@ public class TaxiController {
 			response.setData( result );
 			
 			sqlSession.update("com.tessoft.nearhere.taxi.updateRegisterUserFinished", user );
+			
+			sqlSession.update("com.tessoft.nearhere.taxi.updateUserTypeAsNormal", user );
+			
+			HashMap addInfo = new HashMap();
+			
+			user = selectUser(user, false);
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			if ( profilePoint == null || "".equals( profilePoint ) )
+				profilePoint = "0";
+			user.setProfilePoint(profilePoint);
+			
+			addInfo.put("user", user );
+			
+			response.setData2(addInfo);
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
@@ -1948,7 +2027,7 @@ public class TaxiController {
 			User daeyong = new User();
 			daeyong.setUserID("user27");
 			daeyong.setUserNo("27");
-			daeyong = selectUser( daeyong );
+			daeyong = selectUser( daeyong, false );
 			sendPushMessage( daeyong, "newPostByDistance", "이벤트 신청알림 " + requestInfo.get("userID"), requestInfo.get("userID") , true );
 		}
 		catch( Exception ex )
@@ -2147,5 +2226,42 @@ public class TaxiController {
 			logger.error( ex );
 			return response;
 		}
+	}
+	
+	@RequestMapping( value ="/taxi/updateFacebookInfo.do")
+	public @ResponseBody APIResponse updateFacebookInfo( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			sqlSession.update("com.tessoft.nearhere.taxi.updateFacebookInfo", user );
+			sqlSession.update("com.tessoft.nearhere.taxi.updateUserTokenAsLogIn", user );
+			HashMap addInfo = new HashMap();
+			
+			user = selectUser(user, false);
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			if ( profilePoint == null || "".equals( profilePoint ) )
+				profilePoint = "0";
+			user.setProfilePoint(profilePoint);
+			
+			addInfo.put("user", user );
+			
+			response.setData(addInfo);
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
 	}
 }
