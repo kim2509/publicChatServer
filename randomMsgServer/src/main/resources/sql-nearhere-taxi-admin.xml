@@ -41,4 +41,12 @@
 		order by u.createdDate desc
 		limit 0, 200
 	</select>
+	
+	<select id="selectAllUsersWithLocation" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select u.userID, u.userName, ul.latitude as lat, ul.longitude as lng from user u
+			left outer join user_location ul on u.userID = ul.userID and ul.locationName='현재위치'
+		where isDeleted is null
+		order by u.createdDate desc
+	</select>
 </mapper>

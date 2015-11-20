@@ -74,8 +74,9 @@ html, body {
 	    	                             {lat: 37.475961, lng: 126.977803},
 	    	                             {lat:37.474735, lng:126.962440}
 			];
+	    	
 	    	  
-	    	$("head").append("<script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A&signed_in=true&callback=initMap'>");
+	    	$("head").append("<script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAQdo6qBTtVBFSdHJcWn330-rCpJzgAHVU&signed_in=true&callback=initMap'>");
    	 	});
     </script>
 

@@ -99,6 +99,48 @@ public class AdminController extends BaseController{
 		return mav;
 	}
 	
+	@RequestMapping( value ="/admin/allUsersOnMap.do")
+	public ModelAndView allUsersOnMap ( HttpServletRequest request )
+	{
+		ModelAndView mav = new ModelAndView();
+		
+		try
+		{
+			mav.setViewName("admin/allUsersOnMap");
+		}
+		catch(Exception ex )
+		{
+			
+		}
+		
+		return mav;
+	}
+	
+	@RequestMapping( value ="/admin/allUsersWithLocationAjax.do")
+	public @ResponseBody APIResponse allUsersWithLocationAjax( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+			
+			List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectAllUsersWithLocation");
+			
+			response.setData(userList);
+			
+			response.setResCode("0000");
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/admin/sendEventPushToAllUsers.do")
 	public @ResponseBody APIResponse sendEventPushToAllUsers( HttpServletRequest request, @RequestBody String bodyString )
 	{
