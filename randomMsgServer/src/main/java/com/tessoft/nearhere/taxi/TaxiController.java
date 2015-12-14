@@ -995,6 +995,13 @@ public class TaxiController {
 
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", hash);
 			
+			if ( post.getUser() == null )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("삭제된 합승내역입니다.");
+				return response;
+			}
+			
 			User user = selectUser(post.getUser(), false );
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 			if ( profilePoint == null || "".equals( profilePoint ) )
