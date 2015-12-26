@@ -651,7 +651,7 @@
 	<update id="updateUserRegID" parameterType="com.nearhere.domain.User">
 		update user
 		set
-		regID=#{regID}
+		regID=#{regID}, isDeleted = NULL
 		where userID=#{userID};
 	</update>
 

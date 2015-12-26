@@ -995,6 +995,13 @@ public class TaxiController {
 
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", hash);
 			
+			if ( post.getUser() == null )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("삭제된 합승내역입니다.");
+				return response;
+			}
+			
 			User user = selectUser(post.getUser(), false );
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 			if ( profilePoint == null || "".equals( profilePoint ) )
@@ -1493,9 +1500,18 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegIDAsNull", user );
+			int result = -1;
+			int result2 = -1;
 			
-			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			if ( user != null && !Util.isEmptyString( user.getUserID() ))
+			{
+				result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegIDAsNull", user );
+				result2 = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			}
+			else
+			{
+				logger.error( "[updateUserRegID] user is null" );	
+			}
 
 			response.setData(result + "|" + result2);
 
