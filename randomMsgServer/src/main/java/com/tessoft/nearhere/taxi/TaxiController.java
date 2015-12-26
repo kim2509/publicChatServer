@@ -484,14 +484,16 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
+//			String logIdentifier = requestLogging(request, bodyString);
 
+			logger.info( "[updateUserLocation] START");
+			
 			UserLocation location = mapper.readValue(bodyString, new TypeReference<UserLocation>(){});
 
 			if ( location != null && 
 					(Util.isEmptyString( location.getLatitude() ) || Util.isEmptyString( location.getLongitude() )) )
 			{
-				logger.info( "[" + logIdentifier + "]: location's latitude and longitude is null.");
+//				logger.info( "[" + logIdentifier + "]: location's latitude and longitude is null.");
 				response.setData("0|0");
 				return response;
 			}
@@ -502,7 +504,8 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[updateUserLocation] END");
+//			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
