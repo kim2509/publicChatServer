@@ -153,8 +153,6 @@ public class LocationController extends BaseController{
 		
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-			
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
 			if ( hash == null || Util.isEmptyString(hash.get("locationID")))
@@ -181,8 +179,6 @@ public class LocationController extends BaseController{
 					}
 				}	
 			}
-			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{
