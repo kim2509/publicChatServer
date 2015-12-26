@@ -42,7 +42,7 @@ public class LocationController extends BaseController{
 			{
 				userID = hash.get("userID").toString();
 				Date date = new Date();
-				String hashString = Util.getShaHashString( String.valueOf( date.getTime() ) + userID );
+				String hashString = Util.getSha1HashString( String.valueOf( date.getTime() ) + userID );
 				
 				hash.put("locationID", hashString);
 				

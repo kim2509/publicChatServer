@@ -224,6 +224,14 @@ public class Util {
 	
 	public static String getShaHashString( String stringToEncrypt ) throws Exception
 	{
+		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+		messageDigest.update(stringToEncrypt.getBytes());
+		byte[] data = Base64.encodeBase64( messageDigest.digest() );
+		return new String( data );
+	}
+	
+	public static String getSha1HashString( String stringToEncrypt ) throws Exception
+	{
 		MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
 		messageDigest.update(stringToEncrypt.getBytes());
 		byte[] data = Base64.encodeBase64( messageDigest.digest() );
