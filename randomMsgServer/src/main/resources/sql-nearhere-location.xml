@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.location">
+
+	<insert id="insertLocation" parameterType="java.util.HashMap">
+		insert into location_master(locationID, userID, createdDate )
+		values(#{locationID}, #{userID}, NOW() );
+	</insert>
+
+	<update id="updateLocationTrackingAsFinished" parameterType="java.util.HashMap">
+		update location_master set deletedDate = NOW() where locationID = #{locationID};
+	</update>
+	
+	<insert id="insertLocationDetail" parameterType="java.util.HashMap">
+		insert into location_detail(locationID, latitude, longitude , createdDate )
+		values(#{locationID}, #{latitude}, #{longitude}, NOW() );
+	</insert>
+	
+	<select id="getLocationInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from location_master where locationID=#{locationID} and deletedDate is null;
+	</select>
+	
+	<select id="selectUserCurLocation" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select *
+		from user_location
+		where userID=#{userID}
+		and locationName='현재위치'
+	</select>
+	
+</mapper>

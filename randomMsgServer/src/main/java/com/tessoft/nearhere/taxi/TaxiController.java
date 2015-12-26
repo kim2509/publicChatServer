@@ -1500,9 +1500,18 @@ public class TaxiController {
 
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
-			int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegIDAsNull", user );
+			int result = -1;
+			int result2 = -1;
 			
-			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			if ( user != null && !Util.isEmptyString( user.getUserID() ))
+			{
+				result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegIDAsNull", user );
+				result2 = sqlSession.update("com.tessoft.nearhere.taxi.updateUserRegID", user );
+			}
+			else
+			{
+				logger.error( "[updateUserRegID] user is null" );	
+			}
 
 			response.setData(result + "|" + result2);
 
