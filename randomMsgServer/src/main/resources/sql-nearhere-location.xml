@@ -19,7 +19,10 @@
 	</insert>
 	
 	<select id="getLocationInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		select * from location_master where locationID=#{locationID} and deletedDate is null;
+		select lm.*, u.userName, u.profileImageURL 
+		from location_master lm
+			left outer join user u on lm.userID=u.userID 
+		where lm.locationID=#{locationID} and lm.deletedDate is null;
 	</select>
 	
 	<select id="selectUserCurLocation" parameterType="java.util.HashMap"
