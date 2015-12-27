@@ -115,14 +115,6 @@ html, body {
 				disableDefaultUI : true
 			});
 
-			var icon = {
-				url : "http://www.hereby.co.kr/image/user27.png", // url
-				scaledSize : new google.maps.Size(50, 50), // scaled size
-				origin : new google.maps.Point(0, 0), // origin
-				anchor : new google.maps.Point(20, 20)
-			// anchor
-			};
-
 			startTracking();
 		}
 
