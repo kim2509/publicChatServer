@@ -565,6 +565,14 @@ public class TaxiController {
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			user = selectUser(user, false);
 			
+			if ( user != null && !Util.isEmptyString(user.getUserID()) && hash.containsKey("AppVersion") )
+			{
+				HashMap appVersion = new HashMap();
+				appVersion.put("userID", user.getUserID());
+				appVersion.put("AppVersion", hash.get("AppVersion") );
+				sqlSession.update("com.tessoft.nearhere.taxi.updateUserAppVersion", appVersion );
+			}
+			
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 			if ( profilePoint == null || "".equals( profilePoint ) )
 				profilePoint = "0";
@@ -621,6 +629,11 @@ public class TaxiController {
 				response.setResMsg("사용자정보가 올바르지 않습니다.");
 				logger.error( response.getResCode() + " " + response.getResMsg() );
 				return response;
+			}
+			
+			if ( loginInfo != null && !Util.isEmptyString(loginInfo.get("userID")) && loginInfo.containsKey("AppVersion") )
+			{
+				sqlSession.update("com.tessoft.nearhere.taxi.updateUserAppVersion", loginInfo );
 			}
 			
 			User user = new User();
@@ -1728,7 +1741,8 @@ public class TaxiController {
 				// 등록한 시간에 비해서 30분 이상 차이 나면 푸쉬 전송
 				if ( diffMinutes >= 30)
 				{
-					sendPushMessageOnNewPost( post );
+					if ( !"종료됨".equals( post.getStatus() ) )
+						sendPushMessageOnNewPost( post );
 				}
 				else
 				{

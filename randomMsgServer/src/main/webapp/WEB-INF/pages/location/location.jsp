@@ -94,6 +94,22 @@ html, body {
 	margin-left:5px;
 	color:#661717
 }
+
+#statusDiv {
+	margin-top:5px;
+	font-size:13px;
+}
+
+#statusTitle{
+	font-size:11px;
+	color:#4c643d
+}
+
+#status{
+	margin-left:5px;
+	color:#661717
+}
+
 </style>
 
 <script type="text/javascript"
@@ -108,6 +124,8 @@ html, body {
     	var locationID = '<%=locationID%>';
     	var userID = '<%=userID%>';
 		var marker = null;
+		var loadCount = 0;
+		var bAnimate = true;
 
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
@@ -137,22 +155,32 @@ html, body {
 
 					if (responseData.resCode == '0000') {
 						var resultData = responseData.data;
-
+						
 						if (marker == null )
 						{
-							marker = new google.maps.Marker();
+							marker = new google.maps.Marker({
+								animation: google.maps.Animation.BOUNCE
+							});
 							map.setCenter(new google.maps.LatLng(resultData.latitude,
 									resultData.longitude));
 							marker.setMap( map );
 							
-							var infowindow = new google.maps.InfoWindow({
-							    content: '이동중'
-							  });
-							infowindow.open(map, marker);
-							
+							/*
 							marker.addListener('click', function() {
-								infowindow.open(map, marker);
+								showOpenInfo();
 							  });
+							*/
+							//setTimeout( showOpenInfo, 1000 );
+							
+							marker.addListener('click', toggleBounce);
+						}
+						
+						loadCount++;
+						if ( loadCount > 0 && loadCount % 4 == 0 )
+						{
+							map.setCenter(new google.maps.LatLng(resultData.latitude,
+									resultData.longitude));
+							marker.setMap( map );
 						}
 
 						var myLatLng = new google.maps.LatLng(resultData.latitude,
@@ -162,11 +190,50 @@ html, body {
 
 						$('#address').html( resultData.address );
 						$('#updatedTime').html( new Date( resultData.createdDate ).format("yyyy-MM-dd HH:mm:ss") )
-						
+						$('#status').html('이동중');
 						setTimeout( startTracking, 5000 );
+						
+						if ( bAnimate )
+							marker.setAnimation(google.maps.Animation.BOUNCE);
+						else
+							marker.setAnimation(null);
+					}
+					else
+					{
+						if (marker != null )
+						{
+							/*
+							var infowindow = new google.maps.InfoWindow({
+							    content: '종료됨'
+							  });
+							infowindow.open(map, marker);
+							*/
+						}
+						
+						marker.setAnimation(null);
+						$('#status').html('종료됨');
 					}
 				}
 			});
+		}
+		
+		function showOpenInfo()
+		{
+			var infowindow = new google.maps.InfoWindow({
+			    content: '이동중'
+			  });
+			infowindow.open(map, marker);
+		}
+		
+		function toggleBounce() {
+			
+			bAnimate = !bAnimate;
+			
+			if (marker.getAnimation() !== null) {
+				marker.setAnimation(null);
+			} else {
+				marker.setAnimation(google.maps.Animation.BOUNCE);
+			}
 		}
 </script>
 
@@ -181,9 +248,12 @@ html, body {
 			style="width: 70px; height: 70px;" />
 		</div>
 		<div id="userInfo">
-			<div id="userName"><span><%= userName %></span>님이 이동중입니다.</div>
+			<div id="userName"><span><%= userName %></span>님의 위치</div>
 			<div id="addressDiv"><span id="addressTitle">현재위치</span><span id="address"></span></div>
 			<div id="updatedTimeDiv"><span id="updatedTimeTitle">업데이트 시간</span><span id="updatedTime"></span></div>
+			<div id="statusDiv">
+				<span id="statusTitle">상태</span><span id="status"></span>
+			</div>
 		</div>
 	</div>
 	

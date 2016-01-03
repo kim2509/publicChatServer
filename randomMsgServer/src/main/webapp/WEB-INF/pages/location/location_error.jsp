@@ -28,6 +28,16 @@ html, body {
 
 </head>
 <body>
-	요청 URL 이 만료되었거나 존재하지 않습니다.
+
+	<div>
+		<a href="http://market.android.com/details?id=com.tessoft.nearhere">
+			<img id="image" src='<%= Constants.IMAGE_PATH %>/nearhere_promotion.png' height="90" style="width:100%;"/>
+		</a>
+	</div>
+
+	<div style="height:300px;display: -webkit-box;min-height: 176px;text-align: center;-webkit-box-orient: vertical;-webkit-box-pack: center;">
+		<p style="text-align:center;margin:auto;">위치공유 URL 이 종료되었거나<br/>존재하지 않습니다.</p>
+	</div>
+	
 </body>
 </html>
