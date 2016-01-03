@@ -81,6 +81,12 @@
 		where userNo=#{userNo};
 	</update>
 	
+	<update id="updateUserAppVersion" parameterType="com.nearhere.domain.User">
+		update user set
+		appVersion=#{appVersion}
+		where userID=#{userID};
+	</update>
+	
 	<update id="updateKakaoInfo" parameterType="com.nearhere.domain.User">
 		update user set
 		kakaoID=#{kakaoID}, kakaoThumbnailImageURL = #{kakaoThumbnailImageURL}, kakaoProfileImageURL=#{kakaoProfileImageURL}, userName=#{userName}
@@ -629,6 +635,7 @@
 		select *
 		from user_push_message
 		where toUserID=#{userID}
+		and isRead = 'N'
 		order by createdDate desc;
 	</select>
 
