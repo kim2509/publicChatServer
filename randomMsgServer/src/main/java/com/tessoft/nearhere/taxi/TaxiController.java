@@ -486,7 +486,7 @@ public class TaxiController {
 		{
 //			String logIdentifier = requestLogging(request, bodyString);
 
-			logger.info( "[updateUserLocation] START");
+			//logger.info( "[updateUserLocation] START");
 			
 			UserLocation location = mapper.readValue(bodyString, new TypeReference<UserLocation>(){});
 
@@ -504,7 +504,7 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "[updateUserLocation] END");
+			//logger.info( "[updateUserLocation] END");
 //			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
