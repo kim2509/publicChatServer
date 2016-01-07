@@ -1,3 +1,16 @@
 @CHARSET "utf-8";
 
-#wrapper{margin-top:10px;font-size:14px;padding:20px;}
+body{background:#eeeeee;}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, select, textarea, p, blockquote, th, td, legend, button {
+    margin: 0;
+    padding: 0;
+    color: #333;
+    font-family: 'Malgun Gothic','Droid Sans','Apple-Gothic','애플고딕','Tahoma',dotum,'돋움',gulim,'굴림',sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1.25em;
+    -webkit-text-size-adjust: none;
+}
+
+#wrapper{font-size:18px;line-height: 30px;}
