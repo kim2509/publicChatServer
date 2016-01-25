@@ -2128,8 +2128,21 @@ public class TaxiController {
 	@RequestMapping( value ="/taxi/index.do")
 	public ModelAndView index ()
 	{
-		String message = "Hello World, Spring 3.0!";           
-		return new ModelAndView("index", "message", message);
+		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
+		
+		return new ModelAndView("index", "regionList", regionList);
+	}
+	
+	@RequestMapping( value ="/taxi/searchDestination.do")
+	public ModelAndView searchDestination()
+	{
+		return new ModelAndView("searchDestination");
+	}
+	
+	@RequestMapping( value ="/taxi/listRegion.do")
+	public ModelAndView listRegion()
+	{
+		return new ModelAndView("listRegion");
 	}
 	
 	@RequestMapping( value ="/taxi/viewMoreUsers.do")
@@ -2205,11 +2218,44 @@ public class TaxiController {
 		{			
 			String logIdentifier = requestLogging(request, bodyString);
 
-			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			HashMap requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			int pageNo = 1;
+			int pageStart = 0;
+			int pageSize = 20;
+			
+			if ( requestInfo.containsKey("pageNo") && requestInfo.get("pageNo") != null )
+			{
+				pageNo = Integer.parseInt( requestInfo.get("pageNo").toString() );
+				if ( pageNo > 1 )
+				{
+					pageStart = (pageSize * (pageNo-1));
+				}
+			}
+			else
+			{
+				pageStart = 0;
+				pageSize = 20;
+			}
+			
+			requestInfo.put("pageStart", pageStart );
+			requestInfo.put("pageSize", pageSize);
 			
 			HashMap additionalData = new HashMap();
 			
-			List<HashMap> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsNearHereV2", requestInfo);
+			List<Post> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.getPostsNearHere", requestInfo);
+			
+			for ( int i = 0; i < postsNearHere.size();i++ )
+			{
+				Post item = postsNearHere.get(i);
+				String repetitiveYN = item.getRepetitiveYN();
+				
+				String departureDateTime = item.getDepartureDateTime();
+				departureDateTime = Util.getDepartureDateTime(departureDateTime);
+				
+				item.setDepartureDateTime(departureDateTime);
+			}
+			
 			additionalData.put("postsNearHere", postsNearHere );
 
 			response.setData( additionalData );
@@ -2296,5 +2342,71 @@ public class TaxiController {
 		}
 
 		return response;
+	}
+	
+	@RequestMapping( value ="/taxi/insertDestination.do")
+	public @ResponseBody APIResponse insertDestination( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			HashMap data = new HashMap();
+			
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertDestination", requestInfo);
+			data.put("dbResult",  result );
+			
+			response.setData( data );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("목적지 검색 도중 오류가 발생했습니다.");
+			logger.error( ex );
+			return response;
+		}
+	}
+	
+	@RequestMapping( value ="/taxi/getUserDestinations.do")
+	public @ResponseBody APIResponse getUserDestinations( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
+			
+			HashMap data = new HashMap();
+			
+			List<HashMap> destinationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserDestinations", requestInfo);
+			data.put("destinationList", destinationList );
+
+			response.setData( data );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("목적지 검색 도중 오류가 발생했습니다.");
+			logger.error( ex );
+			return response;
+		}
 	}
 }

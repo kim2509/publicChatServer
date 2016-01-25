@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -144,46 +145,131 @@ public class Util {
 		}
 	}
 	
+	public static String getDepartureDateTime( String departureDateTime )
+	{
+		Date dDepartureDateTime = null;
+		Date now = new Date();
+		String nowDateString = "";
+		String departureDateString = "";
+		
+		String result = "";
+		try
+		{
+			dDepartureDateTime = getDateFromString(departureDateTime, "yyyy-MM-dd HH:mm:ss");
+			result = getDateStringFromDate(dDepartureDateTime,  "yyyy-MM-dd HH:mm");
+			
+			Date today = getDateFromString( getNow("yyyy-MM-dd"), "yyyy-MM-dd" );
+			Date departureDate = getDateFromString(departureDateTime, "yyyy-MM-dd");
+			
+			long diff = now.getTime() - dDepartureDateTime.getTime();
+			long diffDays = TimeUnit.DAYS.convert(today.getTime() - departureDate.getTime(), TimeUnit.MILLISECONDS);
+			long diffHours = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
+			long diffMinutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+			
+			nowDateString = Util.getDateStringFromDate(now, "yyyy-MM-dd");
+			departureDateString = Util.getDateStringFromDate(dDepartureDateTime, "yyyy-MM-dd");
+			
+			if ( diffDays > 0 ||
+					( diffDays == 0 && diffHours > 0 && !nowDateString.equals(departureDateString)))
+			{
+				// 오늘 이전
+				if ( diffDays == 0 )
+					result = diffHours + "시간 전 출발";
+				else if ( diffDays <= 5 ) // 5일 이내
+					result = diffDays + " 일전 출발";
+				else // 5일 이상
+					result = getDateStringFromDate(dDepartureDateTime,  "MM월 dd일") + " 출발"; 
+			}
+			else if ( diffDays == 0 && nowDateString.equals(departureDateString) )
+			{
+				// 오늘
+				diffMinutes -= diffHours * 60;
+				
+				if ( diffHours > 0 && diffMinutes <= 10 )
+					result = diffHours + " 시간전 출발";
+				else if ( diffHours > 0 && diffMinutes > 10 )
+					result = diffHours + "시간 " + diffMinutes + "분전 출발";
+				else if ( diffHours == 0 && diffMinutes > 10 )
+					result = diffMinutes + "분전 출발";
+				else
+				{
+					// 지금 시간 이후
+					if ( diffHours == 0 && diffMinutes < -10 )
+						result = diffMinutes * -1 + "분후";
+					else if ( diffHours == 0 && diffMinutes > -10 )
+						result = "곧";
+					else if ( diffHours < 0 && diffMinutes > -10 )
+						result = diffHours * -1 + "시간 이후";
+					else
+						result = diffHours * -1 + "시간 " + diffMinutes * -1 + "분 이후";
+					
+					result += " 출발예정";
+				}
+			}
+			else if ( diffDays < 0 || ( diffDays == 0 && !nowDateString.equals(departureDateString) ) )
+			{
+				// 오늘 이후
+				if ( diffDays < 0 )
+					result = getDateStringFromDate(dDepartureDateTime,  " MM월 dd일") + " 출발예정";
+				else
+					result = diffHours * -1 + "시간 이후 출발예정";
+			}
+		}
+		catch( Exception ex )
+		{
+		}
+		
+		return result;
+	}
+	
 	public static String getRegionName( String address )
 	{
 		if ( address.indexOf("강북구") >= 0 )
 			return "강북구";
+		else if ( address.indexOf("강서구") >= 0 )
+			return "강서구";
 		else if ( address.indexOf("양천구") >= 0 )
 			return "양천구";
 		else if ( address.indexOf("관악구") >= 0 )
 			return "관악구";
+		else if ( address.indexOf("광진구") >= 0 )
+			return "광진구";
+		else if ( address.indexOf("구로구") >= 0 )
+			return "구로구";
+		else if ( address.indexOf("금천구") >= 0 )
+			return "금천구";
+		else if ( address.indexOf("노원구") >= 0 )
+			return "노원구";
+		else if ( address.indexOf("도봉구") >= 0 )
+			return "도봉구";
+		else if ( address.indexOf("동작구") >= 0 )
+			return "동작구";
+		else if ( address.indexOf("마포구") >= 0 )
+			return "마포구";
+		else if ( address.indexOf("서초구") >= 0 )
+			return "서초구";
 		else if ( address.indexOf("성동구") >= 0 )
 			return "성동구";
 		else if ( address.indexOf("성북구") >= 0 )
 			return "성북구";
-		else if ( address.indexOf("광진구") >= 0 )
-			return "광진구";
+		else if ( address.indexOf("서대문구") >= 0 )
+			return "서대문구";
 		else if ( address.indexOf("송파구") >= 0 )
 			return "송파구";
 		else if ( address.indexOf("종로구") >= 0 )
 			return "종로구";
-		else if ( address.indexOf("노원구") >= 0 )
-			return "노원구";
-		else if ( address.indexOf("동작구") >= 0 )
-			return "동작구";
 		else if ( address.indexOf("영등포구") >= 0 )
 			return "영등포구";
 		else if ( address.indexOf("강남구") >= 0 )
 			return "강남구";
-		else if ( address.indexOf("서초구") >= 0 )
-			return "서초구";
 		else if ( address.indexOf("용산구") >= 0 )
 			return "용산구";
 		else if ( address.indexOf("은평구") >= 0 )
 			return "은평구";
-		else if ( address.indexOf("구로구") >= 0 )
-			return "구로구";
-		else if ( address.indexOf("마포구") >= 0 )
-			return "마포구";
-		else if ( address.indexOf("금천구") >= 0 )
-			return "금천구";
 		else if ( address.indexOf("중구") >= 0 )
 			return "중구";
+		else if ( address.indexOf("중랑구") >= 0 )
+			return "중랑구";
 		else if ( address.startsWith("경기") )
 			return "경기도";
 		else if ( address.startsWith("부산") )
@@ -192,6 +278,8 @@ public class Util {
 			return "인천광역시";
 		else if ( address.startsWith("대전") )
 			return "대전광역시";
+		else if ( address.startsWith("울산") )
+			return "울산광역시";
 		else if ( address.startsWith("대구") )
 			return "대구광역시";
 		else if ( address.startsWith("광주광") )

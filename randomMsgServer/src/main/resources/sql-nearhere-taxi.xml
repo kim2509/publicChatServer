@@ -209,6 +209,18 @@
 			and fromLongitude is not null
 			and P.type='taxi'
 			and deletedDate is null
+			<choose>
+				<when
+					test="regionNo != null and regionNo.equals('40')">
+					AND P.region in ( select regionNo from region where parentNo=#{regionNo} )
+				</when>
+				<when test="regionNo != null">
+					AND P.region = #{regionNo}
+				</when>
+			</choose>
+			<if test="status != null">
+				AND P.status = #{status}
+			</if>
 		) A
 		WHERE 1=1
 		<if test="postID != null">
@@ -222,9 +234,6 @@
 			test="toLatitude != null and toLongitude != null and toDistance != null">
 			AND A.toDistance &lt;= #{toDistance}
 		</if>
-		<if test="status != null">
-			AND A.status = #{status}
-		</if>
 		<choose>
 			<when
 				test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
@@ -236,7 +245,7 @@
 				desc
 			</when>
 			<when test="toLatitude != null and toLongitude != null">
-				order by toDistance, A.status desc,
+				order by A.status desc, toDistance,
 				createdDate desc
 			</when>
 			<otherwise>order by A.status desc, createdDate desc</otherwise>
@@ -918,29 +927,9 @@
 	
 	<select id="getMainInfo" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap">
-		select countInfo, count from (
-		select region.regionName as countInfo, count(region) as count from post
-			left outer join region on post.region=region.regionNo
-		where region is not null
-		and deletedDate is null
-		and type='taxi'
-		group by region.regionName
-		order by region.priority
-		) A
-		union all
-		select '현재진행중' as countInfo, count(postID) as count from post
-		where type='taxi'
-		and status='진행중'
-		and deletedDate is null
-		union all
-		select '내합승내역' as countInfo, count(postID) as count from post
-		where userID=#{userID}
-		and type='taxi'
-		and deletedDate is null
-		union all
-		SELECT '1주일' as countInfo, count(postID) as count from post
-		where departureDateTime >= DATE_FORMAT( DATE_SUB(NOW(),INTERVAL 7 DAY) , '%Y-%m-%d %H:%i:%s')
-		and deletedDate is null;
+		select * from region
+		where parentNo is null
+		order by priority
 	</select>
 	
 	<select id="selectNewUsersCount" resultType="String">
@@ -1100,4 +1089,18 @@
 		update user set facebookID=null, facebookURL=null, facebookProfileImageURL=null, registerUserFinished=null where userID=#{userID}
 	</update>
 	
+	<insert id="insertUserDestination" parameterType="java.util.HashMap">
+		insert into user_destinations(destination, userID, createdDate)
+		SELECT #{destination}, #{userID}, NOW() from user_destinations
+		WHERE NOT EXISTS (
+    		select destinationNo from user_destinations
+    		where userID=#{userID} and destination = #{destination}
+		) LIMIT 1;
+	</insert>
+	
+	<select id="selectUserDestinations" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select * from user_destinations
+		group by destination
+		order by count(destinationNo) desc
+	</select>
 </mapper>
