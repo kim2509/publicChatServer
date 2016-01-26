@@ -33,15 +33,23 @@
 		
 	});
 
+	var pageNo = 1;
+	var bLoading = false;
+	
 	function getPosts()
 	{
+		if ( bLoading ) return;
+		
+		bLoading = true;
+		
 		jQuery.ajax({
 			type : "POST",
 			url : "/nearhere/taxi/getPostsNearHereAjax.do",
 			data : JSON.stringify({
 				"toLatitude" : <%= latitude %>,
 				"toLongitude" : <%= longitude %>,
-				"toDistance" : "10"
+				"toDistance" : "10",
+				"pageNo" : pageNo
 			}),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",
@@ -57,6 +65,16 @@
 					});
 
 					$(window).resize();
+					
+					$(window).bind('scroll', function()
+                    {
+						if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+					        // you're at the bottom of the page
+							pageNo++;
+							getPosts();
+					    }
+					});
+					
 				} catch (ex) {
 					alert(ex.message);
 				}
@@ -64,6 +82,7 @@
 			complete : function(data) {
 				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
 				// TODO
+				bLoading = false;
 			},
 			error : function(xhr, status, error) {
 				alert("에러발생");
@@ -72,10 +91,17 @@
 	}
 	
 	function displayPosts(data) {
+		
+		if ( data == null || data.data.postsNearHere == null || data.data.postsNearHere.length < 1 ) return;
+		
 		var source = $('#postT').html();
 		var template = Handlebars.compile(source);
 		var html = template(data.data);
-		$('#postList').html(html);
+		
+		if ( pageNo == 1 )
+			$('#postList').html(html);
+		else if ( pageNo > 0 )
+			$('#postList dl').append($(html).find('dd'));
 	}
 	
 	function goVIP(postID)
@@ -89,6 +115,11 @@
 			return new Handlebars.SafeString('<img class="sex" src="<%= Constants.IMAGE_PATH %>/ic_male.png" width="15" height="15"/>');
 		else if ( sex == 'F' )
 			return new Handlebars.SafeString('<img class="sex" src="<%= Constants.IMAGE_PATH %>/ic_female.png" width="15" height="15"/>');
+	}
+	
+	function openUserProfile( userID )
+	{
+		document.location.href='nearhere://openUserProfile?userID=' + userID;
 	}
 	
 </script>
@@ -109,7 +140,7 @@
 		<dl class="slide_lst">
 			{{#each postsNearHere}}
 			<dd>
-				<div class='userProfile' onclick="alert('abc');">
+				<div class='userProfile' onclick="openUserProfile('{{user.userID}}');">
 					<img class="lazy" data-original='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
 						src="<%= Constants.IMAGE_PATH %>/no_image.png" width="80" height="80"/>
 				</div>

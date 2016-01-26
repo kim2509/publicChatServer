@@ -2126,7 +2126,7 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/index.do")
-	public ModelAndView index ()
+	public ModelAndView index ( String isApp )
 	{
 		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
 		
@@ -2134,13 +2134,13 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/searchDestination.do")
-	public ModelAndView searchDestination()
+	public ModelAndView searchDestination( String isApp )
 	{
 		return new ModelAndView("searchDestination");
 	}
 	
 	@RequestMapping( value ="/taxi/listRegion.do")
-	public ModelAndView listRegion()
+	public ModelAndView listRegion( String isApp )
 	{
 		return new ModelAndView("listRegion");
 	}
