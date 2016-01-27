@@ -117,9 +117,18 @@ table, td {
 
 	function goRegionPage( titleUrlEncoded, url )
 	{
-		document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url;
+		document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y';
 	}
 	
+	function snsLogin()
+	{
+		document.location.href='nearhere://snsLogin';
+	}
+	
+	function showOKDialog( title, message, param )
+	{
+		document.location.href='nearhere://showOKDialog?title=' + title + '&message=' + message + '&param=' + param;
+	}
 </script>
 </head>
 <body>
@@ -127,18 +136,37 @@ table, td {
 	<div id="wrapper">
 
 		<div>
+			<div onclick="snsLogin();">SNS로그인</div>
+		</div>
+		
+		<div>
+			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
+		</div>
+
+		<div>
 
 			<dl class="slide_lst">
+<%
+				String incheonAirportURL = Constants.getServerURL() + "/taxi/searchDestination.do?latitude=37.460195&longitude=126.438507&address=%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD";
+				incheonAirportURL = URLEncoder.encode( incheonAirportURL, "UTF-8" );
+%>
+				<dd onclick="goRegionPage('%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD','<%= incheonAirportURL %>')">
+					 <strong class="tit">인천공항</strong> <span
+						class="sp_mw arr"></span>
+					
+				</dd>
+				
 <%
 				for ( int i = 0; i < regionList.size(); i++ )
 				{
 					String regionNo = regionList.get(i).get("regionNo").toString();
 					String title = regionList.get(i).get("regionName").toString();
 					String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
+					String regionCount = regionList.get(i).get("regionCount").toString();
 					String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
 %>
 				<dd onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
-					 <strong class="tit"><%= title %></strong> <span
+					 <strong class="tit"><%= title %>(<%= regionCount %>)</strong> <span
 						class="sp_mw arr"></span>
 					
 				</dd>

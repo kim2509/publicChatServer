@@ -117,12 +117,30 @@
 		document.location.href='nearhere://openUserProfile?userID=' + userID;
 	}
 	
+	function snsLogin()
+	{
+		document.location.href='nearhere://snsLogin';
+	}
+	
+	function showOKDialog( title, message, param )
+	{
+		document.location.href='nearhere://showOKDialog?title=' + title + '&message=' + message + '&param=' + param;
+	}
+	
 </script>
 </head>
 <body>
 
 	<div id="wrapper">
 
+		<div>
+			<div onclick="snsLogin();">SNS로그인</div>
+		</div>
+		
+		<div>
+			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
+		</div>
+		
 		<div id="postList">
 		</div>
 

@@ -927,14 +927,25 @@
 	
 	<select id="getMainInfo" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap">
-		select R.*, IFNULL(P.regionCount,0) as regionCount from region R
+		select R.*, IFNULL(P.regionCount,0) as regionCount 
+		from region R
 			left outer join (
-				select region, count(*) as regionCount from post
-				where region is not null
-				group by region	
+				select r.parentNo as region, count(*) as regionCount 
+				from post p
+					left outer join region r on r.regionNo=p.region
+				where p.region is not null
+				and r.parentNo is not null
+				group by r.parentNo
+				union
+				select p.region, count(*) as regionCount 
+				from post p
+					left outer join region r on r.regionNo=p.region
+				where p.region is not null
+				and r.parentNo is null
+				group by p.region	
 			) P on P.region = R.regionNo
-		where parentNo is null 
-		order by priority 
+		where R.parentNo is null
+		order by priority
 	</select>
 	
 	<select id="selectNewUsersCount" resultType="String">

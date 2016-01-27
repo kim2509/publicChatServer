@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.nearhere.domain.*"%>
 <%@ page import="com.dy.common.*"%>
@@ -6,6 +7,11 @@
 	String latitude = request.getParameter("latitude");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
+	//address = new String(address.getBytes("ISO-8859-1"), "UTF-8");
+	if ( address != null && address.length() > 0 )
+	{
+		address = URLDecoder.decode(address, "UTF-8");
+	}
 %>
 <html>
 
