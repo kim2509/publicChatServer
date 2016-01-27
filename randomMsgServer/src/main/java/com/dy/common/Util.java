@@ -224,12 +224,12 @@ public class Util {
 	
 	public static String getRegionName( String address )
 	{
+		if ( address.indexOf("강남구") >= 0 )
+			return "강남구";
 		if ( address.indexOf("강북구") >= 0 )
 			return "강북구";
 		else if ( address.indexOf("강서구") >= 0 )
 			return "강서구";
-		else if ( address.indexOf("양천구") >= 0 )
-			return "양천구";
 		else if ( address.indexOf("관악구") >= 0 )
 			return "관악구";
 		else if ( address.indexOf("광진구") >= 0 )
@@ -246,6 +246,8 @@ public class Util {
 			return "동작구";
 		else if ( address.indexOf("마포구") >= 0 )
 			return "마포구";
+		else if ( address.indexOf("송파구") >= 0 )
+			return "송파구";
 		else if ( address.indexOf("서초구") >= 0 )
 			return "서초구";
 		else if ( address.indexOf("성동구") >= 0 )
@@ -254,18 +256,16 @@ public class Util {
 			return "성북구";
 		else if ( address.indexOf("서대문구") >= 0 )
 			return "서대문구";
-		else if ( address.indexOf("송파구") >= 0 )
-			return "송파구";
-		else if ( address.indexOf("종로구") >= 0 )
-			return "종로구";
+		else if ( address.indexOf("양천구") >= 0 )
+			return "양천구";
 		else if ( address.indexOf("영등포구") >= 0 )
 			return "영등포구";
-		else if ( address.indexOf("강남구") >= 0 )
-			return "강남구";
 		else if ( address.indexOf("용산구") >= 0 )
 			return "용산구";
 		else if ( address.indexOf("은평구") >= 0 )
 			return "은평구";
+		else if ( address.indexOf("종로구") >= 0 )
+			return "종로구";
 		else if ( address.indexOf("중구") >= 0 )
 			return "중구";
 		else if ( address.indexOf("중랑구") >= 0 )
