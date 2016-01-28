@@ -6,7 +6,9 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -17,6 +19,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -2126,11 +2129,15 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/index.do")
-	public ModelAndView index ( String isApp )
+	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
+			@CookieValue(value = "userID", defaultValue = "") String userID,
+			ModelMap model )
 	{
 		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
 		
-		return new ModelAndView("index", "regionList", regionList);
+		model.addAttribute("regionList", regionList );
+		
+		return new ModelAndView("index", model);
 	}
 	
 	@RequestMapping( value ="/taxi/searchDestination.do")

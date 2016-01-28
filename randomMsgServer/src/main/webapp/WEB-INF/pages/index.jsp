@@ -5,6 +5,8 @@
 <%@ page import="com.dy.common.*"%>
 
 <%
+	String isApp = request.getParameter("isApp");
+
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
 %>
 <html>
@@ -15,109 +17,27 @@
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
+	<link rel="stylesheet" type="text/css"
+	href="<%=Constants.CSS_PATH%>/category.css" />
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<style type="text/css">
-dl {
-	display: block;
-	-webkit-margin-before: 1em;
-	-webkit-margin-after: 1em;
-	-webkit-margin-start: 0px;
-	-webkit-margin-end: 0px;
-}
-
-dd {
-	display: block;
-	position: relative;
-	height: 50px;
-	line-height: 50px;
-	border-bottom: 1px solid #ccc;
-	text-align: left;
-}
-
-a:link, a:hover, a:active {
-	text-decoration: none;
-}
-
-.slide_lst {
-	
-}
-
-.slide_lst .inp_box {
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-.slide_lst .inp_box .tit {
-	color: #666;
-}
-
-.inp_box .arr {
-	position: absolute;
-	top: 50%;
-	right: 10px;
-	width: 7px;
-	height: 11px;
-	margin-top: -6px;
-	background-position: -22px -31px;
-	background-image: url(//pics.gmkt.kr/mobile/lpsrp/sp_mw_rtn.png);
-	background-size: 200px auto;
-}
-
-table, td {
-	margin: 0px;
-}
-
-#wrapper {
-	margin-top: 15px;
-	padding: 0px;
-	padding-bottom: 20px;
-}
-
-.region tr {
-	height: 40px;
-}
-
-.region td {
-	padding-left: 5px;
-	padding-right: 5px;
-	text-align: center;
-	font-size: 14px;
-}
-
-.countItem {
-	clear: both;
-	margin-top: 10px;
-}
-
-#divCountPerResion {
-	margin-top: 10px
-}
-
-#progressingPostItems {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.postItem {
-	clear: both;
-	height: 60px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-</style>
-
 <script language="javascript">
+
+	var isApp = '<%= isApp %>';
+	
 	jQuery(document).ready(function() {
 
 	});
 
 	function goRegionPage( titleUrlEncoded, url )
 	{
-		document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y';
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y';
+		else
+			document.location.href = decodeURIComponent(url);
 	}
 	
 	function snsLogin()
@@ -135,13 +55,13 @@ table, td {
 
 	<div id="wrapper">
 
-		<div>
+		<!-- div>
 			<div onclick="snsLogin();">SNS로그인</div>
 		</div>
 		
 		<div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
-		</div>
+		</div-->
 
 		<div>
 

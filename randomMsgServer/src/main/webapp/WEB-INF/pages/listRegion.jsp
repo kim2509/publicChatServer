@@ -6,6 +6,7 @@
 	String regionNo = request.getParameter("regionNo");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
+	Constants.bReal = false;
 %>
 <html>
 
@@ -133,13 +134,13 @@
 
 	<div id="wrapper">
 
-		<div>
+		<!-- div>
 			<div onclick="snsLogin();">SNS로그인</div>
 		</div>
 		
 		<div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
-		</div>
+		</div-->
 		
 		<div id="postList">
 		</div>
@@ -158,8 +159,8 @@
 					<strong class="tit">{{message}}</strong>
 					<div id="departureDateTime">{{departureDateTime}}</div>
 					<div id="readCount">조회수 : {{readCount}}</div>
-					<div id="sexInfo">{{printSexInfo user.sex}}{{user.userName}}</div>
-					<div id="tags">{{vehicle}} {{fareOption}} {{numOfUsers}}</div>
+					<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
+					<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span><span>{{numOfUsers}}</span></div>
 				</div>
 			</dd>
 			{{/each}}

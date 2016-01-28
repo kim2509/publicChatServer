@@ -1,11 +1,6 @@
 @CHARSET "utf-8";
 
 dl {
-    display: block;
-    -webkit-margin-before: 1em;
-    -webkit-margin-after: 1em;
-    -webkit-margin-start: 0px;
-    -webkit-margin-end: 0px;
     border-top: 1px solid #ccc;
 }
 
@@ -26,39 +21,8 @@ a:link, a:hover, a:active {
 .slide_lst {
 }
 
-.slide_lst .inp_box {
-    padding-left:10px;
-    padding-right:10px;
-}
-
 table, td {
 	margin: 0px;
-}
-
-#wrapper {
-	margin-top: 15px;
-	padding: 0px;
-	padding-bottom: 20px;
-}
-
-.region tr {
-	height: 40px;
-}
-
-.region td {
-	padding-left: 5px;
-	padding-right: 5px;
-	text-align: center;
-	font-size: 14px;
-}
-
-.countItem {
-	clear: both;
-	margin-top: 10px;
-}
-
-#divCountPerResion {
-	margin-top: 10px
 }
 
 .userProfile{
@@ -81,4 +45,41 @@ table, td {
 
 .postDesc .tit {
     color: #666;
+}
+
+.postDesc #personInfo{
+	position:absolute;
+	top:43%;	
+}
+
+.postDesc #userSex{
+	float:left;
+}
+
+.postDesc #userName{
+	margin-left:20px;
+}
+
+.postDesc #departureDateTime {
+	position:absolute;
+    top:43%;
+    right:5px;
+}
+
+.postDesc #readCount {
+	position:absolute;
+	bottom:10px;
+}
+
+.postDesc #tags{
+	position:absolute;
+	bottom:10px;
+	right:5px;
+}
+
+.postDesc #tags span{
+	background:red;
+	color:white;
+	margin:3px;
+	padding:1px;
 }

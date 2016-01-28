@@ -1,0 +1,17 @@
+@CHARSET "utf-8";
+
+
+dl {
+	border-top: 1px solid #ccc;
+}
+
+dd {
+	display: block;
+	position: relative;
+	height: 50px;
+	line-height: 50px;
+	border-bottom: 1px solid #ccc;
+	text-align: left;
+	padding-left:10px;
+	padding-right:10px;
+}
