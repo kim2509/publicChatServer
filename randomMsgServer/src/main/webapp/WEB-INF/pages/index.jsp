@@ -12,6 +12,7 @@
 <html>
 
 <head>
+<title>이근처 합승</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -55,11 +56,15 @@
 
 	<div id="wrapper">
 
-		<!-- div>
-			<div onclick="snsLogin();">SNS로그인</div>
+		<div class="snsLogin" onclick="snsLogin();">
+			<div>SNS계정으로 로그인을 하시면 상대방에게 보다 더 믿음을 주실 수 있습니다.</div>
+			<div class="snsBtns">
+				<img src="<%= Constants.IMAGE_PATH %>/kakao_login_btn.png" width="180px;" height="40px"/>
+				<img src="<%= Constants.IMAGE_PATH %>/facebook_logo.png" width="180px;" height="40px"/>
+			</div>
 		</div>
 		
-		<div>
+		<!-- div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
 

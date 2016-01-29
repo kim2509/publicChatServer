@@ -44,7 +44,13 @@ table, td {
 }
 
 .postDesc .tit {
-    color: #666;
+    color: #000000;
+    font-size:16px;
+    display:block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    height:30px;
 }
 
 .postDesc #personInfo{
@@ -78,8 +84,25 @@ table, td {
 }
 
 .postDesc #tags span{
-	background:red;
+	background:#F66C3C;
 	color:white;
 	margin:3px;
-	padding:1px;
+	padding-top:1px;
+	padding-bottom:1px;
+	padding-left:3px;
+	padding-right:3px;
+	border-radius: 5px;
 }
+
+.slide_lst .imgStatus{
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+
+#wrapper .searchRegion{
+	padding:10px;
+	color:#3B5D98;
+	background:white;
+}
+

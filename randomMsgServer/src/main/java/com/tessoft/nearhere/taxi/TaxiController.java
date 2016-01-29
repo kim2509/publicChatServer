@@ -2143,13 +2143,19 @@ public class TaxiController {
 	@RequestMapping( value ="/taxi/searchDestination.do")
 	public ModelAndView searchDestination( String isApp )
 	{
-		return new ModelAndView("searchDestination");
+		return new ModelAndView("carPool/searchDestination");
 	}
 	
 	@RequestMapping( value ="/taxi/listRegion.do")
 	public ModelAndView listRegion( String isApp )
 	{
-		return new ModelAndView("listRegion");
+		return new ModelAndView("carPool/listRegion");
+	}
+	
+	@RequestMapping( value ="/taxi/newPost.do")
+	public ModelAndView newPost( HttpServletRequest request, HttpServletResponse response , ModelMap model )
+	{
+		return new ModelAndView("carPool/newPost");
 	}
 	
 	@RequestMapping( value ="/taxi/viewMoreUsers.do")

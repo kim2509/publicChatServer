@@ -2,7 +2,7 @@
 
 
 dl {
-	border-top: 1px solid #ccc;
+	/*border-top: 1px solid #ccc;*/
 }
 
 dd {
@@ -14,4 +14,17 @@ dd {
 	text-align: left;
 	padding-left:10px;
 	padding-right:10px;
+}
+
+.snsLogin{
+	border-radius: 20px;
+    border: 2px solid #73AD21;
+    padding: 10px; 
+	height:90px;
+	background:white;
+	margin:10px;
+}
+
+.snsBtns{
+	margin-top:10px;
 }
