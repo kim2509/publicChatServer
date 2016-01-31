@@ -124,6 +124,21 @@
 		</selectKey>
 	</insert>
 
+	<insert id="insertPostV2" parameterType="java.util.HashMap"
+		useGeneratedKeys="true" keyProperty="postID" keyColumn="postID">
+		insert into post( userID, type, message, content, fromLatitude,
+		fromLongitude, fromAddress,
+		latitude, longitude, toAddress, sexInfo,
+		numOfUsers, departureDate, departureTime, departureDateTime, vehicle, fareOption, repetitiveYN, region, createdDate)
+		values(#{userID}, 'taxi', #{message}, NULL,
+		#{fromLatitude}, #{fromLongitude}, #{fromAddress}, #{toLatitude},
+		#{toLongitude}, #{toAddress}, #{sexInfo}, #{numOfUsers},
+		#{departureDate}, #{departureTime}, #{departureDateTime}, #{vehicle}, #{fareOption}, #{repetitiveYN}, #{region}, NOW() );
+		<selectKey keyProperty="postID" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
 	<update id="updatePost" parameterType="com.nearhere.domain.Post">
 		replace into post( postID,
 		userID, type, message, content, fromLatitude, fromLongitude,
@@ -209,15 +224,9 @@
 			and fromLongitude is not null
 			and P.type='taxi'
 			and deletedDate is null
-			<choose>
-				<when
-					test="regionNo != null and regionNo.equals('40')">
-					AND P.region in ( select regionNo from region where parentNo=#{regionNo} )
-				</when>
-				<when test="regionNo != null">
-					AND P.region = #{regionNo}
-				</when>
-			</choose>
+			<if test="regionNo != null">
+				AND P.region = #{regionNo}
+			</if>
 			<if test="status != null">
 				AND P.status = #{status}
 			</if>
@@ -1119,4 +1128,11 @@
 		group by destination
 		order by count(destinationNo) desc
 	</select>
+	
+	<select id="getRegionList" resultType="java.util.HashMap">
+		select * from region
+		where parentNo is null
+		order by priority
+	</select>
+	
 </mapper>

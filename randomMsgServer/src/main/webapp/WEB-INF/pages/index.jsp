@@ -6,6 +6,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String snsLoginYN = request.getParameter("snsLogin");
 
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
 %>
@@ -56,13 +57,21 @@
 
 	<div id="wrapper">
 
+<%
+		if ("Y".equals( snsLoginYN ) )
+		{
+%>
 		<div class="snsLogin" onclick="snsLogin();">
 			<div>SNS계정으로 로그인을 하시면 상대방에게 보다 더 믿음을 주실 수 있습니다.</div>
 			<div class="snsBtns">
-				<img src="<%= Constants.IMAGE_PATH %>/kakao_login_btn.png" width="180px;" height="40px"/>
-				<img src="<%= Constants.IMAGE_PATH %>/facebook_logo.png" width="180px;" height="40px"/>
+				<img class="kakaoLogin" src="<%= Constants.IMAGE_PATH %>/kakao_login_btn.png" width="42%;" height="40px"/>
+				<img class="fbLogin" src="<%= Constants.IMAGE_PATH %>/facebook_logo.png" width="42%;" height="40px"/>
 			</div>
 		</div>
+
+<%			
+		}
+%>		
 		
 		<!-- div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>

@@ -38,12 +38,12 @@ jQuery(document).ready(function() {
 	<dl class="slide_lst">
 		{{#each postsNearHere}}
 		<dd>
-			<div class="imgStatus">
-				<img src='{{printPostStatus status}}' width="60" height="60"/>
+			<div class="imgStatus" onclick="openUserProfile('{{user.userID}}');">
+				<img src='{{printPostStatus status}}' width="50" height="50"/>
 			</div>
 			<div class='userProfile' onclick="openUserProfile('{{user.userID}}');">
 				<img class="lazy" data-original='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
-					src="<%= Constants.IMAGE_PATH %>/no_image.png" width="80" height="80"/>
+					src="<%= Constants.IMAGE_PATH %>/no_image.png" width="70" height="70"/>
 			</div>
 			<div class='postDesc' onclick="goVIP('{{postID}}')">
 				<strong class="tit">{{message}}</strong>

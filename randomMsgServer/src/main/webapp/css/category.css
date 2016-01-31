@@ -28,3 +28,13 @@ dd {
 .snsBtns{
 	margin-top:10px;
 }
+
+.kakaoLogin{
+	position:absolute;
+	left:25px;
+}
+
+.fbLogin{
+	position:absolute;
+	right:25px;
+}

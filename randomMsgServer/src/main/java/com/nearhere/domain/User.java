@@ -33,6 +33,13 @@ public class User {
 	private String facebookProfileImageURL;
 	private String facebookURL;
 
+	public User(){}
+	
+	public User( String userID )
+	{
+		setUserID(userID);
+	}
+	
 	public String getUserNo() {
 		return userNo;
 	}

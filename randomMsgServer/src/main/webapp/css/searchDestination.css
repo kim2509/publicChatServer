@@ -45,7 +45,7 @@ table, td {
 
 .postDesc .tit {
     color: #000000;
-    font-size:16px;
+    font-size:14px;
     display:block;
     text-overflow: ellipsis;
     white-space: nowrap;

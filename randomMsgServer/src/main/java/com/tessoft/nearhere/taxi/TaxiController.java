@@ -781,6 +781,68 @@ public class TaxiController {
 		
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/insertPostAjax.do")
+	public @ResponseBody APIResponse insertPostAjax( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap postData = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			try
+			{
+				if ( postData.containsKey("userID") == false )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("사용자 아이디가 올바르지 않습니다.");
+					return response;
+				}
+				
+				User user = new User( postData.get("userID").toString() );
+				user = selectUser(user, false);
+				
+				if ( "여자만".equals( postData.get("sexInfo").toString() ) && "M".equals(user.getSex()))
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("남성회원은 여자만 옵션을 선택할 수 없습니다.");
+					return response;
+				}
+				
+			}
+			catch( Exception ex )
+			{
+				logger.error( ex );
+			}
+			
+			postData.put("departureDateTime", postData.get("departureDate") + " " + postData.get("departureTime") );
+			
+			if ( "반복안함".equals( postData.get("repeat")) )
+				postData.put("repetitiveYN", "N");
+			else
+				postData.put("repetitiveYN", "Y");
+			
+			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostV2", postData );
+
+			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", postData);
+			sendPushMessageOnNewPost(post);
+
+			response.setData( result );
+
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 
 	private void sendPushMessageOnNewPost(Post post){
 		
@@ -2418,6 +2480,28 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg("목적지 검색 도중 오류가 발생했습니다.");
+			logger.error( ex );
+			return response;
+		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/taxi/getRegionListAjax.do")
+	public @ResponseBody APIResponse getRegionListAjax( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		User user = null;
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
+			response.setData( regionList );
+			return response;
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("지역정보를 가져오는 도중 오류가 발생했습니다.");
 			logger.error( ex );
 			return response;
 		}

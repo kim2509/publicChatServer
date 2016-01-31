@@ -225,51 +225,51 @@ public class Util {
 	public static String getRegionName( String address )
 	{
 		if ( address.indexOf("강남구") >= 0 )
-			return "강남구";
+			return "서울";
 		if ( address.indexOf("강북구") >= 0 )
-			return "강북구";
+			return "서울";
 		else if ( address.indexOf("강서구") >= 0 )
-			return "강서구";
+			return "서울";
 		else if ( address.indexOf("관악구") >= 0 )
-			return "관악구";
+			return "서울";
 		else if ( address.indexOf("광진구") >= 0 )
-			return "광진구";
+			return "서울";
 		else if ( address.indexOf("구로구") >= 0 )
-			return "구로구";
+			return "서울";
 		else if ( address.indexOf("금천구") >= 0 )
-			return "금천구";
+			return "서울";
 		else if ( address.indexOf("노원구") >= 0 )
-			return "노원구";
+			return "서울";
 		else if ( address.indexOf("도봉구") >= 0 )
-			return "도봉구";
+			return "서울";
 		else if ( address.indexOf("동작구") >= 0 )
-			return "동작구";
+			return "서울";
 		else if ( address.indexOf("마포구") >= 0 )
-			return "마포구";
+			return "서울";
 		else if ( address.indexOf("송파구") >= 0 )
-			return "송파구";
+			return "서울";
 		else if ( address.indexOf("서초구") >= 0 )
-			return "서초구";
+			return "서울";
 		else if ( address.indexOf("성동구") >= 0 )
-			return "성동구";
+			return "서울";
 		else if ( address.indexOf("성북구") >= 0 )
-			return "성북구";
+			return "서울";
 		else if ( address.indexOf("서대문구") >= 0 )
-			return "서대문구";
+			return "서울";
 		else if ( address.indexOf("양천구") >= 0 )
-			return "양천구";
+			return "서울";
 		else if ( address.indexOf("영등포구") >= 0 )
-			return "영등포구";
+			return "서울";
 		else if ( address.indexOf("용산구") >= 0 )
-			return "용산구";
+			return "서울";
 		else if ( address.indexOf("은평구") >= 0 )
-			return "은평구";
+			return "서울";
 		else if ( address.indexOf("종로구") >= 0 )
-			return "종로구";
+			return "서울";
 		else if ( address.indexOf("중구") >= 0 )
-			return "중구";
+			return "서울";
 		else if ( address.indexOf("중랑구") >= 0 )
-			return "중랑구";
+			return "서울";
 		else if ( address.startsWith("경기") )
 			return "경기도";
 		else if ( address.startsWith("부산") )
@@ -286,17 +286,17 @@ public class Util {
 			return "광주광역시";
 		else if ( address.startsWith("강원") )
 			return "강원도";
-		else if ( address.startsWith("충청북") )
+		else if ( address.startsWith("충청북") || address.startsWith("충북") )
 			return "충청북도";
-		else if ( address.startsWith("충청남") )
+		else if ( address.startsWith("충청남") || address.startsWith("충남") )
 			return "충청남도";
-		else if ( address.startsWith("경상북") )
+		else if ( address.startsWith("경상북") || address.startsWith("경북") )
 			return "경상북도";
-		else if ( address.startsWith("경상남") )
+		else if ( address.startsWith("경상남") || address.startsWith("경남") )
 			return "경상남도";
-		else if ( address.startsWith("전라북") )
+		else if ( address.startsWith("전라북") || address.startsWith("전북") )
 			return "전라북도";
-		else if ( address.startsWith("전라남") )
+		else if ( address.startsWith("전라남") || address.startsWith("전남") )
 			return "전라남도";
 		else if ( address.startsWith("제주") )
 			return "제주도";

@@ -1,22 +1,38 @@
 @CHARSET "utf-8";
 
 #wrapper{
-	padding-top:10px;
+	overflow-x: hidden;
+}
+
+.title{
+	line-height:30px;
+	width:100%;
+	margin:10px;
+}
+
+.title input{
+	border: 1px solid #5f98f1;
+	width:94%;
+	height:44px;
+	padding:10px;
+	border-radius:10px;
 }
 
 .departure,.destination{
 	margin:10px;
-	border-radius: 20px;
-    border: 2px solid #5f98f1;
+	border-radius: 10px;
+    border: 1px solid #5f98f1;
     background:white;
-	line-height:50px;
+	line-height:40px;
 	color:#5f98f1;
 	text-align:center;
 }
 
 .btnRegister{
-	margin:10px;
-	
+	margin-left:10px;
+	margin-right:10px;
+	margin-bottom:10px;
+	margin-top:30px;
 	background:#00d64f;
 	line-height:50px;
 	color:white;
@@ -25,16 +41,16 @@
 
 .departureDateTime{
 	margin:10px;
-	height:100px;
+	height:40px;
 }
 
 .departureDate{
 	position:absolute;
 	left:10px;
-	border-radius: 20px;
-    border: 2px solid gray;
+	border-radius:10px;
+    border: 1px solid gray;
     background:white;
-	line-height:50px;
+	line-height:40px;
 	color:gray;
 	text-align:center;
 	width:45%;
@@ -43,11 +59,32 @@
 .departureTime{
 	position:absolute;
 	right:10px;
-	border-radius: 20px;
-    border: 2px solid gray;
+	border-radius:10px;
+    border: 1px solid gray;
     background:white;
-	line-height:50px;
+	line-height:40px;
 	color:gray;
 	text-align:center;
 	width:45%;
+}
+
+.detailSetting{
+	margin-top:20px;
+	margin-left:10px;
+	margin-right:10px;
+}
+
+.detailSetting th{
+	text-align:left;
+}
+
+.detailSetting td{
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.detailSetting select{
+	width:100%;
 }
