@@ -3,7 +3,29 @@
 <%@ page import="com.dy.common.*"%>
 
 <%
+	Post post = null;
+	String message = "";
 	
+	if ( request.getAttribute("postDetail") != null )
+	{
+		post = (Post) request.getAttribute("postDetail");
+		message = post.getMessage();
+		post.getFromLatitude();
+		post.getFromLongitude();
+		post.getFromAddress();
+		post.getLatitude();
+		post.getLongitude();
+		post.getToAddress();
+		post.getDepartureDate();
+		post.getDepartureTime();
+		post.getRegion();
+		post.getUser().getUserID();
+		post.getSexInfo();
+		post.getNumOfUsers();
+		post.getVehicle();
+		post.getFareOption();
+		post.getRepetitiveYN();
+	}
 %>
 <html>
 

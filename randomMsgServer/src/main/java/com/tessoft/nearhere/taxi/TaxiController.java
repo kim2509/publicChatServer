@@ -2220,6 +2220,21 @@ public class TaxiController {
 		return new ModelAndView("carPool/newPost");
 	}
 	
+	@RequestMapping( value ="/taxi/editPost.do")
+	public ModelAndView editPost( HttpServletRequest request, HttpServletResponse response , String postID, ModelMap model )
+	{
+		HashMap requestData = new HashMap();
+		
+		if ( !Util.isEmptyString(postID ) )
+		{
+			requestData.put("postID", postID);
+			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", requestData);
+			model.addAttribute("postDetail", post);
+		}
+		
+		return new ModelAndView("carPool/newPost", model);
+	}
+	
 	@RequestMapping( value ="/taxi/viewMoreUsers.do")
 	public ModelAndView viewMoreUsers()
 	{
