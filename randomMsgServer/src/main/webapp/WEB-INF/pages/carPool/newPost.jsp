@@ -1,31 +1,53 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.nearhere.domain.*"%>
 <%@ page import="com.dy.common.*"%>
+<%@ page import="java.util.*"%>
 
 <%
+
+	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
+
 	Post post = null;
+	String postID = "";
 	String message = "";
+	String fromLatitude = "";
+	String fromLongitude = "";
+	String fromAddress = "";
+	String toLatitude = "";
+	String toLongitude = "";
+	String toAddress = "";
+	String departureDate = "";
+	String departureTime = "";
+	String region = "";
+	String userID = "";
+	String sexInfo = "";
+	String numOfUsers = "";
+	String vehicle = "";
+	String fareOption = "";
+	String repeat = "";
 	
 	if ( request.getAttribute("postDetail") != null )
 	{
 		post = (Post) request.getAttribute("postDetail");
+		postID = post.getPostID();
 		message = post.getMessage();
-		post.getFromLatitude();
-		post.getFromLongitude();
-		post.getFromAddress();
-		post.getLatitude();
-		post.getLongitude();
-		post.getToAddress();
-		post.getDepartureDate();
-		post.getDepartureTime();
-		post.getRegion();
-		post.getUser().getUserID();
-		post.getSexInfo();
-		post.getNumOfUsers();
-		post.getVehicle();
-		post.getFareOption();
-		post.getRepetitiveYN();
+		fromLatitude = post.getFromLatitude();
+		fromLongitude = post.getFromLongitude();
+		fromAddress = post.getFromAddress();
+		toLatitude = post.getLatitude();
+		toLongitude = post.getLongitude();
+		toAddress = post.getToAddress();
+		departureDate = post.getDepartureDate();
+		departureTime = post.getDepartureTime();
+		region = post.getRegion();
+		userID = post.getUser().getUserID();
+		sexInfo = post.getSexInfo();
+		numOfUsers = post.getNumOfUsers();
+		vehicle = post.getVehicle();
+		fareOption = post.getFareOption();
+		repeat = post.getRepetitiveYN();
 	}
+	
 %>
 <html>
 
@@ -51,7 +73,59 @@
 	
 	jQuery(document).ready(function() {
 
-		getRegionList();
+		requestData.postID = '<%= postID %>';
+		requestData.message = '<%= message %>';
+		
+		requestData.fromLatitude = '<%= fromLatitude %>';
+		requestData.fromLongitude = '<%= fromLongitude %>';
+		requestData.fromAddress = '<%= fromAddress %>';
+		
+		requestData.toLatitude = '<%= toLatitude %>';
+		requestData.toLongitude = '<%= toLongitude %>';
+		requestData.toAddress = '<%= toAddress %>';
+		
+		requestData.departureDate = '<%= departureDate %>';
+		requestData.departureTime = '<%= departureTime %>';
+		
+		requestData.region = '<%= region %>';
+		requestData.sexInfo = '<%= sexInfo %>';
+		requestData.numOfUsers = '<%= numOfUsers %>';
+		requestData.vehicle = '<%= vehicle %>';
+		requestData.fareOption = '<%= fareOption %>';
+		requestData.repeat = '<%= repeat %>';
+		
+		if ( requestData.message.length > 0 )
+			$('#message').val( requestData.message );
+		
+		if ( requestData.fromAddress.length > 0 )
+			$('.departure').html( requestData.fromAddress );
+		
+		if ( requestData.toAddress.length > 0 )
+			$('.destination').html( requestData.toAddress );
+		
+		if ( requestData.departureDate.length > 0 )
+			$('.departureDate').html( requestData.departureDate );
+		
+		if ( requestData.departureTime.length > 0 )
+			$('.departureTime').html( requestData.departureTime );
+		
+		if ( requestData.region.length > 0 )
+			$('#regionList').val( requestData.region );
+		
+		if ( requestData.sexInfo.length > 0 )
+			$('#sexInfo').val( requestData.sexInfo );
+		
+		if ( requestData.numOfUsers.length > 0 )
+			$('#numOfUsers').val( requestData.numOfUsers );
+		
+		if ( requestData.vehicle.length > 0 )
+			$('#vehicle').val( requestData.vehicle );
+		
+		if ( requestData.fareOption.length > 0 )
+			$('#fareOption').val( requestData.fareOption );
+		
+//		if ( requestData.repeat.length > 0 )
+//			$('#repeat').val( requestData.repeat );
 		
 	});
 	
@@ -117,39 +191,6 @@
 		requestData.departureTime = departureTime;
 	}
 	
-	function getRegionList()
-	{
-		jQuery.ajax({
-			type : "POST",
-			url : "/nearhere/taxi/getRegionListAjax.do",
-			data : {},
-			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
-			contentType : "application/json; charset=UTF-8",
-			success : function(data) {
-				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
-				// TODO
-				try {
-
-					if ( data == null || data.data == null || data.data.length < 1 ) return;
-					
-					var selectElement = $('#regionList');
-					
-					for ( var i = 0; i < data.data.length; i++ )
-					{
-						selectElement.append('<option value="' + data.data[i].regionNo + '">' + data.data[i].regionName + '</option>')	
-					}
-				} catch (ex) {
-					alert(ex.message);
-				}
-			},
-			complete : function(data) {
-				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
-			},
-			error : function(xhr, status, error) {
-			}
-		});
-	}
-	
 	function validateInput()
 	{
 		if (requestData.userID == null || requestData.userID.length < 1 )
@@ -206,9 +247,14 @@
 		
 			if ( validateInput() == false ) return;
 			
+			var url = '/nearhere/taxi/insertPostAjax.do';
+			
+			if ( requestData.postID != null && requestData.postID.length > 0 )
+				url = '/nearhere/taxi/modifyPostAjax.do';
+			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/taxi/insertPostAjax.do",
+				url : url,
 				data : JSON.stringify(requestData),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -308,6 +354,14 @@
 					<td>
 						<select id="regionList">
 							<option value=''>선택하세요</option>
+<%
+							for ( int i = 0; i < regionList.size(); i++ )
+							{
+%>
+							<option value="<%= regionList.get(i).get("regionNo") %>"><%= regionList.get(i).get("regionName") %></option>
+<%								
+							}
+%>							
 						</select>
 					</td>
 					<th>

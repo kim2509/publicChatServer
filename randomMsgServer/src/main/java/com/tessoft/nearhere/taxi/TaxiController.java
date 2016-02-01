@@ -2217,13 +2217,19 @@ public class TaxiController {
 	@RequestMapping( value ="/taxi/newPost.do")
 	public ModelAndView newPost( HttpServletRequest request, HttpServletResponse response , ModelMap model )
 	{
-		return new ModelAndView("carPool/newPost");
+		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
+		model.addAttribute("regionList", regionList);
+		
+		return new ModelAndView("carPool/newPost", model );
 	}
 	
 	@RequestMapping( value ="/taxi/editPost.do")
 	public ModelAndView editPost( HttpServletRequest request, HttpServletResponse response , String postID, ModelMap model )
 	{
 		HashMap requestData = new HashMap();
+		
+		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
+		model.addAttribute("regionList", regionList);
 		
 		if ( !Util.isEmptyString(postID ) )
 		{
@@ -2495,28 +2501,6 @@ public class TaxiController {
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg("목적지 검색 도중 오류가 발생했습니다.");
-			logger.error( ex );
-			return response;
-		}
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping( value ="/taxi/getRegionListAjax.do")
-	public @ResponseBody APIResponse getRegionListAjax( HttpServletRequest request, @RequestBody String bodyString )
-	{
-		User user = null;
-		APIResponse response = new APIResponse();
-
-		try
-		{			
-			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
-			response.setData( regionList );
-			return response;
-		}
-		catch( Exception ex )
-		{
-			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("지역정보를 가져오는 도중 오류가 발생했습니다.");
 			logger.error( ex );
 			return response;
 		}
