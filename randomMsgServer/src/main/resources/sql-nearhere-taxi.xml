@@ -152,6 +152,15 @@
 		#{toAddress}, #{sexInfo}, #{numOfUsers}, #{departureDate},
 		#{departureTime}, #{status}, #{departureDateTime} , #{vehicle}, #{fareOption} , #{repetitiveYN} ,NOW(), NOW() );
 	</update>
+	
+	<update id="updatePostV2" parameterType="com.nearhere.domain.Post">
+		update post
+		set message = #{message}, fromLatitude = #{fromLatitude}, fromLongitude = #{fromLongitude}, fromAddress = #{fromAddress},
+		latitude = #{toLatitude}, longitude = #{toLongitude}, toAddress = #{toAddress}, sexInfo = #{sexInfo}, numOfUsers = #{numOfUsers},
+		departureDate = #{departureDate}, departureTime = #{departureTime}, status=#{status}, departureDateTime = #{departureDateTime},
+		vehicle=#{vehicle}, fareOption = #{fareOption}, repetitiveYN = #{repetitiveYN}, updatedDate = NOW()
+		where postID=#{postID};
+	</update>
 
 	<update id="updatePostAsDeleted" parameterType="com.nearhere.domain.Post">
 		update post set

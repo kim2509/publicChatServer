@@ -843,6 +843,89 @@ public class TaxiController {
 		
 		return response;
 	}
+	
+	@RequestMapping( value ="/taxi/modifyPostAjax.do")
+	public @ResponseBody APIResponse modifyPostAjax( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap post = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( post.containsKey("userID") == false || Util.isEmptyString( post.get("userID") ) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("사용자 아이디가 올바르지 않습니다.");
+				return response;
+			}
+			
+			User user = new User( post.get("userID").toString() );
+			user = selectUser(user, false);
+			
+			if ( "여자만".equals( post.get("sexInfo").toString() ) && "M".equals(user.getSex()))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("남성회원은 여자만 옵션을 선택할 수 없습니다.");
+				return response;
+			}
+			
+			post.put("departureDateTime", post.get("departureDate") + " " + post.get("departureTime") );
+			
+			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePostV2", post );
+
+			response.setData(result);
+
+			// 새 글 푸쉬 메시지를 전송한다.
+			/*
+			try
+			{
+				Date now = new Date();
+				Date departureDateTime = Util.getDateFromString(post.getDepartureDateTime(), "yyyy-MM-dd HH:mm:ss");
+				
+				long diff = departureDateTime.getTime() - now.getTime();
+				long diffMinutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+				
+				if ( diffMinutes > 0 && "종료됨".equals( postBeforeModified.getStatus() ) )
+				{
+					post.setStatus("진행중");
+					sqlSession.update("com.tessoft.nearhere.taxi.updatePostStatus", post );
+				}
+				
+				// 등록한 시간에 비해서 30분 이상 차이 나면 푸쉬 전송
+				if ( diffMinutes >= 30)
+				{
+					if ( !"종료됨".equals( post.getStatus() ) )
+						sendPushMessageOnNewPost( post );
+				}
+				else
+				{
+					User daeyong = new User();
+					daeyong.setUserID("user27");
+					daeyong.setUserNo("27");
+					daeyong = selectUser( daeyong, false );
+					sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
+				}
+			}
+			catch( Exception ex )
+			{
+				
+			}
+			*/
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
 
 	private void sendPushMessageOnNewPost(Post post){
 		

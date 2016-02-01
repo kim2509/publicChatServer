@@ -29,8 +29,17 @@ jQuery(document).ready(function() {
 
 	Handlebars.registerHelper('printSexInfo', printSexInfo);
 	Handlebars.registerHelper('printPostStatus', printPostStatus);
+	Handlebars.registerHelper('printRepeat', printRepeat);
 		
 });
+
+function printRepeat( value )
+{
+	if ( value == 'Y')
+		return new Handlebars.SafeString('<span>반복</span>');
+	else
+		return '';
+}
 
 </script>
 
@@ -50,7 +59,7 @@ jQuery(document).ready(function() {
 				<div id="departureDateTime">{{departureDateTime}}</div>
 				<div id="readCount">조회수 : {{readCount}}</div>
 				<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
-				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span><span>{{numOfUsers}}</span></div>
+				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span><span>{{numOfUsers}}</span>{{printRepeat repetitiveYN}}</div>
 			</div>
 		</dd>
 		{{/each}}

@@ -24,7 +24,8 @@
 	String numOfUsers = "";
 	String vehicle = "";
 	String fareOption = "";
-	String repeat = "";
+	String repetitiveYN = "";
+	String status = "";
 	
 	if ( request.getAttribute("postDetail") != null )
 	{
@@ -45,7 +46,8 @@
 		numOfUsers = post.getNumOfUsers();
 		vehicle = post.getVehicle();
 		fareOption = post.getFareOption();
-		repeat = post.getRepetitiveYN();
+		repetitiveYN = post.getRepetitiveYN();
+		status = post.getStatus();
 	}
 	
 %>
@@ -74,6 +76,7 @@
 	jQuery(document).ready(function() {
 
 		requestData.postID = '<%= postID %>';
+		requestData.userID = '<%= userID %>';
 		requestData.message = '<%= message %>';
 		
 		requestData.fromLatitude = '<%= fromLatitude %>';
@@ -92,7 +95,8 @@
 		requestData.numOfUsers = '<%= numOfUsers %>';
 		requestData.vehicle = '<%= vehicle %>';
 		requestData.fareOption = '<%= fareOption %>';
-		requestData.repeat = '<%= repeat %>';
+		requestData.repetitiveYN = '<%= repetitiveYN %>';
+		requestData.status = '<%= status %>';
 		
 		if ( requestData.message.length > 0 )
 			$('#message').val( requestData.message );
@@ -124,8 +128,11 @@
 		if ( requestData.fareOption.length > 0 )
 			$('#fareOption').val( requestData.fareOption );
 		
-//		if ( requestData.repeat.length > 0 )
-//			$('#repeat').val( requestData.repeat );
+		if ( requestData.status.length > 0 )
+			$('#status').val( requestData.status );
+
+		if ( requestData.repetitiveYN.length > 0 )
+			$('#repetitiveYN').val( requestData.repetitiveYN );
 		
 	});
 	
@@ -232,7 +239,7 @@
 		return true;
 	}
 	
-	function insertPost()
+	function insertOrModifyPost()
 	{
 		try
 		{
@@ -243,7 +250,8 @@
 			requestData.numOfUsers = $('#numOfUsers').val();
 			requestData.vehicle = $('#vehicle').val();
 			requestData.fareOption = $('#fareOption').val();
-			requestData.repeat = $('#repeat').val();
+			requestData.repetitiveYN = $('#repetitiveYN').val();
+			requestData.status = $('#status').val();
 		
 			if ( validateInput() == false ) return;
 			
@@ -380,9 +388,9 @@
 					<td>
 						<select id="numOfUsers">
 							<option value="상관없음">상관없음</option>
-							<option value="1">1명</option>
-							<option value="2">2명</option>
-							<option value="3">3명</option>
+							<option value="1명">1명</option>
+							<option value="2명">2명</option>
+							<option value="3명">3명</option>
 						</select>
 					</td>
 					<th>차량</th>
@@ -405,18 +413,51 @@
 					</td>
 					<th>반복</th>
 					<td>
-						<select id="repeat">
-							<option value="반복안함">반복안함</option>
-							<option value="매일">매일</option>
-							<option value="매주">매주</option>
-							<option value="매월">매월</option>
+						<select id="repetitiveYN">
+							<option value="N">반복안함</option>
+							<option value="Y">반복함</option>
 						</select>
 					</td>
 				</tr>
+<%
+		if ( !Util.isEmptyString(postID) )
+		{
+%>
+				<tr>
+					<th>상태</th>
+					<td>
+						<select id="status">
+							<option value="진행중">진행중</option>
+							<option value="종료됨">종료됨</option>
+						</select>
+					</td>
+					<th></th>
+					<td>
+						
+					</td>
+				</tr>
+<%			
+		}
+%>				
+				
 			</table>
 		</div>
 
-		<div class="btnRegister" onclick="insertPost();">등록하기</div>
+<%
+		if ( Util.isEmptyString(postID) )
+		{
+%>
+		<div class="btnRegister" onclick="insertOrModifyPost();">등록하기</div>
+<%			
+		}
+		else
+		{
+%>
+		<div class="btnRegister" onclick="insertOrModifyPost();">수정하기</div>
+<%			
+		}
+%>
+		
 	</div>
 	
 </body>
