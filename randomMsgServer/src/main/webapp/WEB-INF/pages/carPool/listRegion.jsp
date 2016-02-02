@@ -6,7 +6,7 @@
 	String regionNo = request.getParameter("regionNo");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
-	Constants.bReal = false;
+//	Constants.bReal = false;
 %>
 <html>
 
