@@ -84,11 +84,11 @@
 				String incheonAirportURL = Constants.getServerURL() + "/taxi/searchDestination.do?latitude=37.460195&longitude=126.438507&address=%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD";
 				incheonAirportURL = URLEncoder.encode( incheonAirportURL, "UTF-8" );
 %>
-				<dd onclick="goRegionPage('%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD','<%= incheonAirportURL %>')">
+				<!-- dd onclick="goRegionPage('%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD','<%= incheonAirportURL %>')">
 					 <strong class="tit">인천공항</strong> <span
 						class="sp_mw arr"></span>
 					
-				</dd>
+				</dd-->
 				
 <%
 				for ( int i = 0; i < regionList.size(); i++ )
