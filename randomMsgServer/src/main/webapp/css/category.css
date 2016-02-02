@@ -1,0 +1,40 @@
+@CHARSET "utf-8";
+
+
+dl {
+	/*border-top: 1px solid #ccc;*/
+}
+
+dd {
+	display: block;
+	position: relative;
+	height: 50px;
+	line-height: 50px;
+	border-bottom: 1px solid #ccc;
+	text-align: left;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.snsLogin{
+	border-radius: 20px;
+    border: 2px solid #73AD21;
+    padding: 10px; 
+	height:90px;
+	background:white;
+	margin:10px;
+}
+
+.snsBtns{
+	margin-top:10px;
+}
+
+.kakaoLogin{
+	position:absolute;
+	left:25px;
+}
+
+.fbLogin{
+	position:absolute;
+	right:25px;
+}

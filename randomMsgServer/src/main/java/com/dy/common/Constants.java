@@ -11,4 +11,14 @@ public class Constants {
 	public static int push_retry_count = 5;
 
 	public static boolean bReal = true;
+	
+	public static String getServerURL()
+	{
+		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://192.168.10.110:8080/nearhere";
+	}
+	
+	public static String getThumbnailImageURL()
+	{
+		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://192.168.10.110/thumbnail/";
+	}
 }

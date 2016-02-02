@@ -1,0 +1,108 @@
+@CHARSET "utf-8";
+
+dl {
+    border-top: 1px solid #ccc;
+}
+
+dd {
+    display: block;
+    position: relative;
+    height: 80px;
+    line-height: 25px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    padding:10px;
+}
+
+a:link, a:hover, a:active {
+    text-decoration: none;
+}
+
+.slide_lst {
+}
+
+table, td {
+	margin: 0px;
+}
+
+.userProfile{
+	float:left;
+}
+
+.userProfile img{
+	border-radius: 10px;
+}
+
+.postDesc {
+	margin-left:90px;
+	height:60px;
+	font-size:12px;
+}
+
+.postDesc div{
+	font-size:12px;
+}
+
+.postDesc .tit {
+    color: #000000;
+    font-size:14px;
+    display:block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    height:30px;
+}
+
+.postDesc #personInfo{
+	position:absolute;
+	top:43%;	
+}
+
+.postDesc #userSex{
+	float:left;
+}
+
+.postDesc #userName{
+	margin-left:20px;
+}
+
+.postDesc #departureDateTime {
+	position:absolute;
+    top:43%;
+    right:5px;
+}
+
+.postDesc #readCount {
+	position:absolute;
+	bottom:10px;
+}
+
+.postDesc #tags{
+	position:absolute;
+	bottom:10px;
+	right:5px;
+}
+
+.postDesc #tags span{
+	background:#F66C3C;
+	color:white;
+	margin:3px;
+	padding-top:1px;
+	padding-bottom:1px;
+	padding-left:3px;
+	padding-right:3px;
+	border-radius: 5px;
+}
+
+.slide_lst .imgStatus{
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+
+#wrapper .searchRegion{
+	padding:10px;
+	color:#3B5D98;
+	background:white;
+}
+
