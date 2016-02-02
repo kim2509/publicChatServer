@@ -260,6 +260,10 @@
 			if ( requestData.postID != null && requestData.postID.length > 0 )
 				url = '/nearhere/taxi/modifyPostAjax.do';
 			
+			$('#wrapper').find('*').attr('disabled',true);
+			$('.btnRegister').hide();
+			$('#loading').show();
+				
 			jQuery.ajax({
 				type : "POST",
 				url : url,
@@ -291,6 +295,9 @@
 				},
 				complete : function(data) {
 					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					$('#wrapper').find('*').attr('disabled',false);
+					$('.btnRegister').show();
+					$('#loading').hide();
 				},
 				error : function(xhr, status, error) {
 				}
@@ -457,7 +464,10 @@
 <%			
 		}
 %>
-		
+	
+		<div id="loading" style="display:none">
+			전송중입니다.
+		</div>	
 	</div>
 	
 </body>
