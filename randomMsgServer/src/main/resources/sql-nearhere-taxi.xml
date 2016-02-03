@@ -945,7 +945,7 @@
 	
 	<select id="getMainInfo" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap">
-		select R.*, IFNULL(P.regionCount,0) as regionCount 
+		select R.*, IFNULL(P.regionCount,0) as regionCount, IFNULL(N.newCount,0) as newCount
 		from region R
 			left outer join (
 				select r.parentNo as region, count(*) as regionCount 
@@ -962,6 +962,13 @@
 				and r.parentNo is null
 				group by p.region	
 			) P on P.region = R.regionNo
+			left outer join (
+				SELECT region, count(postID) as newCount from post
+				WHERE deletedDate is null
+				and createdDate > DATE_SUB( NOW(), INTERVAL 12 DAY )
+				group by region
+				having count(postID) > 0
+			) N on N.region = R.regionNo
 		where R.parentNo is null
 		order by priority
 	</select>

@@ -58,6 +58,20 @@ public class Util {
 		return false;
 	}
 	
+	public static int getInt( Object val )
+	{
+		if ( isEmptyString( val ) ) return 0;
+		
+		try
+		{
+			return Integer.parseInt( val.toString() );	
+		}
+		catch( Exception ex )
+		{
+			return 0;
+		}
+	}
+	
 	public static double getDouble( String val )
 	{
 		if ( isEmptyString( val ) ) return 0.0;
