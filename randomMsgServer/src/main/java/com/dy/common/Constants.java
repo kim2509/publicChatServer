@@ -10,15 +10,15 @@ public class Constants {
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static int push_retry_count = 5;
 
-	public static boolean bReal = true;
+	public static boolean bReal = false;
 	
 	public static String getServerURL()
 	{
-		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://192.168.10.110:8080/nearhere";
+		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
 	{
-		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://192.168.10.110/thumbnail/";
+		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://localhost:8088/thumbnail/";
 	}
 }
