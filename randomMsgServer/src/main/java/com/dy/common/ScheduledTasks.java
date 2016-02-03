@@ -17,11 +17,15 @@ import com.nearhere.domain.Post;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserPushMessage;
 
+import common.CommonBiz;
+
 public class ScheduledTasks {
 
 	protected static Logger logger = Logger.getLogger(ScheduledTasks.class.getName());
 	
 	ObjectMapper mapper = null;
+	
+	CommonBiz commonBiz = new CommonBiz();
 	
 	@Autowired
 	private SqlSession sqlSession;
@@ -31,66 +35,6 @@ public class ScheduledTasks {
 		mapper = new ObjectMapper();
 		
 		logger.info( "ScheduledTasks created." );
-	}
-	
-	//@Scheduled(initialDelay=5000,fixedDelay = 5000)
-	public void notifyNewUserToNearUsers() {
-//		System.out.println("The time is now " + dateFormat.format(new Date()));
-		
-		try
-		{
-//			if ( ScheduledTasks.bExecuting ) return;
-			
-			logger.info( "notifyNewUserToNearUsers start !!!!!!!!!!!!!!!!" );
-		
-			/*
-			int maxUserNo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectLastNewUser");
-					
-			logger.info( "maxUserNo:" + maxUserNo );
-			
-			HashMap hash = new HashMap();
-			hash.put("maxUserNo", maxUserNo);
-			
-			int resultCount = sqlSession.insert("com.tessoft.nearhere.taxi.insertNewUsers", hash);
-			
-			logger.info( "resultCount:" + resultCount );
-			
-			if ( resultCount > 0 )
-			{
-				List<NewUser> newUsers = sqlSession.selectList("com.tessoft.nearhere.taxi.selectNewUsers");
-				
-				for ( int i = 0; i < newUsers.size() ; i++ )
-				{
-					NewUser user = newUsers.get(i);
-					
-					List<HashMap> usersToSend = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUsersNearNewUser", user );
-					
-					logger.info( "usersToSend count:" + usersToSend.size() );
-					
-					for ( int j = 0; j < usersToSend.size(); j++ )
-					{
-						
-					}
-					
-					logger.info( "sent successfully" );
-					
-					int updateResult = sqlSession.update("com.tessoft.nearhere.taxi.updateNewUserChecked", user );
-					
-					logger.info( "userNo:" + user.getUserNo() + " updateResult:" + updateResult );
-					
-				}
-			}
-			
-			Thread.sleep(2000);
-			ScheduledTasks.bExecuting = false;
-			*/
-			
-			logger.info( "notifyNewUserToNearUsers end !!!!!!!!!!!!!!!!" );
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
 	}
 	
 	@Scheduled(cron="0 0 5,17 * * ?") // 오전 오후 5시 정각에 실행
@@ -350,5 +294,11 @@ public class ScheduledTasks {
 		{
 			logger.error( ex );;
 		}
+	}
+	
+	@Scheduled(cron="0 * * * * ?") // 1분마다
+	public void sendPushUsersOnNewPost()
+	{
+		logger.info("sendPushUsersOnNewPost");
 	}
 }

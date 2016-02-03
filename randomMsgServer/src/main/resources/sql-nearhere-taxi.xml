@@ -891,52 +891,6 @@
 		and userID= #{userID}
 	</select>
 	
-	<select id="selectLastNewUser" resultType="Integer">
-		select ifnull( max( userNo ), 0) from new_user
-		where checked='N';
-	</select>
-	
-	<insert id="insertNewUsers" parameterType="java.util.HashMap">
-		insert into new_user( userNo, userID, userName, latitude, longitude, address, checked, createdDate )
-		select U.userNo, U.userID, U.userName, UL.latitude, UL.longitude, UL.address, 'N', NOW()
-		from user U
-			left outer join user_location UL on U.userID=UL.userID and UL.locationName='현재위치'
-		where userNo > #{maxUserNo}
-		limit 0,100;
-	</insert>
-	
-	<select id="selectNewUsers" parameterType="java.util.HashMap" resultType="com.nearhere.domain.NewUser">
-		select * from new_user
-		where checked='N'
-		limit 0,100;
-	</select>
-	
-	<select id="selectUsersNearNewUser" parameterType="com.nearhere.domain.NewUser" resultType="java.util.HashMap">
-		<![CDATA[
-		select A.*, U.userName, U.regID from (
-			SELECT userID, latitude, longitude,
-				TRUNCATE((
-    					6371 * acos ( cos ( radians( #{latitude} ) )
-	     		 		* cos( radians( latitude ) )
-  	 	  		 		* cos( radians( longitude ) - radians( #{longitude} ) )
-		   		   		+ sin ( radians( #{latitude} ) )
-		   		   		* sin( radians( latitude ) )
-		   		 		)
-  				) , 1)  AS distance
-			FROM user_location UL
-			where locationName='현재위치'
-		) A
-		left outer join user U on U.userID=A.userID
-		where distance < 1
-		]]>
-	</select>
-	
-	<update id="updateNewUserChecked" parameterType="com.nearhere.domain.NewUser">
-		update new_user set
-		checked='Y'
-		where userNo=#{userNo};
-	</update>
-	
 	<update id="updateUserAsDeleted" parameterType="com.nearhere.domain.User">
 		update user set
 		isDeleted='Y'
