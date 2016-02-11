@@ -55,4 +55,32 @@
 		]]> 	
 	</update>
 	
+	<select id="selectPushJobList" resultType="String" parameterType="String">
+		<![CDATA[
+			select * from (
+				select TRUNCATE((
+								6371 * acos ( cos ( radians( 37.453571 )
+								)
+								* cos( radians( latitude ) )
+								* cos( radians( longitude ) -
+								radians( 126.700202 ) )
+								+ sin ( radians( 37.453571 ) )
+								*
+								sin( radians( latitude ) )
+								)
+								) , 1) AS distance, ul.*
+				from (
+					select l.*, u.regID from user_location l
+						left outer join user u on l.userID=u.userID
+					where u.isDeleted is null
+					and l.locationName <> '현재위치'
+					and u.regID is not null
+					and l.latitude <> 0 and l.longitude <> 0
+				) ul
+			) A
+			where distance < 3
+			order by distance
+		]]> 	
+	</select>
+	
 </mapper>
