@@ -98,10 +98,11 @@
 					String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 					String regionCount = regionList.get(i).get("regionCount").toString();
 					String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
+					int newCount = Util.getInt( regionList.get(i).get("newCount") );
 %>
 				<dd onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
-					 <strong class="tit"><%= title %>(<%= regionCount %>)</strong> <span
-						class="sp_mw arr"></span>
+					 <strong class="tit"><%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %></strong> 
+					 <span class="new"></span>
 					
 				</dd>
 <%
