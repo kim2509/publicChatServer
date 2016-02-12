@@ -55,16 +55,27 @@
 		]]> 	
 	</update>
 	
-	<select id="selectPushJobList" resultType="String" parameterType="String">
+	<!-- 푸쉬 보낼 합승내역을 읽어온다. -->
+	<select id="getPushJobList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+			select j.*, p.fromLatitude, p.fromLongitude, p.fromAddress, p.latitude, p.longitude, p.toAddress 
+			from push_job j
+				left outer join post p on p.postID=j.param
+			where j.pushType='newPost'
+			and (j.finishYN is null or j.finishYN <> 'Y')
+		]]> 	
+	</select>
+	
+	<select id="getUserListAroundPost" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
 			select * from (
 				select TRUNCATE((
-								6371 * acos ( cos ( radians( 37.453571 )
+								6371 * acos ( cos ( radians( #{latitude} )
 								)
 								* cos( radians( latitude ) )
 								* cos( radians( longitude ) -
-								radians( 126.700202 ) )
-								+ sin ( radians( 37.453571 ) )
+								radians( #{longitude} ) )
+								+ sin ( radians( #{latitude} ) )
 								*
 								sin( radians( latitude ) )
 								)
@@ -82,5 +93,12 @@
 			order by distance
 		]]> 	
 	</select>
+	
+	<update id="updatePushJobAsFinished" parameterType="java.util.HashMap">
+		<![CDATA[
+			update push_job set finishYN='Y', finishedDate = NOW()
+			where param = #{param};
+		]]> 	
+	</update>
 	
 </mapper>

@@ -17,7 +17,7 @@ import com.nearhere.domain.Post;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserPushMessage;
 
-import common.CommonBiz;
+import common.BackgroundJobBiz;
 
 public class ScheduledTasks {
 
@@ -25,7 +25,7 @@ public class ScheduledTasks {
 	
 	ObjectMapper mapper = null;
 	
-	CommonBiz commonBiz = new CommonBiz();
+	BackgroundJobBiz jobBiz = null;
 	
 	@Autowired
 	private SqlSession sqlSession;
@@ -233,7 +233,7 @@ public class ScheduledTasks {
 								.addData("message",  pushMessage.getMessage() )
 								.addData("type",  type )
 								.addData("postID",  param )
-								.build();	
+								.build();
 					}
 					else if ( "event".equals( type ) || "eventssl".equals( type ) )
 					{
@@ -292,13 +292,21 @@ public class ScheduledTasks {
 		}
 		catch( Exception ex )
 		{
-			logger.error( ex );;
+			logger.error( ex );
 		}
 	}
 	
-	@Scheduled(cron="0 * * * * ?") // 1분마다
-	public void sendPushUsersOnNewPost()
+	@Scheduled(fixedRate = 1000 * 10) // 1분마다
+	public synchronized void sendPushUsersOnNewPost()
 	{
-		logger.info("sendPushUsersOnNewPost");
+		try
+		{
+			logger.info("sendPushUsersOnNewPost");
+			BackgroundJobBiz.getInstance(sqlSession).getPushJobList();
+		}
+		catch(Exception ex )
+		{
+			logger.error( ex );
+		}
 	}
 }
