@@ -101,7 +101,7 @@
 		]]> 	
 	</update>
 	
-	<insert id="" parameterType="java.util.HashMap">
+	<insert id="insertNewPostPushData" parameterType="java.util.HashMap">
 		insert into new_post_push_data( postID, userID, locationID, regID, address, createdDate )
 		values ( #{postID}, #{userID}, #{locationID}, #{regID}, #{address}, NOW() );
 	</insert>

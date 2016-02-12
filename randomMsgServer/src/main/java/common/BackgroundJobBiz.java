@@ -54,9 +54,10 @@ public class BackgroundJobBiz extends CommonBiz{
 				
 				for ( int j = 0; j < userList.size(); j++ )
 				{
+					//messageBiz.insertUserPushMessage(userID, type, msg, param);
 					
 					/*
-					messageBiz.insertUserPushMessage(userID, type, msg, param);
+					
 					messageBiz.sendPushForNewPost(regID, msg, postID);
 					*/	
 				}
