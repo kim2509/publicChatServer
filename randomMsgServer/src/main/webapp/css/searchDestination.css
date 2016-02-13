@@ -27,6 +27,14 @@ table, td {
 
 .userProfile{
 	float:left;
+	position:relative;
+}
+
+.userProfile #kakao{
+	position:absolute;
+	right:0px;
+	bottom:0px;
+	z-index:10;
 }
 
 .userProfile img{
@@ -53,9 +61,13 @@ table, td {
     height:30px;
 }
 
+.postDesc #replyCount{
+	float:right;
+}
+
 .postDesc #personInfo{
 	position:absolute;
-	top:43%;	
+	top:43%;
 }
 
 .postDesc #userSex{
@@ -98,6 +110,7 @@ table, td {
 	position:absolute;
 	top:0px;
 	left:0px;
+	z-index:30;
 }
 
 #wrapper .searchRegion{
@@ -106,3 +119,9 @@ table, td {
 	background:white;
 }
 
+.newButton{
+	position:fixed;
+	right:10px;
+	bottom:10px;
+	z-index:40;
+}
