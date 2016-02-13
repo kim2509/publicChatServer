@@ -30,15 +30,22 @@ public class MessageBiz extends CommonBiz{
 		super(sqlSession);
 	}
 	
-	public String sendPushForNewPost(String regID, String msg , String postID ) throws Exception
+	public String sendPushForNewPost(String regID, String msg , String postID )
 	{
-		Message message = new Message.Builder().addData("title", "신규 합승정보 알림" )
-				.addData("message",  msg )
-				.addData("type",  "newPostByDistance" )
-				.addData("postID",  postID )
-				.build();
-		
-		return sendGCMPush(regID, message);
+		try
+		{
+			Message message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+					.addData("message",  msg )
+					.addData("type",  "newPostByDistance" )
+					.addData("postID",  postID )
+					.build();
+			
+			return sendGCMPush(regID, message);	
+		}
+		catch( Exception ex)
+		{
+			return ex.getMessage();
+		}
 	}
 	
 	public void insertUserPushMessage( String userID, String type, String msg, String param )

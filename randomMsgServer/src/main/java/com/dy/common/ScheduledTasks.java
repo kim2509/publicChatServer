@@ -297,11 +297,10 @@ public class ScheduledTasks {
 	}
 	
 	@Scheduled(fixedRate = 1000 * 10) // 1분마다
-	public synchronized void sendPushUsersOnNewPost()
+	public void sendPushUsersOnNewPost()
 	{
 		try
 		{
-			logger.info("sendPushUsersOnNewPost");
 			BackgroundJobBiz.getInstance(sqlSession).getPushJobList();
 		}
 		catch(Exception ex )

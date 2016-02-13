@@ -55,17 +55,24 @@
 		]]> 	
 	</update>
 	
+	<!-- 새 합승내역을 등록한다. -->
+	<insert id="insertNewPushJob" parameterType="String">
+		insert into push_job( param, pushType, createdDate )
+		values ( #{value}, 'newPostByDistance', NOW() );
+	</insert>
+	
 	<!-- 푸쉬 보낼 합승내역을 읽어온다. -->
 	<select id="getPushJobList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
-			select j.*, p.fromLatitude, p.fromLongitude, p.fromAddress, p.latitude, p.longitude, p.toAddress 
+			select j.*, p.fromLatitude, p.fromLongitude, p.fromAddress, p.latitude, p.longitude, p.toAddress, p.userID
 			from push_job j
 				left outer join post p on p.postID=j.param
-			where j.pushType='newPost'
+			where j.pushType='newPostByDistance'
 			and (j.finishYN is null or j.finishYN <> 'Y')
 		]]> 	
 	</select>
 	
+	<!-- 새 합승내역이 집이나 회사 근처인 사람들을 읽어오는 쿼리 -->
 	<select id="getUserListAroundPost" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
 			select * from (
@@ -86,7 +93,8 @@
 					where u.isDeleted is null
 					and l.locationName <> '현재위치'
 					and u.regID is not null
-					and l.latitude <> 0 and l.longitude <> 0
+					and u.userID <> #{userID}
+					and l.latitude > 0 and l.longitude > 0
 				) ul
 			) A
 			where distance < 3
@@ -97,13 +105,33 @@
 	<update id="updatePushJobAsFinished" parameterType="java.util.HashMap">
 		<![CDATA[
 			update push_job set finishYN='Y', finishedDate = NOW()
-			where param = #{param};
+			where pushID = #{pushID};
 		]]> 	
 	</update>
 	
-	<insert id="insertNewPostPushData" parameterType="java.util.HashMap">
-		insert into new_post_push_data( postID, userID, locationID, regID, address, createdDate )
-		values ( #{postID}, #{userID}, #{locationID}, #{regID}, #{address}, NOW() );
+	<!-- 푸쉬 메세지 보낼 대상 및 내역 -->
+	<insert id="insertNewPostPushData" parameterType="java.util.HashMap"
+	useGeneratedKeys="true" keyProperty="ID" keyColumn="ID">
+		insert into new_post_push_data( pushID, postID, userID, locationID, regID, address, message, createdDate )
+		values ( #{pushID}, #{postID}, #{userID}, #{locationID}, #{regID}, #{address}, #{message}, NOW() );
+		<selectKey keyProperty="ID" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
 	</insert>
+	
+	<!-- 푸쉬 메세지 보낼 대상 및 내역 -->
+	<select id="getNewPostPushDataByPushID" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+			select p.* from new_post_push_data p
+			where pushID=#{pushID}
+			group by userID
+		]]>
+	</select>
+	
+	<!-- 푸쉬 메세지 결과 업데이트 -->
+	<update id="updateNewPostPushData" parameterType="java.util.HashMap">
+		update new_post_push_data set pushResult = #{pushResult}
+		where ID = #{ID}
+	</update>
 	
 </mapper>

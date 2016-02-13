@@ -820,11 +820,6 @@ public class TaxiController {
 			
 			postData.put("departureDateTime", postData.get("departureDate") + " " + postData.get("departureTime") );
 			
-			if ( "반복안함".equals( postData.get("repeat")) )
-				postData.put("repetitiveYN", "N");
-			else
-				postData.put("repetitiveYN", "Y");
-			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostV2", postData );
 
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", postData);
@@ -931,6 +926,7 @@ public class TaxiController {
 		
 		try
 		{
+			/*
 			HashMap distanceInfo = new HashMap();
 			distanceInfo.put("fromLatitude", post.getFromLatitude());
 			distanceInfo.put("fromLongitude", post.getFromLongitude());
@@ -959,6 +955,12 @@ public class TaxiController {
 			else
 			{
 				logger.info( "push offed!!!");
+			}
+			*/
+			
+			if ( post.isbPushOff() == false )
+			{
+				sqlSession.insert("com.tessoft.nearhere.taxi.background.insertNewPushJob", post.getPostID() );	
 			}
 			
 			User daeyong = new User();
