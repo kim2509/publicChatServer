@@ -965,7 +965,7 @@
 			left outer join (
 				SELECT region, count(postID) as newCount from post
 				WHERE deletedDate is null
-				and createdDate > DATE_SUB( NOW(), INTERVAL 12 DAY )
+				and createdDate > DATE_SUB( NOW(), INTERVAL 7 DAY )
 				group by region
 				having count(postID) > 0
 			) N on N.region = R.regionNo

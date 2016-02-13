@@ -101,8 +101,8 @@
 					int newCount = Util.getInt( regionList.get(i).get("newCount") );
 %>
 				<dd onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
-					 <strong class="tit"><%= title %>(<%= regionCount %>)</strong> 
-					 <span class="new"><%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='25' height='25' />":"" %></span>
+					 <strong class="tit"><%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %></strong> 
+					 <span class="new"></span>
 					
 				</dd>
 <%
