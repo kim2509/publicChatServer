@@ -30,13 +30,32 @@ jQuery(document).ready(function() {
 	Handlebars.registerHelper('printSexInfo', printSexInfo);
 	Handlebars.registerHelper('printPostStatus', printPostStatus);
 	Handlebars.registerHelper('printRepeat', printRepeat);
-		
+	Handlebars.registerHelper('printReplyCount', printReplyCount);
+	Handlebars.registerHelper('printKakaoIcon', printKakaoIcon);
 });
 
 function printRepeat( value )
 {
 	if ( value == 'Y')
 		return new Handlebars.SafeString('<span>반복</span>');
+	else
+		return '';
+}
+
+function printReplyCount( count )
+{
+	if ( count == null || count == '' ) return '';
+	
+	if ( parseInt( count) < 1 ) return '';
+	
+	return new Handlebars.SafeString('<div id="replyCount"><div style="position:absolute;color:white;top:7px;right:17px;padding-top:5px;font-size:11px;">' 
+		+ count + '</div><div style="clear:both"><img src=\'<%= Constants.IMAGE_PATH %>/ic_chat.png\' width=\'20\' height=\'20\' /></div></div>');
+}
+
+function printKakaoIcon( kakaoID )
+{
+	if ( kakaoID != null && kakaoID.length > 0 )
+		return new Handlebars.SafeString('<img src=\'<%= Constants.IMAGE_PATH %>/kakaotalk_icon.png\' width=\'18\' height=\'18\' id=\'kakao\'/>');
 	else
 		return '';
 }
@@ -53,8 +72,10 @@ function printRepeat( value )
 			<div class='userProfile' onclick="openUserProfile('{{user.userID}}');">
 				<img class="lazy" data-original='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
 					src="<%= Constants.IMAGE_PATH %>/no_image.png" width="70" height="70"/>
+				{{printKakaoIcon user.kakaoID}}
 			</div>
 			<div class='postDesc' onclick="goVIP('{{postID}}')">
+				{{printReplyCount replyCount}}
 				<strong class="tit">{{message}}</strong>
 				<div id="departureDateTime">{{departureDateTime}}</div>
 				<div id="readCount">조회수 : {{readCount}}</div>

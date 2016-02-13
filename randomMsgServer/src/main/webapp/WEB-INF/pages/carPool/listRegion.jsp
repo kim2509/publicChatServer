@@ -6,6 +6,8 @@
 	String regionNo = request.getParameter("regionNo");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
+	String isApp = request.getParameter("isApp");
+	if ( isApp == null || !"Y".equals( isApp ) ) isApp = "N";
 //	Constants.bReal = false;
 %>
 <html>
@@ -119,6 +121,12 @@
 		document.location.href='nearhere://showOKDialog?title=' + title + '&message=' + message + '&param=' + param;
 	}
 	
+	function goNewPost()
+	{
+		var nextUrl = encodeURIComponent('<%= request.getRequestURL() + request.getQueryString() %>');
+		document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&nextUrl=' + nextUrl;
+	}
+	
 </script>
 
 	<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
@@ -135,6 +143,17 @@
 		<div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
+		
+<%
+		if ( "N".equals( isApp ) )
+		{
+%>
+			<div id="btnNewPost" onclick="goNewPost();">
+				<img class="newButton" src="<%= Constants.IMAGE_PATH %>/plus_image.png" width=50 height=50 />
+			</div>
+<%			
+		}
+%>		
 		
 		<div id="postList">
 		</div>
