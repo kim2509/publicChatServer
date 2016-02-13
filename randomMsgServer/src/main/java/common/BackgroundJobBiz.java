@@ -29,7 +29,7 @@ public class BackgroundJobBiz extends CommonBiz{
 	
 	// 새 글 등록시 집,회사 근처의 사람들에게 푸쉬 메세지를 보낸다.
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<HashMap> getPushJobList() throws Exception
+	public List<HashMap> sendPushMessageToUsersOnNewPost() throws Exception
 	{
 		List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getPushJobList");
 		
