@@ -64,6 +64,7 @@ public class BackgroundJobBiz extends CommonBiz{
 					pushData.put("postID", postList.get(i).get("param") );
 					pushData.put("userID", userList.get(j).get("userID") );
 					pushData.put("locationID", userList.get(j).get("locationID") );
+					pushData.put("locationName", userList.get(j).get("locationName") );
 					pushData.put("regID", userList.get(j).get("regID") );
 					pushData.put("address", userList.get(j).get("address") );
 					pushData.put("message", msg );

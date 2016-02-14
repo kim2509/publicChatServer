@@ -91,7 +91,6 @@
 					select l.*, u.regID from user_location l
 						left outer join user u on l.userID=u.userID
 					where u.isDeleted is null
-					and l.locationName <> '현재위치'
 					and u.regID is not null
 					and u.userID <> #{userID}
 					and l.latitude > 0 and l.longitude > 0
@@ -112,8 +111,8 @@
 	<!-- 푸쉬 메세지 보낼 대상 및 내역 -->
 	<insert id="insertNewPostPushData" parameterType="java.util.HashMap"
 	useGeneratedKeys="true" keyProperty="ID" keyColumn="ID">
-		insert into new_post_push_data( pushID, postID, userID, locationID, regID, address, message, createdDate )
-		values ( #{pushID}, #{postID}, #{userID}, #{locationID}, #{regID}, #{address}, #{message}, NOW() );
+		insert into new_post_push_data( pushID, postID, userID, locationID, locationName, regID, address, message, createdDate )
+		values ( #{pushID}, #{postID}, #{userID}, #{locationID}, #{locationName}, #{regID}, #{address}, #{message}, NOW() );
 		<selectKey keyProperty="ID" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
