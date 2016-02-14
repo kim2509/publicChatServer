@@ -10,7 +10,7 @@ public class Constants {
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static int push_retry_count = 5;
 
-	public static boolean bReal = false;
+	public static boolean bReal = true;
 	
 	public static String getServerURL()
 	{
