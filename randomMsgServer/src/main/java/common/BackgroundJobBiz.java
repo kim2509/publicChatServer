@@ -48,37 +48,46 @@ public class BackgroundJobBiz extends CommonBiz{
 			temp.put("longitude", postList.get(i).get("longitude") );
 			temp.put("userID", postList.get(i).get("userID") );
 			
-			List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getUserListAroundPost", temp );
+			getUserListAndSendPushForNewPost(postList, i, temp);
 			
-			if ( userList == null || userList.size() < 1 )
-				logger.info("userList for the pushID[" + postList.get(i).get("pushID") + "] is null.");
-			else
-			{
-				logger.info("userList for the pushID[" + postList.get(i).get("pushID") + "] size is " + userList.size() );
-				
-				for ( int j = 0; j < userList.size(); j++ )
-				{
-					String msg = "고객님의 지역근처에 합승글이 등록되었습니다.";
-					HashMap pushData = new HashMap();
-					pushData.put("pushID", postList.get(i).get("pushID") );
-					pushData.put("postID", postList.get(i).get("param") );
-					pushData.put("userID", userList.get(j).get("userID") );
-					pushData.put("locationID", userList.get(j).get("locationID") );
-					pushData.put("locationName", userList.get(j).get("locationName") );
-					pushData.put("regID", userList.get(j).get("regID") );
-					pushData.put("address", userList.get(j).get("address") );
-					pushData.put("message", msg );
-
-					sqlSession.insert("com.tessoft.nearhere.taxi.background.insertNewPostPushData", pushData );
-				}
-				
-				sendPushMessageOnNewPost( postList.get(i) );
-			}
+			temp.put("latitude", postList.get(i).get("fromLatitude") );
+			temp.put("longitude", postList.get(i).get("fromLongitude") );
+			
+			getUserListAndSendPushForNewPost(postList, i, temp);
 			
 			sqlSession.update("com.tessoft.nearhere.taxi.background.updatePushJobAsFinished", postList.get(i));
 		}
 		
 		return null;
+	}
+
+	private void getUserListAndSendPushForNewPost(List<HashMap> postList, int i, HashMap temp) throws Exception {
+		List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getUserListAroundPost", temp );
+		
+		if ( userList == null || userList.size() < 1 )
+			logger.info("userList for the pushID[" + postList.get(i).get("pushID") + "] is null.");
+		else
+		{
+			logger.info("userList for the pushID[" + postList.get(i).get("pushID") + "] size is " + userList.size() );
+			
+			for ( int j = 0; j < userList.size(); j++ )
+			{
+				String msg = "고객님의 지역근처에 합승글이 등록되었습니다.";
+				HashMap pushData = new HashMap();
+				pushData.put("pushID", postList.get(i).get("pushID") );
+				pushData.put("postID", postList.get(i).get("param") );
+				pushData.put("userID", userList.get(j).get("userID") );
+				pushData.put("locationID", userList.get(j).get("locationID") );
+				pushData.put("locationName", userList.get(j).get("locationName") );
+				pushData.put("regID", userList.get(j).get("regID") );
+				pushData.put("address", userList.get(j).get("address") );
+				pushData.put("message", msg );
+
+				sqlSession.insert("com.tessoft.nearhere.taxi.background.insertNewPostPushData", pushData );
+			}
+			
+			sendPushMessageOnNewPost( postList.get(i) );
+		}
 	}
 	
 	public void sendPushMessageOnNewPost( HashMap postData ) throws Exception
