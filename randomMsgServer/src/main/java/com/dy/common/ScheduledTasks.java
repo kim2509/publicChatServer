@@ -296,7 +296,7 @@ public class ScheduledTasks {
 		}
 	}
 	
-	@Scheduled(fixedRate = 1000 * 60) // 1분마다
+	@Scheduled(fixedRate = 1000 * 60 * 5) // 1분마다
 	public void sendPushUsersOnNewPost()
 	{
 		try

@@ -56,6 +56,8 @@ public class BackgroundJobBiz extends CommonBiz{
 			getUserListAndSendPushForNewPost(postList, i, temp);
 			
 			sqlSession.update("com.tessoft.nearhere.taxi.background.updatePushJobAsFinished", postList.get(i));
+			
+			Thread.sleep(200);
 		}
 		
 		return null;
@@ -84,6 +86,8 @@ public class BackgroundJobBiz extends CommonBiz{
 				pushData.put("message", msg );
 
 				sqlSession.insert("com.tessoft.nearhere.taxi.background.insertNewPostPushData", pushData );
+				
+				Thread.sleep(200);
 			}
 			
 			sendPushMessageOnNewPost( postList.get(i) );
