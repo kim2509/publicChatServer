@@ -6,7 +6,10 @@
 
 	<select id="selectUserFriends" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
-		select * from appInfo where os = #{os} and useYN='Y'
+			select * 
+			from user_friends uf
+				left outer join user u on uf.userID=u.userID 
+			where userID=#{userID}
 		]]>
 	</select>
 	
