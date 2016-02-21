@@ -112,6 +112,11 @@ public class BackgroundJobBiz extends CommonBiz{
 				String pushResult = messageBiz.sendPushForNewPost(userList.get(i).get("regID").toString(), 
 						userList.get(i).get("message").toString(), userList.get(i).get("postID").toString());
 				userList.get(i).put("pushResult", pushResult);
+				
+				if ( pushResult.contains("NotRegistered") )
+				{
+					UserBiz.getInstance(sqlSession).updateUserAsDeleted(userList.get(i));
+				}
 			}
 			else
 			{

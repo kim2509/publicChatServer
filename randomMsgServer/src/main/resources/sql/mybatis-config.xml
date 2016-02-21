@@ -12,5 +12,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="sql-nearhere-taxi-admin.xml"/>
 		<mapper resource="sql-nearhere-taxi-background.xml"/>
 		<mapper resource="sql-nearhere-location.xml"/>
+		<mapper resource="sql-nearhere-user.xml"/>
 	</mappers>
 </configuration>

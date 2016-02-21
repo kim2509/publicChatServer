@@ -40,7 +40,9 @@ public class MessageBiz extends CommonBiz{
 					.addData("postID",  postID )
 					.build();
 			
-			return sendGCMPush(regID, message);	
+			String result = sendGCMPush(regID, message);
+			
+			return result;
 		}
 		catch( Exception ex)
 		{
