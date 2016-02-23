@@ -16,6 +16,8 @@
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
+	<link rel="stylesheet" type="text/css"
+	href="<%=Constants.CSS_PATH%>/driver.css" />
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -40,23 +42,17 @@
 
 	<div id="wrapper">
 
-		운전면허증을 업로드 해 주세요.
+		<div class="btn">운전면허증을 업로드 해 주세요</div>
 		
-		<br/>
+		<div class="btn">대리기사 보험서류를 업로드 해주세요</div>
 		
-		대리기사 보험서류를 업로드 해주세요.
+		<div class="btn">휴대폰 번호를 등록해 주세요</div>
 		
-		<br/>
-		
-		휴대폰 번호를 등록해 주세요.
-		
-		<br/>
-		
-		사진을 등록해 주세요.
+		<div class="btn">사진을 등록해 주세요</div>
 		
 	</div>
 
-	<div onclick="goDriverGetCall();">등록하기</div>
+	<div class="btnRegister" onclick="goDriverGetCall();">등록하기</div>
 	
 </body>
 </html>
