@@ -10,4 +10,13 @@
 		where userID=#{userID};
 	</update>
 	
+	<select id="getDriverInfo" parameterType="String" resultType="java.util.HashMap">
+		select * from driver
+		where userID=#{value};
+	</select>
+	
+	<delete id="removeDriverInfo" parameterType="String">
+		delete from driver
+		where userID=#{value};
+	</delete>
 </mapper>

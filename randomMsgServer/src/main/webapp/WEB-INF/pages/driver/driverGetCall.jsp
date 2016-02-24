@@ -26,12 +26,17 @@
 	var isApp = '<%= isApp %>';
 	
 	jQuery(document).ready(function() {
-
+		document.location.href='nearhere://clearHistory';
 	});
 	
 	function goDriverGetCall()
 	{
 		document.location.href='driverGetCall.do';
+	}
+	
+	function resignDriver()
+	{
+		document.location.href='removeDriver.do?userID=' + Android.getUserID();
 	}
 	
 </script>
@@ -48,7 +53,7 @@
 		
 		<br/>
 		
-		대리기사 해제하기
+		<div class="btn" onclick="resignDriver();">대리기사 해제하기</div>
 		
 	</div>
 

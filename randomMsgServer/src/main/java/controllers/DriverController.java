@@ -3,6 +3,7 @@ package controllers;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,19 +17,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
+
+import common.UserBiz;
 
 @Controller
 public class DriverController {
 
 	@Autowired
 	private SqlSession sqlSession;
+	UserBiz userBiz = null;
 	
-	@RequestMapping( value ="/driver/driverMain.do")
+	@PostConstruct
+	public void init() {
+		userBiz = UserBiz.getInstance(sqlSession);
+	}
+	
+	@RequestMapping( value = "/driver/driverMain.do" )
 	public ModelAndView driverMain ( HttpServletRequest request, HttpServletResponse response ,
-			ModelMap model )
+			ModelMap model, String userID )
 	{
-		if ( "driver".equals( request.getParameter("mode") ) )
+		HashMap driverInfo = userBiz.getDriverInfo(userID);
+		
+		if ( driverInfo != null && driverInfo.containsKey("userID") && !Util.isEmptyString( driverInfo.get("userID") ) )
 			return new ModelAndView("driver/driverGetCall", model);
 		else
 			return new ModelAndView("driver/driverMain", model);
@@ -53,5 +65,14 @@ public class DriverController {
 			ModelMap model )
 	{
 		return new ModelAndView("driver/waitingDriver", model);
+	}
+	
+	@RequestMapping( value ="/driver/removeDriver.do")
+	public String removeDriver( HttpServletRequest request, HttpServletResponse response ,
+			ModelMap model, String userID )
+	{
+		userBiz.removeDriverInfo(userID);
+		
+		return "forward:/driver/driverMain.do";
 	}
 }

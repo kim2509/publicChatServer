@@ -6,6 +6,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
 %>
 <html>
 
@@ -29,7 +30,7 @@
 	var isApp = '<%= isApp %>';
 	
 	jQuery(document).ready(function() {
-
+		document.location.href='nearhere://clearHistory';
 	});
 	
 	function goCallDriver()

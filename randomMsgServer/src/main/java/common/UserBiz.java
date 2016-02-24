@@ -27,4 +27,15 @@ public class UserBiz extends CommonBiz{
 		sqlSession.update("com.tessoft.nearhere.user.updateUserAsDeleted", receiver );
 		logger.info( "update user as deleted.[" + receiver.get("userID") + "]");
 	}
+	
+	public HashMap getDriverInfo( String userID )
+	{
+		HashMap driverInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getDriverInfo", userID );
+		return driverInfo;
+	}
+	
+	public void removeDriverInfo( String userID )
+	{
+		sqlSession.delete("com.tessoft.nearhere.user.removeDriverInfo", userID );
+	}
 }
