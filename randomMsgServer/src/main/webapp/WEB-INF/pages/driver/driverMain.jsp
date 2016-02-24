@@ -16,6 +16,9 @@
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
+	<link rel="stylesheet" type="text/css"
+	href="<%=Constants.CSS_PATH%>/driver.css" />
+	
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -44,11 +47,11 @@
 
 	<div id="wrapper">
 
-		<div style="height:70px;" onclick="goCallDriver();">
+		<div class="big_btn" onclick="goCallDriver();">
 			대리호출하기
 		</div>
 
-		<div style="height:70px;" onclick="goRegisterDriver();">
+		<div class="big_btn" onclick="goRegisterDriver();">
 			대리기사등록
 		</div>
 		
