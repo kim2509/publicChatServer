@@ -29,9 +29,9 @@
 
 	});
 	
-	function goWaitingDriver()
+	function goDriverMain()
 	{
-		document.location.href='driverMain.do?mode=driver';
+		document.location.href='driverMain.do';
 	}
 	
 </script>
@@ -53,9 +53,31 @@
 		<br/>
 		
 		금액
+		
+		<br/>
+		
+		기사님을 호출하는 중입니다...
+		
+		<br/>
+		
+		주위에 기사님이 없으시네요.
 
-		기사들 제안
+		<br/>
+		
+		기사1
+		
+		<br/>
+		
+		기사2
+		
+		<br/>
 				
+		<div>
+			지도. 기사와 내 위치가 보임.
+			<br/>
+			
+			<div onclick="goDriverMain();">종료하기</div>
+		</div>
 	</div>
 
 	
