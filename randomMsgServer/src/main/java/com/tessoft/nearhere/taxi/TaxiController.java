@@ -489,7 +489,7 @@ public class TaxiController {
 		{
 //			String logIdentifier = requestLogging(request, bodyString);
 
-			//logger.info( "[updateUserLocation] START");
+//			logger.info( "[updateUserLocation] START !!!!!!!!!!!!");
 			
 			UserLocation location = mapper.readValue(bodyString, new TypeReference<UserLocation>(){});
 
@@ -507,7 +507,7 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			//logger.info( "[updateUserLocation] END");
+//			logger.info( "[updateUserLocation] END !!!!!!!!!!!!!!!");
 //			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
@@ -2233,33 +2233,15 @@ public class TaxiController {
 
 			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 			
-			List<HashMap> info = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo", requestInfo);
-			List<HashMap> newUsers = sqlSession.selectList("com.tessoft.nearhere.taxi.selectNewlyRegisteredUsers");
-			String newUserCount = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectNewUsersCount");
+			HashMap registerUserInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getUserAgreement", requestInfo);
 			
-			for ( int i = 0; i < newUsers.size(); i++ )
-			{
-				HashMap hash = newUsers.get(i);
-				if ( hash.get("address") != null && !Util.isEmptyString( hash.get("address").toString() ) )
-					hash.put("address", Util.getRegionName(hash.get("address").toString() ) );
-			}
+			String userAgreed = "N";
+			if ( registerUserInfo != null && !Util.isEmptyString( registerUserInfo.get("agreementUserID") ))
+				userAgreed = "Y";
 			
-			HashMap additionalData = new HashMap();
-			
-			List<HashMap> progressingPosts = sqlSession.selectList("com.tessoft.nearhere.taxi.selectProgressingPosts", requestInfo);
-			additionalData.put("progressingPosts", progressingPosts );
-			
-			List<HashMap> myPosts = sqlSession.selectList("com.tessoft.nearhere.taxi.selectMyPosts", requestInfo);
-			additionalData.put("myPosts", myPosts );
-			
-			List<HashMap> postsWithin1Week = sqlSession.selectList("com.tessoft.nearhere.taxi.selectPostsWithin1Week", requestInfo);
-			additionalData.put("postsWithin1Week", postsWithin1Week );
-			
-			additionalData.put("userList", newUsers );
-			additionalData.put("newUserCount", newUserCount );
-
-			response.setData( info );
-			response.setData2( additionalData );
+			HashMap responseInfo = new HashMap();
+			responseInfo.put("UserAgreed", userAgreed);
+			response.setData(responseInfo);
 			
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 

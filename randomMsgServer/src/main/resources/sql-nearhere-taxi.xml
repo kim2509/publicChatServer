@@ -1069,6 +1069,13 @@
 		update user set type='Normal' where userID=#{userID} and ( kakaoID is not null or facebookURL is not null)
 	</update>
 	
+	<select id="getUserAgreement" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select u.sex , u.userName, u.kakaoID, ua.userID as agreementUserID, u.registerUserFinished
+		from user u
+			left outer join user_terms_agreement ua on u.userID=ua.userID
+		where u.userID=#{userID};
+	</select>
+	
 	<select id="registerUserFinishedInfo" resultType="java.util.HashMap" parameterType="com.nearhere.domain.User">
 		select u.sex , u.userName, u.kakaoID, ua.userID as agreementUserID, u.registerUserFinished
 		from user u
