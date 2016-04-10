@@ -230,6 +230,12 @@
 			return false;
 		}
 		
+		if (requestData.departureTime == null || requestData.departureTime.length < 1 )
+		{
+			showOKDialog('경고', '출발시간을 지정해 주십시오.');
+			return false;
+		}
+		
 		if (requestData.region == null || requestData.region.length < 1 )
 		{
 			showOKDialog('경고', '도착지역을 선택해 주십시오.');
