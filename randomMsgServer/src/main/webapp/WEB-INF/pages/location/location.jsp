@@ -7,8 +7,19 @@
 	HashMap locationInfo = (HashMap) request.getAttribute("location");
 	String locationID = locationInfo.get("locationID").toString();
 	String userID = locationInfo.get("userID").toString();
-	String userName = locationInfo.get("userName").toString();
-	String profileImageURL = locationInfo.get("profileImageURL").toString();
+	String type = locationInfo.get("type").toString();
+	String userName = "";
+	String profileImageURL = "";
+	
+	if ( !"Guest".equals( type ) )
+	{
+		userName = locationInfo.get("userName").toString();
+		profileImageURL = locationInfo.get("profileImageURL").toString();	
+	}
+	else
+	{
+		userName = "Guest";
+	}
 %>
 
 <!DOCTYPE html>
@@ -244,10 +255,25 @@ html, body {
 
 	<div id="over_map">
 		<div id="imageDiv">
+<% 
+	if ( "Guest".equals( type ) )
+	{
+%>		
+			<img id="image" src="<%= Constants.IMAGE_PATH %>/no_image.png"
+			style="width: 70px; height: 70px;" />
+<%
+	}
+	else
+	{
+%>
 			<img id="image" src='http://www.hereby.co.kr/thumbnail/<%= profileImageURL %>'
 			style="width: 70px; height: 70px;" />
+<%		
+	}
+%>			
 		</div>
 		<div id="userInfo">
+		
 			<div id="userName"><span><%= userName %></span>님의 위치</div>
 			<div id="addressDiv"><span id="addressTitle">현재위치</span><span id="address"></span></div>
 			<div id="updatedTimeDiv"><span id="updatedTimeTitle">업데이트 시간</span><span id="updatedTime"></span></div>
