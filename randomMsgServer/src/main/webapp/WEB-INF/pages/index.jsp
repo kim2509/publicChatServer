@@ -9,6 +9,13 @@
 	String snsLoginYN = request.getParameter("snsLogin");
 
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
+	
+	String showSearchDiv = request.getParameter("showSearchDiv");
+	if ( Util.isEmptyString(showSearchDiv) || !"Y".equals( showSearchDiv ) )
+		showSearchDiv = "N";
+	else
+		showSearchDiv = "Y";
+	
 %>
 <html>
 
@@ -20,7 +27,7 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
 	<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/category.css" />
+	href="<%=Constants.CSS_PATH%>/category.css?v=2" />
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -51,11 +58,16 @@
 	{
 		document.location.href='nearhere://showOKDialog?title=' + title + '&message=' + message + '&param=' + param;
 	}
+	
+	function openMap()
+	{
+		document.location.href='nearhere://openSearchDestination';
+	}
 </script>
 </head>
 <body>
 
-	<div id="wrapper">
+	<div id="wrapper" style="margin:10px;">
 
 <%
 		if ("Y".equals( snsLoginYN ) )
@@ -77,39 +89,88 @@
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
 
-		<div>
+		<!-- div class="section">
+		
+			<div id="menu_category">
+				<div class="title"><span class="s_tit">유명지 및 관광지</span></div>
+			</div>
+			
+			<div class="set_service" style="margin-bottom:10px">
+				<ul>
+					<li>
+						<a href="javascript:void()" onclick="">인천공항</a>
+					</li>
+					<li>
+						<a href="javascript:void()" onclick="">을왕리 해수욕장</a>
+					</li>
+					<li>
+						<a href="javascript:void()" onclick="">에버랜드</a>
+					</li>
+					<li>
+						<a href="javascript:void()" onclick="">한국민속촌</a>
+					</li>
+				</ul>
+			</div>
+		
+		</div-->
 
-			<dl class="slide_lst">
 <%
-				String incheonAirportURL = Constants.getServerURL() + "/taxi/searchDestination.do?latitude=37.460195&longitude=126.438507&address=%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD";
-				incheonAirportURL = URLEncoder.encode( incheonAirportURL, "UTF-8" );
+if ("Y".equals( showSearchDiv ) )
+{
 %>
-				<!-- dd onclick="goRegionPage('%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD','<%= incheonAirportURL %>')">
-					 <strong class="tit">인천공항</strong> <span
-						class="sp_mw arr"></span>
+		<div class="section">
+			<div id="menu_category">
+				<div class="title"><span class="s_tit">원하는 목적지 검색</span></div>
+			</div>
+			
+			<div class="destination" onclick="openMap();">목적지 검색</div>
+		</div>
+<%	
+}
+%>		
+		
+		<div class="section">
+		
+			<div id="menu_category">
+				<div class="title"><span class="s_tit">지역별 목적지</span></div>
+			</div>
+			
+			<div class="set_service">
+	
+				<ul>
+	<%
+					String incheonAirportURL = Constants.getServerURL() + "/taxi/searchDestination.do?latitude=37.460195&longitude=126.438507&address=%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD";
+					incheonAirportURL = URLEncoder.encode( incheonAirportURL, "UTF-8" );
+	%>
+					<!-- dd onclick="goRegionPage('%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD','<%= incheonAirportURL %>')">
+						 <strong class="tit">인천공항</strong> <span
+							class="sp_mw arr"></span>
+						
+					</dd-->
 					
-				</dd-->
-				
-<%
-				for ( int i = 0; i < regionList.size(); i++ )
-				{
-					String regionNo = regionList.get(i).get("regionNo").toString();
-					String title = regionList.get(i).get("regionName").toString();
-					String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
-					String regionCount = regionList.get(i).get("regionCount").toString();
-					String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
-					int newCount = Util.getInt( regionList.get(i).get("newCount") );
-%>
-				<dd onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
-					 <strong class="tit"><%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %></strong> 
-					 <span class="new"></span>
-					
-				</dd>
-<%
-				}
-%>
-			</dl>
-
+	<%
+					for ( int i = 0; i < regionList.size(); i++ )
+					{
+						String regionNo = regionList.get(i).get("regionNo").toString();
+						String title = regionList.get(i).get("regionName").toString();
+						String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
+						String regionCount = regionList.get(i).get("regionCount").toString();
+						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
+						int newCount = Util.getInt( regionList.get(i).get("newCount") );
+	%>
+					<li>
+						 <a href="javascript:void()" onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
+						 	<%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %> 
+						 	<span class="new">
+						 </a>
+					</li>
+	<%
+					}
+	%>
+				</ul>
+	
+			</div>
+		
 		</div>
 
 	</div>

@@ -43,6 +43,9 @@
 		if ( bLoading ) return;
 		bLoading = true;
 		
+		//if ( pageNo == 1 )
+			//$('#loading').show();
+		
 		jQuery.ajax({
 			type : "POST",
 			url : "/nearhere/taxi/getPostsNearHereAjax.do",
@@ -57,6 +60,8 @@
 				// TODO
 				try {
 
+					//$('#loading').hide();
+					
 					displayPosts( data );
 					
 					$("img.lazy").lazyload({
@@ -83,6 +88,7 @@
 			},
 			error : function(xhr, status, error) {
 				alert("에러발생");
+				//$('#loading').hide();
 			}
 		});
 	}
@@ -158,6 +164,9 @@
 		<div id="postList">
 		</div>
 
+		<div id="loading" style="display:none">
+			로딩중입니다.
+		</div>
 	</div>
 	
 </body>

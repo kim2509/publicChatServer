@@ -125,3 +125,13 @@ table, td {
 	bottom:10px;
 	z-index:40;
 }
+
+#loading{
+    text-align: center;
+    padding-top: 200;
+    padding-bottom: 200px;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    background: white;
+    margin: 10px;
+}

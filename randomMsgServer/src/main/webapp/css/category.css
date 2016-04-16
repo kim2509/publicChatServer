@@ -1,5 +1,9 @@
 @CHARSET "utf-8";
 
+a:link,a:hover,a:active{text-decoration:none}
+
+#wrapper{
+}
 
 dl {
 	/*border-top: 1px solid #ccc;*/
@@ -45,4 +49,29 @@ dd {
 
 .new{
 	
+}
+
+#menu_category {background:#fff;}
+#menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}
+#menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
+
+.set_service {overflow:hidden;list-style: none outside;background:white;}
+.set_service li {float:left; width:50%}
+.set_service li a {position:relative; display:block; height:50px; padding:5px 10px 5px 12px; border-right:1px solid #ededed; border-bottom:1px solid #ededed; display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box; color:#707b8b; font-weight:normal; font-size:0.81em}
+
+.destination{
+	margin:10px;
+	border-radius: 10px;
+    border: 1px solid #5f98f1;
+    background:white;
+	line-height:40px;
+	color:#5f98f1;
+	text-align:center;
+}
+
+.section{
+	border-radius: 10px;
+	background:white;
+	padding:10px;
+	margin-bottom:10px;
 }
