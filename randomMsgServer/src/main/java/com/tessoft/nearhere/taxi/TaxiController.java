@@ -2266,6 +2266,9 @@ public class TaxiController {
 		
 		model.addAttribute("regionList", regionList );
 		
+		List<HashMap> hotspotList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotList");
+		model.addAttribute("hotspotList", hotspotList );
+		
 		return new ModelAndView("index", model);
 	}
 	
@@ -2276,9 +2279,13 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/listRegion.do")
-	public ModelAndView listRegion( String isApp )
+	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo )
 	{
-		return new ModelAndView("carPool/listRegion");
+		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", regionNo );
+		
+		model.addAttribute("regionInfo", regionInfo );
+		
+		return new ModelAndView("carPool/listRegion", model );
 	}
 	
 	@RequestMapping( value ="/taxi/newPost.do")
@@ -2295,17 +2302,44 @@ public class TaxiController {
 	{
 		HashMap requestData = new HashMap();
 		
-		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
-		model.addAttribute("regionList", regionList);
+		Post post = null;
 		
 		if ( !Util.isEmptyString(postID ) )
 		{
 			requestData.put("postID", postID);
-			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", requestData);
+			post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", requestData);
 			model.addAttribute("postDetail", post);
 		}
 		
-		return new ModelAndView("carPool/newPost", model);
+		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", post.getRegion() );
+		
+		model.addAttribute("regionNo", post.getRegion() );
+		
+		if ( "Y".equals( regionInfo.get("isHotSpot") ) )
+		{
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotRegionList");
+			model.addAttribute("regionList", regionList);
+			
+			return new ModelAndView("carPool/newHotspot", model);
+		}
+		else
+		{
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
+			model.addAttribute("regionList", regionList);
+			
+			return new ModelAndView("carPool/newPost", model);
+		}
+	}
+	
+	@RequestMapping( value ="/taxi/newHotspot.do")
+	public ModelAndView newHotspot( HttpServletRequest request, HttpServletResponse response , ModelMap model, String regionNo )
+	{
+		model.addAttribute("regionNo", regionNo );
+		
+		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotRegionList");
+		model.addAttribute("regionList", regionList);
+		
+		return new ModelAndView("carPool/newHotspot", model );
 	}
 	
 	@RequestMapping( value ="/taxi/viewMoreUsers.do")

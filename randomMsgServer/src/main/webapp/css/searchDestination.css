@@ -135,3 +135,10 @@ table, td {
     background: white;
     margin: 10px;
 }
+
+#empty{
+    text-align: center;
+    padding-top: 200;
+    padding-bottom: 200px;
+    margin: 10px;
+}

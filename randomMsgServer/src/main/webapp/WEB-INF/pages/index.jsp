@@ -7,8 +7,10 @@
 <%
 	String isApp = request.getParameter("isApp");
 	String snsLoginYN = request.getParameter("snsLogin");
+	String showHotSpot = request.getParameter("showHotSpot");
 
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
+	List<HashMap> hotspotList = (List<HashMap>) request.getAttribute("hotspotList");
 	
 	String showSearchDiv = request.getParameter("showSearchDiv");
 	if ( Util.isEmptyString(showSearchDiv) || !"Y".equals( showSearchDiv ) )
@@ -63,6 +65,7 @@
 	{
 		document.location.href='nearhere://openSearchDestination';
 	}
+	
 </script>
 </head>
 <body>
@@ -88,8 +91,8 @@
 		<!-- div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
-
-		<!-- div class="section">
+<% if ("Y".equals( showHotSpot ) ) { %>
+		<div class="section">
 		
 			<div id="menu_category">
 				<div class="title"><span class="s_tit">유명지 및 관광지</span></div>
@@ -97,24 +100,32 @@
 			
 			<div class="set_service" style="margin-bottom:10px">
 				<ul>
+<% 
+			for ( int i = 0; i < hotspotList.size(); i++ )
+			{
+				String regionNo = hotspotList.get(i).get("regionNo").toString();
+				String title = hotspotList.get(i).get("regionName").toString();
+				String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
+				String regionCount = hotspotList.get(i).get("regionCount").toString();
+				String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
+				int newCount = Util.getInt( hotspotList.get(i).get("newCount") );
+%>
 					<li>
-						<a href="javascript:void()" onclick="">인천공항</a>
+						<a href="javascript:void()" onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
+						 	<%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %> 
+						 </a>
 					</li>
-					<li>
-						<a href="javascript:void()" onclick="">을왕리 해수욕장</a>
-					</li>
-					<li>
-						<a href="javascript:void()" onclick="">에버랜드</a>
-					</li>
-					<li>
-						<a href="javascript:void()" onclick="">한국민속촌</a>
-					</li>
+<%				
+			}
+%>				
 				</ul>
 			</div>
 		
-		</div-->
+		</div>
 
 <%
+}
+
 if ("Y".equals( showSearchDiv ) )
 {
 %>
@@ -161,7 +172,6 @@ if ("Y".equals( showSearchDiv ) )
 					<li>
 						 <a href="javascript:void()" onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
 						 	<%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %> 
-						 	<span class="new">
 						 </a>
 					</li>
 	<%

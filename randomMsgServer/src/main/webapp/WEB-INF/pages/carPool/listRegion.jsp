@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.nearhere.domain.*"%>
 <%@ page import="com.dy.common.*"%>
+<%@ page import="java.util.*"%>
 
 <%
 	String regionNo = request.getParameter("regionNo");
@@ -9,6 +10,9 @@
 	String isApp = request.getParameter("isApp");
 	if ( isApp == null || !"Y".equals( isApp ) ) isApp = "N";
 //	Constants.bReal = false;
+
+	HashMap regionInfo = (HashMap) request.getAttribute("regionInfo");
+	String isHotspot = regionInfo.get("isHotSpot") == null ? "" : regionInfo.get("isHotSpot").toString();
 %>
 <html>
 
@@ -45,6 +49,8 @@
 		
 		//if ( pageNo == 1 )
 			//$('#loading').show();
+		
+		$('#empty').hide();
 		
 		jQuery.ajax({
 			type : "POST",
@@ -95,7 +101,12 @@
 	
 	function displayPosts(data) {
 		
-		if ( data == null || data.data.postsNearHere == null || data.data.postsNearHere.length < 1 ) return;
+		if ( data == null || data.data.postsNearHere == null || data.data.postsNearHere.length < 1 )
+		{
+			if ( pageNo == 1 )
+				$('#empty').show();
+			return;
+		}
 		
 		var source = $('#postT').html();
 		var template = Handlebars.compile(source);
@@ -130,7 +141,41 @@
 	function goNewPost()
 	{
 		var nextUrl = encodeURIComponent('<%= request.getRequestURL() + request.getQueryString() %>');
-		document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&nextUrl=' + nextUrl;
+<%
+		if ("Y".equals( isHotspot ) )
+		{
+%>
+			document.location.href='<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>&nextUrl=' + nextUrl;
+<%
+		}
+		else
+		{
+%>
+			document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>&nextUrl=' + nextUrl;
+<%
+		}
+%>		
+	}
+	
+	function getNewPostURL()
+	{
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+<%
+			if ("Y".equals( isHotspot ) )
+			{
+%>
+				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>');
+<%
+			}
+			else
+			{
+%>
+				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>');
+<%
+			}
+%>			
+		}
 	}
 	
 </script>
@@ -166,6 +211,10 @@
 
 		<div id="loading" style="display:none">
 			로딩중입니다.
+		</div>
+		
+		<div id="empty" style="display:none">
+			등록된 내역이 없습니다.
 		</div>
 	</div>
 	
