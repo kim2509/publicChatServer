@@ -5,21 +5,29 @@
 
 <%
 
-	String regionNo = request.getParameter("regionNo");
-	if ( Util.isEmptyString(regionNo) && !Util.isEmptyString( request.getAttribute("regionNo") ) )
-		regionNo = request.getAttribute("regionNo").toString();
+	String regionNo = request.getAttribute("regionNo").toString();
 
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
 
+	HashMap regionInfo = null;
+	for ( int i = 0; i < regionList.size(); i++ )
+	{
+		if ( String.valueOf( regionList.get(i).get("regionNo") ).equals( regionNo ) )
+		{
+			regionInfo = regionList.get(i);
+			break;
+		}
+	}
+	
 	Post post = null;
 	String postID = "";
 	String message = "";
 	String fromLatitude = "";
 	String fromLongitude = "";
 	String fromAddress = "";
-	String toLatitude = "";
-	String toLongitude = "";
-	String toAddress = "";
+	String toLatitude = regionInfo.get("latitude").toString();
+	String toLongitude = regionInfo.get("longitude").toString();
+	String toAddress = regionInfo.get("regionName").toString();
 	String departureDate = "";
 	String departureTime = "";
 	String region = "";
@@ -76,6 +84,9 @@
 <script language="javascript">
 
 	var requestData = {};
+	
+	var hotspotLatitude = '<%= regionInfo.get("latitude") %>';
+	var hotspotLongitude = '<%= regionInfo.get("longitude") %>';
 	
 	jQuery(document).ready(function() {
 
@@ -139,10 +150,52 @@
 			$('#repetitiveYN').val( requestData.repetitiveYN );
 		
 		$('#regionList').val('<%= regionNo %>');
+		
+		if ( requestData.fromAddress == '<%= regionInfo.get("regionName") %>')
+			hotSpotDestination = false;
 	});
+	
+	var hotSpotDestination = true;
+	
+	function changePosition()
+	{
+		if ( hotSpotDestination )
+		{
+			$('.departure').html('출발지 : <%= regionInfo.get("regionName") %>');
+			$('.destination').html('도착지를 설정해 주세요.');
+			hotSpotDestination = false;
+			requestData.fromLatitude = hotspotLatitude;
+			requestData.fromLongitude = hotspotLongitude;
+			requestData.fromAddress = '<%= regionInfo.get("regionName") %>';
+			requestData.toLatitude = '';
+			requestData.toLongitude = '';
+			requestData.toAddress = '';
+		}
+		else
+		{
+			$('.departure').html('출발지를 설정해 주세요.');
+			$('.destination').html('도착지 : <%= regionInfo.get("regionName") %>');
+			hotSpotDestination = true;
+			requestData.fromLatitude = '';
+			requestData.fromLongitude = '';
+			requestData.fromAddress = '';
+			requestData.toLatitude = hotspotLatitude;
+			requestData.toLongitude = hotspotLongitude;
+			requestData.toAddress = '<%= regionInfo.get("regionName") %>';
+		}
+	}
 	
 	function openMap( param )
 	{
+		if ( param == 'departure' && hotSpotDestination == false )
+		{
+			return;
+		}
+		else if ( param == 'destination' && hotSpotDestination )
+		{
+			return;
+		}
+		
 		if ( Android && Android != null && typeof Android != 'undefined')
 		{
 			Android.openMap( param );
@@ -225,7 +278,7 @@
 		
 		if (requestData.toLatitude == null || requestData.toLatitude.length < 1 )
 		{
-			showOKDialog('경고', '도착지를 선택해 주십시오.');
+			showOKDialog('경고', '도착지을 선택해 주십시오.');
 			return false;
 		}
 		
@@ -243,7 +296,7 @@
 		
 		if (requestData.region == null || requestData.region.length < 1 )
 		{
-			showOKDialog('경고', '도착지역을 선택해 주십시오.');
+			showOKDialog('경고', '지역을 선택해 주십시오.');
 			return false;
 		}
 		
@@ -358,9 +411,12 @@
 		<div class="title">
 			<input type=text name="message" id="message" value="" placeholder="제목을 입력해 주세요."/>
 		</div>
-		<div class="departure" onclick="openMap('departure');">출발지를 설정해 주세요</div>
 		
-		<div class="destination" onclick="openMap('destination');">도착지를 설정해 주세요</div>
+		<div>
+			<div class="changePosition" onclick="changePosition();">위치</br>변경</div>
+			<div class="departure" onclick="openMap('departure');" style="margin-right:70px;">출발지를 설정해 주세요</div>
+			<div class="destination" onclick="openMap('destination');" style="margin-right:70px;">도착지 : <%= regionInfo.get("regionName") %></div>
+		</div>
 		
 		<div class="departureDateTime">
 			<div class="departureDate" onclick="openDatePicker();">출발일 설정</div>
@@ -376,7 +432,7 @@
 					<col width="140px;"/>
 				</colgroup>
 				<tr>
-					<th>도착지</th>
+					<th>지역</th>
 					<td>
 						<select id="regionList">
 							<option value=''>선택하세요</option>
