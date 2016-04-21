@@ -32,6 +32,7 @@ jQuery(document).ready(function() {
 	Handlebars.registerHelper('printRepeat', printRepeat);
 	Handlebars.registerHelper('printReplyCount', printReplyCount);
 	Handlebars.registerHelper('printKakaoIcon', printKakaoIcon);
+	Handlebars.registerHelper('printNumOfUsers', printNumOfUsers);
 });
 
 function printRepeat( value )
@@ -60,6 +61,14 @@ function printKakaoIcon( kakaoID )
 		return '';
 }
 
+function printNumOfUsers( numOfUsers )
+{
+	if ( numOfUsers == '상관없음' )
+		return '';
+	else
+		return new Handlebars.SafeString('<span>' + numOfUsers + '</span>');;
+}
+
 </script>
 
 <script id="postT" type="text/x-handlebars-template">
@@ -80,7 +89,7 @@ function printKakaoIcon( kakaoID )
 				<div id="departureDateTime">{{departureDateTime}}</div>
 				<div id="readCount">조회수: {{readCount}}</div>
 				<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
-				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span><span>{{numOfUsers}}</span>{{printRepeat repetitiveYN}}</div>
+				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span>{{printNumOfUsers numOfUsers}}{{printRepeat repetitiveYN}}</div>
 			</div>
 		</dd>
 		{{/each}}
