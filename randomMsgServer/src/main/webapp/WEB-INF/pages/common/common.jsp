@@ -78,7 +78,7 @@ function printKakaoIcon( kakaoID )
 				{{printReplyCount replyCount}}
 				<strong class="tit">{{message}}</strong>
 				<div id="departureDateTime">{{departureDateTime}}</div>
-				<div id="readCount">조회수 : {{readCount}}</div>
+				<div id="readCount">조회수: {{readCount}}</div>
 				<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
 				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span><span>{{numOfUsers}}</span>{{printRepeat repetitiveYN}}</div>
 			</div>
