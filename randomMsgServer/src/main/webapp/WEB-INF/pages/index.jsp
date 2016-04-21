@@ -91,41 +91,8 @@
 		<!-- div>
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
-<% if ("Y".equals( showHotSpot ) ) { %>
-		<div class="section">
-		
-			<div id="menu_category">
-				<div class="title"><span class="s_tit">유명지 및 관광지</span></div>
-			</div>
-			
-			<div class="set_service" style="margin-bottom:10px">
-				<ul>
-<% 
-			for ( int i = 0; i < hotspotList.size(); i++ )
-			{
-				String regionNo = hotspotList.get(i).get("regionNo").toString();
-				String title = hotspotList.get(i).get("regionName").toString();
-				String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
-				String regionCount = hotspotList.get(i).get("regionCount").toString();
-				String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
-				int newCount = Util.getInt( hotspotList.get(i).get("newCount") );
-%>
-					<li>
-						<a href="javascript:void()" onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
-						 	<%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %> 
-						 </a>
-					</li>
-<%				
-			}
-%>				
-				</ul>
-			</div>
-		
-		</div>
 
 <%
-}
-
 if ("Y".equals( showSearchDiv ) )
 {
 %>
@@ -182,6 +149,41 @@ if ("Y".equals( showSearchDiv ) )
 			</div>
 		
 		</div>
+
+<% if ("Y".equals( showHotSpot ) ) { %>
+		<div class="section">
+		
+			<div id="menu_category">
+				<div class="title"><span class="s_tit">유명지 및 관광지</span></div>
+			</div>
+			
+			<div class="set_service" style="margin-bottom:10px">
+				<ul>
+<% 
+			for ( int i = 0; i < hotspotList.size(); i++ )
+			{
+				String regionNo = hotspotList.get(i).get("regionNo").toString();
+				String title = hotspotList.get(i).get("regionName").toString();
+				String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
+				String regionCount = hotspotList.get(i).get("regionCount").toString();
+				String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
+				int newCount = Util.getInt( hotspotList.get(i).get("newCount") );
+%>
+					<li>
+						<a href="javascript:void()" onclick="goRegionPage('<%= titleUrlEncoded %>','<%= url %>')">
+						 	<%= title %>(<%= regionCount %>) <%= newCount > 0 ? "<img src='" + Constants.IMAGE_PATH + "/new_post.png' width='15' height='15' />":"" %> 
+						 </a>
+					</li>
+<%				
+			}
+%>				
+				</ul>
+			</div>
+		
+		</div>
+<%
+}
+%>
 
 	</div>
 
