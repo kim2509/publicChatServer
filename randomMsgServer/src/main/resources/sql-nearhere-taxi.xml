@@ -1155,4 +1155,33 @@
 		where regionNo=#{value}
 	</select>
 	
+	<select id="getRecentPosts" resultType="com.nearhere.domain.Post">
+		SELECT
+		*
+		FROM (
+			SELECT distinct P.userID, P.postID, P.type, message, content, fromLatitude, fromLongitude, fromAddress,
+				latitude, longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
+				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex', U.kakaoID as 'user.kakaoID',
+				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
+				departureTime, departureDateTime
+				,status, vehicle, fareOption, repetitiveYN, RC.readCount as readCount
+			FROM post P
+				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null group by postID ) PR 
+					on P.postID=PR.postID
+				left outer join user U on P.userID=U.userID
+				left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
+					on P.postID=RC.postID
+			WHERE
+			fromLatitude is not null
+			and fromLongitude is not null
+			and P.type='taxi'
+			and deletedDate is null
+			and U.isDeleted is null
+			AND P.status = '진행중'
+		) A
+		WHERE 1=1
+		ORDER BY createdDate desc
+		LIMIT 0,5;
+	</select>
+	
 </mapper>

@@ -2606,4 +2606,46 @@ public class TaxiController {
 			return response;
 		}
 	}
+	
+	@RequestMapping( value ="/taxi/getRecentPosts.do")
+	public @ResponseBody APIResponse getRecentPosts( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{			
+			String logIdentifier = requestLogging(request, bodyString);
+
+			HashMap additionalData = new HashMap();
+			
+			List<Post> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.getRecentPosts");
+			
+			for ( int i = 0; i < postsNearHere.size();i++ )
+			{
+				Post item = postsNearHere.get(i);
+				String repetitiveYN = item.getRepetitiveYN();
+				
+				String departureDateTime = item.getDepartureDateTime();
+				departureDateTime = Util.getDepartureDateTime(departureDateTime);
+				
+				item.setDepartureDateTime(departureDateTime);
+			}
+			
+			additionalData.put("postsNearHere", postsNearHere );
+
+			response.setData( additionalData );
+			
+			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+
+			return response;
+
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+			return response;
+		}
+	}
 }

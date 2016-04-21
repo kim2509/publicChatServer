@@ -8,6 +8,7 @@
 	String isApp = request.getParameter("isApp");
 	String snsLoginYN = request.getParameter("snsLogin");
 	String showHotSpot = request.getParameter("showHotSpot");
+	String showRecentPosts = request.getParameter("showRecentPosts");
 
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
 	List<HashMap> hotspotList = (List<HashMap>) request.getAttribute("hotspotList");
@@ -30,6 +31,8 @@
 	href="<%=Constants.CSS_PATH%>/common.css" />
 	<link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/category.css?v=2" />
+<link rel="stylesheet" type="text/css"
+	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=1" />	
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -41,6 +44,15 @@
 	
 	jQuery(document).ready(function() {
 
+<%
+	if ( "Y".equals( showRecentPosts ) )
+	{
+%>
+		getPosts();
+<%
+	}
+%>
+	
 	});
 
 	function goRegionPage( titleUrlEncoded, url )
@@ -66,7 +78,62 @@
 		document.location.href='nearhere://openSearchDestination';
 	}
 	
+	function getPosts()
+	{
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/taxi/getRecentPosts.do",
+			data : null,
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(data) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					displayPosts( data );
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				
+			},
+			error : function(xhr, status, error) {
+				
+			}
+		});
+	}
+	
+	function displayPosts(data) {
+		
+		if ( data == null || data.data.postsNearHere == null || data.data.postsNearHere.length < 1 )
+		{
+			return;
+		}
+		
+		var source = $('#postT').html();
+		var template = Handlebars.compile(source);
+		var html = template(data.data);
+
+		$('#postList').html(html);
+	}
+	
+	function goVIP(postID)
+	{
+		document.location.href='nearhere://viewPost?postID=' + postID;
+	}
+	
+	function openUserProfile( userID )
+	{
+		document.location.href='nearhere://openUserProfile?userID=' + userID;
+	}
+	
 </script>
+
+	<jsp:include page="common/common.jsp" flush="true"></jsp:include>
+
 </head>
 <body>
 
@@ -150,6 +217,23 @@ if ("Y".equals( showSearchDiv ) )
 		
 		</div>
 
+<%
+	if ( "Y".equals( showRecentPosts ) )
+	{
+%>
+		<div class="section">
+			<div id="menu_category">
+				<div class="title"><span class="s_tit">최근 등록된 합승내역</span></div>
+			</div>
+			
+			<div id="postList">
+			</div>
+		</div>			
+<%
+	}
+%>
+
+
 <% if ("Y".equals( showHotSpot ) ) { %>
 		<div class="section">
 		
@@ -184,7 +268,6 @@ if ("Y".equals( showSearchDiv ) )
 <%
 }
 %>
-
 	</div>
 
 </body>
