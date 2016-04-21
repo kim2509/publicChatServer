@@ -37,6 +37,8 @@
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript"
+	src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
 
 <script language="javascript">
 
@@ -118,6 +120,10 @@
 		var html = template(data.data);
 
 		$('#postList').html(html);
+		
+		$("img.lazy").lazyload({
+		    effect : "fadeIn"
+		});
 	}
 	
 	function goVIP(postID)
