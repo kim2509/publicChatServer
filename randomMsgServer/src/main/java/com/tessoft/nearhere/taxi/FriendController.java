@@ -19,7 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.User;
 
+import common.MessageBiz;
 import common.UserBiz;
 
 @Controller
@@ -69,6 +71,9 @@ public class FriendController extends BaseController{
 		{			
 			HashMap additionalData = new HashMap();
 			
+			if ( !Util.isEmptyString(keyword) )
+				keyword = keyword.trim();
+			
 			List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.friend.searchUser", keyword );
 			
 			additionalData.put("userList", userList );
@@ -107,10 +112,9 @@ public class FriendController extends BaseController{
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.friend.askFriendRequest", requestInfo );
 			
-			/*
 			UserBiz userBiz = UserBiz.getInstance(sqlSession);
-			userBiz.
-*/
+			User user = userBiz.selectUser( requestInfo.get("userID2"), false );
+			MessageBiz.getInstance(sqlSession).sendFriendRequestMessage(user.getRegID(), "친구요청", requestInfo.get("userID") );
 			
 			additionalData.put("result", result );
 

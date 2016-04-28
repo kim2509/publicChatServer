@@ -50,6 +50,28 @@ public class MessageBiz extends CommonBiz{
 		}
 	}
 	
+	public String sendFriendRequestMessage(String regID, String msg , String userID )
+	{
+		try
+		{
+			Message message = new Message.Builder().addData("title", "친구요청" )
+					.addData("message",  msg )
+					.addData("type",  "friendRequest" )
+					.addData("userID",  userID )
+					.addData("sound", "on")
+					.addData("vibrate", "on")
+					.build();
+			
+			String result = sendGCMPush(regID, message);
+			
+			return result;
+		}
+		catch( Exception ex)
+		{
+			return ex.getMessage();
+		}
+	}
+	
 	public void insertUserPushMessage( String userID, String type, String msg, String param )
 	{
 		UserPushMessage pushMessage = new UserPushMessage();

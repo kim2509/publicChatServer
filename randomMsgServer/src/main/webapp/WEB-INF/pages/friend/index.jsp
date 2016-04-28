@@ -114,7 +114,7 @@
 		
 		$('#searchResult').empty();
 		
-		if ( keyword.length < 2 ) return;
+		if ( keyword.length < 1 ) return;
 		
 		keyword = encodeURIComponent( keyword );
 		
