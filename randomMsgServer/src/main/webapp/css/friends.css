@@ -1,0 +1,62 @@
+@CHARSET "utf-8";
+
+#empty{
+	text-align:center;
+	padding-top:50px;
+	padding-bottom:50px;
+}
+
+#friend_search{
+	margin-top:10px;
+}
+
+.editbox{
+	background:#f4f4f4;
+	border: none;
+    flex: 1;
+    box-shadow: none;
+    display: block;
+    margin: 0;
+    border-radius: 4px;
+    font-size: 14px;
+    height: 40px;
+    outline: none;
+    padding: 0 0 0 28px;
+    color: #4e5665;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+dl {
+    border-top: 1px solid #ccc;
+}
+
+dd {
+    display: block;
+    position: relative;
+    height: 80px;
+    line-height: 25px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    padding:10px;
+}
+
+dd .userProfile{
+	float:left;
+	position:relative;
+}
+
+dd .userProfile img{
+	border-radius: 5px;
+}
+
+dd .desc {
+	margin-left:80px;
+	height:60px;
+	font-size:12px;
+}
+
+dd .btns{
+	position:absolute;
+	right:5px;
+}

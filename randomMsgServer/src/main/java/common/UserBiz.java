@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.nearhere.domain.User;
+
 public class UserBiz extends CommonBiz{
 
 	private static UserBiz userBiz = null;
@@ -26,5 +28,18 @@ public class UserBiz extends CommonBiz{
 	{
 		sqlSession.update("com.tessoft.nearhere.user.updateUserAsDeleted", receiver );
 		logger.info( "update user as deleted.[" + receiver.get("userID") + "]");
+	}
+	
+	public User selectUser( String userID , boolean bRequireMobileNo ) {
+		
+		User user = new User();
+		user.setUserID(userID);
+		
+		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		
+		if ( bRequireMobileNo == false )
+			user.setMobileNo("");
+		
+		return user;
 	}
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.friend">
+
+	<select id="searchUser" parameterType="String" resultType="java.util.HashMap">
+		select userNo, userID, userName, sex, profileImageURL, type 
+		from user
+		where userID like CONCAT('%',#{value},'%')
+		or userName like CONCAT('%',#{value},'%')
+		and isDeleted is null
+		limit 0, 10;
+	</select>
+	
+	<select id="getFriendRequestList" parameterType="String" resultType="java.util.HashMap">
+		select u.userNo, u.userID, u.userName, u.sex, u.profileImageURL, u.type
+		from friends f
+			left outer join user u on u.userID=f.friend_one
+		where f.friend_two = #{value}
+		and f.status=0;
+	</select>
+	
+	<insert id="askFriendRequest" parameterType="java.util.HashMap">
+		insert into friends(friend_one, friend_two, status)
+		values(#{userID}, #{userID2}, 0 );
+	</insert>
+	
+	<update id="acceptFriendRequest" parameterType="java.util.HashMap">
+		update friends set status=1
+		where friend_one=#{userID2} and friend_two=#{userID}
+	</update>
+	
+	<select id="getFriendsList" parameterType="String" resultType="java.util.HashMap">
+		select u.userNo, u.userID, u.userName, u.sex, u.profileImageURL, u.type
+		from (select friend_two as friendID from friends
+				where friend_one = #{value} and status=1
+			  union 
+			  select friend_one as friendID from friends
+				where friend_two = #{value} and status=1) f
+			left outer join user u on u.userID=f.friendID
+	</select>
+	
+</mapper>
