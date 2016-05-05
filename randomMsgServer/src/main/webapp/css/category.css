@@ -56,8 +56,33 @@ dd {
 #menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
 
 .set_service {overflow:hidden;list-style: none outside;background:white;}
+.set_service ul {list-style:none;}
 .set_service li {float:left; width:50%}
-.set_service li a {position:relative; display:block; height:50px; padding:5px 10px 5px 12px; border-right:1px solid #ededed; border-bottom:1px solid #ededed; display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box; color:#707b8b; font-weight:normal; font-size:0.81em}
+
+.set_service li a 
+{
+	position:relative; 
+	display:block; 
+	height:50px; 
+	padding:5px 10px 5px 12px; 
+	border-right:1px solid #ededed; 
+	border-bottom:1px solid #ededed; 
+	display:box; 
+	box-orient:vertical;
+	box-pack:center;
+	display:-webkit-box;
+	-webkit-box-orient:vertical;
+	-webkit-box-pack:center;
+	display:-moz-box;
+	-moz-box-orient:vertical;
+	-moz-box-pack:center; 
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-ms-box-sizing: border-box;
+	color:#707b8b; 
+	font-weight:normal; 
+	font-size:0.81em
+}
 
 .destination{
 	margin:10px;

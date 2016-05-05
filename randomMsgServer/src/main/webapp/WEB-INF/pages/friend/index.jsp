@@ -20,7 +20,7 @@
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common.css" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/category.css?v=2" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/category.css?v=3" />
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/friends.css?v=2" />
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
