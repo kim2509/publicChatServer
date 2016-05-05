@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
 	<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/category.css?v=2" />
+	href="<%=Constants.CSS_PATH%>/category.css?v=3" />
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=1" />	
 <script type="text/javascript"
