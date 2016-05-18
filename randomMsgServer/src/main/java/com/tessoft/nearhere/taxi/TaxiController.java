@@ -805,6 +805,13 @@ public class TaxiController {
 				User user = new User( postData.get("userID").toString() );
 				user = selectUser(user, false);
 				
+				if ( "Guest".equals( user.getType() ) )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("SNS 아이디가 존재하지 않습니다. SNS 로그인을 해 주세요.");
+					return response;
+				}
+				
 				if ( "여자만".equals( postData.get("sexInfo").toString() ) && "M".equals(user.getSex()))
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
