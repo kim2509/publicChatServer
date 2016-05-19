@@ -1179,6 +1179,7 @@
 			and U.isDeleted is null
 			and U.profileImageURL is not null
 			AND P.status = '진행중'
+			group by P.userID
 		) A
 		WHERE 1=1
 		ORDER BY createdDate desc
