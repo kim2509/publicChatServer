@@ -42,4 +42,10 @@ public class UserBiz extends CommonBiz{
 		
 		return user;
 	}
+	
+	public HashMap getUserInfo( String userID )
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getUserInfo", userID);
+		return userInfo;
+	}
 }

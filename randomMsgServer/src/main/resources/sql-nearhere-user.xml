@@ -10,4 +10,20 @@
 		where userID=#{userID};
 	</update>
 	
+	<select id="getUserInfo" parameterType="String" resultType="java.util.HashMap">
+		SELECT 
+			userNo
+			, userID
+			, userName
+			, type
+			, profileImageURL
+			, birthday
+			, facebookID
+			, facebookURL
+			, kakaoID
+			, jobTitle
+			, sex
+		from user
+		where userID=#{value}
+	</select>
 </mapper>

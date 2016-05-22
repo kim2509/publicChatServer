@@ -6,6 +6,10 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+
+	HashMap userInfo = null;
+	if ( request.getAttribute("userInfo") != null )
+		userInfo = (HashMap) request.getAttribute("userInfo");
 	
 %>
 <html>
@@ -49,6 +53,7 @@
 
 	<div id="wrapper" style="margin:10px;">
 
+<%		if ( userInfo != null ) { %>
 		<div class="section">
 			
 			<div id="menu_category">
@@ -64,7 +69,7 @@
 					</div>
 					
 					<div id="userInfoTop">
-						<div>김대용</div>
+						<div><%= userInfo.get("userName") %></div>
 						<div>프로필 완성도 70%</div>
 						<div>
 							<hr style="height:10px;border-color: #123455;" />
@@ -80,11 +85,11 @@
 						</colgroup>
 						<tr>
 							<td>성별</td>
-							<td>남자</td>
+							<td><%= "M".equals( userInfo.get("sex") ) ? "남자":"여자" %></td>
 						</tr>
 						<tr>
 							<td>나이</td>
-							<td>39세</td>
+							<td><%= userInfo.get("age") %>세</td>
 						</tr>
 						<tr>
 							<td>집 위치</td>
@@ -185,7 +190,18 @@
 			</div>
 			
 		</div>
+
+<%		} else { %>
 		
+		<div class="section">
+		
+			<div id="content">
+				사용자정보가 없습니다.
+			</div>
+		
+		</div>
+		
+<%		} %>		
 	</div>
 
 </body>
