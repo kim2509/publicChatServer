@@ -1,6 +1,7 @@
 package common;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -47,5 +48,17 @@ public class UserBiz extends CommonBiz{
 	{
 		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getUserInfo", userID);
 		return userInfo;
+	}
+	
+	public List<HashMap> getUserLocation( String userID )
+	{
+		List<HashMap> userLocationList = sqlSession.selectList("com.tessoft.nearhere.user.getUserLocation", userID);
+		return userLocationList;
+	}
+	
+	public List<HashMap> getFriendList( String userID )
+	{
+		List<HashMap> friendList = sqlSession.selectList("com.tessoft.nearhere.user.getFriendList", userID);
+		return friendList;
 	}
 }

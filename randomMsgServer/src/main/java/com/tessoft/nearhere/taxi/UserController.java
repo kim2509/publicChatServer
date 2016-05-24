@@ -2,6 +2,7 @@ package com.tessoft.nearhere.taxi;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
 import com.dy.common.Util;
 
 import common.UserBiz;
@@ -27,9 +29,11 @@ public class UserController extends BaseController{
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("user/userInfo");
 	
-		if ( Util.isEmptyString( userID ) ) return mv;
+		if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
 		
-		HashMap userInfo = UserBiz.getInstance(sqlSession).getUserInfo(userID);
+		UserBiz userBiz = UserBiz.getInstance(sqlSession);
+		
+		HashMap userInfo = userBiz.getUserInfo(userID);
 		
 		if ( !Util.isEmptyString( userInfo.get("birthday") ) )
 		{
@@ -45,6 +49,9 @@ public class UserController extends BaseController{
 		}
 		
 		mv.addObject("userInfo", userInfo);
+		
+		mv.addObject("userLocationList", userBiz.getUserLocation(userID) );
+		mv.addObject("friendList", userBiz.getFriendList(userID) );
 		
 		return mv;
 	}

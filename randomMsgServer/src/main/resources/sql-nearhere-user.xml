@@ -26,4 +26,40 @@
 		from user
 		where userID=#{value}
 	</select>
+	
+	<select id="getUserLocation" parameterType="String" resultType="java.util.HashMap">
+		SELECT 
+			*
+		from user_location
+		where userID=#{value}
+	</select>
+	
+	<select id="getFriendList" parameterType="String" resultType="java.util.HashMap">
+		SELECT 
+			userNo
+			, userID
+			, userName
+			, type
+			, profileImageURL
+			, birthday
+			, facebookID
+			, facebookURL
+			, kakaoID
+			, jobTitle
+			, sex
+		from user
+		where userID in (
+			SELECT 
+				friend_one
+			from friends
+			where friend_two=#{value} and status = 1
+			union
+			SELECT 
+				friend_two
+			from friends
+			where friend_one=#{value} and status = 1
+		)
+		limit 0, 3;
+	</select>
+	
 </mapper>

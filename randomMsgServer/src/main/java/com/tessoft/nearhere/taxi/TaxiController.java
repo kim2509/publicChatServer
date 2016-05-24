@@ -2285,6 +2285,12 @@ public class TaxiController {
 		return new ModelAndView("carPool/searchDestination");
 	}
 	
+	@RequestMapping( value ="/taxi/moreRecentPosts.do")
+	public ModelAndView moreRecentPosts( String isApp )
+	{
+		return new ModelAndView("carPool/moreRecentPosts");
+	}
+	
 	@RequestMapping( value ="/taxi/listRegion.do")
 	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo )
 	{
@@ -2615,7 +2621,7 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/getRecentPosts.do")
-	public @ResponseBody APIResponse getRecentPosts( HttpServletRequest request, @RequestBody String bodyString )
+	public @ResponseBody APIResponse getRecentPosts( HttpServletRequest request, @RequestBody String bodyString, String strPageSize )
 	{
 		APIResponse response = new APIResponse();
 
@@ -2625,7 +2631,11 @@ public class TaxiController {
 
 			HashMap additionalData = new HashMap();
 			
-			List<Post> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.getRecentPosts");
+			int pageSize = 5;
+
+			if ( !Util.isEmptyString(strPageSize) ) pageSize = Integer.parseInt(strPageSize);
+			
+			List<Post> postsNearHere = sqlSession.selectList("com.tessoft.nearhere.taxi.getRecentPosts", pageSize );
 			
 			for ( int i = 0; i < postsNearHere.size();i++ )
 			{

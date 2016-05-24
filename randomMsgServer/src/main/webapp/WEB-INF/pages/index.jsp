@@ -19,6 +19,8 @@
 	else
 		showSearchDiv = "Y";
 	
+	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do";
+	moreRecentPostPage = URLEncoder.encode( moreRecentPostPage, "UTF-8" );
 %>
 <html>
 
@@ -65,6 +67,16 @@
 			document.location.href = decodeURIComponent(url);
 	}
 	
+	function showMoreRecentPosts()
+	{
+		var url = '<%= moreRecentPostPage %>';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=%EC%B5%9C%EA%B7%BC%20%EC%B9%B4%ED%92%80%20%EB%82%B4%EC%97%AD&url=' + url + '&showNewButton=N';
+		else
+			document.location.href = decodeURIComponent(url);
+	}
+	
 	function snsLogin()
 	{
 		document.location.href='nearhere://snsLogin';
@@ -84,7 +96,7 @@
 	{
 		jQuery.ajax({
 			type : "POST",
-			url : "/nearhere/taxi/getRecentPosts.do",
+			url : "/nearhere/taxi/getRecentPosts.do?strPageSize=5",
 			data : null,
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",
@@ -234,6 +246,9 @@ if ("Y".equals( showSearchDiv ) )
 			
 			<div id="postList">
 			</div>
+			
+			<div style="text-align:center;color:#4e88cf;font-weight:bold;padding:10px;" onclick="showMoreRecentPosts();">더 보기</div>
+			
 		</div>			
 <%
 	}

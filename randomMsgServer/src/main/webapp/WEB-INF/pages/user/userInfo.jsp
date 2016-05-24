@@ -11,6 +11,14 @@
 	if ( request.getAttribute("userInfo") != null )
 		userInfo = (HashMap) request.getAttribute("userInfo");
 	
+	List<HashMap> userLocationList = null;
+	if ( request.getAttribute("userLocationList") != null )
+		userLocationList = (List<HashMap>) request.getAttribute("userLocationList");
+	
+	List<HashMap> friendList = null;
+	if ( request.getAttribute("friendList") != null )
+		friendList = (List<HashMap>) request.getAttribute("friendList");
+	
 %>
 <html>
 
@@ -19,18 +27,14 @@
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
-<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/common.css" />
-<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/userInfo.css?v=3" />
-<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=3" />	
-<script type="text/javascript"
-	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
-<script type="text/javascript"
-	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
-<script type="text/javascript"
-	src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common.css" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/userInfo.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/searchDestination.css?v=3" />
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+		
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
 
 <script language="javascript">
 
@@ -69,10 +73,12 @@
 					</div>
 					
 					<div id="userInfoTop">
-						<div><%= userInfo.get("userName") %></div>
-						<div>프로필 완성도 70%</div>
-						<div>
-							<hr style="height:10px;border-color: #123455;" />
+						<div class="p5" style="padding-top:10px;text-align:center"><%= userInfo.get("userName") %></div>
+						<div class="p5" style="margin-top:10px;text-align:center">프로필 완성도</div>
+						<div class="w3-progress-container" style="margin-top:5px;margin-left:5px;">
+							<div id="myBar" class="w3-progressbar w3-green w3-round" style="width:70%">
+								<div class="w3-center w3-text-white" style="padding-top:2px;">70%</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -91,17 +97,23 @@
 							<td>나이</td>
 							<td><%= userInfo.get("age") %>세</td>
 						</tr>
+						
+<%						if ( userLocationList != null && userLocationList.size() > 0 ) {
+							for ( int i = 0; i < userLocationList.size(); i++ ) {
+								
+								if ("현재위치".equals( userLocationList.get(i).get("locationName") ) ) continue;
+%>						
 						<tr>
-							<td>집 위치</td>
-							<td>서울시 관악구 인헌12가길</td>
+							<td><%= userLocationList.get(i).get("locationName") %> 위치</td>
+							<td><%= userLocationList.get(i).get("address") %></td>
 						</tr>
-						<tr>
-							<td>직장위치</td>
-							<td>서울시 마포구 상암동</td>
-						</tr>
+<%
+							}
+						} 
+%>						
 						<tr>
 							<td>직업</td>
-							<td>개발자</td>
+							<td><%= userInfo.get("jobTitle") %></td>
 						</tr>
 					</table>
 				</div>
@@ -117,37 +129,39 @@
 			</div>
 			
 			<div style="padding-top:10px;">
-			
+<%
+				if ( friendList != null && friendList.size() > 0 ) {
+%>			
 				<table style="width:100%;">
 					<tr>
+<%
+						for ( int i = 0; i < friendList.size(); i++ ) {								
+%>						
+					
 						<td style="padding-right:2px;">
 							<div>
-								<img src='<%= Constants.getThumbnailImageURL() %>/user27.png' 
+								<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>' 
 									width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 							</div>
-							<div style="text-align:center">김대용</div>
+							<div style="text-align:center"><%= friendList.get(i).get("userName") %></div>
 						</td>
-						<td style="padding-right:2px;">
-							<div>
-								<img src='<%= Constants.getThumbnailImageURL() %>/user27.png' 
-									width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
-							</div>
-							<div style="text-align:center">김대용</div>
-						</td>
-						<td class="friend">
-							<div>
-								<img src='<%= Constants.getThumbnailImageURL() %>/user27.png' 
-									width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
-							</div>
-							<div style="text-align:center">김대용</div>
-						</td>
+						
+<%						
+						}
+%>
 					</tr>
 					<tr><td colspan="3" style="text-align:center;padding-top:10px;">더 보기</td></tr>
-				</table>
-				
+	
+				</table>				
+<%
+				} else {
+%>
 				<table style="width:100%;">
 					<tr><td style="text-align:center;padding-top:10px;padding-bottom:10px;">친구 정보가 없습니다.</td></tr>
 				</table>
+<%							
+				}
+%>						
 				
 			</div>
 			
