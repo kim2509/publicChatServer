@@ -18,7 +18,13 @@
 	height:130px;
 }
 
-#userInfoTop div{color:#848383;padding:5px;}
+#userInfoTop div{
+	color:#848383;
+}
+
+.p5{padding:5px;}
+
+
 
 #menu_category {background:#fff;}
 #menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}

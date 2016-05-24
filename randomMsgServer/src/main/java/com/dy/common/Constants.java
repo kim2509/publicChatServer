@@ -20,7 +20,7 @@ public class Constants {
 	
 	public static String getThumbnailImageURL()
 	{
-		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://172.30.1.200/thumbnail/";
-//		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://localhost/thumbnail/";
+		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://www.hereby.co.kr/thumbnail/";
+//		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://172.30.1.200/thumbnail/";
 	}
 }

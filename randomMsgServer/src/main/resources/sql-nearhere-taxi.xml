@@ -1155,7 +1155,7 @@
 		where regionNo=#{value}
 	</select>
 	
-	<select id="getRecentPosts" resultType="com.nearhere.domain.Post">
+	<select id="getRecentPosts" resultType="com.nearhere.domain.Post" parameterType="Integer">
 		SELECT
 		*
 		FROM (
@@ -1183,7 +1183,7 @@
 		) A
 		WHERE 1=1
 		ORDER BY createdDate desc
-		LIMIT 0,5;
+		LIMIT 0,#{value};
 	</select>
 	
 </mapper>

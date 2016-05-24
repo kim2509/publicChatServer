@@ -79,8 +79,8 @@ function printNumOfUsers( numOfUsers )
 				<img src='{{printPostStatus status}}' width="50" height="50"/>
 			</div>
 			<div class='userProfile' onclick="openUserProfile('{{user.userID}}');">
-				<img class="lazy" data-original='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
-					src="<%= Constants.IMAGE_PATH %>/no_image.png" width="70" height="70"/>
+				<img src='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
+					width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 				{{printKakaoIcon user.kakaoID}}
 			</div>
 			<div class='postDesc' onclick="goVIP('{{postID}}')">
