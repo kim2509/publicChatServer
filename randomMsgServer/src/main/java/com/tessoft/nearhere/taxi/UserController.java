@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dy.common.Constants;
 import com.dy.common.Util;
 
+import common.CarPoolPostBiz;
 import common.UserBiz;
 
 @Controller
@@ -28,30 +29,42 @@ public class UserController extends BaseController{
 	{
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("user/userInfo");
-	
-		if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
 		
-		UserBiz userBiz = UserBiz.getInstance(sqlSession);
-		
-		HashMap userInfo = userBiz.getUserInfo(userID);
-		
-		if ( !Util.isEmptyString( userInfo.get("birthday") ) )
+		try
 		{
-			String birthday = userInfo.get("birthday").toString().replaceAll("-", "");
-			if ( birthday.length() >= 4 )
+			if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
+			
+			UserBiz userBiz = UserBiz.getInstance(sqlSession);
+			
+			HashMap userInfo = userBiz.getUserInfo(userID);
+			
+			if ( !Util.isEmptyString( userInfo.get("birthday") ) )
 			{
-				Date d = new Date();
-				int year = d.getYear() + 1900;
-				int birthYear = Integer.parseInt( birthday.substring(0, 4) );
-				int age = year - birthYear + 1;
-				userInfo.put("age", String.valueOf( age ) );
+				String birthday = userInfo.get("birthday").toString().replaceAll("-", "");
+				if ( birthday.length() >= 4 )
+				{
+					Date d = new Date();
+					int year = d.getYear() + 1900;
+					int birthYear = Integer.parseInt( birthday.substring(0, 4) );
+					int age = year - birthYear + 1;
+					userInfo.put("age", String.valueOf( age ) );
+				}
 			}
+			
+			mv.addObject("userInfo", userInfo);
+			
+			mv.addObject("userLocationList", userBiz.getUserLocation(userID) );
+			mv.addObject("friendList", userBiz.getFriendList(userID) );
+			
+			List<HashMap> userPostList = CarPoolPostBiz.getInstance(sqlSession).getUserPosts(userID);
+			mv.addObject("userPostList", userPostList );
+			
+			logger.info( "userPostList: " + mapper.writeValueAsString( userPostList ) );	
 		}
-		
-		mv.addObject("userInfo", userInfo);
-		
-		mv.addObject("userLocationList", userBiz.getUserLocation(userID) );
-		mv.addObject("friendList", userBiz.getFriendList(userID) );
+		catch( Exception ex )
+		{
+			
+		}
 		
 		return mv;
 	}

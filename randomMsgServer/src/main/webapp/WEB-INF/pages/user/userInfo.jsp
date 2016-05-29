@@ -19,6 +19,9 @@
 	if ( request.getAttribute("friendList") != null )
 		friendList = (List<HashMap>) request.getAttribute("friendList");
 	
+	List<HashMap> userPostList = null;
+	if ( request.getAttribute("userPostList") != null )
+		userPostList = (List<HashMap>) request.getAttribute("userPostList");
 %>
 <html>
 
@@ -73,8 +76,25 @@
 					</div>
 					
 					<div id="userInfoTop">
-						<div class="p5" style="padding-top:10px;text-align:center"><%= userInfo.get("userName") %></div>
-						<div class="p5" style="margin-top:10px;text-align:center">프로필 완성도</div>
+						<div class="p5" style="padding-top:10px;">
+							<%= userInfo.get("userName") %>
+							<span>
+							<% if ("M".equals( userInfo.get("sex") ) ) { %>
+							<img class="sex" src="/nearhere/image/ic_male.png" width="15" height="15">
+							<% } else if ( "F".equals( userInfo.get("sex") ) ) { %>
+							<img class="sex" src="/nearhere/image/ic_female.png" width="15" height="15">
+							<% } %>
+							
+							<% if ( !Util.isEmptyString( userInfo.get("kakaoID") ) ) { %>
+								<img src="/nearhere/image/kakaotalk_icon.png" width="18" height="18" id="kakao">
+							<% } %>
+							<% if ( !Util.isEmptyString( userInfo.get("facebookID") ) ) { %>
+								<img src="/nearhere/image/facebook_icon.png" width="18" height="18" id="kakao">
+							<% } %>
+							
+							</span>
+						</div>
+						<div class="p5" style="margin-top:10px;">프로필 완성도</div>
 						<div class="w3-progress-container" style="margin-top:5px;margin-left:5px;">
 							<div id="myBar" class="w3-progressbar w3-green w3-round" style="width:70%">
 								<div class="w3-center w3-text-white" style="padding-top:2px;">70%</div>
@@ -143,14 +163,14 @@
 								<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>' 
 									width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 							</div>
-							<div style="text-align:center"><%= friendList.get(i).get("userName") %></div>
+							<div style="text-align:center;margin-top:10px;font-size:15px;"><%= friendList.get(i).get("userName") %></div>
 						</td>
 						
 <%						
 						}
 %>
 					</tr>
-					<tr><td colspan="3" style="text-align:center;padding-top:10px;">더 보기</td></tr>
+					<tr><td colspan="3" style="text-align:center;padding-top:15px;padding-bottom:10px;color:#4e88cf;font-weight:bold;">더 보기</td></tr>
 	
 				</table>				
 <%
@@ -175,32 +195,94 @@
 			
 			<div style="padding-top:10px;">
 			
-				<table style="width:100%;">
-					<tr><td style="text-align:center;padding-top:10px;padding-bottom:10px;">내역이 없습니다.</td></tr>
-				</table>
-				
+<%				if ( userPostList != null && userPostList.size() > 0 ) { %>				
 				<div id="postList">
 					<dl class="slide_lst">
+<%					for ( int i = 0; i < userPostList.size(); i++ ) {
+	
+						HashMap post = userPostList.get(i);
+						HashMap user = null;
+						String userName = "";
+						String departureDateTime = "";
+						String readCount = "";
+						String vehicle = post.get("vehicle").toString();
+						String fareOption = post.get("fareOption").toString();
+						String repetitiveYN = "";
+						
+						if ( post.get("user") != null )
+						{
+							user = (HashMap) post.get("user");
+							userName = user.get("userName").toString();
+						}
+						
+						if ( post.get("departureDateTime") != null )
+						{
+							departureDateTime = post.get("departureDateTime").toString();
+							if ( departureDateTime.length() >= 16 )
+								departureDateTime = departureDateTime.substring(0, 16);
+						}
+						
+						if ( !Util.isEmptyString( post.get("readCount") ) )
+						{
+							int count = Integer.parseInt( post.get("readCount").toString() );
+							if ( count > 0 )
+								readCount = String.valueOf( count );
+						}
+						
+						if ( !Util.isEmptyString( post.get("repetitiveYN") ) && "Y".equals( post.get("repetitiveYN") ))
+						{
+							repetitiveYN = "반복";
+						}
+%>					
 						<dd>
 							<div class="imgStatus" onclick="openUserProfile('user27');">
 								<img src="/nearhere/image//progressing.png" width="50" height="50">
 							</div>
 							<div class="userProfile" onclick="openUserProfile('user27');">
-								<img class="lazy" data-original="http://172.30.1.200/thumbnail//user27.png" src="http://172.30.1.200/thumbnail//user27.png" width="70" height="70" style="display: inline;">
-								<img src="/nearhere/image//kakaotalk_icon.png" width="18" height="18" id="kakao">
+								<img src='<%= Constants.getThumbnailImageURL() %>/<%= user.get("profileImageURL") %>' 
+									width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+								<% if ( !Util.isEmptyString( user.get("kakaoID") ) ) { %>
+									<img src="/nearhere/image//kakaotalk_icon.png" width="18" height="18" id="kakao">
+								<% } %>
 							</div>
-							<div class="postDesc" onclick="goVIP('748')">
+							<div class="postDesc" onclick="goVIP('<%= post.get("postID") %>')">
 								
-								<strong class="tit">이젠 고쳐짐3</strong>
-								<div id="departureDateTime">04월 29일 출발</div>
-								<div id="readCount">조회수: 1</div>
-								<div id="personInfo"><div id="userSex"><img class="sex" src="/nearhere/image//ic_male.png" width="15" height="15"></div><div id="userName">김대용</div></div>
-								<div id="tags"><span>카풀</span><span>나눠서 분담</span><span>반복</span></div>
+								<strong class="tit"><%= post.get("message") %></strong>
+								<div id="departureDateTime"><%= departureDateTime %></div>
+								<div id="readCount">조회수: <%= readCount %></div>
+								<div id="personInfo">
+									<div id="userSex">
+										<% if ("M".equals( user.get("sex") ) ) { %>
+										<img class="sex" src="/nearhere/image//ic_male.png" width="15" height="15">
+										<% } else if ( "F".equals( user.get("sex") ) ) { %>
+										<img class="sex" src="/nearhere/image//ic_female.png" width="15" height="15">
+										<% } %>
+									</div>
+									<div id="userName"><%= userName %></div>
+								</div>
+								<div id="tags">
+								<% if ( !Util.isEmptyString(vehicle) ) { %>
+									<span><%= vehicle %></span>
+								<% } %>	
+								<% if ( !Util.isEmptyString(fareOption) ) { %>
+									<span><%= fareOption %></span>
+								<% } %>	
+								<% if ( !Util.isEmptyString(repetitiveYN) ) { %>
+									<span><%= repetitiveYN %></span>
+								<% } %>	
+								</div>
 							</div>
 						</dd>
-						
-					</dl>
+<%					} %>						
+					</dl>					
 				</div>
+<%				} else { %>
+
+				<table style="width:100%;">
+					<tr><td style="text-align:center;padding-top:10px;padding-bottom:10px;">내역이 없습니다.</td></tr>
+				</table>
+				
+<%				} %>				
 			</div>
 			
 		</div>
