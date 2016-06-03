@@ -21,6 +21,8 @@
 	
 	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do";
 	moreRecentPostPage = URLEncoder.encode( moreRecentPostPage, "UTF-8" );
+	
+	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
 %>
 <html>
 
@@ -145,7 +147,13 @@
 	
 	function openUserProfile( userID )
 	{
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		//document.location.href='nearhere://openUserProfile?userID=' + userID;
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
 	}
 	
 </script>

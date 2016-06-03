@@ -22,6 +22,9 @@
 	List<HashMap> userPostList = null;
 	if ( request.getAttribute("userPostList") != null )
 		userPostList = (List<HashMap>) request.getAttribute("userPostList");
+	
+	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
+	String friendInfoPage = Constants.getServerURL() + "/user/friendInfo.do?userID=" + userInfo.get("userID");
 %>
 <html>
 
@@ -50,7 +53,34 @@
 
 	function openUserProfile( userID )
 	{
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+	}
+	
+	function goFriendInfo()
+	{
+		document.location.href='<%= friendInfoPage %>';
+	}
+	
+	function goUserInfo( userID )
+	{
+		document.location.href='<%= userInfoPage %>' + '?userID=' + userID;
+	}
+	
+	function goVIP(postID)
+	{
+		document.location.href='nearhere://viewPost?postID=' + postID;
+	}
+	
+	function openPhotoViewer( url )
+	{
+		document.location.href='nearhere://openPhotoViewer?url=' + url;
+	}
+	
+	function goFacebook( url )
+	{
+		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
 </script>
@@ -70,9 +100,9 @@
 			<div id="content">
 			
 				<div>
-					<div>
-						<img class="userProfile" src='<%= Constants.getThumbnailImageURL() %>/user27.png' 
-							width="120" height="120" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					<div onclick="openPhotoViewer('<%= userInfo.get("profileImageURL") %>')">
+						<img class="userProfile" src='<%= Constants.getThumbnailImageURL() %>/<%= userInfo.get("profileImageURL") %>' 
+							width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 					</div>
 					
 					<div id="userInfoTop">
@@ -107,34 +137,53 @@
 				
 					<table>
 						<colgroup>
-							<col width="80px;"/>
+							<col width="90px;"/>
 						</colgroup>
+						<% if ( !Util.isEmptyString(userInfo.get("facebookURL") ) ) { %>
 						<tr>
-							<td>성별</td>
-							<td><%= "M".equals( userInfo.get("sex") ) ? "남자":"여자" %></td>
+							<td class="td1">Facebook</td>
+							<td class="td2" style="color:#4e88cf;font-weight:bold;" onclick="goFacebook('<%= userInfo.get("facebookURL") %>');">
+								페이스북 바로가기
+							</td>
 						</tr>
+						<% } %>
+						<% if ( !Util.isEmptyString(userInfo.get("sex") ) ) { %>
 						<tr>
-							<td>나이</td>
-							<td><%= userInfo.get("age") %>세</td>
+							<td class="td1">성별</td>
+							<td class="td2"><%= "M".equals( userInfo.get("sex") ) ? "남자":"여자" %></td>
 						</tr>
-						
+						<% } %>
+						<% if ( !Util.isEmptyString(userInfo.get("age") ) ) { %>
+						<tr>
+							<td class="td1">나이</td>
+							<td class="td2">
+								<% if ( userInfo.get("age") != null ) { %>									
+									<%= userInfo.get("age") %>세									
+								<% }  %>
+							</td>	
+						</tr>
+						<% } %>
 <%						if ( userLocationList != null && userLocationList.size() > 0 ) {
 							for ( int i = 0; i < userLocationList.size(); i++ ) {
 								
 								if ("현재위치".equals( userLocationList.get(i).get("locationName") ) ) continue;
 %>						
 						<tr>
-							<td><%= userLocationList.get(i).get("locationName") %> 위치</td>
-							<td><%= userLocationList.get(i).get("address") %></td>
+							<td class="td1"><%= userLocationList.get(i).get("locationName") %> 위치</td>
+							<td class="td2"><%= userLocationList.get(i).get("address") %></td>
 						</tr>
 <%
 							}
 						} 
 %>						
+						<% if ( !Util.isEmptyString(userInfo.get("jobTitle") ) ) { %>
 						<tr>
-							<td>직업</td>
-							<td><%= userInfo.get("jobTitle") %></td>
+							<td class="td1">직업</td>
+							<td class="td2">
+								<%= userInfo.get("jobTitle") %>세
+							</td>
 						</tr>
+						<% } %>
 					</table>
 				</div>
 			
@@ -147,44 +196,41 @@
 			<div id="menu_category">
 				<div class="title"><span class="s_tit">친구</span></div>
 			</div>
-			
-			<div style="padding-top:10px;">
-<%
-				if ( friendList != null && friendList.size() > 0 ) {
-%>			
-				<table style="width:100%;">
-					<tr>
-<%
-						for ( int i = 0; i < friendList.size(); i++ ) {								
-%>						
-					
-						<td style="padding-right:2px;">
-							<div>
-								<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>' 
-									width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
-							</div>
-							<div style="text-align:center;margin-top:10px;font-size:15px;"><%= friendList.get(i).get("userName") %></div>
-						</td>
-						
-<%						
-						}
-%>
-					</tr>
-					<tr><td colspan="3" style="text-align:center;padding-top:15px;padding-bottom:10px;color:#4e88cf;font-weight:bold;">더 보기</td></tr>
+
+			<div id="content" style="padding:0px;">
+
+<%	if ( friendList == null || friendList.size() == 0 ) { %>			
+				<div style="padding:10px;">친구 정보가 없습니다.</div>
+<%	} else { %> 
+
+				<dl>
 	
-				</table>				
-<%
-				} else {
+<%		for ( int i = 0; i < friendList.size(); i++ ) {
+				if ( i > 2 ) break;
 %>
-				<table style="width:100%;">
-					<tr><td style="text-align:center;padding-top:10px;padding-bottom:10px;">친구 정보가 없습니다.</td></tr>
-				</table>
-<%							
-				}
-%>						
-				
+				<dd onclick="goUserInfo('<%= friendList.get(i).get("userID") %>')">
+					<div style="float:left;">
+						<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
+							style="border-radius: 10px;" 
+							width="60" height="60" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					</div>
+					<div style="margin-left:80px;height:80px;">
+						<div><%= friendList.get(i).get("userName") %></div>
+					</div>
+				</dd>
+<% 		} %>
+				</dl>
+<%
+		if ( friendList.size() > 3 )
+		{
+%>
+				<div style="text-align:center;color:#4e88cf;font-weight:bold;padding:10px;" onclick="goFriendInfo();">더 보기</div>
+<%			
+		}
+	} 
+%>			
 			</div>
-			
+
 		</div>
 		
 		<div class="section">
@@ -193,7 +239,7 @@
 				<div class="title"><span class="s_tit">최근 카풀(합승) 내역</span></div>
 			</div>
 			
-			<div style="padding-top:10px;">
+			<div>
 			
 <%				if ( userPostList != null && userPostList.size() > 0 ) { %>				
 				<div id="postList">
@@ -234,11 +280,11 @@
 							repetitiveYN = "반복";
 						}
 %>					
-						<dd>
-							<div class="imgStatus" onclick="openUserProfile('user27');">
+						<dd style="height:100px;">
+							<div class="imgStatus">
 								<img src="/nearhere/image//progressing.png" width="50" height="50">
 							</div>
-							<div class="userProfile" onclick="openUserProfile('user27');">
+							<div class="userProfile">
 								<img src='<%= Constants.getThumbnailImageURL() %>/<%= user.get("profileImageURL") %>' 
 									width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 								<% if ( !Util.isEmptyString( user.get("kakaoID") ) ) { %>

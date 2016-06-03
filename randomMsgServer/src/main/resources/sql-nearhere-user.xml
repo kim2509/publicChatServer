@@ -59,7 +59,37 @@
 			from friends
 			where friend_one=#{value} and status = 1
 		)
+		and isDeleted is null
 		limit 0, 3;
+	</select>
+	
+	<select id="getAllFriendList" parameterType="String" resultType="java.util.HashMap">
+		SELECT 
+			userNo
+			, userID
+			, userName
+			, type
+			, profileImageURL
+			, birthday
+			, facebookID
+			, facebookURL
+			, kakaoID
+			, jobTitle
+			, sex
+		from user
+		where userID in (
+			SELECT 
+				friend_one
+			from friends
+			where friend_two=#{value} and status = 1
+			union
+			SELECT 
+				friend_two
+			from friends
+			where friend_one=#{value} and status = 1
+		)
+		and isDeleted is null
+		limit 0, 50;
 	</select>
 	
 </mapper>

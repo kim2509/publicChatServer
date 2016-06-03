@@ -11,6 +11,7 @@
 	if ( request.getAttribute("friendRequestList") != null )
 		friendRequestList = (List<HashMap>) request.getAttribute("friendRequestList");
 	
+	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
 %>
 <html>
 
@@ -105,7 +106,13 @@
 
 	function openUserProfile( userID )
 	{
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		//document.location.href='nearhere://openUserProfile?userID=' + userID;
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
 	}
 	
 	function searchUser()

@@ -23,7 +23,7 @@ import common.UserBiz;
 public class UserController extends BaseController{
 
 	@RequestMapping( value ="/user/userInfo.do")
-	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
+	public ModelAndView userInfo ( HttpServletRequest request, HttpServletResponse response , 
 			String userID,
 			ModelMap model )
 	{
@@ -54,12 +54,12 @@ public class UserController extends BaseController{
 			mv.addObject("userInfo", userInfo);
 			
 			mv.addObject("userLocationList", userBiz.getUserLocation(userID) );
-			mv.addObject("friendList", userBiz.getFriendList(userID) );
+			mv.addObject("friendList", userBiz.getFriendList(userID, false) );
 			
 			List<HashMap> userPostList = CarPoolPostBiz.getInstance(sqlSession).getUserPosts(userID);
 			mv.addObject("userPostList", userPostList );
 			
-			logger.info( "userPostList: " + mapper.writeValueAsString( userPostList ) );	
+			logger.info( "userPostList: " + mapper.writeValueAsString( userPostList ) );
 		}
 		catch( Exception ex )
 		{
@@ -69,4 +69,20 @@ public class UserController extends BaseController{
 		return mv;
 	}
 	
+	@RequestMapping( value ="/user/friendInfo.do")
+	public ModelAndView friendInfo ( HttpServletRequest request, HttpServletResponse response , 
+			String userID,
+			ModelMap model )
+	{
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("user/friendInfo");
+		
+		if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
+		
+		UserBiz userBiz = UserBiz.getInstance(sqlSession);
+		
+		mv.addObject("friendList", userBiz.getFriendList(userID, true ) );
+		
+		return mv;
+	}
 }
