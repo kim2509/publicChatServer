@@ -7,8 +7,10 @@ public class Constants {
 	public static boolean bReal = true;
 	
 	public static String CSS_PATH = "http://www.hereby.co.kr/nearhere/css/";
+	public static String SECURE_CSS_PATH = "http://172.30.1.200:8080/nearhere/css/";
 	public static String IMAGE_PATH = "http://www.hereby.co.kr/nearhere/image/";
 	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
+	public static String SECURE_JS_PATH = "http://172.30.1.200:8080/nearhere/js/";
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static int push_retry_count = 5;
 	
