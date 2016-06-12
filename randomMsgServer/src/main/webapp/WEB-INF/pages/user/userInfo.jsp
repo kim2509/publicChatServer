@@ -327,7 +327,7 @@
 %>
 				<dd onclick="goUserInfo('<%= friendList.get(i).get("userID") %>')">
 					<div style="float:left;">
-						<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
+						<img src='<%= Constants.getThumbnailImageSSLURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
 							style="border-radius: 10px;" 
 							width="60" height="60" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 					</div>
