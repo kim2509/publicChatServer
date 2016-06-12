@@ -100,7 +100,7 @@
 			from user_push_message
 			where toUserID=#{value}
 			and type <> 'message'
-			/*and isRead = 'N'*/
+			and isRead = 'N'
 			order by createdDate desc;
 		]]>
 	</select>

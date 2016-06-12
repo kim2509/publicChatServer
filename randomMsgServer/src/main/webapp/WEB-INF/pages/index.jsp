@@ -26,7 +26,7 @@
 	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do";
 	moreRecentPostPage = URLEncoder.encode( moreRecentPostPage, "UTF-8" );
 	
-	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
 %>
 <html>
 

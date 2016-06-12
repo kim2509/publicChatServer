@@ -26,8 +26,8 @@
 		userPostList = (List<HashMap>) request.getAttribute("userPostList");
 	
 	String userID = userInfo.get("userID").toString();
-	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
-	String friendInfoPage = Constants.getServerURL() + "/user/friendInfo.do?userID=" + userID;
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
+	String friendInfoPage = Constants.getServerSSLURL() + "/user/friendInfo.do?userID=" + userID;
 	
 %>
 <html>
@@ -37,14 +37,14 @@
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common.css" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/userInfo.css?v=3" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/searchDestination.css?v=3" />
-<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/userInfo.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/searchDestination.css?v=3" />
+<link rel="stylesheet" href="<%=Constants.SECURE_CSS_PATH%>/w3.css">
 		
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>	
 
 <script language="javascript">
 

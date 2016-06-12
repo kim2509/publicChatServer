@@ -11,7 +11,7 @@
 	if ( request.getAttribute("friendRequestList") != null )
 		friendRequestList = (List<HashMap>) request.getAttribute("friendRequestList");
 	
-	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
 %>
 <html>
 

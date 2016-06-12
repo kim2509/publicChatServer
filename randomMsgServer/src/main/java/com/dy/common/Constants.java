@@ -20,6 +20,12 @@ public class Constants {
 		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://172.30.1.200:8080/nearhere";
 	}
 	
+	public static String getServerSSLURL()
+	{
+//		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
+		return Constants.bReal ? "https://www.hereby.co.kr/nearhere" : "http://172.30.1.200:8080/nearhere";
+	}
+	
 	public static String getThumbnailImageURL()
 	{
 		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://www.hereby.co.kr/thumbnail/";

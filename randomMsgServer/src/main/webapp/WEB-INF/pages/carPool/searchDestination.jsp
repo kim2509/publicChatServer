@@ -18,7 +18,7 @@
 		address = URLDecoder.decode(address, "UTF-8");
 	}
 	
-	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
 %>
 <html>
 
