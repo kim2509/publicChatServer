@@ -19,7 +19,7 @@
 	HashMap regionInfo = (HashMap) request.getAttribute("regionInfo");
 	String isHotspot = regionInfo.get("isHotSpot") == null ? "" : regionInfo.get("isHotSpot").toString();
 	
-	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
 %>
 <html>
 
