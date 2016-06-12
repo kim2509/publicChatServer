@@ -3,6 +3,13 @@
 <%@ page import="com.nearhere.domain.*"%>
 <%@ page import="com.dy.common.*"%>
 
+<%
+	String version = request.getParameter("appVersion");
+	double appVersion = 0;
+	if ( !Util.isEmptyString(version) )
+		appVersion = Double.parseDouble(version);
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
+%>
 <html>
 
 <head>
@@ -90,7 +97,20 @@
 		
 	function openUserProfile( userID )
 	{
+		<% if ( appVersion < 1.53 ) { %>
+			
 		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		
+		<% } else { %>
+		
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
+		
+		<% }%>
 	}
 	
 </script>
