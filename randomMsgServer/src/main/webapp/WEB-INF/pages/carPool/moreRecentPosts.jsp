@@ -4,6 +4,7 @@
 <%@ page import="com.dy.common.*"%>
 
 <%
+	String isApp = request.getParameter("isApp");
 	String version = request.getParameter("appVersion");
 	double appVersion = 0;
 	if ( !Util.isEmptyString(version) )
@@ -29,6 +30,9 @@
 	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <script language="javascript">
+
+	var isApp = '<%= isApp %>';
+	
 	jQuery(document).ready(function() {
 
 		getPosts();
