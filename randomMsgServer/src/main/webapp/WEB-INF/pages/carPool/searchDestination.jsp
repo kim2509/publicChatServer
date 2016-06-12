@@ -4,6 +4,7 @@
 <%@ page import="com.dy.common.*"%>
 
 <%
+	String isApp = request.getParameter("isApp");
 	String latitude = request.getParameter("latitude");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
@@ -39,6 +40,9 @@
 	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <script language="javascript">
+
+	var isApp = '<%= isApp %>';
+	
 	jQuery(document).ready(function() {
 
 		getPosts();
