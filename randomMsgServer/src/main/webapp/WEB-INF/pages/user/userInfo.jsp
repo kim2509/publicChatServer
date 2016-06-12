@@ -101,7 +101,7 @@
 					bLoading = false;
 				},
 				error : function(xhr, status, error) {
-					alert("에러발생");
+					alert("에러발생(getFriendStatus)" + error );
 				}
 			});
 		}
@@ -186,7 +186,7 @@
 					bLoading = false;
 				},
 				error : function(xhr, status, error) {
-					alert("에러발생");
+					alert("에러발생(askFriendRequest)" + error );
 				}
 			});
 		}
@@ -210,7 +210,7 @@
 			
 				<div>
 					<div onclick="openPhotoViewer('<%= userInfo.get("profileImageURL") %>')">
-						<img class="userProfile" src='<%= Constants.getThumbnailImageURL() %>/<%= userInfo.get("profileImageURL") %>' 
+						<img class="userProfile" src='<%= Constants.getThumbnailImageSSLURL() %>/<%= userInfo.get("profileImageURL") %>' 
 							width="100" height="100" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 					</div>
 					
