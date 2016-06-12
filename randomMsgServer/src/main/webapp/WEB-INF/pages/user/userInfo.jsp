@@ -28,6 +28,7 @@
 	String userID = userInfo.get("userID").toString();
 	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
 	String friendInfoPage = Constants.getServerSSLURL() + "/user/friendInfo.do?userID=" + userID;
+	String profilePoint = userInfo.get("profilePoint").toString();
 	
 %>
 <html>
@@ -235,8 +236,8 @@
 						</div>
 						<div class="p5" style="margin-top:10px;">프로필 완성도</div>
 						<div class="w3-progress-container" style="margin-top:5px;margin-left:5px;">
-							<div id="myBar" class="w3-progressbar w3-green w3-round" style="width:70%">
-								<div class="w3-center w3-text-white" style="padding-top:2px;">70%</div>
+							<div id="myBar" class="w3-progressbar w3-green w3-round" style="width:<%= profilePoint%>%">
+								<div class="w3-center w3-text-white" style="padding-top:2px;"><%= profilePoint %>%</div>
 							</div>
 						</div>
 					</div>
