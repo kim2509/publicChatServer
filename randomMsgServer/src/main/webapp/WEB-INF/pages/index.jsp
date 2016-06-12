@@ -23,7 +23,7 @@
 	else
 		showSearchDiv = "Y";
 	
-	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do";
+	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do?isApp=Y" + isApp + "&appVersion=" + appVersion;
 	moreRecentPostPage = URLEncoder.encode( moreRecentPostPage, "UTF-8" );
 	
 	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
@@ -78,7 +78,7 @@
 		var url = '<%= moreRecentPostPage %>';
 		
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=%EC%B5%9C%EA%B7%BC%20%EC%B9%B4%ED%92%80%20%EB%82%B4%EC%97%AD&url=' + url + '&showNewButton=N&isApp=Y';
+			document.location.href='nearhere://openURL?title=%EC%B5%9C%EA%B7%BC%20%EC%B9%B4%ED%92%80%20%EB%82%B4%EC%97%AD&url=' + url + '&showNewButton=N';
 		else
 			document.location.href = decodeURIComponent(url);
 	}
