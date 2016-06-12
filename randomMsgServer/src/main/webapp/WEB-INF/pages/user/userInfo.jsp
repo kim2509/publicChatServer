@@ -402,7 +402,7 @@
 								<img src="/nearhere/image//progressing.png" width="50" height="50">
 							</div>
 							<div class="userProfile">
-								<img src='<%= Constants.getThumbnailImageURL() %>/<%= user.get("profileImageURL") %>' 
+								<img src='<%= Constants.getThumbnailImageSSLURL() %>/<%= user.get("profileImageURL") %>' 
 									width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 								<% if ( !Util.isEmptyString( user.get("kakaoID") ) ) { %>
 									<img src="/nearhere/image//kakaotalk_icon.png" width="18" height="18" id="kakao">
