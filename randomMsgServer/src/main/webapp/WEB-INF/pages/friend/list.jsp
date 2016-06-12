@@ -28,11 +28,11 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
 
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="<%=Constants.CSS_PATH%>/jquery.mobile-1.4.5.min.css">
 <!-- Include the jQuery library -->
-<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <!-- Include the jQuery Mobile library -->
-<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="<%=Constants.JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
   
 <script language="javascript">
 
