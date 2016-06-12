@@ -99,7 +99,7 @@
 				bLoading = false;
 			},
 			error : function(xhr, status, error) {
-				alert("에러발생");
+				alert("에러발생(getFriendRequestList)" + error );
 			}
 		});
 	}
@@ -154,7 +154,7 @@
 				bLoading = false;
 			},
 			error : function(xhr, status, error) {
-				alert("에러발생");
+				alert("에러발생(searchUsers)" + error );
 			}
 		});
 	}
@@ -189,7 +189,7 @@
 				bLoading = false;
 			},
 			error : function(xhr, status, error) {
-				alert("에러발생");
+				alert("에러발생(askFriendRequest)" + error );
 			}
 		});
 	}
@@ -230,7 +230,7 @@
 				bLoading = false;
 			},
 			error : function(xhr, status, error) {
-				alert("에러발생");
+				alert("에러발생(acceptFriendRequest)" + error );
 			}
 		});
 	}
@@ -273,7 +273,7 @@
 				bLoading = false;
 			},
 			error : function(xhr, status, error) {
-				alert("에러발생");
+				alert("에러발생(getFriendsList)" + error );
 			}
 		});
 	}
