@@ -78,7 +78,7 @@
 		var url = '<%= moreRecentPostPage %>';
 		
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=%EC%B5%9C%EA%B7%BC%20%EC%B9%B4%ED%92%80%20%EB%82%B4%EC%97%AD&url=' + url + '&showNewButton=N';
+			document.location.href='nearhere://openURL?title=%EC%B5%9C%EA%B7%BC%20%EC%B9%B4%ED%92%80%20%EB%82%B4%EC%97%AD&url=' + url + '&showNewButton=N&isApp=Y';
 		else
 			document.location.href = decodeURIComponent(url);
 	}
