@@ -10,6 +10,7 @@
 		where userID like CONCAT('%',#{value},'%')
 		or userName like CONCAT('%',#{value},'%')
 		and isDeleted is null
+		and appVersion > 1.52
 		limit 0, 10;
 	</select>
 	
