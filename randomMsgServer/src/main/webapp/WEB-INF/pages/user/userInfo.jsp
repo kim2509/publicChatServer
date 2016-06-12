@@ -17,14 +17,18 @@
 	
 	List<HashMap> friendList = null;
 	if ( request.getAttribute("friendList") != null )
+	{
 		friendList = (List<HashMap>) request.getAttribute("friendList");
+	}
 	
 	List<HashMap> userPostList = null;
 	if ( request.getAttribute("userPostList") != null )
 		userPostList = (List<HashMap>) request.getAttribute("userPostList");
 	
+	String userID = userInfo.get("userID").toString();
 	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
-	String friendInfoPage = Constants.getServerURL() + "/user/friendInfo.do?userID=" + userInfo.get("userID");
+	String friendInfoPage = Constants.getServerURL() + "/user/friendInfo.do?userID=" + userID;
+	
 %>
 <html>
 
@@ -45,10 +49,62 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
+	var loginID = '';
+	var loginUserType = '';
 	
 	jQuery(document).ready(function() {
+		if ( isApp == 'Y' && Android && Android != null && typeof Android != 'undefined')
+		{	
+			loginID = Android.getUserID();
+			loginUserType = Android.getUserType();
+			
+			if ( loginUserType == 'Guest' )
+			{
+				$('#btnFriendAsk').hide();
+				$('#btnFriendAsking').hide();
+				return;
+			}
 
-	
+			var requestParam = {"userID": loginID, "userID2":"<%= userID %>" };
+			
+			jQuery.ajax({
+				type : "POST",
+				url : "/nearhere/friend/getFriendStatus.do",
+				data : JSON.stringify( requestParam ),
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(result) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					// TODO
+					try {
+
+						if ( result.resCode != '0000' ) return;
+						
+						if ( result.data == '' )
+						{
+							$('#btnFriendAsk').show();
+							$('#btnFriendAsking').hide();
+						}
+						else if ( result.data == '0' )
+						{
+							$('#btnFriendAsk').hide();
+							$('#btnFriendAsking').show();
+						}
+						
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+					bLoading = false;
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생");
+				}
+			});
+		}
 	});
 
 	function openUserProfile( userID )
@@ -81,6 +137,59 @@
 	function goFacebook( url )
 	{
 		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
+	}
+	
+	function goUserMessageActivity()
+	{
+		if ( isApp == 'Y' && Android && Android != null && typeof Android != 'undefined')
+		{
+			var userType = Android.getUserType();
+			if ( userType != 'Normal' )
+			{
+				alert('SNS 연동후에 이용가능합니다.');
+				return;
+			}
+			
+			document.location.href='nearhere://goUserMessageActivity?userID=<%= userInfo.get("userID") %>';
+		}
+	}
+	
+	function askFriendRequest()
+	{
+		if ( confirm('친구요청을 하시겠습니까?') )
+		{
+			var requestParam = {"userID": loginID, "userID2":"<%= userID %>" };
+			
+			jQuery.ajax({
+				type : "POST",
+				url : "/nearhere/friend/askFriendRequest.do",
+				data : JSON.stringify( requestParam ),
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(result) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					// TODO
+					try {
+
+						if ( result.resCode != '0000' ) return;
+						
+						$('#btnFriendAsk').hide();
+						$('#btnFriendAsking').show();
+						
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+					bLoading = false;
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생");
+				}
+			});
+		}
 	}
 	
 </script>
@@ -185,6 +294,14 @@
 						</tr>
 						<% } %>
 					</table>
+					
+					<div class="btn" onclick="goUserMessageActivity();">메세지</div>
+					
+					<% if ( Double.parseDouble( userInfo.get("appVersion").toString() ) >= 1.53 ) { %>
+					<div class="btn" id='btnFriendAsk' onclick="askFriendRequest();" style="display:none;">친구요청</div>
+					<% } %>
+					
+					<div class="btn" id='btnFriendAsking' style="background:gray;inline-block;display:none;">요청중</div>
 				</div>
 			
 			</div>

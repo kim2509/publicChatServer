@@ -7,11 +7,18 @@
 	String latitude = request.getParameter("latitude");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
+	String version = request.getParameter("appVersion");
+	double appVersion = 0;
+	if ( !Util.isEmptyString(version) )
+		appVersion = Double.parseDouble(version);
+	
 	//address = new String(address.getBytes("ISO-8859-1"), "UTF-8");
 	if ( address != null && address.length() > 0 )
 	{
 		address = URLDecoder.decode(address, "UTF-8");
 	}
+	
+	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
 %>
 <html>
 
@@ -116,7 +123,20 @@
 		
 	function openUserProfile( userID )
 	{
+		<% if ( appVersion < 1.53 ) { %>
+			
 		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		
+		<% } else { %>
+		
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
+		
+		<% }%>
 	}
 	
 </script>

@@ -22,8 +22,8 @@
 	</select>
 	
 	<insert id="askFriendRequest" parameterType="java.util.HashMap">
-		insert into friends(friend_one, friend_two, status)
-		values(#{userID}, #{userID2}, 0 );
+		insert into friends(friend_one, friend_two, status, createdDate)
+		values(#{userID}, #{userID2}, 0 , NOW() );
 	</insert>
 	
 	<update id="acceptFriendRequest" parameterType="java.util.HashMap">
@@ -39,6 +39,20 @@
 			  select friend_one as friendID from friends
 				where friend_two = #{value} and status=1) f
 			left outer join user u on u.userID=f.friendID
+	</select>
+	
+	<select id="getFriendStatus" parameterType="java.util.HashMap" resultType="String">
+		select status from friends
+			where friend_one = #{userID} and friend_two = #{userID2}
+		union 
+		select status from friends
+			where friend_one = #{userID2} and friend_two = #{userID}
+	</select>
+	
+	<select id="getFriendRequestCount" parameterType="java.util.HashMap" resultType="Integer">
+		select count(friend_one) as friendRequestcount
+		from friends
+		where friend_two=#{userID} and status=0
 	</select>
 	
 </mapper>

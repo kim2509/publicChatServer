@@ -65,4 +65,10 @@ public class UserBiz extends CommonBiz{
 		
 		return friendList;
 	}
+	
+	public List<HashMap> getUserPushMessage( String userID )
+	{
+		List<HashMap> userPushMessageList = sqlSession.selectList("com.tessoft.nearhere.user.getUserPushMessage", userID);
+		return userPushMessageList;
+	}
 }

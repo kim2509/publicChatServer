@@ -8,11 +8,18 @@
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
 	String isApp = request.getParameter("isApp");
+	String version = request.getParameter("appVersion");
+	double appVersion = 0;
+	if ( !Util.isEmptyString(version) )
+		appVersion = Double.parseDouble(version);
+	
 	if ( isApp == null || !"Y".equals( isApp ) ) isApp = "N";
 //	Constants.bReal = false;
 
 	HashMap regionInfo = (HashMap) request.getAttribute("regionInfo");
 	String isHotspot = regionInfo.get("isHotSpot") == null ? "" : regionInfo.get("isHotSpot").toString();
+	
+	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
 %>
 <html>
 
@@ -33,6 +40,9 @@
 	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <script language="javascript">
+
+	var isApp ='<%= isApp %>';
+	
 	jQuery(document).ready(function() {
 
 		getPosts();
@@ -125,7 +135,20 @@
 	
 	function openUserProfile( userID )
 	{
+		<% if ( appVersion < 1.53 ) { %>
+			
 		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		
+		<% } else { %>
+		
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
+		
+		<% }%>
 	}
 	
 	function snsLogin()

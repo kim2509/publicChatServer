@@ -974,7 +974,7 @@ public class TaxiController {
 			daeyong.setUserID("user27");
 			daeyong.setUserNo("27");
 			daeyong = selectUser( daeyong , false );
-			sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
+			sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true , true );
 		}
 		catch( Exception ex )
 		{
@@ -1264,10 +1264,10 @@ public class TaxiController {
 				UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
 				if ( setting == null || !"N".equals( setting.getReplyPushReceiveYN() ) )
 				{
-					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), true);
+					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), true, true );
 				}
 				else
-					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), false );
+					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), false, true );
 			}
 
 			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
@@ -1718,9 +1718,9 @@ public class TaxiController {
 			UserSetting setting = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUserSetting", user );
 			
 			if ( setting == null || !"N".equals( setting.getMessagePushReceiveYN() ))
-				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID(), true );
+				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID(), true, false );
 			else
-				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID(), false );
+				sendPushMessage( message.getToUser(), "message", message.getMessage(), message.getFromUser().getUserID(), false, false );
 
 			HashMap messageInfo = new HashMap();
 			messageInfo.put("userID", message.getFromUser().getUserID());
@@ -1742,7 +1742,7 @@ public class TaxiController {
 		return response;
 	}
 
-	private void sendPushMessage( User receiver, String type, String msg, String param, boolean bSendPush ) throws Exception
+	private void sendPushMessage( User receiver, String type, String msg, String param, boolean bSendPush, boolean bInsertPushMessage ) throws Exception
 	{
 		try
 		{
@@ -1767,9 +1767,14 @@ public class TaxiController {
 				pushMessage.setMessage( msg );
 
 			pushMessage.setParam1(param);
-			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
-
-			logger.info( "insertUserPushMessage result : " + result );
+			
+			int result = 0;
+			
+			if ( bInsertPushMessage )
+			{
+				result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
+				logger.info( "insertUserPushMessage result : " + result );
+			}
 
 			if ( bSendPush )
 			{
@@ -1907,7 +1912,7 @@ public class TaxiController {
 					daeyong.setUserID("user27");
 					daeyong.setUserNo("27");
 					daeyong = selectUser( daeyong, false );
-					sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true );
+					sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true, true );
 				}
 			}
 			catch( Exception ex )
@@ -1970,6 +1975,9 @@ public class TaxiController {
 			HashMap noticeInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUnreadNoticeCount", info );
 			countInfo.put("noticeCount", noticeInfo.get("unreadNoticeCount"));
 			countInfo.put("lastNoticeID", noticeInfo.get("lastNoticeID"));
+			
+			int friendRequestCount = sqlSession.selectOne("com.tessoft.nearhere.friend.getFriendRequestCount", info );
+			countInfo.put("friendRequestCount", friendRequestCount);
 
 			response.setData(countInfo);
 
@@ -2140,7 +2148,7 @@ public class TaxiController {
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "event", "[이벤트] 이마트 상품권을 쏩니다!!", "1", true );	
+				sendPushMessage(userList.get(i), "event", "[이벤트] 이마트 상품권을 쏩니다!!", "1", true, true );	
 			}
 			
 			response.setData(userList);
@@ -2218,7 +2226,7 @@ public class TaxiController {
 			daeyong.setUserID("user27");
 			daeyong.setUserNo("27");
 			daeyong = selectUser( daeyong, false );
-			sendPushMessage( daeyong, "newPostByDistance", "이벤트 신청알림 " + requestInfo.get("userID"), requestInfo.get("userID") , true );
+			sendPushMessage( daeyong, "newPostByDistance", "이벤트 신청알림 " + requestInfo.get("userID"), requestInfo.get("userID") , true, true );
 		}
 		catch( Exception ex )
 		{

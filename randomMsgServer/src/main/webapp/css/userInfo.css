@@ -52,3 +52,17 @@ td{
 	font-size:14px;
 	color:black;
 }
+
+.btn{
+	margin-top:10px;
+	margin-right:5px;
+	display:inline-block;
+	background:rgba(0, 95, 214, 0.63);
+	border-radius: 10px;
+	line-height:30px;
+	color:white;
+	font-size:14px;
+	text-align:center;
+	width:80px;
+	padding-top:2px;
+}

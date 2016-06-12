@@ -9,6 +9,10 @@
 	String snsLoginYN = request.getParameter("snsLogin");
 	String showHotSpot = request.getParameter("showHotSpot");
 	String showRecentPosts = request.getParameter("showRecentPosts");
+	String version = request.getParameter("appVersion");
+	double appVersion = 0;
+	if ( !Util.isEmptyString(version) )
+		appVersion = Double.parseDouble(version);
 
 	List<HashMap> regionList = (List<HashMap>) request.getAttribute("regionList");
 	List<HashMap> hotspotList = (List<HashMap>) request.getAttribute("hotspotList");
@@ -147,13 +151,20 @@
 	
 	function openUserProfile( userID )
 	{
-		//document.location.href='nearhere://openUserProfile?userID=' + userID;
+		<% if ( appVersion < 1.53 ) { %>
+			
+		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		
+		<% } else { %>
+		
 		var url = '<%= userInfoPage %>' + '?userID=' + userID;
 		
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
 		else
 			document.location.href = decodeURIComponent(url);
+		
+		<% }%>
 	}
 	
 </script>
@@ -226,7 +237,7 @@ if ("Y".equals( showSearchDiv ) )
 						String title = regionList.get(i).get("regionName").toString();
 						String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 						String regionCount = regionList.get(i).get("regionCount").toString();
-						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
+						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
 						int newCount = Util.getInt( regionList.get(i).get("newCount") );
 	%>
 					<li>

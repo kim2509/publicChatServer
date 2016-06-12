@@ -71,8 +71,7 @@ public class UserController extends BaseController{
 	
 	@RequestMapping( value ="/user/friendInfo.do")
 	public ModelAndView friendInfo ( HttpServletRequest request, HttpServletResponse response , 
-			String userID,
-			ModelMap model )
+			String userID, String userHash )
 	{
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("user/friendInfo");

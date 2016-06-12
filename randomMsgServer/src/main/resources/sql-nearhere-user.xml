@@ -23,6 +23,7 @@
 			, kakaoID
 			, jobTitle
 			, sex
+			, appVersion
 		from user
 		where userID=#{value}
 	</select>
@@ -90,6 +91,18 @@
 		)
 		and isDeleted is null
 		limit 0, 50;
+	</select>
+	
+	<select id="getUserPushMessage" parameterType="String"
+		resultType="java.util.HashMap">
+		<![CDATA[
+			select *
+			from user_push_message
+			where toUserID=#{value}
+			and type <> 'message'
+			/*and isRead = 'N'*/
+			order by createdDate desc;
+		]]>
 	</select>
 	
 </mapper>
