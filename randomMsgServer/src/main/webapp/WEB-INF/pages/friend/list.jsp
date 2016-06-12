@@ -11,6 +11,7 @@
 	if ( request.getAttribute("friendRequestList") != null )
 		friendRequestList = (List<HashMap>) request.getAttribute("friendRequestList");
 	
+	String userInfoPage = Constants.getServerURL() + "/user/userInfo.do";
 %>
 <html>
 
@@ -36,7 +37,7 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
-	var userID = '';
+	var loginID = '';
 	
 	jQuery(document).ready(function() {
 
@@ -53,7 +54,7 @@
 		
 		if ( isApp == 'Y' && Android && Android != null && typeof Android != 'undefined')
 		{
-			userID = Android.getUserID();		
+			loginID = Android.getUserID();		
 		}
 
 
@@ -66,7 +67,7 @@
 	{
 		jQuery.ajax({
 			type : "POST",
-			url : "/nearhere/friend/getFriendRequestList.do?userID=" + userID,
+			url : "/nearhere/friend/getFriendRequestList.do?userID=" + loginID,
 			data : null,
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",
@@ -105,7 +106,12 @@
 
 	function openUserProfile( userID )
 	{
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
+		var url = '<%= userInfoPage %>' + '?userID=' + userID;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
 	}
 	
 	function searchUser()
@@ -155,7 +161,7 @@
 	
 	function requestFriend( element, userID2 )
 	{
-		var requestParam = {"userID": userID, "userID2":userID2 };
+		var requestParam = {"userID": loginID, "userID2":userID2 };
 		
 		jQuery.ajax({
 			type : "POST",
@@ -190,7 +196,12 @@
 	
 	function acceptFriendRequest( element, userID2 )
 	{
-		var requestParam = {"userID": userID, "userID2":userID2 };
+		var requestParam = {"userID": loginID, "userID2":userID2 };
+		
+		if ( isApp == 'Y' && Android && Android != null && typeof Android != 'undefined')
+		{
+			Android.refreshFriendTabCount();		
+		}
 		
 		jQuery.ajax({
 			type : "POST",
@@ -230,7 +241,7 @@
 		
 		jQuery.ajax({
 			type : "POST",
-			url : "/nearhere/friend/getFriendsList.do?userID=" + userID,
+			url : "/nearhere/friend/getFriendsList.do?userID=" + loginID,
 			data : null,
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",
@@ -327,7 +338,7 @@
 <body>
 
 	<div id="wrapper" style="margin:10px;">
-
+	
 		<div class="section" id="friendRequestSection" style="display:none;">
 			<div id="menu_category">
 				<div class="title"><span class="s_tit">친구요청</span></div>

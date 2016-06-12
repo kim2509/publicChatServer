@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.post">
+
+	<select id="getUserPosts" parameterType="String" resultType="java.util.HashMap">
+		<![CDATA[
+		select P.*,
+			U.userID as 'user.userID',
+			U.userName as 'user.userName',
+			U.profileImageURL as 'user.profileImageURL',
+			U.kakaoID as 'user.kakaoID',
+			U.sex as 'user.sex',
+			RC.readCount as readCount 
+		from post P
+			left outer join user U on P.userID=U.userID
+			left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
+					on P.postID=RC.postID
+		where P.userID=#{value} and P.type='taxi'
+		and P.deletedDate is null
+		limit 0, 5;
+		]]>
+	</select>
+	
+</mapper>

@@ -47,6 +47,7 @@ public class Util {
 	public static boolean isEmptyString( String str )
 	{
 		if ( str == null ) return true;
+		if ( "null".equals( str.toLowerCase() ) ) return true;
 		if ( "".equals(str.trim())) return true;
 		return false;
 	}

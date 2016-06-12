@@ -12,14 +12,27 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
+import com.dy.common.Util;
+
+import common.UserBiz;
+
 @Controller
 public class NotificationController extends BaseController{
 
-	@RequestMapping( value ="/notification/index.do")
-	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
-			@CookieValue(value = "userID", defaultValue = "") String userID,
-			ModelMap model )
+	@RequestMapping( value ="/notification/list.do")
+	public ModelAndView list ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, String userHash )
 	{
-		return new ModelAndView("notification/index", model);
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("notification/list");
+
+		if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
+		
+		List<HashMap> userPushMessageList = UserBiz.getInstance(sqlSession).getUserPushMessage(userID);
+		
+		mv.addObject("userPushMessageList", userPushMessageList );
+		
+		return mv;
 	}
 }

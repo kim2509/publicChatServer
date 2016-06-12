@@ -56,9 +56,19 @@ public class UserBiz extends CommonBiz{
 		return userLocationList;
 	}
 	
-	public List<HashMap> getFriendList( String userID )
+	public List<HashMap> getFriendList( String userID , boolean bAll )
 	{
-		List<HashMap> friendList = sqlSession.selectList("com.tessoft.nearhere.user.getFriendList", userID);
+		List<HashMap> friendList = null;
+		
+		if ( bAll ) friendList = sqlSession.selectList("com.tessoft.nearhere.user.getAllFriendList", userID);
+		else friendList = sqlSession.selectList("com.tessoft.nearhere.user.getFriendList", userID);
+		
 		return friendList;
+	}
+	
+	public List<HashMap> getUserPushMessage( String userID )
+	{
+		List<HashMap> userPushMessageList = sqlSession.selectList("com.tessoft.nearhere.user.getUserPushMessage", userID);
+		return userPushMessageList;
 	}
 }
