@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dy.common.Constants;
 import com.dy.common.Util;
+import com.nearhere.domain.User;
 
 import common.CarPoolPostBiz;
 import common.UserBiz;
@@ -37,6 +38,9 @@ public class UserController extends BaseController{
 			UserBiz userBiz = UserBiz.getInstance(sqlSession);
 			
 			HashMap userInfo = userBiz.getUserInfo(userID);
+			User user = userBiz.selectUser(userInfo.get("userID").toString(), false);
+			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			userInfo.put("profilePoint", profilePoint);
 			
 			if ( !Util.isEmptyString( userInfo.get("birthday") ) )
 			{
