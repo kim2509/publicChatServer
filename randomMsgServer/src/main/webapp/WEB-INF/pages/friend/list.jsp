@@ -286,7 +286,7 @@
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
 				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
 				<div id='name'>{{userName}}</div>
@@ -305,7 +305,7 @@
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
 				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
 				<div id='name'>{{userName}}</div>
@@ -324,7 +324,7 @@
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
 				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
 				<div id='name'>{{userName}}</div>
