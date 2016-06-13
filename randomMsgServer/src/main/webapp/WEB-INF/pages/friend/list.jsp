@@ -37,7 +37,7 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
-	var loginID = '';
+	var loginID = 'user27';
 	
 	jQuery(document).ready(function() {
 
@@ -174,7 +174,11 @@
 				// TODO
 				try {
 
-					if ( result.resCode != '0000' ) return;
+					if ( result.resCode != '0000' )
+					{
+						alert( result.resMsg );
+						return;
+					}
 					
 					$(element).addClass('ui-disabled');
 					$(element).html('요청중');
@@ -214,7 +218,16 @@
 				// TODO
 				try {
 
-					if ( result.resCode != '0000' ) return;
+					if ( result.resCode != '0000' )
+					{
+						alert( result.resMsg );
+						return;
+					}
+		
+					if ( $(element).closest('dl').find('dd').length == 1 )
+					{
+						$('#friendRequestSection').hide();
+					}
 					
 					$(element).closest('dd').remove();
 					
