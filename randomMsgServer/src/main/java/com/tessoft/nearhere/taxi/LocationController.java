@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,15 +13,21 @@ import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.User;
 import com.nearhere.domain.UserLocation;
+
+import common.CarPoolPostBiz;
+import common.UserBiz;
 
 @Controller
 public class LocationController extends BaseController{
@@ -187,5 +194,26 @@ public class LocationController extends BaseController{
 		}
 		
 		return response;
+	}
+	
+	@RequestMapping( value ="/location/history.do")
+	public ModelAndView history ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model )
+	{
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("location/locationHistory");
+		
+		try
+		{
+			if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
+
+
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		return mv;
 	}
 }
