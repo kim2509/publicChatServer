@@ -290,7 +290,7 @@
 						<tr>
 							<td class="td1">직업</td>
 							<td class="td2">
-								<%= userInfo.get("jobTitle") %>세
+								<%= userInfo.get("jobTitle") %>
 							</td>
 						</tr>
 						<% } %>
