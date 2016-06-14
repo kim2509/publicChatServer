@@ -110,6 +110,30 @@ public class FriendController extends BaseController{
 				return response;
 			}
 			
+			String userID = requestInfo.get("userID");
+			String userID2 = requestInfo.get("userID2");
+			
+			if ( requestInfo.get("userID").equals( requestInfo.get("userID2") ) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("본인에게 친구요청을 하실 수 없습니다.");
+				return response;
+			}
+			
+			List<HashMap> friendRequestList = sqlSession.selectList("com.tessoft.nearhere.friend.getFriendsList", userID );
+			if ( friendRequestList != null )
+			{
+				for ( int i = 0; i < friendRequestList.size(); i++ ){
+					if ( userID2.equals( friendRequestList.get(i).get("userID") ) )
+					{
+						response.setResCode( ErrorCode.UNKNOWN_ERROR );
+						response.setResMsg("이미 친구입니다.");
+						return response;
+					}
+				}	
+			}
+			
+			
 			int result = sqlSession.insert("com.tessoft.nearhere.friend.askFriendRequest", requestInfo );
 			
 			UserBiz userBiz = UserBiz.getInstance(sqlSession);

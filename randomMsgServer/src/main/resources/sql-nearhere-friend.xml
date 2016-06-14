@@ -7,9 +7,10 @@
 	<select id="searchUser" parameterType="String" resultType="java.util.HashMap">
 		select userNo, userID, userName, sex, profileImageURL, type 
 		from user
-		where userID like CONCAT('%',#{value},'%')
-		or userName like CONCAT('%',#{value},'%')
+		where (userID like CONCAT('%',#{value},'%')
+		or userName like CONCAT('%',#{value},'%'))
 		and isDeleted is null
+		and appVersion is not null
 		and appVersion > 1.52
 		limit 0, 10;
 	</select>
