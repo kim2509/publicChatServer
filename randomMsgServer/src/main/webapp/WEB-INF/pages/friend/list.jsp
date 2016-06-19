@@ -291,6 +291,51 @@
 		});
 	}
 	
+	function askLocation( element, userID2 )
+	{
+		if ( confirm('위치를 물어보시겠습니까?') == false ) return;
+		
+		var param = {"userID":loginID, "toUserID": userID2 };
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/location/askLocation.do?userID=" + loginID,
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					if ( result == null || result.data == null  )
+					{
+						return;
+					}
+					
+					if ( result.resCode != '0000' )
+					{
+						alert( result.resMsg );
+						return;
+					}
+					
+					
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				bLoading = false;
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(getFriendsList)" + error );
+			}
+		});
+	}
+	
 </script>
 
 <script id="userRequestT" type="text/x-handlebars-template">
@@ -340,7 +385,15 @@
 					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
-				<div id='name'>{{userName}}</div>
+				<div id='name' style='margin-left:5px;margin-top:5px;'>{{userName}}</div>
+
+				<div style='margin-top:5px;'>
+					<a href="javascript:void(0)" onclick="requestFriend( this, '{{userID}}');" 
+						class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-shadow ui-mini" data-rel="dialog">메세지</a>
+					<a href="javascript:void(0)" onclick="askLocation( this, '{{userID}}');" 
+						class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-shadow ui-mini" data-rel="dialog">위치물어보기</a>
+				</div>
+				
 			</div>
 		</dd>
 		{{/each}}

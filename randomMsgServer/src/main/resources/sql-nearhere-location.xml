@@ -53,13 +53,17 @@
 	</select>
 	
 	<!-- 위치 물어보기 -->
-	<insert id="askLocation" parameterType="java.util.HashMap">
+	<insert id="askLocation" parameterType="java.util.HashMap"
+		useGeneratedKeys="true" keyProperty="locationID" keyColumn="locationID">
 		insert into location_history( userID, toUserID, status, createdDate)
 		values(#{userID}, #{toUserID}, 0, NOW() );
+		<selectKey keyProperty="locationID" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
 	</insert>
 	
 	<!-- 위치 대답하기 -->
-	<update id="respondLocatinoRequest" parameterType="java.util.HashMap">
+	<update id="respondLocatinRequest" parameterType="java.util.HashMap">
 		update location_history
 		set status=1, latitude=#{latitude}, longitude=#{longitude}, address=#{address}
 		, autoResponseYN=#{autoResponseYN}, autoExpiredDate=#{autoExpiredDate}

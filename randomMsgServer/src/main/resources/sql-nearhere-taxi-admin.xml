@@ -49,4 +49,43 @@
 		where isDeleted is null
 		order by u.createdDate desc
 	</select>
+	
+	<!-- 버전 1.52 이상 조회 -->
+	<select id="inquiryByVersion" resultType="java.util.HashMap">
+		select * from user where 
+		appVersion > 1.52
+		and isDeleted is null
+	</select>
+	
+	<!-- 친구요청 조회 -->
+	<select id="getFriendRequestCount" resultType="java.util.HashMap">
+		select * from friends
+	</select>
+	
+	<!-- 오늘 설치율 조회 -->
+	<select id="getInstallCountForToday" resultType="java.util.HashMap">
+		select sum(i), sum(d), (1.0 - (sum(d)*0.1)/(sum(i)*0.1))*100 from (
+		select count(userNo) as i, 0 as d from user
+		where isDeleted is null
+		and left(createdDate, 10)=left(NOW(),10)
+		union
+		select 0 as i, count(userNo) as d from user
+		where isDeleted='Y'
+		and left(createdDate,10)=LEFT(NOW(),10)
+		) A
+	</select>
+	
+	<!-- value 일자 전 설치율 조회 -->
+	<select id="getInstallCountByDay" parameterType="Integer">
+		select sum(i), sum(d), (1.0 - (sum(d)*0.1)/(sum(i)*0.1))*100 from (
+		select count(userNo) as i, 0 as d from user
+		where isDeleted is null
+		and left(createdDate, 10)=left( DATE_SUB(NOW(), INTERVAL #{value} DAY),10)
+		union
+		select 0 as i, count(userNo) as d from user
+		where isDeleted='Y'
+		and left(createdDate,10)=LEFT( DATE_SUB(NOW(), INTERVAL #{value} DAY),10)
+		) A
+	</select>
+	
 </mapper>

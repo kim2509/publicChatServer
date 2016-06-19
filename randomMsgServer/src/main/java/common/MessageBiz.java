@@ -94,6 +94,54 @@ public class MessageBiz extends CommonBiz{
 		}
 	}
 	
+	public String sendAskLocationRequest(String regID, String msg , String userID, String userName, String locationID )
+	{
+		try
+		{
+			Message message = new Message.Builder().addData("title", "현재위치 요청" )
+					.addData("message",  msg )
+					.addData("type",  "askLocationRequest" )
+					.addData("userID",  userID )
+					.addData("userName",  userName )
+					.addData("locationID",  locationID )
+					.addData("sound", "on")
+					.addData("vibrate", "on")
+					.build();
+			
+			String result = sendGCMPush(regID, message);
+			
+			return result;
+		}
+		catch( Exception ex)
+		{
+			return ex.getMessage();
+		}
+	}
+	
+	public String sendResponseLocationRequest(String regID, String msg , String userID, String toUserID, String locationID )
+	{
+		try
+		{
+			Message message = new Message.Builder().addData("title", "현재위치 요청" )
+					.addData("message",  msg )
+					.addData("type",  "sendLocationRequestResponse" )
+					.addData("userID",  userID )
+					.addData("toUserID",  toUserID)
+					.addData("locationID",  locationID )
+					.addData("sound", "on")
+					.addData("vibrate", "on")
+					.build();
+			
+			String result = sendGCMPush(regID, message);
+			
+			return result;
+		}
+		catch( Exception ex)
+		{
+			return ex.getMessage();
+		}
+	}
+	
 	public void insertUserPushMessage( String userID, String type, String msg, String param )
 	{
 		UserPushMessage pushMessage = new UserPushMessage();

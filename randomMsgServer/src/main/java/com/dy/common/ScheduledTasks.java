@@ -138,7 +138,7 @@ public class ScheduledTasks {
 		}
 	}
 	
-	@Scheduled(cron="0 0 6,20 * * ?") // 오전 6 오후 10시 정각에 실행
+	@Scheduled(cron="0 0 6,20 * * ?") // 오전 6 오후 8시 정각에 실행
 	public void updateAllUsersCurrentLocation() {
 
 		try

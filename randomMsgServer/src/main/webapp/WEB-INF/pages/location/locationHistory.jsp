@@ -16,6 +16,10 @@
 		userID = userInfo.get("userID").toString();
 	}
 	
+	List<HashMap> locationHistory = null;
+	if ( request.getAttribute("locationHistory") != null )
+		locationHistory = (List<HashMap>) request.getAttribute("locationHistory");
+	
 %>
 <html>
 
@@ -83,27 +87,29 @@ dd{
 
 	<div id="wrapper">
 
-		<div class="content" style="display:none">
+<% if ( locationHistory == null || locationHistory.size() == 0 ) { %>
+		<div class="content">
 		
 			<div class="msg">위치전송내역이 없습니다.</div>
 			
 			<div class="hint">친구끼리 위치를 물어본 내역이<br/>여기에 표시됩니다.</div>
 		
 		</div>
-				
+<% 
+	} else {
+%>				
 		<div class="content">
 		
 			<dl>
+			<% for ( int i = 0; i < locationHistory.size(); i++ ) { %>
 				<dd>
 				abc
 				</dd>
-				<dd>
-				abc
-				</dd>
+			<% } %>
 			</dl>
 		
 		</div>
-		
+<% } %>		
 	</div>
 
 </body>
