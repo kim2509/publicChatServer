@@ -1,3 +1,4 @@
+<!DOCTYPE html> 
 <%@page import="java.net.URLEncoder"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.nearhere.domain.*"%>
@@ -8,12 +9,12 @@
 	String isApp = request.getParameter("isApp");
 
 	HashMap userInfo = null;
-	String userID = "";
+	String loginUserID = "";
 	
 	if ( request.getAttribute("userInfo") != null )
 	{
 		userInfo = (HashMap) request.getAttribute("userInfo");
-		userID = userInfo.get("userID").toString();
+		loginUserID = userInfo.get("userID").toString();
 	}
 	
 	List<HashMap> locationHistory = null;
@@ -25,8 +26,7 @@
 
 <head>
 <title>이근처 합승</title>
-<meta name="viewport"
-	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />
 <link rel="stylesheet" href="<%=Constants.SECURE_CSS_PATH%>/jquery.mobile-1.4.5.min.css">
@@ -77,15 +77,15 @@
     background: #fff9d0;
 }
 
-dd{
-	border-bottom: 1px solid #ccc;
+#wrapper{
+	background:#eeeeee;
 }
 </style>
 
 </head>
 <body>
 
-	<div id="wrapper">
+	<div id="wrapper" data-role="page">
 
 <% if ( locationHistory == null || locationHistory.size() == 0 ) { %>
 		<div class="content">
@@ -98,15 +98,75 @@ dd{
 <% 
 	} else {
 %>				
-		<div class="content">
+		<div class="content" style="padding:10px;">
 		
-			<dl>
-			<% for ( int i = 0; i < locationHistory.size(); i++ ) { %>
-				<dd>
-				abc
-				</dd>
+			<ul data-role="listview" data-inset="true">
+			<% 
+				for ( int i = 0; i < locationHistory.size(); i++ ) {
+					
+					HashMap item = locationHistory.get(i);
+					
+					String profileImageURL = item.get("profileImageURL").toString();
+					String userName = item.get("userName").toString();
+					String status = "";
+					boolean bClick = false;
+					
+					if ( "Y".equals( item.get("senderYN") ) )
+					{
+						if ( "0".equals( item.get("status").toString() ) )
+							status = "님에게 위치 물어보는중";
+						else
+							status = "";
+					}
+					else
+					{
+						if ( "0".equals( item.get("status").toString() ) )
+						{
+							status = "님이 고객님의 위치를 물어봅니다.";
+							bClick = true;
+						}
+						else
+							status = "";
+					}
+					
+			%>
+				<li>
+					<% if ( bClick ) { %>
+					<a href="">
+					<%} %>
+						<img src='<%= Constants.getThumbnailImageURL() %>/<%= profileImageURL %>' width="100" height="100"
+							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					<h2><%= userName %></h2><p><%= status %></p>
+					<p class="ui-li-aside">06-19 19:30</p>
+					<% if ( bClick ) { %>
+					</a>
+					<%} %>
+				</li>
+				<li data-icon="info"><a href="">
+						<img src='<%= Constants.getThumbnailImageURL() %>/user3984.png' width="100" height="100"
+							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					<h2>김영조</h2><p>님의 위치가 도착했습니다</p>
+					<p class="ui-li-aside">06-19 19:30</p>
+					</a>
+				</li>
+				<li>
+					<a href="">
+						<img src='<%= Constants.getThumbnailImageURL() %>/user3982.png' width="100" height="100"
+							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					<h2>오동욱</h2><p>님이 김대용님의 위치를 물어봅니다.</p>
+					<p class="ui-li-aside">06-19 19:30</p>
+					</a>
+				</li>
+				<li>
+					
+						<img src='<%= Constants.getThumbnailImageURL() %>/user3980.png' width="100" height="100"
+							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+					<h2>오동욱</h2><p>님에게 위치를 전송했습니다.</p>
+					<p class="ui-li-aside">06-19 19:30</p>
+					
+				</li>
 			<% } %>
-			</dl>
+			</ul>
 		
 		</div>
 <% } %>		

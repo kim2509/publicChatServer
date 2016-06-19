@@ -37,7 +37,7 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
-	var loginID = 'user27';
+	var loginID = '';
 	
 	jQuery(document).ready(function() {
 
@@ -403,9 +403,9 @@
 </head>
 <body>
 
-	<div id="wrapper" style="margin:10px;">
+	<div id="wrapper" data-role="page" style="background:#eeeeee">
 	
-		<div class="section" id="friendRequestSection" style="display:none;">
+		<div class="section" id="friendRequestSection" style="display:none;margin:10px;">
 			<div id="menu_category">
 				<div class="title"><span class="s_tit">친구요청</span></div>
 			</div>
@@ -414,7 +414,7 @@
 			</div>
 		</div>
 		
-		<div class="section">
+		<div class="section" style="margin:10px;">
 			<div id="menu_category">
 				<div class="title"><span class="s_tit">회원검색</span></div>
 			</div>
@@ -427,7 +427,7 @@
 			</div>
 		</div>
 		
-		<div class="section">
+		<div class="section" style="margin:10px;">
 			<div id="menu_category">
 				<div class="title"><span class="s_tit">친구</span></div>
 			</div>
