@@ -3,15 +3,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
-	String host = request.getAttribute("host").toString();
-	ArrayList<HashMap<String, String>> items = (ArrayList<HashMap<String, String>>) request.getAttribute("items");
-
+	ArrayList<HashMap> items = (ArrayList<HashMap>) request.getAttribute("items");
 %>
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport"
+	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <title>Insert title here</title>
+
+<style type="text/css">
+
+span{ padding:5px; }
+
+</style>
+
 </head>
 <body>
 
@@ -20,13 +27,8 @@
 		
 		HashMap<String,String> hash = items.get(i);
 		String link = hash.get("link");
-		
-		if ( link.startsWith("javascript:") ) continue;
-		
-		if ( link.toLowerCase().startsWith("http") == false )
-			link = host + link;
 %>
-		<a href="<%= link %>"><%= hash.get("title") %></a><br/>		
+		<span><%= hash.get("regionName") %></span><a href="<%= link %>"><%= hash.get("title") %></a><br/>		
 <%
 	}
 %>
