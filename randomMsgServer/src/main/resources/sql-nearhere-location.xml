@@ -36,7 +36,7 @@
 	<!-- 위치내역조회 -->
 	<select id="getLocationHistory" parameterType="String" resultType="java.util.HashMap">
 		select * from (
-			select l.toUserID, u.userName, u.profileImageURL, 'Y' as senderYN, l.status
+			select l.toUserID as 'userID', u.userName, u.profileImageURL, 'Y' as senderYN, l.status
 				, l.autoResponseYN, l.autoExpiredDate, l.createdDate, l.updatedDate, l.deletedDate 
 			from location_history l
 				left outer join user u on l.toUserID = u.userID and u.isDeleted is null

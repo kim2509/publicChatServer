@@ -49,6 +49,14 @@
 		{	
 		}
 	});
+	
+	function respondLocationRequest()
+	{
+		if ( isApp == 'Y' && Android && Android != null && typeof Android != 'undefined')
+		{
+			Android.respondLocationRequest();
+		}
+	}
 
 </script>
 
@@ -109,7 +117,7 @@
 					String profileImageURL = item.get("profileImageURL").toString();
 					String userName = item.get("userName").toString();
 					String status = "";
-					boolean bClick = false;
+					int clickType = 0;
 					
 					if ( "Y".equals( item.get("senderYN") ) )
 					{
@@ -123,7 +131,7 @@
 						if ( "0".equals( item.get("status").toString() ) )
 						{
 							status = "님이 고객님의 위치를 물어봅니다.";
-							bClick = true;
+							clickType = 1;
 						}
 						else
 							status = "";
@@ -131,14 +139,14 @@
 					
 			%>
 				<li>
-					<% if ( bClick ) { %>
-					<a href="">
+					<% if ( clickType == 1 ) { %>
+					<a href="javascript:void(0)" onclick="respondLocationRequest();">
 					<%} %>
 						<img src='<%= Constants.getThumbnailImageURL() %>/<%= profileImageURL %>' width="100" height="100"
 							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 					<h2><%= userName %></h2><p><%= status %></p>
 					<p class="ui-li-aside">06-19 19:30</p>
-					<% if ( bClick ) { %>
+					<% if ( clickType == 1 ) { %>
 					</a>
 					<%} %>
 				</li>
