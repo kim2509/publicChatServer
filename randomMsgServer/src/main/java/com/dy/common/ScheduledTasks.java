@@ -18,36 +18,38 @@ import com.nearhere.domain.User;
 import com.nearhere.domain.UserPushMessage;
 
 import common.BackgroundJobBiz;
+import common.NewsBiz;
 
 public class ScheduledTasks {
 
 	protected static Logger logger = Logger.getLogger(ScheduledTasks.class.getName());
-	
+
 	ObjectMapper mapper = null;
-	
+
 	BackgroundJobBiz jobBiz = null;
-	
+
 	@Autowired
 	private SqlSession sqlSession;
-	
+
 	public ScheduledTasks() {
 		// TODO Auto-generated constructor stub
 		mapper = new ObjectMapper();
-		
+
 		logger.info( "ScheduledTasks created." );
 	}
-	
+
+	// 자동종료처리 매일 오전 오후 5시 정각에 실행
 	@Scheduled(cron="0 0 5,17 * * ?") // 오전 오후 5시 정각에 실행
 	public void updatePostAsFinished() {
-//		System.out.println("The time is now " + dateFormat.format(new Date()));
-		
+		//		System.out.println("The time is now " + dateFormat.format(new Date()));
+
 		try
 		{
 			logger.info( "updatePostAsFinished start !!!!!!!!!!!!!!!!" );
-			
+
 			// 50개씩
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getPostsNotYetFinished");
-			
+
 			if ( postList == null )
 			{
 				logger.info( "postList is null.");
@@ -55,27 +57,27 @@ public class ScheduledTasks {
 			else
 			{
 				logger.info( "postList.size : " + postList.size() );
-				
+
 				int result = 0;
-				
+
 				Date now = new Date();
-				
+
 				if ( postList != null && postList.size() > 0 )
 				{
 					for ( int i = postList.size() - 1 ; i >= 0 ; i-- )
 					{
 						Post post = postList.get(i);
-						
+
 						if ( Util.isEmptyString( post.getDepartureDateTime() ) )
 						{
 							Util.setPostDepartureDateTime(logger, "", post);
-							
+
 							// departureDateTime update
 							sqlSession.update("com.tessoft.nearhere.taxi.updatePostDepartureDateTime", post );	
 						}
-						
+
 						Date dDepartureDateTime = Util.getDateFromString(post.getDepartureDateTime(), "yyyy-MM-dd HH:mm:ss");
-						
+
 						long diff = now.getTime() - dDepartureDateTime.getTime();
 						long diffDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 						if ( diffDays <= 1 || post.getMessage().indexOf("매일") >= 0 || "Y".equals( post.getRepetitiveYN() ) )
@@ -84,17 +86,17 @@ public class ScheduledTasks {
 							postList.remove(i);
 						}
 					}
-					
+
 					logger.info( "final postList size: " + postList.size() );
-					
+
 					// 남은 postList 는 모두 종료처리
 					if ( postList.size() > 0 )
 						result = sqlSession.update("com.tessoft.nearhere.taxi.background.updatePostAsFinished", postList );
-					
+
 					logger.info( "update result : " + result );
 				}
 			}
-			
+
 			logger.info( "updatePostAsFinished end !!!!!!!!!!!!!!!!" );
 		}
 		catch( Exception ex )
@@ -102,24 +104,25 @@ public class ScheduledTasks {
 			logger.error( new Exception("scheduledTask", ex ) );
 		}
 	}
-	
+
+	// 합승글 지역 null 일때 알아서 업데이트 (1시간마다)
 	@Scheduled(fixedRate = 1000 * 60 * 60 ) // 1시간마다
 	public void updatePostResgion() {
-		
+
 		try
 		{
 			logger.info( "updatePostResgion start !!!!!!!!!!!!!!!!" );
-			
+
 			List<Post> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.selectPostsRegionNull" );
-			
+
 			int result = 0;
-			
+
 			for ( int i = 0; i < postList.size(); i++ )
 			{
 				Post post = postList.get(i);
-				
+
 				String regionName = Util.getRegionName( post.getToAddress() );
-				
+
 				if ( !Util.isEmptyString( regionName ) )
 				{
 					String region = sqlSession.selectOne("com.tessoft.nearhere.taxi.background.selectRegionNo", regionName );
@@ -127,9 +130,9 @@ public class ScheduledTasks {
 					result += sqlSession.update("com.tessoft.nearhere.taxi.background.updatePostRegion", post );
 				}
 			}
-			
+
 			logger.info( "update total count:" + result );
-			
+
 			logger.info( "updatePostResgion ended !!!!!!!!!!!!!!!!" );
 		}
 		catch( Exception ex )
@@ -137,21 +140,22 @@ public class ScheduledTasks {
 			logger.error( ex );
 		}
 	}
-	
-	@Scheduled(cron="0 0 6,20 * * ?") // 오전 6 오후 8시 정각에 실행
+
+	// 고객 현재위치 읽어옴 매일 오전 6 오후 8시 정각에 실행
+	@Scheduled(cron="0 0 6,20 * * ?") // 
 	public void updateAllUsersCurrentLocation() {
 
 		try
 		{
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectUsersForLocationUpdate");
-			
+
 			for ( int i = 0; i < userList.size(); i++ )
 			{
 				User receiver = userList.get(i);
-				
+
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
-				
+
 				sendPushMessage(receiver, "locationUpdate", "합승 등록 이벤트를 진행합니다!!!", "", true );
 			}			
 		}
@@ -160,12 +164,12 @@ public class ScheduledTasks {
 			logger.error( ex );
 		}
 	}
-	
+
 	protected User selectUser(User user) {
 		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
 		return user;
 	}
-	
+
 	protected void sendPushMessage( User receiver, String type, String msg, String param, boolean bSendPush ) throws Exception
 	{
 		try
@@ -193,9 +197,9 @@ public class ScheduledTasks {
 				pushMessage.setMessage( msg );
 
 			pushMessage.setParam1(param);
-			
+
 			int result = 0;
-			
+
 			if ( !"locationUpdate".equals( type ) )
 			{
 				result = sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
@@ -269,7 +273,7 @@ public class ScheduledTasks {
 
 					logger.info( "push result[" + receiver.getRegID() + "]:" + pushResult.toString() + 
 							" errorCode:[" + pushResult.getErrorCodeName() + "]");
-					
+
 					try
 					{
 						if ( "NotRegistered".equalsIgnoreCase( pushResult.getErrorCodeName() ) )
@@ -288,20 +292,34 @@ public class ScheduledTasks {
 					logger.info( "push regID is null." );		
 				}
 			}
-			
+
 		}
 		catch( Exception ex )
 		{
 			logger.error( ex );
 		}
 	}
-	
-	@Scheduled(fixedRate = 1000 * 60 * 5) // 1분마다
+
+	// 새 글 push 매 1분마다
+	@Scheduled(fixedRate = 1000 * 60 * 5)
 	public void sendPushUsersOnNewPost()
 	{
 		try
 		{
 			BackgroundJobBiz.getInstance(sqlSession).sendPushMessageToUsersOnNewPost();
+		}
+		catch(Exception ex )
+		{
+			logger.error( ex );
+		}
+	}
+
+	// 뉴스 읽어오기 (1시간마다)
+	@Scheduled(fixedRate = 1000 * 60 * 60 )
+	public void scrapNews() {
+		try
+		{
+			NewsBiz.getInstance(sqlSession).scrapNews();
 		}
 		catch(Exception ex )
 		{
