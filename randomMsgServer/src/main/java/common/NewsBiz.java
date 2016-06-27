@@ -41,7 +41,14 @@ public class NewsBiz extends CommonBiz{
 		getGeumcheonGuNews();
 		
 		// 도봉구 추가
-		getSimpleScrapingItems( "http://m.dobong.go.kr/", "http://m.dobong.go.kr/", ".notice_list ul li a", "36", false );
+		getSimpleScrapingItems( "http://m.dobong.go.kr/", "http://m.dobong.go.kr/", ".notice_list ul li a", "38", false );
+		
+		// 동작구 추가
+		getSimpleScrapingItems( "http://m.dongjak.go.kr/m/main.do", "http://m.dongjak.go.kr/", ".lastest1 li a", "7", false );
+		
+		// 송파구 추가
+		getSimpleScrapingItems( "http://m.songpa.go.kr/index.do", "http://m.songpa.go.kr/", ".easy_board ul li a", "9", false );
+		
 	}
 
 	public void getSeoulCityNews() throws Exception
@@ -73,6 +80,8 @@ public class NewsBiz extends CommonBiz{
 			}
 			else
 				title = newsHeadlines.get(i).html();
+			
+			title = title.replaceAll("\\'", "");
 			
 			String link = newsHeadlines.get(i).attr("href");
 

@@ -4,6 +4,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+	String isApp = request.getParameter("isApp");
+
 	ArrayList<HashMap> items = (ArrayList<HashMap>) request.getAttribute("items");
 	ArrayList<HashMap> newsList = (ArrayList<HashMap>) request.getAttribute("newsList");
 	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
@@ -56,6 +58,8 @@ a{
 
 	<script language="javascript">
 	
+	var isApp = '<%= isApp %>';
+	
 	jQuery(document).ready(function(){
 		
 		console.log('ready');
@@ -67,6 +71,15 @@ a{
 		document.fm.submit();
 	}
 	
+	function openURL( title, url )
+	{
+		var titleUrlEncoded = encodeURIComponent( '상세' )
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&fullURL=' + encodeURIComponent( url );
+		else
+			document.location.href= url;
+	}
+	
 	</script>
 </head>
 <body>
@@ -76,7 +89,7 @@ a{
 	<form action="/nearhere/news/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
 	</form>
 	
-	<div class="section">
+	<div class="section" style="margin:10px;">
 		<div id="menu_category">
 			<div class="title">
 				<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
@@ -94,7 +107,7 @@ a{
 		ArrayList<HashMap> news = (ArrayList<HashMap>) regionItem.get("news");	
 	%>
 	
-	<div class="section">
+	<div class="section" style="margin:10px;">
 		<div id="menu_category">
 			<div class="title">
 				<!-- span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;"><a href="www.naver.com">홈페이지 이동</a></span-->
@@ -110,7 +123,7 @@ a{
 		HashMap<String,String> hash = news.get(j);
 		String link = hash.get("link");
 %>
-		<li><a href="<%= link %>"><%= hash.get("title") %></li>		
+		<li><a href="javascript:void(0)" onclick="openURL('<%= hash.get("title") %>','<%= link %>');"><%= hash.get("title") %></li>		
 <%
 	}
 %>
