@@ -37,6 +37,11 @@ public class NewsBiz extends CommonBiz{
 		getSeoulCityNews();
 		getGangnamGuNews();
 		getGwanakNews();
+		getGwangjinGuNews();
+		getGeumcheonGuNews();
+		
+		// 도봉구 추가
+		getSimpleScrapingItems( "http://m.dobong.go.kr/", "http://m.dobong.go.kr/", ".notice_list ul li a", "36", false );
 	}
 
 	public void getSeoulCityNews() throws Exception
@@ -100,9 +105,8 @@ public class NewsBiz extends CommonBiz{
 		
 		String host = "http://www.gangnam.go.kr/";
 		String regionNo = "1";
-		String regionName = "강남구";
 		
-		ArrayList<HashMap> items = getHashMapList(newsHeadlines, host, regionNo, regionName);
+		ArrayList<HashMap> items = getHashMapList(newsHeadlines, host, regionNo, false );
 		
 		if ( items != null && items.size() > 0 )
 		{
@@ -121,9 +125,8 @@ public class NewsBiz extends CommonBiz{
 		
 		String host = "http://m.gwanak.go.kr/";
 		String regionNo = "3";
-		String regionName = "관악구";
 		
-		ArrayList<HashMap> items = getHashMapList(newsHeadlines, host, regionNo, regionName);
+		ArrayList<HashMap> items = getHashMapList(newsHeadlines, host, regionNo, true );
 		
 		if ( items != null && items.size() > 0 )
 		{
@@ -134,12 +137,73 @@ public class NewsBiz extends CommonBiz{
 		return items;
 	}
 	
-	private ArrayList<HashMap> getHashMapList(Elements newsHeadlines, String host, String regionNo, String regionName) {
+	public ArrayList<HashMap> getGwangjinGuNews() throws Exception
+	{
+		Document doc = Jsoup.connect("http://m.gwangjin.go.kr/board/MIT038/list#")
+				.timeout(5000).get();
+		Elements newsHeadlines = doc.select(".bbs_list a");
+		
+		String host = "http://m.gwangjin.go.kr/";
+		String regionNo = "4";
+		
+		ArrayList<HashMap> items = getHashMapList(newsHeadlines, host, regionNo, false );
+		
+		if ( items != null && items.size() > 0 )
+		{
+			sqlSession.delete("com.tessoft.nearhere.news.deleteNewsByRegion", regionNo );
+			int result = sqlSession.insert("com.tessoft.nearhere.news.insertNews", items );
+		}
+		
+		return items;
+	}
+	
+	public ArrayList<HashMap> getGeumcheonGuNews() throws Exception
+	{
+		Document doc = Jsoup.connect("http://m.geumcheon.go.kr/html/046/046.jsp")
+				.timeout(5000).get();
+		Elements newsHeadlines = doc.select("#mainContent .bbs-con li a");
+		
+		String host = "http://m.geumcheon.go.kr/";
+		String regionNo = "6";
+		
+		ArrayList<HashMap> items = getHashMapList(newsHeadlines, host, regionNo, false );
+		
+		if ( items != null && items.size() > 0 )
+		{
+			sqlSession.delete("com.tessoft.nearhere.news.deleteNewsByRegion", regionNo );
+			int result = sqlSession.insert("com.tessoft.nearhere.news.insertNews", items );
+		}
+		
+		return items;
+	}
+	
+	private ArrayList<HashMap> getSimpleScrapingItems( String homeURL, String hostURL, String scrapingRule, String regionNo, boolean bScriptHTMLTitle ) throws Exception
+	{
+		Document doc = Jsoup.connect( homeURL ).timeout(5000).get();
+		Elements newsHeadlines = doc.select( scrapingRule );
+		
+		ArrayList<HashMap> items = getHashMapList(newsHeadlines, hostURL, regionNo, false );
+		
+		if ( items != null && items.size() > 0 )
+		{
+			sqlSession.delete("com.tessoft.nearhere.news.deleteNewsByRegion", regionNo );
+			int result = sqlSession.insert("com.tessoft.nearhere.news.insertNews", items );
+		}
+		
+		return items;
+	}
+	
+	private ArrayList<HashMap> getHashMapList(Elements newsHeadlines, String host, String regionNo, boolean bStripHTMLTitle ) {
 		ArrayList<HashMap> items = new ArrayList<HashMap>();
 		
 		for ( int i = 0; i < newsHeadlines.size(); i++ )
 		{
-			String title = newsHeadlines.get(i).html();
+			String title = "";
+			if ( bStripHTMLTitle )
+				title =  Jsoup.parse(newsHeadlines.get(i).html()).text();
+			else
+				title = newsHeadlines.get(i).html();
+			
 			String link = newsHeadlines.get(i).attr("href");
 			
 			if ( link.startsWith("javascript:") ) continue;
@@ -151,7 +215,6 @@ public class NewsBiz extends CommonBiz{
 			hash.put("title", title);
 			hash.put("link", link);
 			hash.put("regionNo", regionNo);
-			hash.put("regionName", regionName);
 			hash.put("host", host );
 			items.add( hash );
 		}
