@@ -49,6 +49,8 @@ public class NewsBiz extends CommonBiz{
 		// 송파구 추가
 		getSimpleScrapingItems( "http://m.songpa.go.kr/index.do", "http://m.songpa.go.kr/", ".easy_board ul li a", "9", false );
 		
+		// 성동구 추가
+		getSimpleScrapingItems( "http://m.sd.go.kr/sd/topmenu.do?op=main#none", "http://m.sd.go.kr/", ".main_box1_con02 li a", "11", false );
 	}
 
 	public void getSeoulCityNews() throws Exception
