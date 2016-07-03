@@ -4,6 +4,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+	String isApp = request.getParameter("isApp");
+
 	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
 	String userID = request.getParameter("userID");
 	
@@ -149,7 +151,7 @@ a {
 
 		<div class="section">
 		
-			<form action="/nearhere/news/setFavoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
+			<form action="/nearhere/news/setFavoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>" method="post" name="fm">
 				<input type="hidden" name="returnURL" value="/nearhere/news/list.do?userID=<%= userID %>" />
 				<input type="hidden" name="selectedRegionNo" value="" />
 			</form>

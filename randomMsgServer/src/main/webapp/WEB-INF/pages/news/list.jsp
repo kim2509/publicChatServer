@@ -24,12 +24,9 @@
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <title>Insert title here</title>
 
-<link rel="stylesheet" href="<%=Constants.CSS_PATH%>/jquery.mobile-1.4.5.min.css">
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
-<!-- Include the jQuery Mobile library -->
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
 
 <style type="text/css">
 
@@ -49,11 +46,23 @@ span{ padding:5px; }
 
 li{
 	padding:3px;
+	border-bottom: 1px solid #eeeeee;
 }
 a{
-	text-decoration: none;color:#2e4986;
-	line-height: 1.2em;
+	text-decoration: none;color:black;
+	line-height: 1.4em;
 }
+
+.hostURL{
+    color: #ffffff;
+    background: #5c5aa7;
+    border: 1;
+    border: 1px solid #7f9bea;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+}
+
 </style>
 
 	<script language="javascript">
@@ -68,34 +77,46 @@ a{
 	
 	function goFavoriteRegionPage()
 	{
-		document.fm.submit();
+		if ( isApp == 'Y' )
+		{
+			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
+			var url = '<%= Constants.getServerURL() %>/news/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
+		}
+		else
+			document.fm.submit();
 	}
 	
 	function openURL( title, url )
 	{
 		var titleUrlEncoded = encodeURIComponent( '상세' )
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&fullURL=' + encodeURIComponent( url );
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&disableWebViewClient=Y&fullURL=' + encodeURIComponent( url );
 		else
 			document.location.href= url;
+	}
+	
+	function goHostURL( url )
+	{
+		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
 	</script>
 </head>
 <body>
 
-	<div id="wrapper" data-role="page">
+	<div id="wrapper">
 	
 	<form action="/nearhere/news/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
 	</form>
 	
-	<div class="section" style="margin:10px;">
+	<div class="section">
 		<div id="menu_category">
 			<div class="title">
 				<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
 				<span class="s_tit">관심지역</span>
 			</div>
-			<div style="padding:5px;"><%= favoriteRegions %></div>
+			<div style="padding-top:10px;padding-left:10px;padding-right:10px;"><%= favoriteRegions %></div>
 		</div>
 		
 	</div>
@@ -104,10 +125,12 @@ a{
 		
 		HashMap regionItem = newsList.get(i);
 		
+		String hostURL = Util.isEmptyString(regionItem.get("hostURL")) ? "" : regionItem.get("hostURL").toString();
+		
 		ArrayList<HashMap> news = (ArrayList<HashMap>) regionItem.get("news");	
 	%>
 	
-	<div class="section" style="margin:10px;">
+	<div class="section">
 		<div id="menu_category">
 			<div class="title">
 				<!-- span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;"><a href="www.naver.com">홈페이지 이동</a></span-->
@@ -115,7 +138,7 @@ a{
 			</div>
 		</div>
 		
-		<div style="padding:5px;">
+		<div>
 				<ul style="list-style:none;padding:0px;">
 <%
 	for ( int j = 0; j < news.size(); j++ ) {
@@ -123,13 +146,18 @@ a{
 		HashMap<String,String> hash = news.get(j);
 		String link = hash.get("link");
 %>
-		<li><a href="javascript:void(0)" onclick="openURL('<%= hash.get("title") %>','<%= link %>');"><%= hash.get("title") %></li>		
+					<li><a href="javascript:void(0)" onclick="openURL('<%= hash.get("title") %>','<%= link %>');"><%= hash.get("title") %></a></li>		
 <%
 	}
 %>
 				</ul>
-			</div>
-			
+		</div>
+		
+		<% if ( !Util.isEmptyString( hostURL ) ) { %>
+		<div style="text-align:center; width:100%;font-weight:bold;margin-bottom:10px;margin-top:10px;">
+			<a href="javascript:void(0)" onclick="goHostURL('<%= hostURL %>');" class="hostURL"><%= regionItem.get("regionName") %> 바로가기</a>
+		</div>	
+		<% } %>
 	</div>
 	
 	<% } %>

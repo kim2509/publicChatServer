@@ -29,8 +29,9 @@
 	 </insert>
  
  	<select id="getFavoriteRegionByUser" parameterType="String" resultType="java.util.HashMap">
-		select r.* from user_favorite_region ur
+		select r.*, sm.hostURL from user_favorite_region ur
 			left outer join region r on ur.regionNo=r.regionNo
+			left outer join scraping_master sm on sm.regionNo = ur.regionNo
 		where ur.userID=#{value}
 		order by priority
 	</select>
@@ -56,5 +57,6 @@
 	<select id="getNewsByRegion" parameterType="String" resultType="java.util.HashMap">
 		select * from news
 		where regionNo = #{value}
+		and length(title) > 1
 	</select>
 </mapper>

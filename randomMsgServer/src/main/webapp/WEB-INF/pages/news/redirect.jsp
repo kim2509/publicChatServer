@@ -4,6 +4,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+	String isApp = request.getParameter("isApp");
+
 	String returnURL = request.getParameter("returnURL");
 	returnURL = URLDecoder.decode(returnURL);
 %>
@@ -20,7 +22,18 @@
 	<script language="javascript">
 	
 	jQuery(document).ready(function(){
-		document.location.href='<%= returnURL %>';
+		
+		if ('<%= isApp %>' == 'Y' )
+		{
+			if ( Android && Android != null && typeof Android != 'undefined')
+			{
+				return Android.finishActivity('BROADCAST_REFRESH_NEWS');
+			}
+		}
+		else
+		{
+			document.location.href='<%= returnURL %>';	
+		}
 	});
 	
 	
