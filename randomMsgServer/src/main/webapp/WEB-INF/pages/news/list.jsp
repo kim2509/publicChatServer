@@ -6,9 +6,8 @@
 <%
 	String isApp = request.getParameter("isApp");
 
-	ArrayList<HashMap> items = (ArrayList<HashMap>) request.getAttribute("items");
 	ArrayList<HashMap> newsList = (ArrayList<HashMap>) request.getAttribute("newsList");
-	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
+
 	String userID = request.getParameter("userID");
 	String favoriteRegions = request.getAttribute("favoriteRegions").toString();
 	if ( Util.isEmptyString(favoriteRegions) )

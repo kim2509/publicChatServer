@@ -387,12 +387,12 @@
 			<div class='desc' >
 				<div id='name' style='margin-left:5px;margin-top:5px;'>{{userName}}</div>
 
-				<div style='margin-top:5px;'>
+				<!--div style='margin-top:5px;'>
 					<a href="javascript:void(0)" onclick="requestFriend( this, '{{userID}}');" 
 						class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-shadow ui-mini" data-rel="dialog">메세지</a>
 					<a href="javascript:void(0)" onclick="askLocation( this, '{{userID}}');" 
 						class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-shadow ui-mini" data-rel="dialog">위치물어보기</a>
-				</div>
+				</div-->
 				
 			</div>
 		</dd>

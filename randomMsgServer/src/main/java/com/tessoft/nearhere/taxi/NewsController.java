@@ -24,23 +24,13 @@ import com.dy.common.Util;
 @Controller
 public class NewsController extends BaseController{
 
-	@SuppressWarnings({ "unused", "rawtypes" })
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
 	@RequestMapping( value ="/news/list.do")
 	public ModelAndView list ( HttpServletRequest request, HttpServletResponse response , 
 			String userID, ModelMap model ) throws IOException
 	{
-		ArrayList items = new ArrayList();
-		ArrayList bigCities = new ArrayList();
 		try
 		{
-			bigCities = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.news.getBigCities");
-			
-//			items = getSeoulCityNews();
-//			items.addAll( getGangnamGuNews() );
-//			items.addAll( getGwanakNews() );
-//			items.addAll( getGwangjinGuNews() );
-//			items.addAll( getGeumcheonGuNews() );
-			
 			List list = (List) sqlSession.selectList("com.tessoft.nearhere.news.getFavoriteRegionByUser", userID );
 			String favoriteRegions = "";
 			
@@ -57,18 +47,28 @@ public class NewsController extends BaseController{
 				if ( favoriteRegions.endsWith(",") )
 					favoriteRegions = favoriteRegions.substring(0, favoriteRegions.length() - 1 );
 			}
+			else
+			{
+				HashMap region = new HashMap();
+				region.put("regionNo", "40");
+				region.put("regionName", "서울");
+				region.put("news", sqlSession.selectList("com.tessoft.nearhere.news.getNewsByRegion", "40" ));
+				list.add(region);
+				
+				region = new HashMap();
+				region.put("regionNo", "18");
+				region.put("regionName", "경기도");
+				region.put("news", sqlSession.selectList("com.tessoft.nearhere.news.getNewsByRegion", "18" ));
+				list.add(region);
+			}
 			
 			request.setAttribute("newsList", list);
-			
 			request.setAttribute("favoriteRegions", favoriteRegions);
 		}
 		catch( Exception ex )
 		{
-			
+			logger.error( ex );
 		}
-		
-		model.addAttribute("cities", bigCities );
-//		model.addAttribute("items", items );
 		
 		return new ModelAndView("news/list", model);
 	}
@@ -119,7 +119,7 @@ public class NewsController extends BaseController{
 		}
 		catch( Exception ex )
 		{
-			
+			logger.error( ex );
 		}
 		
 		model.addAttribute("cities", bigCities );
@@ -151,15 +151,19 @@ public class NewsController extends BaseController{
 				}
 			}
 			
-			if ( !Util.isEmptyString(userID) && ar != null && ar.size() > 0 )
+			if ( !Util.isEmptyString(userID) )
 			{
 				sqlSession.delete("com.tessoft.nearhere.news.deleteRegionByUser", userID );
-				int result = sqlSession.insert("com.tessoft.nearhere.news.insertFavoriteRegion", ar );	
+				
+				if ( ar != null && ar.size() > 0 )
+				{
+					int result = sqlSession.insert("com.tessoft.nearhere.news.insertFavoriteRegion", ar );	
+				}
 			}
 		}
 		catch( Exception ex )
 		{
-			
+			logger.error( ex );
 		}
 		
 		

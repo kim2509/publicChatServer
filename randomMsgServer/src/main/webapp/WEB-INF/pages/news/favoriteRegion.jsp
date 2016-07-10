@@ -119,6 +119,7 @@ a {
 					selectedRegion += $(this).attr('regionName') + ',';
 				});
 				
+				// 콤마로 끝나면 콤마 제거
 				if ( selectedRegion.match(/,$/))
 					selectedRegion = selectedRegion.substring(0, selectedRegion.length -1 );
 				
