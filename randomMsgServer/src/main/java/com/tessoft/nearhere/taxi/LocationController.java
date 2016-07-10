@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,15 +13,22 @@ import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.User;
 import com.nearhere.domain.UserLocation;
+
+import common.CarPoolPostBiz;
+import common.MessageBiz;
+import common.UserBiz;
 
 @Controller
 public class LocationController extends BaseController{
@@ -179,6 +187,105 @@ public class LocationController extends BaseController{
 					}
 				}	
 			}
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/location/history.do")
+	public ModelAndView history ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model )
+	{
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("location/locationHistory");
+		
+		try
+		{
+			if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
+
+			List<HashMap> locationHistory = sqlSession.selectList("com.tessoft.nearhere.location.getLocationHistory", userID );
+			
+			mv.addObject("locationHistory", locationHistory );
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		return mv;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/location/askLocation.do")
+	public @ResponseBody APIResponse askLocation ( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		HashMap responseData = new HashMap();
+		
+		try
+		{
+			HashMap requestInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			if ( Util.isEmptyString(requestInfo.get("userID")) || Util.isEmptyString(requestInfo.get("toUserID")) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("요청이 올바르지 않습니다.\r\n다시 시도해 주십시오.");
+				return response;
+			}
+			
+			int result = sqlSession.insert("com.tessoft.nearhere.location.askLocation", requestInfo );
+			
+			User user = UserBiz.getInstance(sqlSession).selectUser( requestInfo.get("toUserID").toString(), false );
+			MessageBiz.getInstance(sqlSession).sendAskLocationRequest( user.getRegID(), 
+					user.getUserName() + "님이 현재위치를 물어봅니다.", user.getUserID(), user.getUserName(), requestInfo.get("locationID").toString() );
+			
+			responseData.put("locationID", requestInfo.get("locationID").toString() );
+			responseData.put("dbResult", result );
+			
+			response.setData( responseData );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg(ex.getMessage());
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/location/respondLocatinRequest.do")
+	public @ResponseBody APIResponse respondLocatinRequest ( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		HashMap responseData = new HashMap();
+		
+		try
+		{
+			HashMap requestInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyString(requestInfo.get("userID")) || Util.isEmptyString(requestInfo.get("userID2")) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("요청이 올바르지 않습니다.\r\n다시 시도해 주십시오.");
+				return response;
+			}
+
+			int result = sqlSession.update("com.tessoft.nearhere.location.respondLocatinRequest", requestInfo );
+			
+			User user = UserBiz.getInstance(sqlSession).selectUser( requestInfo.get("toUserID").toString(), false );
+			MessageBiz.getInstance(sqlSession).sendAskLocationRequest( user.getRegID(), 
+					user.getUserName() + "님의 위치가 도착했습니다.", user.getUserID(), requestInfo.get("toUserID").toString(), requestInfo.get("locationID").toString() );
+			
+			responseData.put("dbResult", result );
+			
+			response.setData( responseData );
 		}
 		catch( Exception ex )
 		{

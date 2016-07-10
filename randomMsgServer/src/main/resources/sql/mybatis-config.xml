@@ -15,5 +15,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="sql-nearhere-friend.xml"/>
 		<mapper resource="sql-nearhere-user.xml"/>
 		<mapper resource="sql-nearhere-post.xml"/>
+		<mapper resource="sql-nearhere-news.xml"/>
 	</mappers>
 </configuration>

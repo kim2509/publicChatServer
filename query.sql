@@ -13,3 +13,25 @@ COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 AUTO_INCREMENT=2
 ;
+
+
+CREATE TABLE `news` (
+	`regionNo` INT(11) NULL DEFAULT NULL,
+	`title` VARCHAR(300) NULL DEFAULT NULL,
+	`link` VARCHAR(300) NULL DEFAULT NULL,
+	`createdDate` DATETIME NULL DEFAULT NULL
+)
+ENGINE=InnoDB
+;
+
+
+CREATE TABLE `user_favorite_region` (
+	`userID` VARCHAR(20) NOT NULL,
+	`regionNo` INT(11) NOT NULL,
+	`createdDate` DATETIME NOT NULL,
+	PRIMARY KEY (`userID`, `regionNo`),
+	INDEX `createdDate` (`createdDate`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;

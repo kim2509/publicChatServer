@@ -33,4 +33,41 @@
 		and locationName='현재위치'
 	</select>
 	
+	<!-- 위치내역조회 -->
+	<select id="getLocationHistory" parameterType="String" resultType="java.util.HashMap">
+		select * from (
+			select l.toUserID as 'userID', u.userName, u.profileImageURL, 'Y' as senderYN, l.status
+				, l.autoResponseYN, l.autoExpiredDate, l.createdDate, l.updatedDate, l.deletedDate 
+			from location_history l
+				left outer join user u on l.toUserID = u.userID and u.isDeleted is null
+			where l.userID = #{value}
+			union
+			select l.userID, u.userName, u.profileImageURL, 'N' as senderYN, l.status
+				, l.autoResponseYN, l.autoExpiredDate, l.createdDate, l.updatedDate, l.deletedDate 
+			from location_history l
+				left outer join user u on l.userID = u.userID and u.isDeleted is null
+			where l.toUserID = #{value}
+		) A
+		where deletedDate is null
+		order by updatedDate, createdDate
+	</select>
+	
+	<!-- 위치 물어보기 -->
+	<insert id="askLocation" parameterType="java.util.HashMap"
+		useGeneratedKeys="true" keyProperty="locationID" keyColumn="locationID">
+		insert into location_history( userID, toUserID, status, createdDate)
+		values(#{userID}, #{toUserID}, 0, NOW() );
+		<selectKey keyProperty="locationID" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<!-- 위치 대답하기 -->
+	<update id="respondLocatinRequest" parameterType="java.util.HashMap">
+		update location_history
+		set status=1, latitude=#{latitude}, longitude=#{longitude}, address=#{address}
+		, autoResponseYN=#{autoResponseYN}, autoExpiredDate=#{autoExpiredDate}
+		where locationID=#{locationID}
+	</update>
+	
 </mapper>
