@@ -105,4 +105,9 @@
 		]]>
 	</select>
 	
+	<update id="updateUserAppVersion" parameterType="java.util.HashMap">
+		update user
+		set appVersion=#{AppVersion}
+		where userID=#{userID}
+	</update>
 </mapper>

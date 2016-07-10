@@ -7,15 +7,20 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dy.common.Constants;
 import com.dy.common.Util;
+import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
+import com.nearhere.domain.UserLocation;
 
 import common.CarPoolPostBiz;
 import common.UserBiz;
@@ -87,5 +92,24 @@ public class UserController extends BaseController{
 		mv.addObject("friendList", userBiz.getFriendList(userID, true ) );
 		
 		return mv;
+	}
+	
+	@RequestMapping( value ="/user/updateUserInfo.do")
+	public @ResponseBody APIResponse updateUserInfo( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			sqlSession.update("com.tessoft.nearhere.user.updateUserAppVersion", requestHash);
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return response;
 	}
 }
