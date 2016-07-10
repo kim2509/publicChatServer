@@ -142,7 +142,7 @@ public class ScheduledTasks {
 	}
 
 	// 고객 현재위치 읽어옴 매일 오전 6 오후 8시 정각에 실행
-	@Scheduled(cron="0 0 6,20 * * ?") // 
+	@Scheduled(cron="0 0 6,20 * * ?") //
 	public void updateAllUsersCurrentLocation() {
 
 		try
@@ -156,7 +156,7 @@ public class ScheduledTasks {
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 
-				sendPushMessage(receiver, "locationUpdate", "합승 등록 이벤트를 진행합니다!!!", "", true );
+				sendPushMessage(receiver, "locationUpdate", "고객상태 업데이트", "", true );
 			}			
 		}
 		catch( Exception ex )

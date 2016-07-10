@@ -536,29 +536,36 @@ public class NewsBiz extends CommonBiz{
 	{
 		ArrayList<HashMap> items = null;
 		
-		// titleRule 이 없을때 공백으로
-		if ( titleRules == null || titleRules.length < homeURL.length )
-			titleRules = new String[homeURL.length];
-		
-		for ( int i = 0; i < homeURL.length; i++ )
+		try
 		{
-			Document doc = Jsoup.connect( homeURL[i] ).timeout(5000).get();
+			// titleRule 이 없을때 공백으로
+			if ( titleRules == null || titleRules.length < homeURL.length )
+				titleRules = new String[homeURL.length];
 			
-			for ( int j = 0; j < scrapingRule.length; j++ )
+			for ( int i = 0; i < homeURL.length; i++ )
 			{
-				Elements newsHeadlines = doc.select( scrapingRule[j] );
+				Document doc = Jsoup.connect( homeURL[i] ).timeout(5000).get();
 				
-				if ( items == null )
-					items = getHashMapList(newsHeadlines, hostURL, subDirs[i], regionNo, bScriptHTMLTitle, titleRules[i] );
-				else
-					items.addAll( getHashMapList(newsHeadlines, hostURL, subDirs[i], regionNo, bScriptHTMLTitle, titleRules[i] ) );
+				for ( int j = 0; j < scrapingRule.length; j++ )
+				{
+					Elements newsHeadlines = doc.select( scrapingRule[j] );
+					
+					if ( items == null )
+						items = getHashMapList(newsHeadlines, hostURL, subDirs[i], regionNo, bScriptHTMLTitle, titleRules[i] );
+					else
+						items.addAll( getHashMapList(newsHeadlines, hostURL, subDirs[i], regionNo, bScriptHTMLTitle, titleRules[i] ) );
+				}
 			}
+			
+			if ( items != null && items.size() > 0 )
+			{
+				sqlSession.delete("com.tessoft.nearhere.news.deleteNewsByRegion", regionNo );
+				int result = sqlSession.insert("com.tessoft.nearhere.news.insertNews", items );
+			}	
 		}
-		
-		if ( items != null && items.size() > 0 )
+		catch( Exception ex )
 		{
-			sqlSession.delete("com.tessoft.nearhere.news.deleteNewsByRegion", regionNo );
-			int result = sqlSession.insert("com.tessoft.nearhere.news.insertNews", items );
+			logger.error(ex);
 		}
 		
 		return items;
