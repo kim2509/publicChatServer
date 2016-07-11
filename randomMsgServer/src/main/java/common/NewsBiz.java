@@ -161,7 +161,7 @@ public class NewsBiz extends CommonBiz{
 		
 		logger.info("서대문구청");
 		// 서대문구 추가		
-		getHashMapListWithTitleRule("http://m.sdm.go.kr/", "http://m.sdm.go.kr/", "37", ".innerdiv li a", ".ml_10" );
+		getHashMapListWithTitleRule("http://m.sdm.go.kr/", "http://m.sdm.go.kr/", "36", ".innerdiv li a", ".ml_10" );
 		
 		// 양천구 추가 인증절차가 있어서 보류		
 		//getSimpleScrapingItems("http://m.yangcheon.go.kr/", "http://m.yangcheon.go.kr/", ".view_board li a", "13", false );
@@ -184,7 +184,7 @@ public class NewsBiz extends CommonBiz{
 		logger.info("중랑구청");
 		// 중랑구청 추가
 		getSimpleScrapingItems("http://m.jungnang.go.kr/mobile/main.do", "http://m.jungnang.go.kr/", 
-				new String[]{".notice-tab li a"}, "35", true, null );
+				new String[]{".notice-tab li a"}, "37", true, null );
 		
 		logger.info("경기도청");
 		// 경기도 뉴스포털 추가
