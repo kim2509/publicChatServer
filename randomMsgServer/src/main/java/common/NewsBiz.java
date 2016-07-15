@@ -288,8 +288,211 @@ public class NewsBiz extends CommonBiz{
 		hostList.add(host);
 		getSimpleScrapingItems( hostList, "31" );
 		*/
+		
+		logger.info("창원시");
+		// 창원시
+		scrapChangwon();
+		
+		// 고양시
+		logger.info("고양시");
+		scrapGoyang();
+		
+		// 성남시
+		logger.info("성남시");
+		scrapSeongnam();
+		
+		// 용인시
+		logger.info("용인시");
+		scrapYongin();
+		
+		// 부천시
+		logger.info("부천시");
+		scrapBucheon();
+		
+		// 청주시
+		logger.info("청주시");
+		scrapCheongju();
+		
+		// 안산시
+		logger.info("안산시");
+		scrapAnsan();
+		
+		// 전주시
+		logger.info("전주시");
+		scrapJeonju();
+		
+		// 남양주시는 함수로 돼 있음.
+		
+		// 안양시
+		logger.info("안양시");
+		scrapAnYang();
+		
+		// 천안시는 복잡함.
+		
+		// 화성시는 javascript 에서 document.write 로 돼 있음.
+		
+		// 김해시
+		logger.info("김해시");
+		scrapGimhae();
+		
+		// 포항시(두번째 url 은 이상함)
+		logger.info("포항시");
+		scrapPohang();
+	}
+	
+	private void scrapPohang() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.ipohang.org/");
+		HomeURL homeURL = new HomeURL("http://m.ipohang.org/main.do", "");
+		homeURL.addScrapingRule(new ScrapingRule(".notice dd a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		homeURL = new HomeURL("http://m.ipohang.org/bbs/selectBbsList.do?board=focus&ibCategory=&searchWrd=&mId=4120", "");
+		homeURL.addScrapingRule(new ScrapingRule("#thelist .ui-btn-text a", false, ".listTit"));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "52" );
+	}
+	
+	private void scrapGimhae() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.gimhae.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.gimhae.go.kr/", "");
+		homeURL.addScrapingRule(new ScrapingRule("#bbs1 li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "51" );
+	}
+	
+	private void scrapAnYang() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.anyang.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.anyang.go.kr/m/main.do", "");
+		homeURL.addScrapingRule(new ScrapingRule(".news li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "50" );
+	}
+	
+	private void scrapJeonju() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://www.jeonju.go.kr/");
+		HomeURL homeURL = new HomeURL("http://www.jeonju.go.kr/index.9is", "");
+		homeURL.addScrapingRule(new ScrapingRule(".board_tab li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "49" );
+	}
+	
+	private void scrapAnsan() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.iansan.net/");
+		HomeURL homeURL = new HomeURL("http://m.iansan.net/", "");
+		homeURL.addScrapingRule(new ScrapingRule(".listWrap li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "48" );
+	}
+	
+	private void scrapCheongju() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.cheongju.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.cheongju.go.kr/bbs/selectBoardDataList.do?bbsNo=40&mId=1310", "");
+		homeURL.addScrapingRule(new ScrapingRule("#thelist li a", false, "span strong"));
+		host.addHomeURL(homeURL);
+		
+		homeURL = new HomeURL("http://m.cheongju.go.kr/job/list.do?mId=4810", "");
+		homeURL.addScrapingRule(new ScrapingRule("#thelist li a", false, "span"));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "47" );
+	}
+	
+	private void scrapBucheon() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.bucheon.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.bucheon.go.kr/site/main/index200_sub1", "");
+		homeURL.addScrapingRule(new ScrapingRule(".news_list1 li a", true, ""));
+		homeURL.addScrapingRule(new ScrapingRule(".img_txt1 li a", false, ".txt"));
+		homeURL.addScrapingRule(new ScrapingRule(".news_list2 li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		homeURL = new HomeURL("http://m.bucheon.go.kr/site/main/index200_sub2", "");
+		homeURL.addScrapingRule(new ScrapingRule(".news_list3 li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		homeURL = new HomeURL("http://m.bucheon.go.kr/site/main/index200_sub3", "");
+		homeURL.addScrapingRule(new ScrapingRule(".news_list3 li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		homeURL = new HomeURL("http://m.bucheon.go.kr/site/main/index200_sub4", "");
+		homeURL.addScrapingRule(new ScrapingRule(".news_list2 li a", true, ""));
+		host.addHomeURL(homeURL);
+		
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "46" );
+	}
+	
+	private void scrapYongin() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("https://m.yongin.go.kr/");
+		HomeURL homeURL = new HomeURL("https://m.yongin.go.kr/m/index.do", "");
+		homeURL.addScrapingRule(new ScrapingRule(".mainTab2 .tab li a", true, ""));
+		host.addHomeURL(homeURL);
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "45" );
+	}
+	
+	private void scrapSeongnam() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.seongnam.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.seongnam.go.kr/main.do", "");
+		homeURL.addScrapingRule(new ScrapingRule(".mainNews li a", true, ""));
+		host.addHomeURL(homeURL);
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "44" );
+	}
+	
+	private void scrapGoyang() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.goyang.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.goyang.go.kr/m/sm2_1.jsp", "");
+		homeURL.addScrapingRule(new ScrapingRule(".list li a", true, ""));
+		host.addHomeURL(homeURL);
+		homeURL = new HomeURL("http://m.goyang.go.kr/m/sm4_1.jsp", "");
+		homeURL.addScrapingRule(new ScrapingRule(".list li a", true, ""));
+		host.addHomeURL(homeURL);
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "43" );
 	}
 
+	private void scrapChangwon() throws Exception
+	{
+		ArrayList<Host> hostList = new ArrayList<Host>();
+		Host host = new Host("http://m.changwon.go.kr/");
+		HomeURL homeURL = new HomeURL("http://m.changwon.go.kr/", "");
+		homeURL.addScrapingRule(new ScrapingRule(".notice li a", false, "b"));
+		host.addHomeURL(homeURL);
+		hostList.add(host);
+		getSimpleScrapingItems( hostList, "42" );
+	}
+	
 	private void scrapJeonnam() throws Exception {
 		ArrayList<Host> hostList = new ArrayList<NewsBiz.Host>();
 		Host host = new Host("http://www.jeonnam.go.kr/");
