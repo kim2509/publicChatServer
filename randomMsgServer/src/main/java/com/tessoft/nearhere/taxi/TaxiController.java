@@ -504,7 +504,8 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "[updateUserLocation]userID:" + location.getUser().getUserID() + " locationName:" + location.getLocationName() );
+			logger.info( "[updateUserLocation]userID:" + location.getUser().getUserID() + " locationName:" + location.getLocationName() + 
+					" lat:" + location.getLatitude() + " lon:" + location.getLongitude());
 		}
 		catch( Exception ex )
 		{
