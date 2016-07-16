@@ -504,7 +504,8 @@ public class TaxiController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "[updateUserLocation]userID:" + location.getUser().getUserID() + " locationName:" + location.getLocationName() );
+			logger.info( "[updateUserLocation]userID:" + location.getUser().getUserID() + " locationName:" + location.getLocationName() + 
+					" lat:" + location.getLatitude() + " lon:" + location.getLongitude());
 		}
 		catch( Exception ex )
 		{
@@ -1158,10 +1159,16 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
+			String userID = "";
+			if ( hash != null && hash.get("userID") != null )
+				userID = hash.get("userID").toString();
+			
+			String postID = "";
+			if ( hash != null && hash.get("postID") != null )
+				postID = hash.get("postID").toString();
+			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", hash);
 			
 			if ( post.getUser() == null )
@@ -1223,7 +1230,7 @@ public class TaxiController {
 				}
 			}
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[getPostDetail.do] userID:" + userID + " postID:" + postID + " title:" + post.getMessage() );
 		}
 		catch( Exception ex )
 		{
