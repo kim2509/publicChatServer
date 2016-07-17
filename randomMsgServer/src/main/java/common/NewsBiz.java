@@ -353,7 +353,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "52" );
+		getSimpleScrapingItems( hostList, "57" );
 	}
 	
 	private void scrapGimhae() throws Exception
@@ -365,7 +365,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "51" );
+		getSimpleScrapingItems( hostList, "56" );
 	}
 	
 	private void scrapAnYang() throws Exception
@@ -377,7 +377,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "50" );
+		getSimpleScrapingItems( hostList, "55" );
 	}
 	
 	private void scrapJeonju() throws Exception
@@ -389,7 +389,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "49" );
+		getSimpleScrapingItems( hostList, "54" );
 	}
 	
 	private void scrapAnsan() throws Exception
@@ -401,7 +401,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "48" );
+		getSimpleScrapingItems( hostList, "53" );
 	}
 	
 	private void scrapCheongju() throws Exception
@@ -417,7 +417,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "47" );
+		getSimpleScrapingItems( hostList, "52" );
 	}
 	
 	private void scrapBucheon() throws Exception
@@ -443,7 +443,7 @@ public class NewsBiz extends CommonBiz{
 		host.addHomeURL(homeURL);
 		
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "46" );
+		getSimpleScrapingItems( hostList, "51" );
 	}
 	
 	private void scrapYongin() throws Exception
@@ -454,7 +454,7 @@ public class NewsBiz extends CommonBiz{
 		homeURL.addScrapingRule(new ScrapingRule(".mainTab2 .tab li a", true, ""));
 		host.addHomeURL(homeURL);
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "45" );
+		getSimpleScrapingItems( hostList, "50" );
 	}
 	
 	private void scrapSeongnam() throws Exception
@@ -465,7 +465,7 @@ public class NewsBiz extends CommonBiz{
 		homeURL.addScrapingRule(new ScrapingRule(".mainNews li a", true, ""));
 		host.addHomeURL(homeURL);
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "44" );
+		getSimpleScrapingItems( hostList, "49" );
 	}
 	
 	private void scrapGoyang() throws Exception
@@ -479,7 +479,7 @@ public class NewsBiz extends CommonBiz{
 		homeURL.addScrapingRule(new ScrapingRule(".list li a", true, ""));
 		host.addHomeURL(homeURL);
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "43" );
+		getSimpleScrapingItems( hostList, "48" );
 	}
 
 	private void scrapChangwon() throws Exception
@@ -490,7 +490,7 @@ public class NewsBiz extends CommonBiz{
 		homeURL.addScrapingRule(new ScrapingRule(".notice li a", false, "b"));
 		host.addHomeURL(homeURL);
 		hostList.add(host);
-		getSimpleScrapingItems( hostList, "42" );
+		getSimpleScrapingItems( hostList, "47" );
 	}
 	
 	private void scrapJeonnam() throws Exception {
