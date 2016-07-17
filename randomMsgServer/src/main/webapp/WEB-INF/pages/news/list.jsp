@@ -143,9 +143,11 @@ a{
 	for ( int j = 0; j < news.size(); j++ ) {
 		
 		HashMap<String,String> hash = news.get(j);
+		String title = hash.get("title");
+		title = title.replaceAll("\\\"", "");
 		String link = hash.get("link");
 %>
-					<li><a href="javascript:void(0)" onclick="openURL('<%= hash.get("title") %>','<%= link %>');"><%= hash.get("title") %></a></li>		
+					<li><a href="javascript:void(0)" onclick="openURL('상세','<%= link %>');"><%= hash.get("title") %></a></li>		
 <%
 	}
 %>
