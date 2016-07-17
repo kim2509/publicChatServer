@@ -472,10 +472,10 @@ public class NewsBiz extends CommonBiz{
 	{
 		ArrayList<Host> hostList = new ArrayList<Host>();
 		Host host = new Host("http://m.goyang.go.kr/");
-		HomeURL homeURL = new HomeURL("http://m.goyang.go.kr/m/sm2_1.jsp", "");
+		HomeURL homeURL = new HomeURL("http://m.goyang.go.kr/m/sm2_1.jsp", "m/");
 		homeURL.addScrapingRule(new ScrapingRule(".list li a", true, ""));
 		host.addHomeURL(homeURL);
-		homeURL = new HomeURL("http://m.goyang.go.kr/m/sm4_1.jsp", "");
+		homeURL = new HomeURL("http://m.goyang.go.kr/m/sm4_1.jsp", "m/");
 		homeURL.addScrapingRule(new ScrapingRule(".list li a", true, ""));
 		host.addHomeURL(homeURL);
 		hostList.add(host);
@@ -879,6 +879,7 @@ public class NewsBiz extends CommonBiz{
 				link = host + subDirs + link;
 			
 			link.replaceAll("http://www.siminilbo.co.kr", "http://m.siminilbo.co.kr");
+			link.replaceAll("http://www.newsbucheon.net", "http://m.newsbucheon.net/");
 			
 			HashMap<String, String> hash = new HashMap<String, String>();
 			hash.put("title", title);
