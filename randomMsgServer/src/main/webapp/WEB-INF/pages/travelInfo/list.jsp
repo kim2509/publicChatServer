@@ -6,14 +6,6 @@
 <%
 	String isApp = request.getParameter("isApp");
 
-	ArrayList<HashMap> newsList = (ArrayList<HashMap>) request.getAttribute("newsList");
-
-	String userID = request.getParameter("userID");
-	String favoriteRegions = request.getAttribute("favoriteRegions").toString();
-	if ( Util.isEmptyString(favoriteRegions) )
-	{
-		favoriteRegions = "설정된 지역이 없습니다.";
-	}
 %>
 
 <html>

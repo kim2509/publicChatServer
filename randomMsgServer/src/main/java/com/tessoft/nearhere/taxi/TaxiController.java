@@ -69,14 +69,12 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			HashMap appInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectAppInfo", hash);
 
 			response.setData(appInfo);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[appInfo.do]" );
 		}
 		catch( Exception ex )
 		{
@@ -558,8 +556,6 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
@@ -591,7 +587,7 @@ public class TaxiController {
 			
 			response.setData2(addInfo);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[login_bg.do]:" + user.getUserID() );
 		}
 		catch( Exception ex )
 		{
@@ -611,8 +607,6 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap loginInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
 			if ( !loginInfo.containsKey("hash") && !"".equals( loginInfo.get("hash") ) )
@@ -681,7 +675,7 @@ public class TaxiController {
 			user.setProfilePoint(profilePoint);
 			response.setData(user);
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[login_bg.do2]:" + user.getUserID() );
 		}
 		catch( Exception ex )
 		{
@@ -1672,8 +1666,6 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 
 			int result = -1;
@@ -1691,7 +1683,7 @@ public class TaxiController {
 
 			response.setData(result + "|" + result2);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[updateUserRegID.do]: " + user.getUserID() + " regID:" + user.getRegID() );
 		}
 		catch( Exception ex )
 		{
@@ -1969,8 +1961,6 @@ public class TaxiController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
 			HashMap countInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getUnreadCount", info );
@@ -1986,14 +1976,11 @@ public class TaxiController {
 
 			if ( info.containsKey("UUID") )
 			{
-				logger.info( "[" + logIdentifier + "] uuid is not null.");
 				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserSysInfo", info );
 				response.setData2( result );
 			}
-			else
-				logger.info( "[" + logIdentifier + "] uuid is null.");
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[getUnreadCount.do] " + info.get("userID") );
 		}
 		catch( Exception ex )
 		{
@@ -2115,8 +2102,11 @@ public class TaxiController {
 		APIResponse response = new APIResponse();
 		try
 		{
-			requestLogging(request, bodyString);
-
+			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			if ( info.containsKey("userID") )
+				logger.info( "[statistics.do]: " + info.get("userID"));
+			else
+				logger.info( "[statistics.do]: userID is null");
 		}
 		catch( Exception ex )
 		{
@@ -2247,8 +2237,6 @@ public class TaxiController {
 
 		try
 		{			
-			String logIdentifier = requestLogging(request, bodyString);
-
 			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 			
 			HashMap registerUserInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getUserAgreement", requestInfo);
@@ -2261,7 +2249,7 @@ public class TaxiController {
 			responseInfo.put("UserAgreed", userAgreed);
 			response.setData(responseInfo);
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[getMainInfo.do]: " + requestInfo.get("userID") );
 
 			return response;
 
@@ -2638,8 +2626,6 @@ public class TaxiController {
 
 		try
 		{			
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap additionalData = new HashMap();
 			
 			int pageSize = 5;
@@ -2663,7 +2649,7 @@ public class TaxiController {
 
 			response.setData( additionalData );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[getRecentPosts.do]: " + bodyString );
 
 			return response;
 

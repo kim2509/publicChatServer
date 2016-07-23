@@ -49,6 +49,7 @@ public class Util {
 		if ( str == null ) return true;
 		if ( "null".equals( str.toLowerCase() ) ) return true;
 		if ( "".equals(str.trim())) return true;
+		if (str.trim().length() == 0) return true;
 		return false;
 	}
 	
