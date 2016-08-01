@@ -5,7 +5,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-
+	String userID = request.getParameter("userID");
 %>
 
 <html>
@@ -97,64 +97,7 @@ a{
 <body>
 
 	<div id="wrapper">
-	
-	<form action="/nearhere/news/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
-	</form>
-	
-	<div class="section">
-		<div id="menu_category">
-			<div class="title">
-				<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
-				<span class="s_tit">관심지역</span>
-			</div>
-			<div style="padding-top:10px;padding-left:10px;padding-right:10px;"><%= favoriteRegions %></div>
-		</div>
-		
-	</div>
-	
-	<% for ( int i = 0; i < newsList.size(); i++ ) { 
-		
-		HashMap regionItem = newsList.get(i);
-		
-		String hostURL = Util.isEmptyString(regionItem.get("hostURL")) ? "" : regionItem.get("hostURL").toString();
-		
-		ArrayList<HashMap> news = (ArrayList<HashMap>) regionItem.get("news");	
-	%>
-	
-	<div class="section">
-		<div id="menu_category">
-			<div class="title">
-				<!-- span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;"><a href="www.naver.com">홈페이지 이동</a></span-->
-				<span class="s_tit"><%= regionItem.get("regionName") %></span>
-			</div>
-		</div>
-		
-		<div>
-				<ul style="list-style:none;padding:0px;">
-<%
-	for ( int j = 0; j < news.size(); j++ ) {
-		
-		HashMap<String,String> hash = news.get(j);
-		String title = hash.get("title");
-		title = title.replaceAll("\\\"", "");
-		String link = hash.get("link");
-%>
-					<li><a href="javascript:void(0)" onclick="openURL('상세','<%= link %>');"><%= hash.get("title") %></a></li>		
-<%
-	}
-%>
-				</ul>
-		</div>
-		
-		<% if ( !Util.isEmptyString( hostURL ) ) { %>
-		<div style="text-align:center; width:100%;font-weight:bold;margin-bottom:10px;margin-top:10px;">
-			<a href="javascript:void(0)" onclick="goHostURL('<%= hostURL %>');" class="hostURL"><%= regionItem.get("regionName") %> 바로가기</a>
-		</div>	
-		<% } %>
-	</div>
-	
-	<% } %>
-
+	fdsafdsfasddfs
 	
 	</div>
 
