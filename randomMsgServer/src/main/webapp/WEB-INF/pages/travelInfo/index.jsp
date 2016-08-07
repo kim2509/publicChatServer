@@ -20,6 +20,7 @@
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <style type="text/css">
 
@@ -56,6 +57,10 @@ a{
     margin: 10px;
 }
 
+dl, dd{
+	margin:0px;
+	padding:0px;
+}
 </style>
 
 	<script language="javascript">
@@ -65,9 +70,18 @@ a{
 	jQuery(document).ready(function(){
 		
 		$('#provinceList').change(function(){
-			getCityList($(this).val());
+			if ( $(this).val() != '' )
+				getCityList($(this).val());
 		});
 		
+		// 서울 선택
+		$('#provinceList').val('1');
+		getCityList( $('#provinceList').val() );
+		
+		$('#cityList').change(function(){
+			if ( $(this).val() != '' )
+				searchTravelInfo();
+		});
 	});
 
 	function getCityList( code )
@@ -91,6 +105,7 @@ a{
 					}
 
 					$('#cityList').empty();
+					$('#cityList').append( '<option value="">선택하세요</option>' );
 					
 					for ( var i = 0; i < result.data.length ; i++ )
 					{
@@ -101,6 +116,8 @@ a{
 						
 						$('#cityList').append( optionElement );					
 					}
+					
+					searchTravelInfo();
 					
 				} catch (ex) {
 					alert(ex.message);
@@ -117,13 +134,22 @@ a{
 		});
 	}
 	
+	var pageNo = 1;
+	var pageSize = 20;
+	var totalItemCount = 0;
+	
 	function searchTravelInfo()
 	{
 		var areaCode = $('#provinceList').val();
 		var cityCode = $('#cityList').val();
 		
-		alert( cityCode );
-		var param = {"areaCode": areaCode, "cityCode" : cityCode };
+		if ( areaCode == '' ) 
+		{
+			alert('지역을 선택하세요.');
+			return;
+		}
+		
+		var param = {"areaCode": areaCode, "cityCode" : cityCode , "pageNo": pageNo };
 		
 		jQuery.ajax({
 			type : "POST",
@@ -142,15 +168,16 @@ a{
 					}
 
 					$('#travelInfoDiv').empty();
-					
-					for ( var i = 0; i < result.data.length ; i++ )
-					{
-						var liElement = $('<li></li>');
 
-						liElement.html('<img src=\"' + result.data[i].firstimage + '\" width="200" height="200"/>');
-						
-						$('#travelInfoDiv').append( liElement );					
-					}
+					var source = $('#itemT').html();
+					var template = Handlebars.compile(source);
+					var html = template(result.data);
+					
+					totalItemCount = result.data.totalCount;
+					
+					$('#travelInfoDiv').html( html );
+					
+					displayPagingInfo();
 					
 				} catch (ex) {
 					alert(ex.message);
@@ -167,39 +194,94 @@ a{
 		});
 	}
 	
+	function openDetailView( contentTypeID, contentID )
+	{
+		var url = '<%= Constants.getServerURL() + "/travelInfo/detail.do" %>' + '?contentTypeID=' + contentTypeID + '&contentID=' + contentID ;
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('상세정보') + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = decodeURIComponent(url);
+	}
+	
+	var firstPage = 0;
+	var lastPage = 0;
+	var numOfPagesOnScreen = 5;
+	
+	function displayPagingInfo()
+	{
+		$('#pagingInfo').empty();
+		
+		if ( pageNo <= numOfPagesOnScreen )
+			firstPage = 1;
+		else
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen + (pageNo % numOfPagesOnScreen);
+		
+		lastPage = parseInt( totalItemCount / pageSize );
+		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
+			lastPage++;
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" style="padding:5px;">' + (firstPage + i) + '</a>');
+		
+		$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" style="padding:5px;">' + lastPage + '</a>');
+		
+	}
+	function goPage(num)
+	{
+		pageNo = num;
+		searchTravelInfo();
+	}
+	
 	</script>
 </head>
 <body>
 
-	<div id="wrapper">
-	
-	<br/>
-	지역
-	<select name="provinceList" id="provinceList">
+	<script id="itemT" type="text/x-handlebars-template">
+	<dl class="slide_lst">
+		{{#each items}}
+		<dd onclick="openDetailView('{{contenttypeid}}','{{contentid}}');" style="height:100px;">
+			<div class="thumbnail" style="float:left;">
+				<img src='{{firstimage2}}' width="80" height="80"/>
+			</div>
+			<div class='desc' style="margin-left:120px">
+				<strong class="tit">{{title}}</strong>
+				<div>조회수 : {{readcount}}</div>
+			</div>
+		</dd>
+		{{/each}}
+	</dl>
+</script>
 
-	<%	for ( int i = 0; i < provinces.size(); i++ ) {
-			HashMap province = provinces.get(i);
-	%>
-		<option value="<%= province.get("code") %>"><%= province.get("name") %></option>
-	<%	
-		}
-	%>
-	</select>
+	<div id="wrapper" style="padding-bottom:30px;">
 	
-	시군구
-	<select id="cityList">
-		<option>선택하세요</option>
-	</select>
+		<br/>
+		지역
+		<select name="provinceList" id="provinceList">
 	
-	<input type="button" value="조회" onclick="searchTravelInfo();" />
+			<option value=''>선택하세요</option>
+		<%	for ( int i = 0; i < provinces.size(); i++ ) {
+				HashMap province = provinces.get(i);
+		%>
+			<option value="<%= province.get("code") %>"><%= province.get("name") %></option>
+		<%	
+			}
+		%>
+		</select>
+		
+		시군구
+		<select id="cityList">
+			<option>선택하세요</option>
+		</select>
 	
-	<div>
+		<div id="travelInfoDiv" style="margin-top:10px;">
+			
+		</div>
 	
-		<ul id="travelInfoDiv">
-		</ul>
-	
-	</div>
-	
+		<div id="pagingInfo" style="text-align:center;">
+			
+			
+		</div>
 	</div>
 
 	

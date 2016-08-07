@@ -62,7 +62,11 @@ public class TravelInfoController extends BaseController{
 	{
 		try
 		{
-			ArrayList<HashMap> provinces = getRegionList( null );
+			HashMap result = callAPI("areaCode", 20, 10, 1, 1, null );
+			ArrayList<HashMap> provinces = null;
+					
+			if ( result != null && result.get("items") != null )
+				provinces = (ArrayList<HashMap>) result.get("items");
 			
 			request.setAttribute("provinces", provinces);
 		}
@@ -72,66 +76,6 @@ public class TravelInfoController extends BaseController{
 		}
 
 		return new ModelAndView("travelInfo/index", model);
-	}
-
-	private ArrayList<HashMap> getRegionList( String areaCode ) throws Exception {
-		
-		String apiName = "/rest/KorService/areaCode";
-		
-		String url = "http://api.visitkorea.or.kr/openapi/service";
-
-		url += apiName + "?ServiceKey=" + serverKey + "&numOfRows=20&pageSize=10&pageNo=1&startPage=1&MobileOS=ETC&MobileApp=공유자원포털";
-		
-		if ( !Util.isEmptyString(areaCode) )
-			url += "&areaCode=" + areaCode;
-
-		HttpClient client = HttpClientBuilder.create().build();
-		
-		HttpGet req = new HttpGet( url );
-
-		// add request header
-		HttpResponse res = client.execute(req);
-
-		BufferedReader rd = new BufferedReader(
-				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
-
-		StringBuffer result = new StringBuffer();
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
-		}
-
-		DocumentBuilderFactory factory =
-				DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		ByteArrayInputStream input =  new ByteArrayInputStream(
-				result.toString().getBytes("UTF-8"));
-		Document doc = builder.parse(input);
-
-		XPath xPath =  XPathFactory.newInstance().newXPath();
-			
-		String resultCode = xPath.compile("response/header/resultCode").evaluate(doc);
-		String resultMsg = xPath.compile("response/header/resultMsg").evaluate(doc);
-		String pageNo = xPath.compile("response/body/pageNo").evaluate(doc);
-		String numOfRows = xPath.compile("response/body/numOfRows").evaluate(doc);
-		String totalCount = xPath.compile("response/body/totalCount").evaluate(doc);
-		
-		//read a nodelist using xpath
-		NodeList nodeList = (NodeList) xPath.compile("/response/body/items/item").evaluate(doc, XPathConstants.NODESET);
-		
-		ArrayList<HashMap> provinces = new ArrayList<HashMap>();
-		
-		for ( int i = 0; i < nodeList.getLength(); i++ )
-		{
-			HashMap province = new HashMap();
-			String code = xPath.compile("code").evaluate(nodeList.item(i));
-			String name = xPath.compile("name").evaluate(nodeList.item(i));
-			province.put("code", code);
-			province.put("name", name);
-			
-			provinces.add(province);
-		}
-		return provinces;
 	}
 	
 	@RequestMapping( value ="/travelInfo/getCityList.do")
@@ -143,7 +87,14 @@ public class TravelInfoController extends BaseController{
 		{	
 			Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 			
-			ArrayList<HashMap> cityList = getRegionList( requestInfo.get("areaCode") );
+			HashMap params = new HashMap();
+			params.put("areaCode", requestInfo.get("areaCode"));
+			HashMap result = callAPI("areaCode", 20, 10, 1, 1, params );
+			ArrayList<HashMap> cityList = null;
+			
+			if ( result != null && result.get("items") != null )
+				cityList = (ArrayList<HashMap>) result.get("items");
+				
 			response.setData(cityList);
 			
 			return response;
@@ -165,69 +116,24 @@ public class TravelInfoController extends BaseController{
 		
 		Map<String, String> requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 		
-		String apiName = "/rest/KorService/areaBasedList";
+		HashMap params = new HashMap();
 		
-		String url = "http://api.visitkorea.or.kr/openapi/service";
-
-		url += apiName + "?ServiceKey=" + serverKey + "&numOfRows=10&pageSize=10&pageNo=1&startPage=1&arrange=P&listYN=Y&MobileOS=ETC&MobileApp=공유자원포털";
+		int pageNo = 1;
 		
-		if ( !Util.isEmptyString( requestInfo.get("areaCode") ) )
-			url += "&areaCode=" + requestInfo.get("areaCode");
-		if ( !Util.isEmptyString( requestInfo.get("cityCode") ) )
-			url += "&sigunguCode=" + requestInfo.get("cityCode");
-
-		HttpClient client = HttpClientBuilder.create().build();
+		if ( requestInfo.containsKey("areaCode") && !Util.isEmptyString(requestInfo.get("areaCode") ) )
+			params.put("areaCode", requestInfo.get("areaCode"));
+		if ( requestInfo.containsKey("cityCode") && !Util.isEmptyString(requestInfo.get("cityCode") ) )
+			params.put("sigunguCode", requestInfo.get("cityCode"));
+		if ( requestInfo.containsKey("pageNo") && !Util.isEmptyString(requestInfo.get("pageNo") ) )
+			pageNo = Integer.parseInt( requestInfo.get("pageNo") );
 		
-		HttpGet req = new HttpGet( url );
-
-		// add request header
-		HttpResponse res = client.execute(req);
-
-		BufferedReader rd = new BufferedReader(
-				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
-
-		StringBuffer result = new StringBuffer();
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
-		}
-
-		DocumentBuilderFactory factory =
-				DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		ByteArrayInputStream input =  new ByteArrayInputStream(
-				result.toString().getBytes("UTF-8"));
-		Document doc = builder.parse(input);
-
-		XPath xPath =  XPathFactory.newInstance().newXPath();
-			
-		String resultCode = xPath.compile("response/header/resultCode").evaluate(doc);
-		String resultMsg = xPath.compile("response/header/resultMsg").evaluate(doc);
-		String pageNo = xPath.compile("response/body/pageNo").evaluate(doc);
-		String numOfRows = xPath.compile("response/body/numOfRows").evaluate(doc);
-		String totalCount = xPath.compile("response/body/totalCount").evaluate(doc);
-		
-		//read a nodelist using xpath
-		NodeList nodeList = (NodeList) xPath.compile("/response/body/items/item").evaluate(doc, XPathConstants.NODESET);
-		
-		ArrayList<HashMap> travelInfo = new ArrayList<HashMap>();
-		
-		for ( int i = 0; i < nodeList.getLength(); i++ )
-		{
-			HashMap item = new HashMap();
-			String firstimage = xPath.compile("firstimage").evaluate(nodeList.item(i));
-			String title = xPath.compile("title").evaluate(nodeList.item(i));
-			item.put("firstimage", firstimage);
-			item.put("title", title);
-			
-			travelInfo.add(item);
-		}
+		params.put("arrange", "P");
+		HashMap travelInfo = callAPI("areaBasedList", 20, 10, pageNo , 1, params);
 		
 		response.setData(travelInfo);
 		
 		return response;
 	}
-	
 	
 	@SuppressWarnings({ "unused", "unused" })
 	@RequestMapping( value ="/travelInfo/detail.do")
@@ -242,10 +148,10 @@ public class TravelInfoController extends BaseController{
 				params.put("contentTypeId", contentTypeID);
 				params.put("contentId", contentID);
 				
-				HashMap detailIntro = callAPI( "detailIntro", params );
+				HashMap detailIntro = callAPI( "detailIntro", 999, 999, 1, 1, params );
 				model.addAttribute("detailIntro", detailIntro);
 				
-				HashMap detailImage = callAPI( "detailImage", params );
+				HashMap detailImage = callAPI( "detailImage", 999, 999, 1, 1, params );
 				model.addAttribute("detailImage", detailImage);
 				
 				params.put("defaultYN", "Y");
@@ -257,7 +163,7 @@ public class TravelInfoController extends BaseController{
 				params.put("mapinfoYN", "Y");
 				params.put("overviewYN", "Y");
 				params.put("transGuideYN", "Y");
-				HashMap detailCommon = callAPI( "detailCommon", params );
+				HashMap detailCommon = callAPI( "detailCommon", 999, 999, 1, 1, params );
 				model.addAttribute("detailCommon", detailCommon );
 			}
 			
@@ -270,16 +176,19 @@ public class TravelInfoController extends BaseController{
 		return new ModelAndView("travelInfo/detail");
 	}
 
-	private HashMap callAPI( String apiName, HashMap params ) throws Exception {
+	private HashMap callAPI( String apiName, int numOfRows, int pageSize, int pageNo, int startPage, HashMap params ) throws Exception {
 		String url = "http://api.visitkorea.or.kr/openapi/service";
 		String apiURL = "/rest/KorService/" + apiName;
-		url += apiURL + "?ServiceKey=" + serverKey + "&numOfRows=999&pageSize=999&pageNo=1&startPage=1&MobileOS=ETC";
+		url += apiURL + "?ServiceKey=" + serverKey + "&numOfRows=" + numOfRows + "&pageSize=" + pageSize + "&pageNo=" + pageNo + "&startPage=" + startPage + "&MobileOS=ETC";
 		
-		Iterator it = params.keySet().iterator();
-		while( it.hasNext() )
+		if ( params != null )
 		{
-			String key = it.next().toString();
-			url += "&" + key + "=" + params.get(key);	
+			Iterator it = params.keySet().iterator();
+			while( it.hasNext() )
+			{
+				String key = it.next().toString();
+				url += "&" + key + "=" + params.get(key);	
+			}	
 		}
 		
 		url += "&MobileApp=공유자원포털";
@@ -318,16 +227,16 @@ public class TravelInfoController extends BaseController{
 			
 		String resultCode = xPath.compile("response/header/resultCode").evaluate(doc);
 		String resultMsg = xPath.compile("response/header/resultMsg").evaluate(doc);
-		String pageNo = xPath.compile("response/body/pageNo").evaluate(doc);
-		String numOfRows = xPath.compile("response/body/numOfRows").evaluate(doc);
+		String sPageNo = xPath.compile("response/body/pageNo").evaluate(doc);
+		String sNumOfRows = xPath.compile("response/body/numOfRows").evaluate(doc);
 		String totalCount = xPath.compile("response/body/totalCount").evaluate(doc);
 		
 		HashMap result = new HashMap();
 		
 		result.put("resultCode", resultCode);
 		result.put("resultMsg", resultMsg);
-		result.put("pageNo", pageNo);
-		result.put("numOfRows", numOfRows);
+		result.put("pageNo", sPageNo);
+		result.put("numOfRows", sNumOfRows);
 		result.put("totalCount", totalCount);
 		
 		//read a nodelist using xpath

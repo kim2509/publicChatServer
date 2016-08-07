@@ -319,7 +319,8 @@ public class ScheduledTasks {
 	public void scrapNews() {
 		try
 		{
-			NewsBiz.getInstance(sqlSession).scrapNews();
+			if ( Constants.bReal )
+				NewsBiz.getInstance(sqlSession).scrapNews();
 		}
 		catch(Exception ex )
 		{
