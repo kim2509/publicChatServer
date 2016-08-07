@@ -6,6 +6,8 @@
 <%
 	String isApp = request.getParameter("isApp");
 	String userID = request.getParameter("userID");
+	
+	ArrayList<HashMap> provinces = (ArrayList<HashMap>) request.getAttribute("provinces");
 %>
 
 <html>
@@ -62,34 +64,107 @@ a{
 	
 	jQuery(document).ready(function(){
 		
-		console.log('ready');
+		$('#provinceList').change(function(){
+			getCityList($(this).val());
+		});
 		
 	});
-	
-	function goFavoriteRegionPage()
+
+	function getCityList( code )
 	{
-		if ( isApp == 'Y' )
-		{
-			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
-			var url = '<%= Constants.getServerURL() %>/news/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
-		}
-		else
-			document.fm.submit();
+		var param = {"areaCode":code};
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/travelInfo/getCityList.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					if ( result == null || result.data == null )
+					{
+						return;
+					}
+
+					$('#cityList').empty();
+					
+					for ( var i = 0; i < result.data.length ; i++ )
+					{
+						var optionElement = $('<option></option>');
+						
+						optionElement.val(result.data[i].code);
+						optionElement.html(result.data[i].name);
+						
+						$('#cityList').append( optionElement );					
+					}
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				bLoading = false;
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(getCityList)" + error );
+			}
+		});
 	}
 	
-	function openURL( title, url )
+	function searchTravelInfo()
 	{
-		var titleUrlEncoded = encodeURIComponent( '상세' )
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&disableWebViewClient=Y&fullURL=' + encodeURIComponent( url );
-		else
-			document.location.href= url;
-	}
-	
-	function goHostURL( url )
-	{
-		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
+		var areaCode = $('#provinceList').val();
+		var cityCode = $('#cityList').val();
+		
+		alert( cityCode );
+		var param = {"areaCode": areaCode, "cityCode" : cityCode };
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/travelInfo/getTravelInfo.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					if ( result == null || result.data == null )
+					{
+						return;
+					}
+
+					$('#travelInfoDiv').empty();
+					
+					for ( var i = 0; i < result.data.length ; i++ )
+					{
+						var liElement = $('<li></li>');
+
+						liElement.html('<img src=\"' + result.data[i].firstimage + '\" width="200" height="200"/>');
+						
+						$('#travelInfoDiv').append( liElement );					
+					}
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				bLoading = false;
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(getCityList)" + error );
+			}
+		});
 	}
 	
 	</script>
@@ -97,9 +172,37 @@ a{
 <body>
 
 	<div id="wrapper">
-	fdsafdsfasddfs
+	
+	<br/>
+	지역
+	<select name="provinceList" id="provinceList">
+
+	<%	for ( int i = 0; i < provinces.size(); i++ ) {
+			HashMap province = provinces.get(i);
+	%>
+		<option value="<%= province.get("code") %>"><%= province.get("name") %></option>
+	<%	
+		}
+	%>
+	</select>
+	
+	시군구
+	<select id="cityList">
+		<option>선택하세요</option>
+	</select>
+	
+	<input type="button" value="조회" onclick="searchTravelInfo();" />
+	
+	<div>
+	
+		<ul id="travelInfoDiv">
+		</ul>
+	
+	</div>
 	
 	</div>
 
+	
+	
 </body>
 </html>
