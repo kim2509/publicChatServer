@@ -3,9 +3,51 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%!
+	public String getDetailInfoString( String contentTypeID, HashMap detailIntro )
+	{
+		String resultString = "";
+		
+		if ( detailIntro == null || Util.isEmptyString(contentTypeID) ) {
+			return "";
+		}
+	
+		if ("15".equals(contentTypeID)){
+			resultString += "주최자 정보 : " + Util.getString(detailIntro.get("sponsor1")) + "<br/>";
+			resultString += "행사장 위치안내 : " + Util.getString(detailIntro.get("placeinfo")) + "<br/>";
+			
+			resultString += Util.getString(detailIntro.get("reservationlodging")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("reservationurl")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("roomtype")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("roomcount")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("pickup")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("chkcooking")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("checkintime")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("checkouttime")) + "<br/>";	
+		}
+		else if ("32".equals(contentTypeID)){
+			resultString += Util.getString(detailIntro.get("foodplace")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("parkinglodging")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("reservationlodging")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("reservationurl")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("roomtype")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("roomcount")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("pickup")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("chkcooking")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("checkintime")) + "<br/>";
+			resultString += Util.getString(detailIntro.get("checkouttime")) + "<br/>";	
+		}
+		
+		return resultString;
+	}
+%>
+
 <%
 	String isApp = request.getParameter("isApp");
 	String userID = request.getParameter("userID");
+	
+	String contentTypeID = request.getParameter("contentTypeID");
+	
 	HashMap detailCommon = null;
 	if ( request.getAttribute("detailCommon") != null )
 	{
@@ -125,11 +167,14 @@ a{
 	
 		<%= detailCommon.get("title") %><br/><br/>
 		
+		<%= getDetailInfoString( contentTypeID ,detailIntro) %>
+		
 		<img src="<%= detailCommon.get("firstimage") %>" width="100%" /><br/>
 	
 		<%= detailCommon.get("overview") %><br/>
 		
 	<% } %>
+	
 	
 	<% 
 	if ( imageList != null && imageList.size() > 0 )
@@ -145,23 +190,6 @@ a{
 		}
 	 } 
 	%>
-	
-	<% if ( detailIntro != null ) { %>
-	
-	<% if ( !Util.isEmptyString( detailIntro.get("foodplace")) ) { out.println(detailIntro.get("foodplace")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("parkinglodging")) ) { out.println(detailIntro.get("parkinglodging")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("reservationlodging")) ) { out.println(detailIntro.get("reservationlodging")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("reservationurl")) ) { out.println(detailIntro.get("reservationurl")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("roomtype")) ) { out.println(detailIntro.get("roomtype")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("roomcount")) ) { out.println(detailIntro.get("roomcount")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("pickup")) ) { out.println(detailIntro.get("pickup")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("chkcooking")) ) { out.println(detailIntro.get("chkcooking")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("checkintime")) ) { out.println(detailIntro.get("checkintime")); } %><br/>
-	<% if ( !Util.isEmptyString( detailIntro.get("checkouttime")) ) { out.println(detailIntro.get("checkouttime")); } %><br/>
-		
-		
-	<% } %>
-	
 	
 		<div id="footer" style="margin-top:40px;text-align:right;">
 		출처 : 공공데이터 포털

@@ -88,6 +88,12 @@ public class Util {
 		}
 	}
 	
+	public static String getString( Object obj )
+	{
+		if ( Util.isEmptyString(obj) ) return "";
+		else return obj.toString();
+	}
+	
 	public static Date getDateFromString( String dateString, String format ) throws Exception
 	{
 		if ( dateString == null || "".equals( dateString ) ) return null;
