@@ -50,6 +50,8 @@ import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 
+import common.UserBiz;
+
 @Controller
 public class TravelInfoController extends BaseController{
 
@@ -69,6 +71,50 @@ public class TravelInfoController extends BaseController{
 				provinces = (ArrayList<HashMap>) result.get("items");
 			
 			request.setAttribute("provinces", provinces);
+			
+			String regionName = "";
+			
+			// 최근위치 조회
+			if ( !Util.isEmptyString(userID) )
+			{
+				// favorite region 을 가져옴.
+				List list = (List) sqlSession.selectList("com.tessoft.nearhere.news.getFavoriteRegionByUser", userID );
+				if ( list != null && list.size() > 0 )
+				{
+					HashMap hash = (HashMap) list.get(0);
+					if ( hash.containsKey("parentNo") && !Util.isEmptyString(hash.get("parentNo")))
+					{
+						List tmp = (List) sqlSession.selectList("com.tessoft.nearhere.news.getParentRegion", hash.get("parentNo").toString() );
+						if ( tmp != null && tmp.size() > 0 )
+							regionName = ((HashMap) tmp.get(0)).get("regionName").toString();
+					}
+					else
+					{
+						regionName = hash.get("regionName").toString(); 
+					}
+				}
+				
+				if ( Util.isEmptyString( regionName ) )
+				{
+					// user_location 테이블을 가져옴.
+					
+					List<HashMap> userLocations = UserBiz.getInstance(sqlSession).getUserLocation(userID);
+					if ( userLocations != null && userLocations.size() > 0 )
+					{
+						for ( int i = 0; i < userLocations.size(); i++ )
+						{
+							HashMap region = userLocations.get(i);
+							if ( region.containsKey("address") && !Util.isEmptyString( region.get("address") ) )
+							{
+								regionName = region.get("address").toString();
+								break;
+							}
+						}
+					}
+				}
+			}
+		
+			request.setAttribute("selectedAreaCode", getAreaCodeByName(regionName));
 		}
 		catch( Exception ex )
 		{
@@ -76,6 +122,31 @@ public class TravelInfoController extends BaseController{
 		}
 
 		return new ModelAndView("travelInfo/index", model);
+	}
+	
+	public String getAreaCodeByName( String regionName )
+	{
+		if ( Util.isEmptyString( regionName ) ) return "";
+		
+		if (regionName.startsWith("서울")) return "1";
+		if (regionName.startsWith("인천")) return "2";
+		if (regionName.startsWith("대전")) return "3";
+		if (regionName.startsWith("대구")) return "4";
+		if (regionName.startsWith("광주")) return "5";
+		if (regionName.startsWith("부산")) return "6";
+		if (regionName.startsWith("울산")) return "7";
+		if (regionName.startsWith("세종")) return "8";
+		if (regionName.startsWith("경기")) return "31";
+		if (regionName.startsWith("강원")) return "32";
+		if (regionName.startsWith("충청북")) return "33";
+		if (regionName.startsWith("충청남")) return "34";
+		if (regionName.startsWith("경상북")) return "35";
+		if (regionName.startsWith("경상남")) return "36";
+		if (regionName.startsWith("전라북")) return "37";
+		if (regionName.startsWith("전라남")) return "38";
+		if (regionName.startsWith("제주")) return "39";
+		
+		return "";
 	}
 	
 	@RequestMapping( value ="/travelInfo/getCityList.do")

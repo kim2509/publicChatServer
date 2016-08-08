@@ -162,6 +162,11 @@ a{
 		
 	<% } %>
 	
+	
+		<div id="footer" style="margin-top:40px;text-align:right;">
+		출처 : 공공데이터 포털
+		</div>
+	
 	</div>
 
 </body>

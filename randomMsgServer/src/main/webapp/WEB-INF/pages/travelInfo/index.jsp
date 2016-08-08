@@ -8,6 +8,10 @@
 	String userID = request.getParameter("userID");
 	
 	ArrayList<HashMap> provinces = (ArrayList<HashMap>) request.getAttribute("provinces");
+	
+	String selectedAreaCode = null;
+	if ( request.getAttribute("selectedAreaCode") != null )
+		selectedAreaCode = request.getAttribute("selectedAreaCode").toString();
 %>
 
 <html>
@@ -118,8 +122,12 @@ dl {
 				getCityList($(this).val());
 		});
 		
+		<% if ( Util.isEmptyString(selectedAreaCode) ) { %>
 		// 서울 선택
 		$('#provinceList').val('1');
+		
+		<% } %>
+		
 		getCityList( $('#provinceList').val() );
 		
 		$('#cityList').change(function(){
@@ -382,7 +390,7 @@ dl {
 	</dl>
 </script>
 
-	<div id="wrapper" style="padding-bottom:30px;">
+	<div id="wrapper" style="padding-bottom:10px;">
 	
 		<br/>
 		지역
@@ -391,8 +399,16 @@ dl {
 			<option value=''>선택하세요</option>
 		<%	for ( int i = 0; i < provinces.size(); i++ ) {
 				HashMap province = provinces.get(i);
+				
+				String selected = "";
+				
+				if ( !Util.isEmptyString(selectedAreaCode) && selectedAreaCode.equals(province.get("code")))
+				{
+					selected = "selected";	
+				}
+				
 		%>
-			<option value="<%= province.get("code") %>"><%= province.get("name") %></option>
+			<option value="<%= province.get("code") %>" <%= selected %>><%= province.get("name") %></option>
 		<%	
 			}
 		%>
@@ -448,6 +464,10 @@ dl {
 		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
 			
 			
+		</div>
+		
+		<div id="footer" style="margin-top:40px;text-align:right;">
+		출처 : 공공데이터 포털
 		</div>
 	</div>
 

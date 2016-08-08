@@ -20,6 +20,11 @@
 		order by r.priority
 	</select>
 	
+	<select id="getParentRegion" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where regionNo=#{value}
+	</select>
+	
 	<insert id="insertFavoriteRegion" parameterType="java.util.HashMap">
         insert into user_favorite_region(userID, regionNo, createdDate)
         values
