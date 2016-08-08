@@ -126,6 +126,8 @@ public class TravelInfoController extends BaseController{
 			params.put("sigunguCode", requestInfo.get("cityCode"));
 		if ( requestInfo.containsKey("pageNo") && !Util.isEmptyString(requestInfo.get("pageNo") ) )
 			pageNo = Integer.parseInt( requestInfo.get("pageNo") );
+		if ( requestInfo.containsKey("contentTypeID") && !Util.isEmptyString(requestInfo.get("contentTypeID") ) )
+			params.put("contentTypeId", requestInfo.get("contentTypeID"));
 		
 		params.put("arrange", "P");
 		HashMap travelInfo = callAPI("areaBasedList", 20, 10, pageNo , 1, params);

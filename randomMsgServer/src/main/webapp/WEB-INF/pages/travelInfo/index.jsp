@@ -24,6 +24,11 @@
 
 <style type="text/css">
 
+body{
+	background: #eeeeee;
+}
+
+
 span{ padding:5px; }
 
 .section{
@@ -37,6 +42,7 @@ span{ padding:5px; }
 #menu_category {background:#fff;}
 #menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}
 #menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
+
 
 li{
 	padding:3px;
@@ -61,6 +67,44 @@ dl, dd{
 	margin:0px;
 	padding:0px;
 }
+
+dl {
+	border-bottom: 0px solid #ccc;
+	background:#ffffff;
+	border-radius: 10px;
+}
+
+.item{
+	border-bottom: 1px solid #ccc;
+	padding:10px;
+	height:80px;
+}
+
+.tit{
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+}
+
+.thumbnail{
+	float:left;
+}
+
+.thumbnail img{
+	border-radius: 10px;
+}
+
+#pagingInfo a{
+	border: 1px solid #ccc;
+	margin: 2px;
+	background:white;
+}
+
+.pageSelected{
+	color:blue;
+}
+
 </style>
 
 	<script language="javascript">
@@ -82,6 +126,17 @@ dl, dd{
 			if ( $(this).val() != '' )
 				searchTravelInfo();
 		});
+		
+		$('input[name=contentTypeID]').click( function() {
+			contentTypeID = $(this).val();
+			searchTravelInfo();
+		});
+		
+		Handlebars.registerHelper('getTypeName', getTypeName );
+		Handlebars.registerHelper('numberWithCommas', numberWithCommas );
+		Handlebars.registerHelper('displayThumnailYN', displayThumnailYN );
+		Handlebars.registerHelper('putLeftYN', putLeftYN );
+				
 	});
 
 	function getCityList( code )
@@ -137,6 +192,7 @@ dl, dd{
 	var pageNo = 1;
 	var pageSize = 20;
 	var totalItemCount = 0;
+	var contentTypeID = '';
 	
 	function searchTravelInfo()
 	{
@@ -149,7 +205,7 @@ dl, dd{
 			return;
 		}
 		
-		var param = {"areaCode": areaCode, "cityCode" : cityCode , "pageNo": pageNo };
+		var param = {"areaCode": areaCode, "cityCode" : cityCode , "pageNo": pageNo, "contentTypeID":contentTypeID };
 		
 		jQuery.ajax({
 			type : "POST",
@@ -215,22 +271,94 @@ dl, dd{
 		if ( pageNo <= numOfPagesOnScreen )
 			firstPage = 1;
 		else
-			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen + (pageNo % numOfPagesOnScreen);
+		{
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
+			if ( pageNo % numOfPagesOnScreen == 0 )
+				firstPage = firstPage - numOfPagesOnScreen + 1;
+			else
+				firstPage++;
+		}
 		
 		lastPage = parseInt( totalItemCount / pageSize );
 		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
 			lastPage++;
 		
-		for ( var i = 0; i < numOfPagesOnScreen; i++ )
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" style="padding:5px;">' + (firstPage + i) + '</a>');
+		$('#info').html('전체 ' + numberWithCommas(totalItemCount) + '건');
 		
-		$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" style="padding:5px;">' + lastPage + '</a>');
+		if ( firstPage > numOfPagesOnScreen + 1)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;">처음</a>');
+		
+		if ( firstPage != 1 )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');" style="padding:5px;">이전</a>');
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+		{
+			if ( firstPage + i == pageNo)
+			{
+				$('#pagingInfo').append('<b><a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" style="padding:5px;" class="pageSelected">' + (firstPage + i) + '</a></b>');
+			}
+			else
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" style="padding:5px;">' + (firstPage + i) + '</a>');
+			}
+		
+			if ( (firstPage + i) == lastPage )
+				break;
+		}
+		
+		if ( lastPage > firstPage + numOfPagesOnScreen )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" style="padding:5px;">다음</a>');
+		
+		if ( firstPage + numOfPagesOnScreen < lastPage - numOfPagesOnScreen)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" style="padding:5px;">마지막</a>');
 		
 	}
 	function goPage(num)
 	{
 		pageNo = num;
 		searchTravelInfo();
+	}
+	
+	function getTypeName( typeID )
+	{
+		switch( parseInt(typeID) )
+		{
+			case 12 : return "관광지";
+			break;
+			case 14 : return "문화시설";
+			break;
+			case 15 : return "축제/행사";
+			break;
+			case 25 : return "여행코스";
+			break;
+			case 28 : return "레포츠";
+			break;
+			case 32 : return "숙박";
+			break;
+			case 38 : return "쇼핑";
+			break;
+			case 39 : return "음식";
+			break;
+			default : return "";
+		}
+	}
+	
+	function numberWithCommas(x) {
+	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+	
+	function displayThumnailYN( thumbnail ){
+		if ( typeof thumbnail != 'undefined' && thumbnail != null && thumbnail.length > 0 )
+			return '';
+		else
+			return 'style=display:none;';
+	}
+	
+	function putLeftYN( thumbnail ){
+		if ( typeof thumbnail != 'undefined' && thumbnail != null && thumbnail.length > 0 )
+			return 'style=margin-left:100px;';
+		else
+			return '';
 	}
 	
 	</script>
@@ -240,13 +368,14 @@ dl, dd{
 	<script id="itemT" type="text/x-handlebars-template">
 	<dl class="slide_lst">
 		{{#each items}}
-		<dd onclick="openDetailView('{{contenttypeid}}','{{contentid}}');" style="height:100px;">
-			<div class="thumbnail" style="float:left;">
+		<dd onclick="openDetailView('{{contenttypeid}}','{{contentid}}');" class="item">
+			<div class="thumbnail" {{displayThumnailYN firstimage2}}>
 				<img src='{{firstimage2}}' width="80" height="80"/>
 			</div>
-			<div class='desc' style="margin-left:120px">
+			<div class='desc' {{putLeftYN firstimage2}}>
 				<strong class="tit">{{title}}</strong>
-				<div>조회수 : {{readcount}}</div>
+				<div style="font-size:14px;margin-top:10px;">분류 : {{getTypeName contenttypeid}}</div>
+				<div style="font-size:14px;margin-top:5px;font-weight:bold;">조회수 : {{numberWithCommas readcount}}</div>
 			</div>
 		</dd>
 		{{/each}}
@@ -273,12 +402,50 @@ dl, dd{
 		<select id="cityList">
 			<option>선택하세요</option>
 		</select>
+		<br/>
+		
+		<div style="margin-top:10px;margin-bottom:10px;">
+		<div style="float:left;">분류</div> 
+		
+		<div style="margin-left:40px;">
+			
+			<input type="radio" name="contentTypeID" id="contentTypeAll" value="" checked="checked">
+			<label for="contentTypeAll">전체</label>
+			
+			<input type="radio" name="contentTypeID" id="contentType12" value="12">
+			<label for="contentType12">관광지</label>
+			
+			<input type="radio" name="contentTypeID" id="contentType14" value="14">
+			<label for="contentType14">문화시설</label><br/>
+			
+			<input type="radio" name="contentTypeID" id="contentType15" value="15">
+			<label for="contentType15">축제/행사</label>
+			
+			<input type="radio" name="contentTypeID" id="contentType25" value="25">
+			<label for="contentType25">여행코스</label>
+			
+			<input type="radio" name="contentTypeID" id="contentType28" value="28">
+			<label for="contentType28">레포츠</label><br/>
+			
+			<input type="radio" name="contentTypeID" id="contentType32" value="32">
+			<label for="contentType32">숙박</label>
+			
+			<input type="radio" name="contentTypeID" id="contentType38" value="38">
+			<label for="contentType38">쇼핑</label>
+			
+			<input type="radio" name="contentTypeID" id="contentType39" value="39">
+			<label for="contentType39">음식</label>
+		</div>
+		
+		</div>
 	
-		<div id="travelInfoDiv" style="margin-top:10px;">
+		<div id="info" style="margin:10px;float:right;"></div>
+	
+		<div id="travelInfoDiv" style="margin-top:10px;clear:both;">
 			
 		</div>
 	
-		<div id="pagingInfo" style="text-align:center;">
+		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
 			
 			
 		</div>
