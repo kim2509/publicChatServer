@@ -73,7 +73,7 @@ dl, dd{
 }
 
 dl {
-	border-bottom: 0px solid #ccc;
+	border: 1px solid #ccc;
 	background:#ffffff;
 	border-radius: 10px;
 }
@@ -107,6 +107,13 @@ dl {
 
 .pageSelected{
 	color:blue;
+}
+
+#searchCondition{
+	border: 1px solid #8787bc;
+	border-radius: 10px;
+	background:#ffffff;
+	padding:10px;
 }
 
 </style>
@@ -294,10 +301,10 @@ dl {
 		$('#info').html('전체 ' + numberWithCommas(totalItemCount) + '건');
 		
 		if ( firstPage > numOfPagesOnScreen + 1)
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;">처음</a>');
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;">&lt;&lt;</a>');
 		
 		if ( firstPage != 1 )
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');" style="padding:5px;">이전</a>');
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');" style="padding:5px;">&lt;</a>');
 		
 		for ( var i = 0; i < numOfPagesOnScreen; i++ )
 		{
@@ -315,10 +322,10 @@ dl {
 		}
 		
 		if ( lastPage > firstPage + numOfPagesOnScreen )
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" style="padding:5px;">다음</a>');
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" style="padding:5px;">&gt;</a>');
 		
 		if ( firstPage + numOfPagesOnScreen < lastPage - numOfPagesOnScreen)
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" style="padding:5px;">마지막</a>');
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" style="padding:5px;">&gt;&gt;</a>');
 		
 	}
 	function goPage(num)
@@ -392,8 +399,11 @@ dl {
 
 	<div id="wrapper" style="padding-bottom:10px;">
 	
-		<br/>
-		지역
+		<div id="searchCondition">
+		
+		<div style="float:left;">지역</div> 
+		
+		<div style="margin-left:40px;">
 		<select name="provinceList" id="provinceList">
 	
 			<option value=''>선택하세요</option>
@@ -418,7 +428,8 @@ dl {
 		<select id="cityList">
 			<option>선택하세요</option>
 		</select>
-		<br/>
+		
+		</div>
 		
 		<div style="margin-top:10px;margin-bottom:10px;">
 		<div style="float:left;">분류</div> 
@@ -455,6 +466,8 @@ dl {
 		
 		</div>
 	
+		</div>
+		
 		<div id="info" style="margin:10px;float:right;"></div>
 	
 		<div id="travelInfoDiv" style="margin-top:10px;clear:both;">
