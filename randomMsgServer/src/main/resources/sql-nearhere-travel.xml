@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.travel">
+
+	<select id="getCachedData" parameterType="String" resultType="java.util.HashMap">
+		SELECT 
+			*
+		from travel_info_cache
+		where fullURL=#{value}
+		AND createdDate >= subdate(NOW(),INTERVAL 1 DAY)
+	</select>
+	
+	<delete id="deleteCachedData" parameterType="String">
+		delete
+		from travel_info_cache
+		where fullURL=#{value}
+	</delete>
+	
+	<insert id="insertApiData" parameterType="java.util.HashMap">
+		replace into
+		travel_info_cache ( fullURL, apiName, response, createdDate)
+		values(#{fullURL}, #{apiName}, #{response}, NOW());
+	</insert>
+	
+</mapper>
