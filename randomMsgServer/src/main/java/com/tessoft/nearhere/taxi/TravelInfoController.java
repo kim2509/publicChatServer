@@ -252,7 +252,7 @@ public class TravelInfoController extends BaseController{
 	private HashMap callAPI( String apiName, int numOfRows, int pageSize, int pageNo, int startPage, HashMap params ) throws Exception {
 		String url = "http://api.visitkorea.or.kr/openapi/service";
 		String apiURL = "/rest/KorService/" + apiName;
-		url += apiURL + "?ServiceKey=" + serverKey + "&numOfRows=" + numOfRows + "&pageSize=" + pageSize + "&pageNo=" + pageNo + "&startPage=" + startPage + "&MobileOS=ETC";
+		url += apiURL + "?numOfRows=" + numOfRows + "&pageSize=" + pageSize + "&pageNo=" + pageNo + "&startPage=" + startPage + "&MobileOS=ETC";
 		
 		if ( params != null )
 		{
@@ -264,30 +264,51 @@ public class TravelInfoController extends BaseController{
 			}	
 		}
 		
-		url += "&MobileApp=공유자원포털";
+		List<HashMap> data = sqlSession.selectList("com.tessoft.nearhere.travel.getCachedData", url);
 		
-		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet req = new HttpGet(url);
-		
-		HttpHost proxy = new HttpHost("localhost", 8888);
-		CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
-
-		// add request header
-		HttpResponse res = null;
-
-		if ( Constants.bReal )
-			res = client.execute(req);
-		else
-			res = wf_client.execute(req);
-
-		BufferedReader rd = new BufferedReader(
-				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
-
 		StringBuffer resultText = new StringBuffer();
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			resultText.append(line);
+		
+		if ( data == null || data.size() < 1 )
+		{
+			HashMap cacheData = new HashMap();
+			cacheData.put("fullURL", url);
+			cacheData.put("apiName", apiName);
+			
+			url += "&ServiceKey=" + serverKey + "&MobileApp=공유자원포털";
+			
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet req = new HttpGet(url);
+			
+			// add request header
+			HttpResponse res = null;
+
+			if ( Constants.bReal )
+				res = client.execute(req);
+			else
+			{
+				HttpHost proxy = new HttpHost("localhost", 8888);
+				CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+				res = wf_client.execute(req);
+			}
+
+			BufferedReader rd = new BufferedReader(
+					new InputStreamReader(res.getEntity().getContent(), "utf-8"));
+
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				resultText.append(line);
+			}
+			
+			cacheData.put("response", resultText.toString());
+			
+			sqlSession.insert("com.tessoft.nearhere.travel.deleteCachedData", cacheData.get("fullURL"));
+			sqlSession.insert("com.tessoft.nearhere.travel.insertApiData", cacheData);
 		}
+		else
+		{
+			resultText.append(data.get(0).get("response"));
+		}
+		
 
 		DocumentBuilderFactory factory =
 				DocumentBuilderFactory.newInstance();
@@ -326,7 +347,6 @@ public class TravelInfoController extends BaseController{
 			{
 				Node childNode = node.getChildNodes().item(j);
 				itemDetail.put(childNode.getNodeName(), childNode.getTextContent());
-				logger.info( childNode.getNodeName() + " " + childNode.getTextContent());
 			}
 			
 			items.add(itemDetail);

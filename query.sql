@@ -35,3 +35,16 @@ CREATE TABLE `user_favorite_region` (
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
+
+
+CREATE TABLE `travel_info_cache` (
+	`fullURL` VARCHAR(400) NOT NULL,
+	`apiName` VARCHAR(50) NULL DEFAULT NULL,
+	`response` TEXT NULL,
+	`createdDate` DATETIME NULL DEFAULT NULL,
+	INDEX `createdDate` (`createdDate`),
+	INDEX `fullURL` (`fullURL`(255))
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
