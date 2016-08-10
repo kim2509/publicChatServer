@@ -227,6 +227,13 @@ public class TravelInfoController extends BaseController{
 				HashMap detailImage = callAPI( "detailImage", 999, 999, 1, 1, params );
 				model.addAttribute("detailImage", detailImage);
 				
+				params.put("detailYN", "Y");
+				HashMap detailInfo = callAPI( "detailInfo", 999, 999, 1, 1, params );
+				model.addAttribute("detailInfo", detailInfo);
+				
+				params = new HashMap();
+				params.put("contentTypeId", contentTypeID);
+				params.put("contentId", contentID);
 				params.put("defaultYN", "Y");
 				params.put("mapImageYN", "Y");
 				params.put("firstImageYN", "Y");
