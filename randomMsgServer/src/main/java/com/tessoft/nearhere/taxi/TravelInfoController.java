@@ -268,7 +268,7 @@ public class TravelInfoController extends BaseController{
 		
 		StringBuffer resultText = new StringBuffer();
 		
-		if ( data == null || data.size() < 1 )
+		if ( Constants.bReal == false || data == null || data.size() < 1 )
 		{
 			HashMap cacheData = new HashMap();
 			cacheData.put("fullURL", url);

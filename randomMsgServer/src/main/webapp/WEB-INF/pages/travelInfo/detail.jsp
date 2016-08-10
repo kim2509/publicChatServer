@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%!
-	public String getDetailInfoString( String contentTypeID, HashMap detailIntro )
+	public String getDetailInfoString( HashMap detailCommon, String contentTypeID, HashMap detailIntro )
 	{
 		String resultString = "";
 		
@@ -13,17 +13,26 @@
 		}
 	
 		if ("15".equals(contentTypeID)){
+			resultString += "<h3>기본정보</h3>";
+			resultString += "우편번호 : " + Util.getString(detailCommon.get("zipcode")) + "<br/>";
+			resultString += "전화명 : " + Util.getString(detailCommon.get("telname")) + "<br/>";
+			resultString += "전화번호 : " + Util.getString(detailCommon.get("tel")) + "<br/>";
+			resultString += "홈페이지 : <br/>" + Util.getString(detailCommon.get("homepage"));
+			resultString += "주소 : " + Util.getString(detailCommon.get("addr1")) + Util.getString(detailCommon.get("addr2")) + "<br/>";
+			
+			resultString += "<h3>이용안내</h3>";
 			resultString += "주최자 정보 : " + Util.getString(detailIntro.get("sponsor1")) + "<br/>";
+			resultString += "주최자 연락처 : " + Util.getString(detailIntro.get("sponsor1tel")) + "<br/>";
+			resultString += "주관사 연락처 : " + Util.getString(detailIntro.get("sponsor2tel")) + "<br/>";
+			resultString += "행사시작일 : " + Util.getString(detailIntro.get("eventstartdate")) + "<br/>";
+			resultString += "행사종료일 : " + Util.getString(detailIntro.get("eventenddate")) + "<br/>";
+			resultString += "공연시간 : " + Util.getString(detailIntro.get("playtime")) + "<br/>";
+			resultString += "행사장소 : " + Util.getString(detailIntro.get("eventplace")) + "<br/>";
+			resultString += "이용시간 : " + Util.getString(detailIntro.get("usetimefestival")) + "<br/>";
+			resultString += "관람소요시간 : " + Util.getString(detailIntro.get("spendtimefestival")) + "<br/>";
+			resultString += "관람가능연령 : " + Util.getString(detailIntro.get("agelimit")) + "<br/><br/>";
 			resultString += "행사장 위치안내 : " + Util.getString(detailIntro.get("placeinfo")) + "<br/>";
 			
-			resultString += Util.getString(detailIntro.get("reservationlodging")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("reservationurl")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("roomtype")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("roomcount")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("pickup")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("chkcooking")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("checkintime")) + "<br/>";
-			resultString += Util.getString(detailIntro.get("checkouttime")) + "<br/>";	
 		}
 		else if ("32".equals(contentTypeID)){
 			resultString += Util.getString(detailIntro.get("foodplace")) + "<br/>";
@@ -167,8 +176,6 @@ a{
 	
 		<%= detailCommon.get("title") %><br/><br/>
 		
-		<%= getDetailInfoString( contentTypeID ,detailIntro) %>
-		
 		<img src="<%= detailCommon.get("firstimage") %>" width="100%" /><br/>
 	
 		<%= detailCommon.get("overview") %><br/>
@@ -190,6 +197,8 @@ a{
 		}
 	 } 
 	%>
+	
+		<%= getDetailInfoString( detailCommon, contentTypeID ,detailIntro) %>
 	
 		<div id="footer" style="margin-top:40px;text-align:right;">
 		출처 : 공공데이터 포털
