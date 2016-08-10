@@ -9,7 +9,7 @@
 			*
 		from travel_info_cache
 		where fullURL=#{value}
-		AND createdDate >= subdate(NOW(),INTERVAL 1 DAY)
+		AND createdDate >= subdate(NOW(),INTERVAL 3 DAY)
 	</select>
 	
 	<delete id="deleteCachedData" parameterType="String">
