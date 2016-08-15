@@ -1,50 +1,191 @@
-CREATE TABLE `push_job` (
-	`pushID` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`param` VARCHAR(50) NOT NULL,
-	`pushType` VARCHAR(50) NOT NULL,
-	`finishYN` VARCHAR(1) NULL DEFAULT NULL,
-	`createdDate` DATETIME NOT NULL,
-	`finishedDate` DATETIME NULL DEFAULT NULL,
-	PRIMARY KEY (`pushID`),
-	INDEX `createdDate` (`createdDate`),
-	INDEX `finishYN` (`finishYN`)
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=2
-;
+
+insert into region(regionName, shortRegionName, priority, parentNo) values('강동구','강동구',0,40);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동대문구','동대문구',0,40);
+insert into region(regionName, shortRegionName, priority, parentNo) values('가평군','가평',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('과천시','과천',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('광명시','광명',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('구리시','구리',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('군포시','군포',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남양주시','남양주',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동두천시','동두천',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('수원시','수원',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('시흥시','시흥',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('안성시','안성',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('양주시','양주',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('양평군','양평',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('여주군','여주',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('연천군','연천',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('오산시','오산',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('의왕시','의왕',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('의정부시','의정부',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('이천시','이천',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('포천시','포천',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('하남시','하남',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('화성시','화성',0,18);
+insert into region(regionName, shortRegionName, priority, parentNo) values('강릉시','강릉',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('고성군','고성',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동해시','동해',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('삼척시','삼척',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('속초시','속초',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('양구군','양구',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('양양군','양양',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영울군','영울',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('워주시','워주',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('인제군','인제',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('정선군','정선',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('철원군','철원',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('춘천시','춘천',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('태백시','태백',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('평창군','평창',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('홍천군','홍천',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('화천군','화천',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('횡성군','횡성',0,24);
+insert into region(regionName, shortRegionName, priority, parentNo) values('거제시','거제',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('거창군','거창',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('고성군','고성',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남해군','남해',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('밀양시','밀양',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('사천시','사천',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('산청군','산청',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('의령군','의령',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('진주시','진주',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('창녕군','창녕',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('통영시','통영',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('하동군','하동',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('함안군','함안',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('함양군','함양',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('합천군','합천',0,28);
+insert into region(regionName, shortRegionName, priority, parentNo) values('경산시','경산',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('경주시','경주',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('고령군','고령',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('군위군','군위',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('김천시','김천',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('문경시','문경',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('봉화군','봉화',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('상주시','상주',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('성주군','성주',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('안동시','안동',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영덕군','영덕',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영양군','영양',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영주시','영주',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영천시','영천',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('예천군','예천',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('울진군','울진',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('의성군','의성',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('청도군','청도',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('청송군','청송',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('칠곡군','칠곡',0,27);
+insert into region(regionName, shortRegionName, priority, parentNo) values('광산구','광산구',0,23);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동구','동구',0,23);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서구','서구',0,23);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남구','남구',0,23);
+insert into region(regionName, shortRegionName, priority, parentNo) values('북구','북구',0,23);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남구','남구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('달성구','달성구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('달성군','달성군',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동구','동구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('북구','북구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서구','서구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('수성구','수성구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('중구','중구',0,22);
+insert into region(regionName, shortRegionName, priority, parentNo) values('대덕구','대덕구',0,21);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동구','동구',0,21);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서구','서구',0,21);
+insert into region(regionName, shortRegionName, priority, parentNo) values('중구','중구',0,21);
+insert into region(regionName, shortRegionName, priority, parentNo) values('유성구','유성구',0,21);
+insert into region(regionName, shortRegionName, priority, parentNo) values('강서구','강서구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('금정구','금정구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('기장군','기장군',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남구','남구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동구','동구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동래구','동래구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('부산진구','부산진구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('북구','북구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('사상구','사상구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('사하구','사하구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서구','서구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('수영구','수영구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('연제구','연제구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영도구','영도구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('중구','중구',0,19);
+insert into region(regionName, shortRegionName, priority, parentNo) values('해운대구','해운대구',0,19);
+insert into region(regionName, priority) values('세종시',215);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남구','남구',0,39);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동구','동구',0,39);
+insert into region(regionName, shortRegionName, priority, parentNo) values('북구','북구',0,39);
+insert into region(regionName, shortRegionName, priority, parentNo) values('울주군','울주군',0,39);
+insert into region(regionName, shortRegionName, priority, parentNo) values('중구','중구',0,39);
+insert into region(regionName, shortRegionName, priority, parentNo) values('강화군','강화군',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('계양구','계양구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남구','남구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남동구','남동구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('동구','동구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('부평구','부평구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서구','서구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('연수구','연수구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('옹진군','옹진군',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('중구','중구',0,20);
+insert into region(regionName, shortRegionName, priority, parentNo) values('강진군','강진',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('고흥군','고흥',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('곡성군','곡성',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('광양시','광양',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('구례군','구례',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('나주시','나주',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('담양군','담양',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('목포시','목포',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('무안군','무안',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('보성군','보성',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('순천시','순천',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('신안군','신안',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영광군','영광',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영암군','영암',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('완도군','완도',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('장성군','장성',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('장흥군','장흥',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('진도군','진도',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('함평군','함평',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('해남군','해남',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('화순군','화순',0,30);
+insert into region(regionName, shortRegionName, priority, parentNo) values('고창군','고창',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('군산시','군산',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('김제시','김제',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('남원시','남원',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('무주군','무주',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('부안군','부안',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('순창군','순창',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('완주군','완주',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('임실군','임실',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('장수군','장수',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('정읍시','정읍',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('진안군','진안',0,29);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서귀포시','서귀포',0,31);
+insert into region(regionName, shortRegionName, priority, parentNo) values('계룡시','계룡',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('공주시','공주',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('금산군','금산',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('논산시','논산',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('당진시','당진',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('보령시','보령',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('부여군','부여',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서산시','서산',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('서천군','서천',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('예산군','예산',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('천안시','천안',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('청양군','청양',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('태안군','태안',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('홍성군','홍성',0,26);
+insert into region(regionName, shortRegionName, priority, parentNo) values('괴산군','괴산',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('단양군','단양',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('보은군','보은',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('영동군','영동',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('옥천군','옥천',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('음성군','음성',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('제천시','제천',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('증평군','증평',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('진천군','진천',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('청원군','청원',0,25);
+insert into region(regionName, shortRegionName, priority, parentNo) values('충주시','충주',0,25);
 
 
-CREATE TABLE `news` (
-	`regionNo` INT(11) NULL DEFAULT NULL,
-	`title` VARCHAR(300) NULL DEFAULT NULL,
-	`link` VARCHAR(300) NULL DEFAULT NULL,
-	`createdDate` DATETIME NULL DEFAULT NULL
-)
-ENGINE=InnoDB
-;
-
-
-CREATE TABLE `user_favorite_region` (
-	`userID` VARCHAR(20) NOT NULL,
-	`regionNo` INT(11) NOT NULL,
-	`createdDate` DATETIME NOT NULL,
-	PRIMARY KEY (`userID`, `regionNo`),
-	INDEX `createdDate` (`createdDate`)
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-;
-
-
-CREATE TABLE `travel_info_cache` (
-	`fullURL` VARCHAR(400) NOT NULL,
-	`apiName` VARCHAR(50) NULL DEFAULT NULL,
-	`response` TEXT NULL,
-	`createdDate` DATETIME NULL DEFAULT NULL,
-	INDEX `createdDate` (`createdDate`),
-	INDEX `fullURL` (`fullURL`(255))
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-;
+update region
+set shortRegionName=regionName
+where parentNo=40
