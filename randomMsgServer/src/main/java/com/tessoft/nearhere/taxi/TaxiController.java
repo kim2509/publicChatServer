@@ -2291,11 +2291,17 @@ public class TaxiController {
 	}
 	
 	@RequestMapping( value ="/taxi/listRegion.do")
-	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo )
+	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo, String mRegionNo, String sRegionNo )
 	{
 		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", regionNo );
 		
 		model.addAttribute("regionInfo", regionInfo );
+		
+		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) )
+		{
+			List<HashMap> childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
+			model.addAttribute("childRegionList", childRegionList);
+		}
 		
 		return new ModelAndView("carPool/listRegion", model );
 	}
@@ -2425,8 +2431,6 @@ public class TaxiController {
 
 		try
 		{			
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 			
 			int pageNo = 1;
@@ -2469,7 +2473,7 @@ public class TaxiController {
 
 			response.setData( additionalData );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[getPostsNearHereAjax.do]: " + requestInfo.get("userID") );
 
 			return response;
 

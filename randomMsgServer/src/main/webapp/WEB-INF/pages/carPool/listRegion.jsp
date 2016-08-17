@@ -20,6 +20,12 @@
 	String isHotspot = regionInfo.get("isHotSpot") == null ? "" : regionInfo.get("isHotSpot").toString();
 	
 	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
+	
+	List<HashMap> childRegionList = null;
+	if ( request.getAttribute("childRegionList") != null )
+	{
+		childRegionList = (List<HashMap>) request.getAttribute("childRegionList");
+	}
 %>
 <html>
 
@@ -28,10 +34,48 @@
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
+
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
-	<link rel="stylesheet" type="text/css"
+<link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/searchDestination.css" />
+	
+<style type="text/css">
+	body{
+		background:#eeeeee;
+	}
+	
+	#regionList{
+		margin:10px;
+		background:#white;
+		border: 1px solid gray;
+		padding:10px;
+		overflow:auto;
+	}
+	
+	#regionItem{
+		float:left;
+		display: list-item;
+		width:100px;
+		text-align: -webkit-match-parent;
+		padding:2px;
+	}
+	
+	#postList{
+		clear:both;
+		display:block;
+		margin:10px;
+		background:#white;
+		border-radius: 10px;
+		border: 1px solid gray;
+	}
+	
+	#title{
+	    color: #4d4da0;
+    	text-align: center;
+	}
+</style>
+
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -218,6 +262,24 @@
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
 		
+		<div id="regionList" style="padding:10px;background:white;">
+		
+			<div id="title">목적지 상세지역</div>
+		
+			<ul style="list-style:none;display:block;text-align:center;margin-top:10px;">
+<%
+		if ( childRegionList != null ) {
+			for ( int i = 0; i < childRegionList.size(); i++ )
+			{
+%>				
+				<li id="regionItem"><%= childRegionList.get(i).get("regionName") %></li>
+<%				
+			}
+		}
+%>			
+			</ul>
+		</div>
+		
 <%
 		if ( "N".equals( isApp ) )
 		{
@@ -229,7 +291,7 @@
 		}
 %>		
 		
-		<div id="postList">
+		<div id="postList" style="padding:10px;background:white;">
 		</div>
 
 		<div id="loading" style="display:none">
