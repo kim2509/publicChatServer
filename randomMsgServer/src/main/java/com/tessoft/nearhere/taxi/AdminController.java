@@ -1,11 +1,27 @@
 package com.tessoft.nearhere.taxi;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -16,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.dy.common.Constants;
 import com.dy.common.Util;
@@ -38,13 +57,107 @@ public class AdminController extends BaseController{
 	        mav.setViewName("redirect:login.do");
 			if ( request.getSession().getAttribute("id") == null )
 				return mav;
+			
+			getSidoList(0, null, null, null );
 		}
 		catch(Exception ex )
 		{
-			
+			logger.error(ex);
 		}
 		
 		return new ModelAndView("admin/index");
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private HashMap getSidoList( int level, String sido, String sigungu, String lgdong ) throws Exception
+	{
+		String url = "";
+		
+		if ( level == 0 )
+			url = "http://www.nsic.go.kr/ndsi/openapi/sido.do";
+		else if ( level == 1 )
+		{
+			if ( Util.isEmptyString( sido ) ) return null;
+			url = "http://www.nsic.go.kr/ndsi/openapi/sigungu.do?sido=" + sido;
+		}
+		else if ( level == 2 )
+		{
+			if ( Util.isEmptyString( sido ) || Util.isEmptyString( sigungu ) ) return null;
+			url = "http://www.nsic.go.kr/ndsi/openapi/lgdong.do?sido=" + sido + "&sigungu=" + sigungu;
+		}
+		else if ( level == 3 )
+		{
+			if ( Util.isEmptyString( sido ) || Util.isEmptyString( sigungu ) || Util.isEmptyString( lgdong ) ) return null;
+			url = "http://www.nsic.go.kr/ndsi/openapi/ri.do?sido=" + sido + "&sigungu=" + sigungu + "&lgdong=" + lgdong;
+		}
+			
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet req = new HttpGet(url);
+		
+		StringBuffer resultText = new StringBuffer();
+		
+		// add request header
+		HttpResponse res = null;
+
+		if ( Constants.bReal )
+			res = client.execute(req);
+		else
+		{
+			HttpHost proxy = new HttpHost("localhost", 8888);
+			CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+			res = wf_client.execute(req);
+		}
+
+		BufferedReader rd = new BufferedReader(
+				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
+
+		String line = "";
+		while ((line = rd.readLine()) != null) {
+			resultText.append(line);
+		}
+		
+		DocumentBuilderFactory factory =
+				DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		ByteArrayInputStream input =  new ByteArrayInputStream(
+				resultText.toString().getBytes("UTF-8"));
+		Document doc = builder.parse(input);
+
+		XPath xPath =  XPathFactory.newInstance().newXPath();
+		
+		String elementName = "";
+		if ( level == 0 )
+			elementName = "sidolist";
+		else if ( level == 1 )
+			elementName = "sigungulist";
+		else if ( level == 2 )
+			elementName = "lgdonglist";
+		else if ( level == 3 )
+			elementName = "rilist";
+		
+		NodeList nodeList = (NodeList) xPath.compile("/list/" + elementName ).evaluate(doc, XPathConstants.NODESET);
+		
+		HashMap result = new HashMap();
+		
+		ArrayList items = new ArrayList();
+		
+		for ( int i = 0; i < nodeList.getLength(); i++ )
+		{
+			Node node = nodeList.item(i);
+
+			HashMap itemDetail = new HashMap();
+			for ( int j = 0; j < node.getChildNodes().getLength(); j++ )
+			{
+				Node childNode = node.getChildNodes().item(j);
+				itemDetail.put(childNode.getNodeName(), childNode.getTextContent());
+			}
+			
+			items.add(itemDetail);
+		}
+		
+		result.put("items", items);
+		
+		return result;
 	}
 	
 	@RequestMapping( value ="/admin/login.do")
