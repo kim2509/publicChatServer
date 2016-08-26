@@ -1155,6 +1155,11 @@
 		where regionNo=#{value}
 	</select>
 	
+	<select id="getMiddleRegionList" resultType="java.util.HashMap" parameterType="String">
+		select * from region
+		where parentNo=#{value}
+	</select>
+	
 	<select id="getRecentPosts" resultType="com.nearhere.domain.Post" parameterType="Integer">
 		SELECT
 		*

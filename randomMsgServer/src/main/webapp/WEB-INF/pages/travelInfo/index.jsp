@@ -139,11 +139,13 @@ dl {
 		
 		$('#cityList').change(function(){
 			if ( $(this).val() != '' )
+				pageNo = 1;
 				searchTravelInfo();
 		});
 		
 		$('input[name=contentTypeID]').click( function() {
 			contentTypeID = $(this).val();
+			pageNo = 1;
 			searchTravelInfo();
 		});
 		
