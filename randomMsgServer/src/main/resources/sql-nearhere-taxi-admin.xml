@@ -88,4 +88,15 @@
 		) A
 	</select>
 	
+	<select id="getRegionByName" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from region
+		where regionName=#{regionName} and level=#{level}
+	</select>
+	
+	<update id="updateCodeByRegionNo" parameterType="java.util.HashMap">
+		update region
+		set code = #{code}
+		where regionNo=#{regionNo}
+	</update>
+	
 </mapper>
