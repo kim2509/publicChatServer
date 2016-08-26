@@ -57,8 +57,6 @@ public class AdminController extends BaseController{
 	        mav.setViewName("redirect:login.do");
 			if ( request.getSession().getAttribute("id") == null )
 				return mav;
-			
-			getSidoList(0, null, null, null );
 		}
 		catch(Exception ex )
 		{
@@ -66,6 +64,51 @@ public class AdminController extends BaseController{
 		}
 		
 		return new ModelAndView("admin/index");
+	}
+	
+	@RequestMapping( value ="/admin/test.do")
+	public ModelAndView test ( HttpServletRequest request )
+	{
+		try
+		{
+			HashMap result = getSidoList(0, null, null, null );
+			
+			List<HashMap> list = (List<HashMap>) result.get("items");
+			
+			for ( int i = 0; i < list.size(); i++ )
+			{
+				HashMap item = list.get(i);
+				
+				if ( "서울특별시".equals( item.get("sidonm") ) )
+					item.put("sidonm", "서울");
+				else if ( "세종특별자치시".equals( item.get("sidonm") ) )
+					item.put("sidonm", "세종시");
+				else if ( "제주특별자치도".equals( item.get("sidonm") ) )
+					item.put("sidonm", "제주도");
+				
+				HashMap temp = new HashMap();
+				temp.put("regionName", item.get("sidonm") );
+				temp.put("level", 1);
+				
+				HashMap region = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByName", temp);
+				
+				if ( region == null )
+				{
+					logger.info("sido:" + item.get("sido") + " name:" + item.get("sidonm") );	
+				}
+				else
+				{
+					region.put("code", item.get("sido") );
+					sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo", region );
+				}
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("admin/test");
 	}
 	
 	@SuppressWarnings("rawtypes")
