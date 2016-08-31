@@ -26,6 +26,8 @@
 	{
 		childRegionList = (List<HashMap>) request.getAttribute("childRegionList");
 	}
+	
+	String listRegionLink = Constants.getServerURL() + "/taxi/listRegion.do?isApp=" + isApp + "&appVersion=" + version;
 %>
 <html>
 
@@ -272,7 +274,7 @@
 			for ( int i = 0; i < childRegionList.size(); i++ )
 			{
 %>				
-				<li id="regionItem"><%= childRegionList.get(i).get("regionName") %></li>
+				<li id="regionItem"><a href="<%= listRegionLink %>&regionNo=<%= childRegionList.get(i).get("regionNo") %>"><%= childRegionList.get(i).get("regionName") %></a></li>
 <%				
 			}
 		}

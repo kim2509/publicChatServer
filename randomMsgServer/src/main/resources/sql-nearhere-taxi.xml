@@ -1190,25 +1190,4 @@
 		ORDER BY createdDate desc
 		LIMIT 0,#{value};
 	</select>
-	
-	<select id="getRegionByName" resultType="java.util.HashMap" parameterType="String">
-		select * from region
-		where regionName=#{value} limit 0,1
-	</select>
-	
-	<select id="getRegionByNo" resultType="java.util.HashMap" parameterType="String">
-		select * from region
-		where regionNo=#{value} limit 0, 1
-	</select>
-	
-	<select id="getRegionByName2" resultType="java.util.HashMap" parameterType="HashMap">
-		select * from region
-		where regionName=#{regionName} and parentNo=#{parentNo} limit 0, 1
-	</select>
-	
-	<insert id="insertRegion" parameterType="HashMap">
-		insert into region(regionName, parentNo, priority, level )
-		values(#{regionName}, #{parentNo}, 0, #{level})
-	</insert>
-	
 </mapper>

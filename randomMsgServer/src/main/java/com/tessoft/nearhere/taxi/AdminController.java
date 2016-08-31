@@ -66,51 +66,6 @@ public class AdminController extends BaseController{
 		return new ModelAndView("admin/index");
 	}
 	
-	@RequestMapping( value ="/admin/test.do")
-	public ModelAndView test ( HttpServletRequest request )
-	{
-		try
-		{
-			HashMap result = getSidoList(0, null, null, null );
-			
-			List<HashMap> list = (List<HashMap>) result.get("items");
-			
-			for ( int i = 0; i < list.size(); i++ )
-			{
-				HashMap item = list.get(i);
-				
-				if ( "서울특별시".equals( item.get("sidonm") ) )
-					item.put("sidonm", "서울");
-				else if ( "세종특별자치시".equals( item.get("sidonm") ) )
-					item.put("sidonm", "세종시");
-				else if ( "제주특별자치도".equals( item.get("sidonm") ) )
-					item.put("sidonm", "제주도");
-				
-				HashMap temp = new HashMap();
-				temp.put("regionName", item.get("sidonm") );
-				temp.put("level", 1);
-				
-				HashMap region = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByName", temp);
-				
-				if ( region == null )
-				{
-					logger.info("sido:" + item.get("sido") + " name:" + item.get("sidonm") );	
-				}
-				else
-				{
-					region.put("code", item.get("sido") );
-					sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo", region );
-				}
-			}
-		}
-		catch(Exception ex )
-		{
-			logger.error(ex);
-		}
-		
-		return new ModelAndView("admin/test");
-	}
-	
 	@SuppressWarnings("rawtypes")
 	private HashMap getSidoList( int level, String sido, String sigungu, String lgdong ) throws Exception
 	{
@@ -135,7 +90,7 @@ public class AdminController extends BaseController{
 		}
 			
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet req = new HttpGet(url);
+		HttpGet req = new HttpGet(url.trim());
 		
 		StringBuffer resultText = new StringBuffer();
 		
@@ -464,5 +419,424 @@ public class AdminController extends BaseController{
 		}
 		
 		return response;
+	}
+	
+	@RequestMapping( value ="/admin/test.do")
+	public ModelAndView test ( HttpServletRequest request )
+	{
+		try
+		{
+			HashMap result = getSidoList(0, null, null, null );
+			
+			List<HashMap> list = (List<HashMap>) result.get("items");
+			
+			for ( int i = 0; i < list.size(); i++ )
+			{
+				HashMap item = list.get(i);
+				
+				if ( "서울특별시".equals( item.get("sidonm") ) )
+					item.put("sidonm", "서울");
+				else if ( "세종특별자치시".equals( item.get("sidonm") ) )
+					item.put("sidonm", "세종시");
+				else if ( "제주특별자치도".equals( item.get("sidonm") ) )
+					item.put("sidonm", "제주도");
+				
+				HashMap temp = new HashMap();
+				temp.put("regionName", item.get("sidonm") );
+				temp.put("level", 1);
+				
+				HashMap region = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByName", temp);
+				
+				if ( region == null )
+				{
+					logger.info("sido:" + item.get("sido") + " name:" + item.get("sidonm") );	
+					temp.put("code", item.get("sido") );
+					
+					sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertRegion", temp );
+				}
+				else
+				{
+					if ( Util.isEmptyString( region.get("code") ) )
+					{
+						region.put("code", item.get("sido") );
+						sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo", region );						
+					}
+				}
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("admin/test");
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/admin/test2.do")
+	public ModelAndView test2( HttpServletRequest request )
+	{
+		try
+		{
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getRegionListByLevel", "1");
+			
+			HashMap result = null;
+			
+			for ( int i = 0; i < regionList.size(); i++ )
+			{
+				HashMap region = regionList.get(i);
+				
+				if ("세종시".equals(region.get("regionName") ) ) continue;
+				
+				if ( !Util.isEmptyString( region.get("code") ) )
+				{
+					result = getSidoList(1, region.get("code").toString(), null, null );
+					
+					List<HashMap> list = (List<HashMap>) result.get("items");
+					
+					for ( int j = 0; j < list.size(); j++ )
+					{
+						HashMap item = list.get(j);
+						
+						HashMap temp = new HashMap();
+						
+						if ( Util.isEmptyString(item.get("sigungunm") ) )
+						{
+							logger.info("sigungunm is empty for " + item.get("sigungu") );
+							continue;
+						}
+						
+						temp.put("regionName", item.get("sigungunm") );
+						temp.put("level", 2);
+						temp.put("parentNo", region.get("regionNo"));
+						
+						HashMap region2 = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByName2", temp);
+						
+						if ( region2 == null )
+						{
+							logger.info("insert sido:" + item.get("sigungu") + " name:" + item.get("sigungunm") );	
+							temp.put("code", item.get("sigungu") );
+							
+							sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertRegion", temp );
+						}
+						else
+						{
+							temp.put("regionNo", region2.get("regionNo"));
+							
+							if ( Util.isEmptyString( region2.get("code") ) )
+							{
+								logger.info("update sido:" + item.get("sigungu") + " name:" + item.get("sigungunm") );
+								
+								region2.put("code", item.get("sigungu") );
+								sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo", region2 );						
+							}
+							else if ( !Util.isEmptyString( region2.get("code") ) )
+							{
+								logger.info("update sido:" + item.get("sigungu") + " name:" + item.get("sigungunm") );
+								
+								region2.put("code", item.get("sigungu") );
+								sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo2", temp );						
+							}
+						}
+					}
+				}
+				else
+				{
+					logger.info("code is null for region :" + region.get("regionName") );
+				}
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("admin/test");
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/admin/test3.do")
+	public ModelAndView test3( HttpServletRequest request )
+	{
+		try
+		{
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getRegionListByLevel", "2");
+			
+			HashMap result = null;
+			
+			for ( int i = 0; i < regionList.size(); i++ )
+			{
+				HashMap region = regionList.get(i);
+				
+				if ("세종시".equals(region.get("regionName") ) ) continue;
+				
+				if ( !Util.isEmptyString( region.get("code") ) )
+				{
+					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", region.get("parentNo").toString() );
+					
+					result = getSidoList(2, parent.get("code").toString(), region.get("code").toString(), null );
+					
+					List<HashMap> list = (List<HashMap>) result.get("items");
+					
+					for ( int j = 0; j < list.size(); j++ )
+					{
+						HashMap item = list.get(j);
+						
+						HashMap temp = new HashMap();
+						
+						if ( Util.isEmptyString(item.get("lgdongnm") ) )
+						{
+							logger.info("lgdongnm is empty for " + item.get("lgdong") );
+							continue;
+						}
+						
+						temp.put("regionName", item.get("lgdongnm") );
+						temp.put("level", 3);
+						temp.put("parentNo", region.get("regionNo"));
+						
+						HashMap region2 = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByName2", temp);
+						
+						if ( region2 == null )
+						{
+							logger.info("insert sido:" + item.get("lgdong") + " name:" + item.get("lgdongnm") );	
+							temp.put("code", item.get("lgdong") );
+							
+							sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertRegion", temp );
+						}
+						else
+						{
+							temp.put("regionNo", region2.get("regionNo"));
+							
+							if ( Util.isEmptyString( region2.get("code") ) )
+							{
+								logger.info("update sido:" + item.get("lgdong") + " name:" + item.get("lgdongnm") );
+								
+								region2.put("code", item.get("lgdong") );
+								sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo", region2 );						
+							}
+							else if ( !Util.isEmptyString( region2.get("code") ) )
+							{
+								logger.info("update sido:" + item.get("lgdong") + " name:" + item.get("lgdongnm") );
+								
+								region2.put("code", item.get("lgdong") );
+								sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo2", temp );						
+							}
+						}
+					}
+				}
+				else
+				{
+					logger.info("code is null for region :" + region.get("regionName") );
+				}
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("admin/test");
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/admin/test4.do")
+	public ModelAndView test4( HttpServletRequest request )
+	{
+		try
+		{
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getRegionListByLevel", "3");
+			
+			HashMap result = null;
+			
+			for ( int i = 0; i < regionList.size(); i++ )
+			{
+				HashMap region = regionList.get(i);
+				
+				if ( !Util.isEmptyString( region.get("code") ) )
+				{
+					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", region.get("parentNo").toString() );
+					HashMap sidoParent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", parent.get("parentNo").toString() );
+					
+					result = getSidoList(3, sidoParent.get("code").toString(),parent.get("code").toString(), region.get("code").toString() );
+					
+					if ( result == null || result.containsKey("items") == false ) continue;
+					
+					List<HashMap> list = (List<HashMap>) result.get("items");
+					
+					if ( list == null || list.size() == 0 ) continue;
+					
+					for ( int j = 0; j < list.size(); j++ )
+					{
+						HashMap item = list.get(j);
+						
+						HashMap temp = new HashMap();
+						
+						if ( Util.isEmptyString(item.get("rinm") ) )
+						{
+							logger.info("rinm is empty for " + item.get("ri") );
+							continue;
+						}
+						
+						temp.put("regionName", item.get("rinm") );
+						temp.put("level", 4);
+						temp.put("parentNo", region.get("regionNo"));
+						
+						HashMap region2 = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByName2", temp);
+						
+						if ( region2 == null )
+						{
+							logger.info("insert sido:" + item.get("ri") + " name:" + item.get("rinm") );	
+							temp.put("code", item.get("ri") );
+							
+							sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertRegion", temp );
+						}
+						else
+						{
+							temp.put("regionNo", region2.get("regionNo"));
+							
+							if ( Util.isEmptyString( region2.get("code") ) )
+							{
+								logger.info("update sido:" + item.get("ri") + " name:" + item.get("rinm") );
+								
+								region2.put("code", item.get("ri") );
+								sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo", region2 );						
+							}
+							else if ( !Util.isEmptyString( region2.get("code") ) )
+							{
+								logger.info("update sido:" + item.get("ri") + " name:" + item.get("rinm") );
+								
+								region2.put("code", item.get("ri") );
+								sqlSession.update("com.tessoft.nearhere.taxi.admin.updateCodeByRegionNo2", temp );						
+							}
+						}
+					}
+				}
+				else
+				{
+					logger.info("code is null for region :" + region.get("regionName") );
+				}
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("admin/test");
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/admin/updatePostRegion.do")
+	public ModelAndView updatePostRegion( HttpServletRequest request )
+	{
+		try
+		{
+			List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getPostsWhereRegionNull");
+			
+			for ( int i = 0; i < postList.size(); i++ )
+			{
+				String latitude = postList.get(i).get("fromLatitude").toString();
+				String longitude = postList.get(i).get("fromLongitude").toString();
+				String fromAddress = getFullAddress(latitude, longitude);
+//				String fromAddress = postList.get(i).get("fromAddress").toString();
+				
+				if (Util.isEmptyString(fromAddress))
+				{
+					fromAddress = postList.get(i).get("fromAddress").toString();
+				}
+				
+				HashMap regionInfo = getRegionInfo(fromAddress);
+				
+				if ( regionInfo != null )
+				{
+					regionInfo.put("add", fromAddress);
+					
+					if ( regionInfo.get("lRegion") == null ||  regionInfo.get("mRegion") == null || regionInfo.get("sRegion") == null )
+						logger.info( mapper.writeValueAsString(regionInfo) );
+					
+					HashMap param = new HashMap();
+					param.put("postID", postList.get(i).get("postID").toString() );
+					param.put("regionName", "출발지");
+					param.put("address", fromAddress );
+					
+					if ( regionInfo.get("lRegion") != null )
+						param.put("lRegionNo", ( (HashMap) regionInfo.get("lRegion") ).get("regionNo") );
+					if ( regionInfo.get("mRegion") != null )
+						param.put("mRegionNo", ( (HashMap) regionInfo.get("mRegion") ).get("regionNo") );
+					if ( regionInfo.get("sRegion") != null )
+						param.put("sRegionNo", ( (HashMap) regionInfo.get("sRegion") ).get("regionNo") );
+					if ( regionInfo.get("tRegion") != null )
+						param.put("tRegionNo", ( (HashMap) regionInfo.get("tRegion") ).get("regionNo") );
+					
+					param.put("latitude", latitude );
+					param.put("longitude", longitude );
+					
+					sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertPostRegion", param );
+				}
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		
+		return new ModelAndView("admin/test");
+	}
+	
+	public String getFullAddress( String latitude, String longitude ) throws Exception
+	{
+		String url = "http://apis.daum.net/maps/coord2detailaddr?apikey=d346cd447ad87016b635e77df459b155adb17509&x=" + longitude + "&y=" + latitude + "&inputCoordSystem=WGS84&output=xml";
+		
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet req = new HttpGet(url.trim());
+		
+		StringBuffer resultText = new StringBuffer();
+		
+		// add request header
+		HttpResponse res = null;
+
+		if ( Constants.bReal )
+			res = client.execute(req);
+		else
+		{
+			HttpHost proxy = new HttpHost("localhost", 8888);
+			CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+			res = wf_client.execute(req);
+		}
+
+		BufferedReader rd = new BufferedReader(
+				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
+
+		String line = "";
+		while ((line = rd.readLine()) != null) {
+			resultText.append(line);
+		}
+		
+		DocumentBuilderFactory factory =
+				DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		ByteArrayInputStream input =  new ByteArrayInputStream(
+				resultText.toString().getBytes("UTF-8"));
+		Document doc = builder.parse(input);
+
+		XPath xPath =  XPathFactory.newInstance().newXPath();
+		
+		NodeList list = doc.getDocumentElement().getChildNodes();
+		
+		String address = "";
+		
+		for ( int i = 0; i < list.getLength(); i++ )
+		{
+			Node node = list.item(i);
+			if ("region".equals(node.getNodeName()) )
+			{
+				address = node.getAttributes().item(0).getNodeValue();
+				break;
+			}
+			
+		}
+		
+		return address;
 	}
 }

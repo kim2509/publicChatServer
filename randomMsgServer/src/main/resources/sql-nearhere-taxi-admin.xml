@@ -88,9 +88,29 @@
 		) A
 	</select>
 	
+	<select id="getRegionByNo" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where regionNo=#{value}
+	</select>
+	
 	<select id="getRegionByName" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		select * from region
 		where regionName=#{regionName} and level=#{level}
+	</select>
+	
+	<select id="getRegionByName2" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from region
+		where regionName=#{regionName} and level=#{level} and parentNo=#{parentNo}
+	</select>
+
+	<select id="getRegionByName3" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from region
+		where regionName like concat(#{regionName},'%')  and level=#{level} limit 0, 1
+	</select>
+	
+	<select id="getRegionByName4" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from region
+		where regionName like concat(#{regionName},'%')  and level=#{level} and parentNo=#{parentNo} limit 0, 1
 	</select>
 	
 	<update id="updateCodeByRegionNo" parameterType="java.util.HashMap">
@@ -98,5 +118,32 @@
 		set code = #{code}
 		where regionNo=#{regionNo}
 	</update>
+	
+	<update id="updateCodeByRegionNo2" parameterType="java.util.HashMap">
+		update region
+		set code = #{code}, parentNo=#{parentNo}
+		where regionNo=#{regionNo}
+	</update>
+	
+	<insert id="insertRegion" parameterType="java.util.HashMap">
+		insert into region(regionName, level, code , parentNo )
+		value (#{regionName}, #{level}, #{code}, #{parentNo});
+	</insert>
+	
+	<select id="getRegionListByLevel" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where level=#{value}
+	</select>
+	
+	<select id="getPostsWhereRegionNull" resultType="java.util.HashMap">
+		select p.* from post p
+			left outer join post_region pr on p.postID=pr.postID
+		where pr.postID is null
+	</select>
+	
+	<insert id="insertPostRegion" parameterType="java.util.HashMap">
+		insert into post_region(postID, regionName, lRegionNo , mRegionNo, sRegionNo, tRegionNo, latitude, longitude, address, createdDate)
+		value (#{postID}, #{regionName}, #{lRegionNo}, #{mRegionNo}, #{sRegionNo}, #{tRegionNo}, #{latitude}, #{longitude}, #{address}, NOW());
+	</insert>
 	
 </mapper>
