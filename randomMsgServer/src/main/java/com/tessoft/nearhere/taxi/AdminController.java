@@ -486,8 +486,6 @@ public class AdminController extends BaseController{
 			{
 				HashMap region = regionList.get(i);
 				
-				if ("세종시".equals(region.get("regionName") ) ) continue;
-				
 				if ( !Util.isEmptyString( region.get("code") ) )
 				{
 					result = getSidoList(1, region.get("code").toString(), null, null );
@@ -560,6 +558,7 @@ public class AdminController extends BaseController{
 	{
 		try
 		{
+			// 구 리스트를 가져온다. 관악구, 강남구 같은.. 포항시 남구, 포항시 북구 와 같은 리스트를 모두 가져온다.
 			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getRegionListByLevel", "2");
 			
 			HashMap result = null;
@@ -568,10 +567,9 @@ public class AdminController extends BaseController{
 			{
 				HashMap region = regionList.get(i);
 				
-				if ("세종시".equals(region.get("regionName") ) ) continue;
-				
 				if ( !Util.isEmptyString( region.get("code") ) )
 				{
+					// 부모 region 을 가져온다.  포항시 남구 의 경우 "경북",  강남구의 경우 "서울" 이 해당됨.
 					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", region.get("parentNo").toString() );
 					
 					result = getSidoList(2, parent.get("code").toString(), region.get("code").toString(), null );
@@ -644,6 +642,7 @@ public class AdminController extends BaseController{
 	{
 		try
 		{
+			// 연일읍 에 해당하는 regionList 를 가져온다.
 			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getRegionListByLevel", "3");
 			
 			HashMap result = null;
@@ -654,10 +653,14 @@ public class AdminController extends BaseController{
 				
 				if ( !Util.isEmptyString( region.get("code") ) )
 				{
+					// 포항시 남구, 강남구 에 해당하는 region 을 가져온다.
 					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", region.get("parentNo").toString() );
+					
+					// 경북 과 같은 최상위 region 을 가져온다.
 					HashMap sidoParent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", parent.get("parentNo").toString() );
 					
-					result = getSidoList(3, sidoParent.get("code").toString(),parent.get("code").toString(), region.get("code").toString() );
+					// 경북, 포항시 남구, 연일읍 의 하위 region 들을 조회
+					result = getSidoList(3, sidoParent.get("code").toString(), parent.get("code").toString(), region.get("code").toString() );
 					
 					if ( result == null || result.containsKey("items") == false ) continue;
 					
