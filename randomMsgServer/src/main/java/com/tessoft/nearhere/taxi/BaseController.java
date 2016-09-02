@@ -2,6 +2,7 @@ package com.tessoft.nearhere.taxi;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -200,13 +201,17 @@ public class BaseController {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public HashMap getRegionInfo( String address )
+	public HashMap getRegionInfo( String address ) throws Exception
 	{
 		HashMap regionInfo = new HashMap();
 		
 		if ( Util.isEmptyString(address) ) return null;
 		
-		String[] regionTokens = address.split(" ");
+		address = stripBunji( address );
+		
+		String[] regionTokens = splitRegions( address );
+		
+		if ( regionTokens == null || regionTokens.length < 1 ) return null;
 		
 		for ( int i = 0; i < regionTokens.length; i++ )
 		{
@@ -296,6 +301,102 @@ public class BaseController {
 			result = result.substring(0,  result.length() - 1 );
 		
 		result = result.replaceAll("\\d","");	
+		
+		return result;
+	}
+	
+	public String stripBunji( String address ) throws Exception
+	{
+		String result = "";
+		
+		String[] tokens = address.split(" ");
+		
+		int gu = 0;
+		int dong = 0;
+		int myeon = 0;
+		int li = 0;
+		
+		for( int i = 0; i < tokens.length; i++ )
+		{
+			String token = tokens[i].trim();
+			
+			if ( token.endsWith("구") && gu == 0 ) gu = i;
+			if ( ( token.endsWith("동") || token.indexOf("동") >= 0 && token.indexOf("가") >= 0 || token.indexOf("로") >= 0 && token.indexOf("가") >= 0 ) && dong == 0 ) dong = i;
+			if ( token.endsWith("면") && myeon == 0 ) myeon = i;
+			if ( token.endsWith("리") && li == 0 ) li = i;
+		}
+		
+		if ( li > 0 )
+		{
+			for ( int i = 0; i <= li; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else if ( dong > 0 )
+		{
+			for ( int i = 0; i <= dong; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else
+			throw new Exception( address );
+		
+		return result.trim();
+	}
+	
+	public String[] splitRegions( String address )
+	{
+		String[] tokens = address.split(" ");
+		
+		for( int i = 0; i < tokens.length; i++ )
+			tokens[i] = tokens[i].trim();
+		
+		ArrayList list = new ArrayList();
+		
+		// 리 가 있는지 체크
+		if ( !Util.isEmptyString( tokens[tokens.length - 1 ] ) && tokens[tokens.length - 1 ].endsWith("리"))
+		{
+			if ( tokens.length == 4 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1]);
+				list.add(tokens[2]);
+				list.add(tokens[3]);
+			}
+			else if ( tokens.length == 5 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1] + " " + tokens[2]);
+				list.add(tokens[3]);
+				list.add(tokens[4]);
+			}
+			else
+			{
+				logger.error("tokens.length(리) " + tokens.length + " is strange for " + address );
+				return null;
+			}
+		}
+		else
+		{
+			if ( tokens.length == 3 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1]);
+				list.add(tokens[2]);
+			}
+			else if ( tokens.length == 4 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1] + " " + tokens[2]);
+				list.add(tokens[3]);
+			}
+			else
+			{
+				logger.error("tokens.length " + tokens.length + " is strange for " + address);
+				return null;
+			}
+		}
+		
+		
+		String[] result = (String[]) list.toArray(new String[list.size()]);
 		
 		return result;
 	}

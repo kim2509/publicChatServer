@@ -741,6 +741,7 @@ public class AdminController extends BaseController{
 				String latitude = postList.get(i).get("fromLatitude").toString();
 				String longitude = postList.get(i).get("fromLongitude").toString();
 				String fromAddress = getFullAddress(latitude, longitude);
+				
 //				String fromAddress = postList.get(i).get("fromAddress").toString();
 				
 				if (Util.isEmptyString(fromAddress))
@@ -776,6 +777,7 @@ public class AdminController extends BaseController{
 					
 					sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertPostRegion", param );
 				}
+				
 			}
 		}
 		catch(Exception ex )
@@ -825,14 +827,14 @@ public class AdminController extends BaseController{
 
 		XPath xPath =  XPathFactory.newInstance().newXPath();
 		
-		NodeList list = doc.getDocumentElement().getChildNodes();
-		
+		NodeList list = doc.getElementsByTagName("old").item(0).getChildNodes();
+
 		String address = "";
 		
 		for ( int i = 0; i < list.getLength(); i++ )
 		{
 			Node node = list.item(i);
-			if ("region".equals(node.getNodeName()) )
+			if ("name".equals(node.getNodeName()) )
 			{
 				address = node.getAttributes().item(0).getNodeValue();
 				break;
