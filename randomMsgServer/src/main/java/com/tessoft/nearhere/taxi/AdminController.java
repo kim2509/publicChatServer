@@ -734,7 +734,7 @@ public class AdminController extends BaseController{
 	{
 		try
 		{
-			List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getPostsWhereRegionNull");
+			List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getPostsWhereRegionNull", "출발지");
 			
 			for ( int i = 0; i < postList.size(); i++ )
 			{
@@ -761,6 +761,67 @@ public class AdminController extends BaseController{
 					HashMap param = new HashMap();
 					param.put("postID", postList.get(i).get("postID").toString() );
 					param.put("regionName", "출발지");
+					param.put("address", fromAddress );
+					
+					if ( regionInfo.get("lRegion") != null )
+						param.put("lRegionNo", ( (HashMap) regionInfo.get("lRegion") ).get("regionNo") );
+					if ( regionInfo.get("mRegion") != null )
+						param.put("mRegionNo", ( (HashMap) regionInfo.get("mRegion") ).get("regionNo") );
+					if ( regionInfo.get("sRegion") != null )
+						param.put("sRegionNo", ( (HashMap) regionInfo.get("sRegion") ).get("regionNo") );
+					if ( regionInfo.get("tRegion") != null )
+						param.put("tRegionNo", ( (HashMap) regionInfo.get("tRegion") ).get("regionNo") );
+					
+					param.put("latitude", latitude );
+					param.put("longitude", longitude );
+					
+					sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertPostRegion", param );
+				}
+				
+			}
+		}
+		catch(Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		
+		return new ModelAndView("admin/test");
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/admin/updatePostRegion2.do")
+	public ModelAndView updatePostRegion2( HttpServletRequest request )
+	{
+		try
+		{
+			List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getPostsWhereRegionNull", "도착지");
+			
+			for ( int i = 0; i < postList.size(); i++ )
+			{
+				String latitude = postList.get(i).get("latitude").toString();
+				String longitude = postList.get(i).get("longitude").toString();
+				String fromAddress = getFullAddress(latitude, longitude);
+				
+//				String fromAddress = postList.get(i).get("fromAddress").toString();
+				
+				if (Util.isEmptyString(fromAddress))
+				{
+					fromAddress = postList.get(i).get("toAddress").toString();
+				}
+				
+				HashMap regionInfo = getRegionInfo(fromAddress);
+				
+				if ( regionInfo != null )
+				{
+					regionInfo.put("add", fromAddress);
+					
+					if ( regionInfo.get("lRegion") == null ||  regionInfo.get("mRegion") == null || regionInfo.get("sRegion") == null )
+						logger.info( mapper.writeValueAsString(regionInfo) );
+					
+					HashMap param = new HashMap();
+					param.put("postID", postList.get(i).get("postID").toString() );
+					param.put("regionName", "도착지");
 					param.put("address", fromAddress );
 					
 					if ( regionInfo.get("lRegion") != null )

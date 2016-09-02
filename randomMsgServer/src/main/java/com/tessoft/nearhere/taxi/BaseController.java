@@ -285,6 +285,7 @@ public class BaseController {
 			result = result.replaceAll("광역시", "");
 		}
 
+		/*
 		if ( !"대구".equals( result ) && result.endsWith("구") )
 			result = result.substring(0,  result.length() - 1 );
 		else if ( result.endsWith("군") )
@@ -301,6 +302,7 @@ public class BaseController {
 			result = result.substring(0,  result.length() - 1 );
 		
 		result = result.replaceAll("\\d","");	
+		*/
 		
 		return result;
 	}
@@ -312,6 +314,7 @@ public class BaseController {
 		String[] tokens = address.split(" ");
 		
 		int gu = 0;
+		int si = 0;
 		int dong = 0;
 		int myeon = 0;
 		int li = 0;
@@ -321,6 +324,7 @@ public class BaseController {
 			String token = tokens[i].trim();
 			
 			if ( token.endsWith("구") && gu == 0 ) gu = i;
+			if ( token.endsWith("시") && si == 0 ) si = i;
 			if ( ( token.endsWith("동") || token.indexOf("동") >= 0 && token.indexOf("가") >= 0 || token.indexOf("로") >= 0 && token.indexOf("가") >= 0 ) && dong == 0 ) dong = i;
 			if ( token.endsWith("면") && myeon == 0 ) myeon = i;
 			if ( token.endsWith("리") && li == 0 ) li = i;
@@ -334,6 +338,16 @@ public class BaseController {
 		else if ( dong > 0 )
 		{
 			for ( int i = 0; i <= dong; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else if ( si > 0 )
+		{
+			for ( int i = 0; i <= si; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else if ( gu > 0 )
+		{
+			for ( int i = 0; i <= gu; i++ )
 				result += tokens[i].trim() + " ";
 		}
 		else
@@ -371,7 +385,10 @@ public class BaseController {
 			else
 			{
 				logger.error("tokens.length(리) " + tokens.length + " is strange for " + address );
-				return null;
+				
+				for ( int i = 0; i < tokens.length; i++ )
+					list.add(tokens[i]);
+
 			}
 		}
 		else
@@ -391,7 +408,9 @@ public class BaseController {
 			else
 			{
 				logger.error("tokens.length " + tokens.length + " is strange for " + address);
-				return null;
+
+				for ( int i = 0; i < tokens.length; i++ )
+					list.add(tokens[i]);
 			}
 		}
 		

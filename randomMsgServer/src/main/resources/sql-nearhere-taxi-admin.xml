@@ -135,9 +135,9 @@
 		where level=#{value}
 	</select>
 	
-	<select id="getPostsWhereRegionNull" resultType="java.util.HashMap">
+	<select id="getPostsWhereRegionNull" parameterType="String" resultType="java.util.HashMap">
 		select p.* from post p
-			left outer join post_region pr on p.postID=pr.postID
+			left outer join post_region pr on p.postID=pr.postID and pr.regionName=#{value}
 		where pr.postID is null
 	</select>
 	
