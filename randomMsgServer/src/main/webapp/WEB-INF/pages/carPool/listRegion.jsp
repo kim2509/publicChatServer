@@ -28,6 +28,7 @@
 	}
 	
 	String listRegionLink = Constants.getServerURL() + "/taxi/listRegion.do?isApp=" + isApp + "&appVersion=" + version;
+	String mRegionNo = request.getParameter("mRegionNo");
 %>
 <html>
 
@@ -75,6 +76,10 @@
 	#title{
 	    color: #4d4da0;
     	text-align: center;
+	}
+	
+	.region{
+		font-size:14px;
 	}
 </style>
 
@@ -273,9 +278,19 @@
 		if ( childRegionList != null ) {
 			for ( int i = 0; i < childRegionList.size(); i++ )
 			{
+				String linkURL = listRegionLink + "&regionNo=" + regionNo;
+				
+				if ("1".equals( request.getAttribute("level") ) )
+				{
+					linkURL += "&mRegionNo=" + childRegionList.get(i).get("regionNo");
+				}
+				else if ("2".equals( request.getAttribute("level") ) )
+				{
+					linkURL += "&mRegionNo=" + mRegionNo + "&sRegionNo=" + childRegionList.get(i).get("regionNo");
+				}
 %>				
 				<li id="regionItem">
-				<a href="<%= listRegionLink %>&regionNo=<%= childRegionList.get(i).get("regionNo") %>">
+				<a href="<%= linkURL %>" class="region">
 					<%= childRegionList.get(i).get("regionName") %>
 					(<%= childRegionList.get(i).get("cnt") %>)
 				</a>

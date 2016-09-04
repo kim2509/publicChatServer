@@ -25,6 +25,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -2295,62 +2296,82 @@ public class TaxiController {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/taxi/listRegion.do")
-	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo, String mRegionNo, String sRegionNo )
+	public ModelAndView listRegion( String isApp , ModelMap model, 
+			String regionNo, 
+			@RequestParam(value="mRegionNo", defaultValue = "") String mRegionNo, 
+			@RequestParam(value="sRegionNo", defaultValue = "") String sRegionNo, 
+			@RequestParam(value="tRegionNo", defaultValue = "") String tRegionNo )
 	{
 		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", regionNo );
 		
 		model.addAttribute("regionInfo", regionInfo );
 		
-		ArrayList<HashMap> childRegionList = new ArrayList<HashMap>();
+		List<HashMap> childRegionList = null;
 		
-		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) )
+		model.addAttribute("level", "1");
+		
+		if ( !Util.isEmptyString( mRegionNo ) )
 		{
-			List<HashMap> temp = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
-			
-			if ( temp != null )
-			{
-				ArrayList<HashMap> subParentList = new ArrayList<HashMap>();
-				
-				for ( int i = 0; i < temp.size(); i++ )
-				{
-					HashMap region = temp.get(i);
-					
-					// 성남시, 수원시, 용인시 와 같은 parentNo2 에 해당하는 값들임.
-					if ( Util.isEmptyForKey(region, "code") )
-					{
-						subParentList.add(region);
-					}
-				}
-				
-				for ( int i = 0; i < temp.size(); i++ )
-				{
-					HashMap region = temp.get(i);
-					
-					// 성남시 분당구, 용인시 수지구 와 같이 성남시, 용인시의 child 들임.
-					if ( !Util.isEmptyForKey(region, "parentNo2") )
-					{
-						for ( int j = 0; j < subParentList.size(); j++ )
-						{
-							HashMap parent = subParentList.get(i);
-							if ( region.get("parentNo2").toString().equals( parent.get("regionNo") ) )
-							{
-								int cnt = Integer.parseInt( parent.get("cnt").toString() );
-								cnt += Integer.parseInt( region.get("cnt").toString() );
-								parent.put("cnt", String.valueOf( cnt ));
-							}
-						}
-					}
-					else
-					{
-						childRegionList.add(region);	
-					}
-				}
-			}
+			model.addAttribute("level", "2");
+			model.addAttribute("mRegionNo", mRegionNo );
 		}
+		
+		if ( !Util.isEmptyString( sRegionNo ) )
+		{
+			model.addAttribute("level", "3");
+			model.addAttribute("sRegionNo", sRegionNo );
+		}
+		
+		childRegionList = getChildRegionList(regionNo, mRegionNo, sRegionNo, tRegionNo );
 		
 		model.addAttribute("childRegionList", childRegionList);
 		
 		return new ModelAndView("carPool/listRegion", model );
+	}
+
+	private List<HashMap> getChildRegionList(String regionNo, String mRegionNo, String sRegionNo, String tRegionNo ) {
+
+		List<HashMap> childRegionList = null;
+		
+		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) && Util.isEmptyString(tRegionNo) )
+		{
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
+		}
+		else if ( !Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) && Util.isEmptyString(tRegionNo) )
+		{
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList", mRegionNo );
+		}
+		else if ( !Util.isEmptyString(mRegionNo) && !Util.isEmptyString(sRegionNo) )
+		{
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getTinyRegionList", sRegionNo );
+		}
+		else
+		{
+			childRegionList = new ArrayList<HashMap>(); 
+		}
+		
+		if ( childRegionList != null )
+		{
+			for ( int i = 0; i < childRegionList.size(); i++ )
+			{
+				HashMap region = childRegionList.get(i);
+
+				if ("Y".equals(region.get("isSubParent") ) )
+				{
+					HashMap temp = new HashMap();
+					temp.put("parentNo", region.get("parentNo"));
+					temp.put("parentNo2", region.get("regionNo"));
+
+					HashMap subParent = sqlSession.selectOne("com.tessoft.nearhere.taxi.getSubParent", temp );
+
+					if ( subParent != null && !Util.isEmptyForKey(subParent, "cnt") )
+						region.put("cnt", subParent.get("cnt") );
+				}
+			}
+		}
+		
+		
+		return childRegionList;
 	}
 	
 	@RequestMapping( value ="/taxi/newPost.do")
