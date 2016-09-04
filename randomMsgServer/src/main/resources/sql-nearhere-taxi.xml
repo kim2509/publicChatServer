@@ -1156,8 +1156,18 @@
 	</select>
 	
 	<select id="getMiddleRegionList" resultType="java.util.HashMap" parameterType="String">
-		select * from region
+		select r.regionNo, r.regionName, ifnull(pr.cnt,0) as cnt, r.code as code, r.parentNo2 as parentNo2 from region r
+			left outer join (
+				select mRegionNo as regionNo, count( no ) as cnt
+				from post_region 
+				group by mRegionNo
+			) pr on r.regionNo = pr.regionNo
 		where parentNo=#{value}
+		union
+		select 0, '기타', count(no) as cnt, null as code, null as parentNo2
+		from post_region
+		where lRegionNo = #{value} and mRegionNo is null
+		group by mRegionNo
 	</select>
 	
 	<select id="getRecentPosts" resultType="com.nearhere.domain.Post" parameterType="Integer">

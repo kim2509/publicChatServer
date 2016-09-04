@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -57,6 +58,15 @@ public class Util {
 	{
 		if ( obj == null ) return true;
 		if ( "".equals( obj.toString().trim())) return true;
+		return false;
+	}
+	
+	public static boolean isEmptyForKey( HashMap hash, String key )
+	{
+		if ( hash == null ) return true;
+		
+		if ( !hash.containsKey(key) || Util.isEmptyString(hash.get(key)) ) return true;
+		
 		return false;
 	}
 	

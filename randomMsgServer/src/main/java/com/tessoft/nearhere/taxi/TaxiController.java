@@ -2293,6 +2293,7 @@ public class TaxiController {
 		return new ModelAndView("carPool/moreRecentPosts");
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/taxi/listRegion.do")
 	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo, String mRegionNo, String sRegionNo )
 	{
@@ -2300,11 +2301,54 @@ public class TaxiController {
 		
 		model.addAttribute("regionInfo", regionInfo );
 		
+		ArrayList<HashMap> childRegionList = new ArrayList<HashMap>();
+		
 		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) )
 		{
-			List<HashMap> childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
-			model.addAttribute("childRegionList", childRegionList);
+			List<HashMap> temp = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
+			
+			if ( temp != null )
+			{
+				ArrayList<HashMap> subParentList = new ArrayList<HashMap>();
+				
+				for ( int i = 0; i < temp.size(); i++ )
+				{
+					HashMap region = temp.get(i);
+					
+					// 성남시, 수원시, 용인시 와 같은 parentNo2 에 해당하는 값들임.
+					if ( Util.isEmptyForKey(region, "code") )
+					{
+						subParentList.add(region);
+					}
+				}
+				
+				for ( int i = 0; i < temp.size(); i++ )
+				{
+					HashMap region = temp.get(i);
+					
+					// 성남시 분당구, 용인시 수지구 와 같이 성남시, 용인시의 child 들임.
+					if ( !Util.isEmptyForKey(region, "parentNo2") )
+					{
+						for ( int j = 0; j < subParentList.size(); j++ )
+						{
+							HashMap parent = subParentList.get(i);
+							if ( region.get("parentNo2").toString().equals( parent.get("regionNo") ) )
+							{
+								int cnt = Integer.parseInt( parent.get("cnt").toString() );
+								cnt += Integer.parseInt( region.get("cnt").toString() );
+								parent.put("cnt", String.valueOf( cnt ));
+							}
+						}
+					}
+					else
+					{
+						childRegionList.add(region);	
+					}
+				}
+			}
 		}
+		
+		model.addAttribute("childRegionList", childRegionList);
 		
 		return new ModelAndView("carPool/listRegion", model );
 	}

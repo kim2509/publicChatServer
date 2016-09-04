@@ -274,7 +274,12 @@
 			for ( int i = 0; i < childRegionList.size(); i++ )
 			{
 %>				
-				<li id="regionItem"><a href="<%= listRegionLink %>&regionNo=<%= childRegionList.get(i).get("regionNo") %>"><%= childRegionList.get(i).get("regionName") %></a></li>
+				<li id="regionItem">
+				<a href="<%= listRegionLink %>&regionNo=<%= childRegionList.get(i).get("regionNo") %>">
+					<%= childRegionList.get(i).get("regionName") %>
+					(<%= childRegionList.get(i).get("cnt") %>)
+				</a>
+				</li>
 <%				
 			}
 		}
