@@ -1231,6 +1231,41 @@
 		group by sRegionNo
 	</select>
 	
+	<select id="getSmallRegionList2" resultType="java.util.HashMap" parameterType="String">
+		select r.regionNo
+		, r.regionName
+		, ifnull(pr.cnt,0) as cnt 
+		, ifnull(isSubParent,'N') as isSubParent
+		, r.parentNo
+		, ifnull(childCount,0) as childRegionCount
+		from region r
+			left outer join (
+				select sRegionNo as regionNo, count( no ) as cnt
+				from post_region 
+				group by sRegionNo
+			) pr on r.regionNo = pr.regionNo
+			left outer join (
+				select parentNo2, 
+					case when count(regionNo) > 0 then 'Y' else 'N' end isSubParent
+				from region 
+				where parentNo2 is not null
+				group by parentNo2
+			) r2 on r.regionNo = r2.parentNo2
+			left outer join (
+				select parentNo as regionNo, count(regionNo) as childCount
+				from region
+				group by parentNo
+			) r3 on r3.regionNo = r.regionNo
+		where parentNo in ( select regionNo from region where parentNo2 = #{value} ) 
+		and r.parentNo2 is null
+		union
+		select 0, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
+		from post_region
+		where mRegionNo in ( select regionNo from region where parentNo2 = #{value} )
+		and sRegionNo is null
+		group by sRegionNo
+	</select>
+	
 	<select id="getTinyRegionList" resultType="java.util.HashMap" parameterType="String">
 		select r.regionNo
 		, r.regionName

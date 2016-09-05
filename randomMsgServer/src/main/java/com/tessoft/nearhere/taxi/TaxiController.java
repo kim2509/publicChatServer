@@ -2300,7 +2300,9 @@ public class TaxiController {
 			String regionNo, 
 			@RequestParam(value="mRegionNo", defaultValue = "") String mRegionNo, 
 			@RequestParam(value="sRegionNo", defaultValue = "") String sRegionNo, 
-			@RequestParam(value="tRegionNo", defaultValue = "") String tRegionNo )
+			@RequestParam(value="tRegionNo", defaultValue = "") String tRegionNo,
+			@RequestParam(value="isSubParent", defaultValue = "N") String isSubParent, 
+			@RequestParam(value="childRegionCount", defaultValue = "0") int childRegionCount)
 	{
 		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", regionNo );
 		
@@ -2322,24 +2324,35 @@ public class TaxiController {
 			model.addAttribute("sRegionNo", sRegionNo );
 		}
 		
-		childRegionList = getChildRegionList(regionNo, mRegionNo, sRegionNo, tRegionNo );
+		if ( !Util.isEmptyString( tRegionNo ) )
+		{
+			model.addAttribute("level", "4");
+			model.addAttribute("tRegionNo", tRegionNo );
+		}
+		
+		childRegionList = getChildRegionList(regionNo, mRegionNo, sRegionNo, tRegionNo, isSubParent, childRegionCount );
 		
 		model.addAttribute("childRegionList", childRegionList);
 		
 		return new ModelAndView("carPool/listRegion", model );
 	}
 
-	private List<HashMap> getChildRegionList(String regionNo, String mRegionNo, String sRegionNo, String tRegionNo ) {
+	private List<HashMap> getChildRegionList(String regionNo, String mRegionNo, String sRegionNo, String tRegionNo, String isSubParent, int childRegionCount ) {
 
 		List<HashMap> childRegionList = null;
 		
-		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) && Util.isEmptyString(tRegionNo) )
+		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo))
 		{
 			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
 		}
-		else if ( !Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo) && Util.isEmptyString(tRegionNo) )
+		else if ( !Util.isEmptyString(mRegionNo) && 
+				( Util.isEmptyString(sRegionNo)|| childRegionCount == 0 ) )
 		{
-			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList", mRegionNo );
+			if ("Y".equals( isSubParent ) ) {
+				childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList2", mRegionNo );
+			}
+			else
+				childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList", mRegionNo );
 		}
 		else if ( !Util.isEmptyString(mRegionNo) && !Util.isEmptyString(sRegionNo) )
 		{

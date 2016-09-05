@@ -29,6 +29,7 @@
 	
 	String listRegionLink = Constants.getServerURL() + "/taxi/listRegion.do?isApp=" + isApp + "&appVersion=" + version;
 	String mRegionNo = request.getParameter("mRegionNo");
+	String sRegionNo = request.getParameter("sRegionNo");
 %>
 <html>
 
@@ -278,7 +279,9 @@
 		if ( childRegionList != null ) {
 			for ( int i = 0; i < childRegionList.size(); i++ )
 			{
+				int childRegionCount = Integer.parseInt( childRegionList.get(i).get("childRegionCount").toString() );
 				String linkURL = listRegionLink + "&regionNo=" + regionNo;
+				String isSubParent = childRegionList.get(i).get("isSubParent").toString();
 				
 				if ("1".equals( request.getAttribute("level") ) )
 				{
@@ -286,14 +289,24 @@
 				}
 				else if ("2".equals( request.getAttribute("level") ) )
 				{
-					linkURL += "&mRegionNo=" + mRegionNo + "&sRegionNo=" + childRegionList.get(i).get("regionNo");
+					linkURL += "&mRegionNo=" + mRegionNo + "&sRegionNo=" + childRegionList.get(i).get("regionNo") + "&childRegionCount=" + childRegionCount;
+				}
+				else if ("3".equals( request.getAttribute("level") ) || "4".equals( request.getAttribute("level") ) )
+				{
+					linkURL += "&mRegionNo=" + mRegionNo + "&sRegionNo=" + sRegionNo + "&tRegionNo=" + childRegionList.get(i).get("regionNo") ;
+				}
+				
+				if ( !Util.isEmptyString( isSubParent ) ) {
+					linkURL += "&isSubParent=" + isSubParent;
 				}
 %>				
 				<li id="regionItem">
+				
 				<a href="<%= linkURL %>" class="region">
 					<%= childRegionList.get(i).get("regionName") %>
 					(<%= childRegionList.get(i).get("cnt") %>)
 				</a>
+				
 				</li>
 <%				
 			}
