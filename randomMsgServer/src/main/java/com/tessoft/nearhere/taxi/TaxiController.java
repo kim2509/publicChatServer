@@ -2320,7 +2320,11 @@ public class TaxiController {
 		
 		if ( !Util.isEmptyString( sRegionNo ) )
 		{
-			model.addAttribute("level", "3");
+			if ( childRegionCount == 0 )
+				model.addAttribute("level", "2");
+			else
+				model.addAttribute("level", "3");
+			
 			model.addAttribute("sRegionNo", sRegionNo );
 		}
 		
@@ -2345,14 +2349,14 @@ public class TaxiController {
 		{
 			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
 		}
-		else if ( !Util.isEmptyString(mRegionNo) && 
-				( Util.isEmptyString(sRegionNo)|| childRegionCount == 0 ) )
+		else if ( !Util.isEmptyString(mRegionNo) && Util.isEmptyString(tRegionNo) && childRegionCount == 0 )
 		{
-			if ("Y".equals( isSubParent ) ) {
-				childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList2", mRegionNo );
-			}
-			else
-				childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList", mRegionNo );
+//			if ( ( Util.isEmptyString(sRegionNo) || childRegionCount == 0 ) )
+				
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList2", mRegionNo );
+			List<HashMap> temp = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList", mRegionNo );
+			childRegionList.addAll( temp );
+			
 		}
 		else if ( !Util.isEmptyString(mRegionNo) && !Util.isEmptyString(sRegionNo) )
 		{
