@@ -2297,14 +2297,14 @@ public class TaxiController {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/taxi/listRegion.do")
 	public ModelAndView listRegion( String isApp , ModelMap model, 
-			String regionNo, 
+			@RequestParam(value="lRegionNo", defaultValue = "") String lRegionNo, 
 			@RequestParam(value="mRegionNo", defaultValue = "") String mRegionNo, 
 			@RequestParam(value="sRegionNo", defaultValue = "") String sRegionNo, 
 			@RequestParam(value="tRegionNo", defaultValue = "") String tRegionNo,
 			@RequestParam(value="isSubParent", defaultValue = "N") String isSubParent, 
 			@RequestParam(value="childRegionCount", defaultValue = "0") int childRegionCount)
 	{
-		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", regionNo );
+		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", lRegionNo );
 		
 		model.addAttribute("regionInfo", regionInfo );
 		
@@ -2334,20 +2334,20 @@ public class TaxiController {
 			model.addAttribute("tRegionNo", tRegionNo );
 		}
 		
-		childRegionList = getChildRegionList(regionNo, mRegionNo, sRegionNo, tRegionNo, isSubParent, childRegionCount );
+		childRegionList = getChildRegionList(lRegionNo, mRegionNo, sRegionNo, tRegionNo, isSubParent, childRegionCount );
 		
 		model.addAttribute("childRegionList", childRegionList);
 		
 		return new ModelAndView("carPool/listRegion", model );
 	}
 
-	private List<HashMap> getChildRegionList(String regionNo, String mRegionNo, String sRegionNo, String tRegionNo, String isSubParent, int childRegionCount ) {
+	private List<HashMap> getChildRegionList(String lRegionNo, String mRegionNo, String sRegionNo, String tRegionNo, String isSubParent, int childRegionCount ) {
 
 		List<HashMap> childRegionList = null;
 		
 		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo))
 		{
-			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", regionNo );
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", lRegionNo );
 		}
 		else if ( !Util.isEmptyString(mRegionNo) && Util.isEmptyString(tRegionNo) && childRegionCount == 0 )
 		{

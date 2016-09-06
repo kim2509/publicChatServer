@@ -237,7 +237,7 @@ if ("Y".equals( showSearchDiv ) )
 						String title = regionList.get(i).get("regionName").toString();
 						String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 						String regionCount = regionList.get(i).get("regionCount").toString();
-						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
+						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?lRegionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
 						int newCount = Util.getInt( regionList.get(i).get("newCount") );
 	%>
 					<li>

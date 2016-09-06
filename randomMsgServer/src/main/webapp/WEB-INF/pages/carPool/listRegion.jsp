@@ -4,7 +4,7 @@
 <%@ page import="java.util.*"%>
 
 <%
-	String regionNo = request.getParameter("regionNo");
+	String lRegionNo = request.getParameter("lRegionNo");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
 	String isApp = request.getParameter("isApp");
@@ -30,6 +30,7 @@
 	String listRegionLink = Constants.getServerURL() + "/taxi/listRegion.do?isApp=" + isApp + "&appVersion=" + version;
 	String mRegionNo = request.getParameter("mRegionNo");
 	String sRegionNo = request.getParameter("sRegionNo");
+	String tRegionNo = request.getParameter("tRegionNo");
 %>
 <html>
 
@@ -118,7 +119,10 @@
 			type : "POST",
 			url : "/nearhere/taxi/getPostsNearHereAjax.do",
 			data : JSON.stringify({
-				"regionNo" : <%= regionNo %>,
+				"lRegionNo" : <%= lRegionNo %>,
+				"mRegionNo" : <%= mRegionNo %>,
+				"sRegionNo" : <%= sRegionNo %>,
+				"tRegionNo" : <%= tRegionNo %>,
 				"pageNo" : pageNo
 			}),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
@@ -220,13 +224,13 @@
 		if ("Y".equals( isHotspot ) )
 		{
 %>
-			document.location.href='<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>&nextUrl=' + nextUrl;
+			document.location.href='<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>&nextUrl=' + nextUrl;
 <%
 		}
 		else
 		{
 %>
-			document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>&nextUrl=' + nextUrl;
+			document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>&nextUrl=' + nextUrl;
 <%
 		}
 %>		
@@ -240,13 +244,13 @@
 			if ("Y".equals( isHotspot ) )
 			{
 %>
-				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>');
+				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>');
 <%
 			}
 			else
 			{
 %>
-				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>');
+				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>');
 <%
 			}
 %>			
@@ -280,7 +284,7 @@
 			for ( int i = 0; i < childRegionList.size(); i++ )
 			{
 				int childRegionCount = Integer.parseInt( childRegionList.get(i).get("childRegionCount").toString() );
-				String linkURL = listRegionLink + "&regionNo=" + regionNo;
+				String linkURL = listRegionLink + "&lRegionNo=" + lRegionNo;
 				String isSubParent = childRegionList.get(i).get("isSubParent").toString();
 				
 				if ("1".equals( request.getAttribute("level") ) )

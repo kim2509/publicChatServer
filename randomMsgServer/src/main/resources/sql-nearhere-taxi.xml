@@ -192,7 +192,7 @@
 		*
 		FROM (
 			SELECT P.postID, P.userID, P.type, message, content, fromLatitude, fromLongitude, fromAddress,
-				latitude, longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
+				P.latitude, P.longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
 				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex', U.kakaoID as 'user.kakaoID',
 				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
 				departureTime, departureDateTime
@@ -209,18 +209,6 @@
 				)
 				) , 1) AS fromDistance
 			</if>
-			<if test="toLatitude != null and toLongitude != null">
-				,TRUNCATE((
-				6371 * acos ( cos ( radians( #{toLatitude} ) )
-				* cos( radians( latitude ) )
-				* cos( radians( longitude ) - radians(
-				#{toLongitude} ) )
-				+ sin ( radians( #{toLatitude} ) )
-				* sin( radians(
-				latitude ) )
-				)
-				) , 1) AS toDistance
-			</if>
 				,status, vehicle, fareOption, repetitiveYN, RC.readCount as readCount
 			FROM post P
 				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null group by postID ) PR 
@@ -228,13 +216,23 @@
 				left outer join user U on P.userID=U.userID
 				left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
 					on P.postID=RC.postID
+				left outer join post_region pr2 on P.postID=pr2.postID and pr2.regionName='도착지'
 			WHERE
 			fromLatitude is not null
 			and fromLongitude is not null
 			and P.type='taxi'
 			and deletedDate is null
-			<if test="regionNo != null">
-				AND P.region = #{regionNo}
+			<if test="lRegionNo != null">
+				AND pr2.lRegionNo = #{lRegionNo}
+			</if>
+			<if test="mRegionNo != null">
+				AND pr2.mRegionNo = #{mRegionNo}
+			</if>
+			<if test="sRegionNo != null">
+				AND pr2.sRegionNo = #{sRegionNo}
+			</if>
+			<if test="tRegionNo != null">
+				AND pr2.tRegionNo = #{tRegionNo}
 			</if>
 			<if test="status != null">
 				AND P.status = #{status}
@@ -248,23 +246,10 @@
 			test="fromLatitude != null and fromLongitude != null and fromDistance != null">
 			AND A.fromDistance &lt;= #{fromDistance}
 		</if>
-		<if
-			test="toLatitude != null and toLongitude != null and toDistance != null">
-			AND A.toDistance &lt;= #{toDistance}
-		</if>
 		<choose>
-			<when
-				test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
-				order by toDistance, fromDistance, A.status desc, createdDate
-				desc
-			</when>
 			<when test="fromLatitude != null and fromLongitude != null">
 				order by fromDistance, A.status desc, createdDate
 				desc
-			</when>
-			<when test="toLatitude != null and toLongitude != null">
-				order by A.status desc, toDistance,
-				createdDate desc
 			</when>
 			<otherwise>order by A.status desc, createdDate desc</otherwise>
 		</choose>
@@ -1166,6 +1151,7 @@
 			left outer join (
 				select mRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+				where regionName='도착지'
 				group by mRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
@@ -1209,6 +1195,7 @@
 			left outer join (
 				select sRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+				where regionName='도착지'
 				group by sRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
@@ -1242,6 +1229,7 @@
 			left outer join (
 				select sRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+				where regionName='도착지'
 				group by sRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
@@ -1277,6 +1265,7 @@
 			left outer join (
 				select tRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+				where regionName='도착지'
 				group by tRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
