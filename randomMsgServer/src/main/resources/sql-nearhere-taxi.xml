@@ -217,6 +217,7 @@
 				left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
 					on P.postID=RC.postID
 				left outer join post_region pr2 on P.postID=pr2.postID and pr2.regionName='도착지'
+				left outer join region rm on rm.regionNo = pr2.mRegionNo
 			WHERE
 			fromLatitude is not null
 			and fromLongitude is not null
@@ -226,7 +227,7 @@
 				AND pr2.lRegionNo = #{lRegionNo}
 			</if>
 			<if test="mRegionNo != null">
-				AND pr2.mRegionNo = #{mRegionNo}
+				AND ( pr2.mRegionNo = #{mRegionNo} or rm.parentNo2 = #{mRegionNo} )
 			</if>
 			<if test="sRegionNo != null">
 				AND pr2.sRegionNo = #{sRegionNo}
@@ -1150,8 +1151,10 @@
 		from region r
 			left outer join (
 				select mRegionNo as regionNo, count( no ) as cnt
-				from post_region 
+				from post_region
+					left outer join post on post_region.postID=post.postID
 				where regionName='도착지'
+				and post.deletedDate is null
 				group by mRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
@@ -1195,7 +1198,9 @@
 			left outer join (
 				select sRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+					left outer join post on post_region.postID=post.postID
 				where regionName='도착지'
+				and post.deletedDate is null
 				group by sRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
@@ -1229,7 +1234,9 @@
 			left outer join (
 				select sRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+					left outer join post on post_region.postID=post.postID
 				where regionName='도착지'
+				and post.deletedDate is null
 				group by sRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
@@ -1265,7 +1272,9 @@
 			left outer join (
 				select tRegionNo as regionNo, count( no ) as cnt
 				from post_region 
+					left outer join post on post_region.postID=post.postID
 				where regionName='도착지'
+				and post.deletedDate is null
 				group by tRegionNo
 			) pr on r.regionNo = pr.regionNo
 			left outer join (
