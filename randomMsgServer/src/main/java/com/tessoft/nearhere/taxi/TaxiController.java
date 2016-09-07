@@ -2312,6 +2312,25 @@ public class TaxiController {
 		
 		model.addAttribute("level", "1");
 		
+		// 기타를 선택했을 경우 카테고리는 유지하고 아이템만 반영하기 위함
+		if ("999999".equals( lRegionNo ) ) {
+			model.addAttribute("lRegionNo", "999999" );
+			lRegionNo = "";
+		}
+		if ("999999".equals( mRegionNo ) ) {
+			model.addAttribute("mRegionNo", "999999" );
+			mRegionNo = "";
+		}
+		if ("999999".equals( sRegionNo ) ) {
+			model.addAttribute("sRegionNo", "999999" );
+			sRegionNo = "";
+		}
+		if ("999999".equals( tRegionNo ) ) {
+			model.addAttribute("tRegionNo", "999999" );
+			tRegionNo = "";
+		}
+		
+		
 		if ( !Util.isEmptyString( mRegionNo ) )
 		{
 			model.addAttribute("level", "2");

@@ -226,9 +226,15 @@
 			<if test="lRegionNo != null">
 				AND pr2.lRegionNo = #{lRegionNo}
 			</if>
-			<if test="mRegionNo != null">
-				AND ( pr2.mRegionNo = #{mRegionNo} or rm.parentNo2 = #{mRegionNo} )
-			</if>
+			<choose>
+				<when test="mRegionNo == '999999'">
+					AND pr2.mRegionNo is null
+				</when>
+				<when test="mRegionNo != null">
+					AND ( pr2.mRegionNo = #{mRegionNo} or rm.parentNo2 = #{mRegionNo} )
+				</when>
+				<otherwise></otherwise>
+			</choose>
 			<if test="sRegionNo != null">
 				AND pr2.sRegionNo = #{sRegionNo}
 			</if>
@@ -1171,9 +1177,12 @@
 			) r3 on r3.regionNo = r.regionNo
 		where parentNo=#{value} and r.parentNo2 is null
 		union
-		select 0, '기타', count(no) as cnt, 'N' as isSubParent, lRegionNo as parentNo,0 as childRegionCount
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, lRegionNo as parentNo,0 as childRegionCount
 		from post_region
+			left outer join post on post_region.postID=post.postID
 		where lRegionNo = #{value} and mRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
 		group by mRegionNo
 	</select>
 	
@@ -1217,9 +1226,12 @@
 			) r3 on r3.regionNo = r.regionNo
 		where parentNo=#{value} and r.parentNo2 is null
 		union
-		select 0, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
 		from post_region
+			left outer join post on post_region.postID=post.postID
 		where mRegionNo =#{value} and sRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
 		group by sRegionNo
 	</select>
 	
@@ -1254,10 +1266,13 @@
 		where parentNo in ( select regionNo from region where parentNo2 = #{value} ) 
 		and r.parentNo2 is null
 		union
-		select 0, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
 		from post_region
+			left outer join post on post_region.postID=post.postID
 		where mRegionNo in ( select regionNo from region where parentNo2 = #{value} )
 		and sRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
 		group by sRegionNo
 	</select>
 	
@@ -1291,9 +1306,12 @@
 			) r3 on r3.regionNo = r.regionNo
 		where parentNo= #{value} and r.parentNo2 is null
 		union
-		select 0, '기타', count(no) as cnt, 'N' as isSubParent, sRegionNo as parentNo,0 as childRegionCount
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, sRegionNo as parentNo,0 as childRegionCount
 		from post_region
+			left outer join post on post_region.postID=post.postID
 		where sRegionNo = #{value} and tRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
 		group by tRegionNo
 	</select>
 	
