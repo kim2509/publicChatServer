@@ -898,16 +898,16 @@
 				from post p
 					left outer join post_region pr on p.postID=pr.postID and pr.regionName='도착지'
 					left outer join region r on r.regionNo=pr.lRegionNo
-				where p.region is not null
+				where pr.lRegionNo is not null
 				and p.deletedDate is null
 				and r.parentNo is not null
 				group by r.parentNo
 				union
-				select p.region, count(*) as regionCount 
+				select pr.lRegionNo as region, count(*) as regionCount 
 				from post p
 					left outer join post_region pr on p.postID=pr.postID and pr.regionName='도착지'
 					left outer join region r on r.regionNo=pr.lRegionNo
-				where p.region is not null
+				where pr.lRegionNo is not null
 				and p.deletedDate is null
 				and r.parentNo is null
 				group by r.regionNo	
