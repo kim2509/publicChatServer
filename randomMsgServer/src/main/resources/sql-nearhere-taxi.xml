@@ -896,24 +896,29 @@
 			left outer join (
 				select r.parentNo as region, count(*) as regionCount 
 				from post p
-					left outer join region r on r.regionNo=p.region
+					left outer join post_region pr on p.postID=pr.postID and pr.regionName='도착지'
+					left outer join region r on r.regionNo=pr.lRegionNo
 				where p.region is not null
+				and p.deletedDate is null
 				and r.parentNo is not null
 				group by r.parentNo
 				union
 				select p.region, count(*) as regionCount 
 				from post p
-					left outer join region r on r.regionNo=p.region
+					left outer join post_region pr on p.postID=pr.postID and pr.regionName='도착지'
+					left outer join region r on r.regionNo=pr.lRegionNo
 				where p.region is not null
+				and p.deletedDate is null
 				and r.parentNo is null
-				group by p.region	
+				group by r.regionNo	
 			) P on P.region = R.regionNo
 			left outer join (
-				SELECT region, count(postID) as newCount from post
-				WHERE deletedDate is null
-				and createdDate > DATE_SUB( NOW(), INTERVAL 7 DAY )
-				group by region
-				having count(postID) > 0
+				SELECT pr.lRegionNo as region, count(post.postID) as newCount from post
+					left outer join post_region pr on post.postID=pr.postID and pr.regionName='도착지'
+				WHERE post.deletedDate is null
+				and post.createdDate > DATE_SUB( NOW(), INTERVAL 7 DAY )
+				group by pr.lRegionNo
+				having count(post.postID) > 0
 			) N on N.region = R.regionNo
 		where R.parentNo is null
 		and isHotSpot is null
@@ -1190,7 +1195,10 @@
 		select sum( ifnull(pr.cnt,0) ) as cnt , r.parentNo2 as parentNo2 from region r
 			left outer join (
 				select mRegionNo as regionNo, count( no ) as cnt
-				from post_region 
+				from post_region
+					left outer join post p on p.postID=post_region.postID
+				where regionName='도착지'
+				and p.deletedDate is null
 				group by mRegionNo
 			) pr on r.regionNo = pr.regionNo
 		where parentNo=#{parentNo} and parentNo2 = #{parentNo2}
