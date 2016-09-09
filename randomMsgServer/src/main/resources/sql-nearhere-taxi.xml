@@ -191,8 +191,10 @@
 		SELECT
 		*
 		FROM (
-			SELECT P.postID, P.userID, P.type, message, content, fromLatitude, fromLongitude, fromAddress,
-				latitude, longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
+			SELECT P.postID, P.userID, P.type, message, content
+				, pr3.latitude as fromLatitude, pr3.longitude as fromLongitude, pr3.address as fromAddress
+				, pr2.latitude as latitude, pr2.longitude as longitude, pr2.address as toAddress
+				, reward, P.createdDate, P.userID as 'user.userID',
 				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex', U.kakaoID as 'user.kakaoID',
 				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
 				departureTime, departureDateTime
@@ -209,18 +211,6 @@
 				)
 				) , 1) AS fromDistance
 			</if>
-			<if test="toLatitude != null and toLongitude != null">
-				,TRUNCATE((
-				6371 * acos ( cos ( radians( #{toLatitude} ) )
-				* cos( radians( latitude ) )
-				* cos( radians( longitude ) - radians(
-				#{toLongitude} ) )
-				+ sin ( radians( #{toLatitude} ) )
-				* sin( radians(
-				latitude ) )
-				)
-				) , 1) AS toDistance
-			</if>
 				,status, vehicle, fareOption, repetitiveYN, RC.readCount as readCount
 			FROM post P
 				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null group by postID ) PR 
@@ -228,13 +218,31 @@
 				left outer join user U on P.userID=U.userID
 				left outer join ( select postID, count(postID) as readCount from post_read_history group by postID ) RC 
 					on P.postID=RC.postID
+				left outer join post_region pr2 on P.postID=pr2.postID and pr2.regionName='도착지'
+				left outer join region rm on rm.regionNo = pr2.mRegionNo
+				left outer join post_region pr3 on P.postID=pr3.postID and pr3.regionName='출발지'
 			WHERE
 			fromLatitude is not null
 			and fromLongitude is not null
 			and P.type='taxi'
 			and deletedDate is null
-			<if test="regionNo != null">
-				AND P.region = #{regionNo}
+			<if test="lRegionNo != null">
+				AND pr2.lRegionNo = #{lRegionNo}
+			</if>
+			<choose>
+				<when test="mRegionNo == '999999'">
+					AND pr2.mRegionNo is null
+				</when>
+				<when test="mRegionNo != null">
+					AND ( pr2.mRegionNo = #{mRegionNo} or rm.parentNo2 = #{mRegionNo} )
+				</when>
+				<otherwise></otherwise>
+			</choose>
+			<if test="sRegionNo != null">
+				AND pr2.sRegionNo = #{sRegionNo}
+			</if>
+			<if test="tRegionNo != null">
+				AND pr2.tRegionNo = #{tRegionNo}
 			</if>
 			<if test="status != null">
 				AND P.status = #{status}
@@ -248,23 +256,10 @@
 			test="fromLatitude != null and fromLongitude != null and fromDistance != null">
 			AND A.fromDistance &lt;= #{fromDistance}
 		</if>
-		<if
-			test="toLatitude != null and toLongitude != null and toDistance != null">
-			AND A.toDistance &lt;= #{toDistance}
-		</if>
 		<choose>
-			<when
-				test="fromLatitude != null and fromLongitude != null and toLatitude != null and toLongitude != null">
-				order by toDistance, fromDistance, A.status desc, createdDate
-				desc
-			</when>
 			<when test="fromLatitude != null and fromLongitude != null">
 				order by fromDistance, A.status desc, createdDate
 				desc
-			</when>
-			<when test="toLatitude != null and toLongitude != null">
-				order by A.status desc, toDistance,
-				createdDate desc
 			</when>
 			<otherwise>order by A.status desc, createdDate desc</otherwise>
 		</choose>
@@ -904,24 +899,29 @@
 			left outer join (
 				select r.parentNo as region, count(*) as regionCount 
 				from post p
-					left outer join region r on r.regionNo=p.region
-				where p.region is not null
+					left outer join post_region pr on p.postID=pr.postID and pr.regionName='도착지'
+					left outer join region r on r.regionNo=pr.lRegionNo
+				where pr.lRegionNo is not null
+				and p.deletedDate is null
 				and r.parentNo is not null
 				group by r.parentNo
 				union
-				select p.region, count(*) as regionCount 
+				select pr.lRegionNo as region, count(*) as regionCount 
 				from post p
-					left outer join region r on r.regionNo=p.region
-				where p.region is not null
+					left outer join post_region pr on p.postID=pr.postID and pr.regionName='도착지'
+					left outer join region r on r.regionNo=pr.lRegionNo
+				where pr.lRegionNo is not null
+				and p.deletedDate is null
 				and r.parentNo is null
-				group by p.region	
+				group by r.regionNo	
 			) P on P.region = R.regionNo
 			left outer join (
-				SELECT region, count(postID) as newCount from post
-				WHERE deletedDate is null
-				and createdDate > DATE_SUB( NOW(), INTERVAL 7 DAY )
-				group by region
-				having count(postID) > 0
+				SELECT pr.lRegionNo as region, count(post.postID) as newCount from post
+					left outer join post_region pr on post.postID=pr.postID and pr.regionName='도착지'
+				WHERE post.deletedDate is null
+				and post.createdDate > DATE_SUB( NOW(), INTERVAL 7 DAY )
+				group by pr.lRegionNo
+				having count(post.postID) > 0
 			) N on N.region = R.regionNo
 		where R.parentNo is null
 		and isHotSpot is null
@@ -1155,6 +1155,182 @@
 		where regionNo=#{value}
 	</select>
 	
+	<select id="getMiddleRegionList" resultType="java.util.HashMap" parameterType="String">
+		select r.regionNo
+		, r.regionName
+		, ifnull(pr.cnt,0) as cnt 
+		, ifnull(isSubParent,'N') as isSubParent
+		, r.parentNo
+		, ifnull(childCount,0) as childRegionCount
+		from region r
+			left outer join (
+				select mRegionNo as regionNo, count( no ) as cnt
+				from post_region
+					left outer join post on post_region.postID=post.postID
+				where regionName='도착지'
+				and post.deletedDate is null
+				group by mRegionNo
+			) pr on r.regionNo = pr.regionNo
+			left outer join (
+				select parentNo2, 
+					case when count(regionNo) > 0 then 'Y' else 'N' end isSubParent
+				from region 
+				where parentNo2 is not null
+				group by parentNo2
+			) r2 on r.regionNo = r2.parentNo2
+			left outer join (
+				select parentNo as regionNo, count(regionNo) as childCount
+				from region
+				group by parentNo
+			) r3 on r3.regionNo = r.regionNo
+		where parentNo=#{value} and r.parentNo2 is null
+		union
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, lRegionNo as parentNo,0 as childRegionCount
+		from post_region
+			left outer join post on post_region.postID=post.postID
+		where lRegionNo = #{value} and mRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
+		group by mRegionNo
+	</select>
+	
+	<select id="getSubParent" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select sum( ifnull(pr.cnt,0) ) as cnt , r.parentNo2 as parentNo2 from region r
+			left outer join (
+				select mRegionNo as regionNo, count( no ) as cnt
+				from post_region
+					left outer join post p on p.postID=post_region.postID
+				where regionName='도착지'
+				and p.deletedDate is null
+				group by mRegionNo
+			) pr on r.regionNo = pr.regionNo
+		where parentNo=#{parentNo} and parentNo2 = #{parentNo2}
+	</select>
+	
+	<select id="getSmallRegionList" resultType="java.util.HashMap" parameterType="String">
+		select r.regionNo
+		, r.regionName
+		, ifnull(pr.cnt,0) as cnt 
+		, ifnull(isSubParent,'N') as isSubParent
+		, r.parentNo
+		, ifnull(childCount,0) as childRegionCount
+		from region r
+			left outer join (
+				select sRegionNo as regionNo, count( no ) as cnt
+				from post_region 
+					left outer join post on post_region.postID=post.postID
+				where regionName='도착지'
+				and post.deletedDate is null
+				group by sRegionNo
+			) pr on r.regionNo = pr.regionNo
+			left outer join (
+				select parentNo2, 
+					case when count(regionNo) > 0 then 'Y' else 'N' end isSubParent
+				from region 
+				where parentNo2 is not null
+				group by parentNo2
+			) r2 on r.regionNo = r2.parentNo2
+			left outer join (
+				select parentNo as regionNo, count(regionNo) as childCount
+				from region
+				group by parentNo
+			) r3 on r3.regionNo = r.regionNo
+		where parentNo=#{value} and r.parentNo2 is null
+		union
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
+		from post_region
+			left outer join post on post_region.postID=post.postID
+		where mRegionNo =#{value} and sRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
+		group by sRegionNo
+	</select>
+	
+	<select id="getSmallRegionList2" resultType="java.util.HashMap" parameterType="String">
+		select r.regionNo
+		, r.regionName
+		, ifnull(pr.cnt,0) as cnt 
+		, ifnull(isSubParent,'N') as isSubParent
+		, r.parentNo
+		, ifnull(childCount,0) as childRegionCount
+		from region r
+			left outer join (
+				select sRegionNo as regionNo, count( no ) as cnt
+				from post_region 
+					left outer join post on post_region.postID=post.postID
+				where regionName='도착지'
+				and post.deletedDate is null
+				group by sRegionNo
+			) pr on r.regionNo = pr.regionNo
+			left outer join (
+				select parentNo2, 
+					case when count(regionNo) > 0 then 'Y' else 'N' end isSubParent
+				from region 
+				where parentNo2 is not null
+				group by parentNo2
+			) r2 on r.regionNo = r2.parentNo2
+			left outer join (
+				select parentNo as regionNo, count(regionNo) as childCount
+				from region
+				group by parentNo
+			) r3 on r3.regionNo = r.regionNo
+		where parentNo in ( select regionNo from region where parentNo2 = #{value} ) 
+		and r.parentNo2 is null
+		union
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, mRegionNo as parentNo,0 as childRegionCount
+		from post_region
+			left outer join post on post_region.postID=post.postID
+		where mRegionNo in ( select regionNo from region where parentNo2 = #{value} )
+		and sRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
+		group by sRegionNo
+	</select>
+	
+	<select id="getTinyRegionList" resultType="java.util.HashMap" parameterType="String">
+		select r.regionNo
+		, r.regionName
+		, ifnull(pr.cnt,0) as cnt 
+		, ifnull(isSubParent,'N') as isSubParent
+		, r.parentNo
+		, ifnull(childCount,0) as childRegionCount
+		from region r
+			left outer join (
+				select tRegionNo as regionNo, count( no ) as cnt
+				from post_region 
+					left outer join post on post_region.postID=post.postID
+				where regionName='도착지'
+				and post.deletedDate is null
+				group by tRegionNo
+			) pr on r.regionNo = pr.regionNo
+			left outer join (
+				select parentNo2, 
+					case when count(regionNo) > 0 then 'Y' else 'N' end isSubParent
+				from region 
+				where parentNo2 is not null
+				group by parentNo2
+			) r2 on r.regionNo = r2.parentNo2
+			left outer join (
+				select parentNo as regionNo, count(regionNo) as childCount
+				from region
+				group by parentNo
+			) r3 on r3.regionNo = r.regionNo
+		where parentNo= #{value} and r.parentNo2 is null
+		union
+		select 999999, '기타', count(no) as cnt, 'N' as isSubParent, sRegionNo as parentNo,0 as childRegionCount
+		from post_region
+			left outer join post on post_region.postID=post.postID
+		where sRegionNo = #{value} and tRegionNo is null
+		and post.deletedDate is null
+		and regionName='도착지'
+		group by tRegionNo
+	</select>
+	
+	<select id="getRegionByNo" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where regionNo=#{value}
+	</select>
+	
 	<select id="getRecentPosts" resultType="com.nearhere.domain.Post" parameterType="Integer">
 		SELECT
 		*
@@ -1185,5 +1361,4 @@
 		ORDER BY createdDate desc
 		LIMIT 0,#{value};
 	</select>
-	
 </mapper>

@@ -7,7 +7,7 @@ dl {
 dd {
     display: block;
     position: relative;
-    height: 80px;
+    height: 90px;
     line-height: 25px;
     border-bottom: 1px solid #ccc;
     text-align: left;
@@ -67,7 +67,7 @@ table, td {
 
 .postDesc #personInfo{
 	position:absolute;
-	top:43%;
+	top:35%;
 }
 
 .postDesc #userSex{
@@ -80,18 +80,18 @@ table, td {
 
 .postDesc #departureDateTime {
 	position:absolute;
-    top:43%;
+    top:35%;
     right:5px;
 }
 
 .postDesc #readCount {
 	position:absolute;
-	bottom:10px;
+	bottom:30px;
 }
 
 .postDesc #tags{
 	position:absolute;
-	bottom:10px;
+	bottom:30px;
 	right:5px;
 }
 
@@ -104,6 +104,16 @@ table, td {
 	padding-left:2px;
 	padding-right:2px;
 	border-radius: 5px;
+}
+
+.postDesc #addressInfo{
+	position:absolute;
+	bottom:5px;
+	right:5px;
+    color: #204ae2;
+    font-weight: bold;
+    padding: 2px;
+    border-radius: 5px;
 }
 
 .slide_lst .imgStatus{

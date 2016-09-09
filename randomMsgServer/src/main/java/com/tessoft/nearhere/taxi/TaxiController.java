@@ -1,27 +1,20 @@
 package com.tessoft.nearhere.taxi;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,22 +37,11 @@ import com.nearhere.domain.UserPushMessage;
 import com.nearhere.domain.UserSetting;
 
 @Controller
-public class TaxiController {
-
-	private SecureRandom random = new SecureRandom();
-
-	@Autowired
-	private SqlSession sqlSession;
-	ObjectMapper mapper = null;
-	protected static Logger logger = Logger.getLogger(TaxiController.class.getName());
+public class TaxiController extends BaseController {
 
 	public TaxiController()
 	{
 		mapper = new ObjectMapper();
-	}
-
-	public String getLogIdentifier() {
-		return new BigInteger(130, random).toString(32);
 	}
 
 	@RequestMapping( value ="/app/appInfo.do")
@@ -404,24 +386,6 @@ public class TaxiController {
 			logger.error( ex );
 			return response;
 		}
-	}
-
-	private String requestLogging(HttpServletRequest request, String bodyString) {
-		
-		String logIdentifier = "";
-		
-		try
-		{
-			logIdentifier = getLogIdentifier();
-			logger.info( "REQUEST URL [" + request.getRemoteAddr() + "][" + logIdentifier + "]:" + makeUrl( request ) );
-			logger.info( "REQUEST[" + logIdentifier + "]:" + bodyString );	
-		}
-		catch( Exception ex )
-		{
-			logger.error(ex);
-		}
-		
-		return logIdentifier;
 	}
 
 	@RequestMapping( value ="/taxi/getUserTerms.do")
@@ -820,8 +784,13 @@ public class TaxiController {
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostV2", postData );
 
+			updatePostRegion(postData, "출발지");
+			updatePostRegion(postData, "도착지");
+			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", postData);
-			sendPushMessageOnNewPost(post);
+			
+			if ( Constants.bReal )
+				sendPushMessageOnNewPost(post);
 
 			response.setData( result );
 
@@ -835,6 +804,40 @@ public class TaxiController {
 		}
 		
 		return response;
+	}
+
+	private void updatePostRegion(HashMap postData, String regionName) throws Exception {
+		
+		String latitudeFieldName = "출발지".equals(regionName) ? "fromLatitude":"toLatitude";
+		String longitudeFieldName = "출발지".equals(regionName) ? "fromLongitude":"toLongitude";
+		
+		String latitude = postData.get( latitudeFieldName ).toString();
+		String longitude = postData.get( longitudeFieldName).toString();
+		String fromAddress = getFullAddress(latitude, longitude);
+		
+		HashMap param = new HashMap();
+		param.put("postID", postData.get("postID").toString() );
+		param.put("regionName", regionName );
+		param.put("address", fromAddress );
+		
+		HashMap regionInfo = getRegionInfo(fromAddress);
+		
+		if ( regionInfo == null ) return;
+		
+		if ( regionInfo.get("lRegion") != null )
+			param.put("lRegionNo", ( (HashMap) regionInfo.get("lRegion") ).get("regionNo") );
+		if ( regionInfo.get("mRegion") != null )
+			param.put("mRegionNo", ( (HashMap) regionInfo.get("mRegion") ).get("regionNo") );
+		if ( regionInfo.get("sRegion") != null )
+			param.put("sRegionNo", ( (HashMap) regionInfo.get("sRegion") ).get("regionNo") );
+		if ( regionInfo.get("tRegion") != null )
+			param.put("tRegionNo", ( (HashMap) regionInfo.get("tRegion") ).get("regionNo") );
+		
+		param.put("latitude", latitude );
+		param.put("longitude", longitude );
+		
+		sqlSession.insert("com.tessoft.nearhere.taxi.admin.deletePostRegion", param );
+		sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertPostRegion", param );
 	}
 	
 	@RequestMapping( value ="/taxi/modifyPostAjax.do")
@@ -869,6 +872,9 @@ public class TaxiController {
 			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePostV2", post );
 
+			updatePostRegion(post, "출발지");
+			updatePostRegion(post, "도착지");
+			
 			response.setData(result);
 
 			// 새 글 푸쉬 메시지를 전송한다.
@@ -2290,14 +2296,120 @@ public class TaxiController {
 		return new ModelAndView("carPool/moreRecentPosts");
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/taxi/listRegion.do")
-	public ModelAndView listRegion( String isApp , ModelMap model, String regionNo )
+	public ModelAndView listRegion( String isApp , ModelMap model, 
+			@RequestParam(value="lRegionNo", defaultValue = "") String lRegionNo, 
+			@RequestParam(value="mRegionNo", defaultValue = "") String mRegionNo, 
+			@RequestParam(value="sRegionNo", defaultValue = "") String sRegionNo, 
+			@RequestParam(value="tRegionNo", defaultValue = "") String tRegionNo,
+			@RequestParam(value="isSubParent", defaultValue = "N") String isSubParent, 
+			@RequestParam(value="childRegionCount", defaultValue = "0") int childRegionCount)
 	{
-		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", regionNo );
+		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", lRegionNo );
 		
 		model.addAttribute("regionInfo", regionInfo );
 		
+		List<HashMap> childRegionList = null;
+		
+		model.addAttribute("level", "1");
+		
+		// 기타를 선택했을 경우 카테고리는 유지하고 아이템만 반영하기 위함
+		if ("999999".equals( lRegionNo ) ) {
+			model.addAttribute("lRegionNo", "999999" );
+			lRegionNo = "";
+		}
+		if ("999999".equals( mRegionNo ) ) {
+			model.addAttribute("mRegionNo", "999999" );
+			mRegionNo = "";
+		}
+		if ("999999".equals( sRegionNo ) ) {
+			model.addAttribute("sRegionNo", "999999" );
+			sRegionNo = "";
+		}
+		if ("999999".equals( tRegionNo ) ) {
+			model.addAttribute("tRegionNo", "999999" );
+			tRegionNo = "";
+		}
+		
+		
+		if ( !Util.isEmptyString( mRegionNo ) )
+		{
+			model.addAttribute("level", "2");
+			model.addAttribute("mRegionNo", mRegionNo );
+		}
+		
+		if ( !Util.isEmptyString( sRegionNo ) )
+		{
+			if ( childRegionCount == 0 )
+				model.addAttribute("level", "2");
+			else
+				model.addAttribute("level", "3");
+			
+			model.addAttribute("sRegionNo", sRegionNo );
+		}
+		
+		if ( !Util.isEmptyString( tRegionNo ) )
+		{
+			model.addAttribute("level", "4");
+			model.addAttribute("tRegionNo", tRegionNo );
+		}
+		
+		childRegionList = getChildRegionList(lRegionNo, mRegionNo, sRegionNo, tRegionNo, isSubParent, childRegionCount );
+		
+		model.addAttribute("childRegionList", childRegionList);
+		
 		return new ModelAndView("carPool/listRegion", model );
+	}
+
+	private List<HashMap> getChildRegionList(String lRegionNo, String mRegionNo, String sRegionNo, String tRegionNo, String isSubParent, int childRegionCount ) {
+
+		List<HashMap> childRegionList = null;
+		
+		if ( Util.isEmptyString(mRegionNo) && Util.isEmptyString(sRegionNo))
+		{
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMiddleRegionList", lRegionNo );
+		}
+		else if ( !Util.isEmptyString(mRegionNo) && Util.isEmptyString(tRegionNo) && childRegionCount == 0 )
+		{
+//			if ( ( Util.isEmptyString(sRegionNo) || childRegionCount == 0 ) )
+				
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList2", mRegionNo );
+			List<HashMap> temp = sqlSession.selectList("com.tessoft.nearhere.taxi.getSmallRegionList", mRegionNo );
+			childRegionList.addAll( temp );
+			
+		}
+		else if ( !Util.isEmptyString(mRegionNo) && !Util.isEmptyString(sRegionNo) )
+		{
+			childRegionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getTinyRegionList", sRegionNo );
+		}
+		else
+		{
+			childRegionList = new ArrayList<HashMap>(); 
+		}
+		
+		if ( childRegionList != null )
+		{
+			for ( int i = 0; i < childRegionList.size(); i++ )
+			{
+				HashMap region = childRegionList.get(i);
+
+				if ("Y".equals(region.get("isSubParent") ) )
+				{
+					HashMap temp = new HashMap();
+					temp.put("parentNo", region.get("parentNo"));
+					temp.put("parentNo2", region.get("regionNo"));
+
+					HashMap subParent = sqlSession.selectOne("com.tessoft.nearhere.taxi.getSubParent", temp );
+
+					if ( subParent != null && !Util.isEmptyForKey(subParent, "cnt") )
+						region.put("cnt", subParent.get("cnt") );
+				}
+			}
+		}
+		
+		
+		return childRegionList;
 	}
 	
 	@RequestMapping( value ="/taxi/newPost.do")
@@ -2425,8 +2537,6 @@ public class TaxiController {
 
 		try
 		{			
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap requestInfo = mapper.readValue(bodyString, new TypeReference<Map<String, String>>(){});
 			
 			int pageNo = 1;
@@ -2463,13 +2573,25 @@ public class TaxiController {
 				departureDateTime = Util.getDepartureDateTime(departureDateTime);
 				
 				item.setDepartureDateTime(departureDateTime);
+				
+				String fromAddress = Util.stripBunji( item.getFromAddress() );
+				String[] fromRegion = Util.splitRegions(fromAddress);
+				if ( fromRegion != null && fromRegion.length > 1 )
+					fromAddress = fromRegion[0] + " " + fromRegion[1];
+				item.setFromAddress( fromAddress );
+				
+				String toAddress = Util.stripBunji( item.getToAddress() );
+				String[] toRegion = Util.splitRegions(toAddress);
+				if ( toRegion != null && toRegion.length > 1 )
+					toAddress = toRegion[0] + " " + toRegion[1];
+				item.setToAddress( toAddress );
 			}
 			
 			additionalData.put("postsNearHere", postsNearHere );
 
 			response.setData( additionalData );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			logger.info( "[getPostsNearHereAjax.do]: " + requestInfo.get("userID") );
 
 			return response;
 
@@ -2643,6 +2765,18 @@ public class TaxiController {
 				departureDateTime = Util.getDepartureDateTime(departureDateTime);
 				
 				item.setDepartureDateTime(departureDateTime);
+				
+				String fromAddress = Util.stripBunji( item.getFromAddress() );
+				String[] fromRegion = Util.splitRegions(fromAddress);
+				if ( fromRegion != null && fromRegion.length > 1 )
+					fromAddress = fromRegion[0] + " " + fromRegion[1];
+				item.setFromAddress( fromAddress );
+				
+				String toAddress = Util.stripBunji( item.getToAddress() );
+				String[] toRegion = Util.splitRegions(toAddress);
+				if ( toRegion != null && toRegion.length > 1 )
+					toAddress = toRegion[0] + " " + toRegion[1];
+				item.setToAddress( toAddress );
 			}
 			
 			additionalData.put("postsNearHere", postsNearHere );

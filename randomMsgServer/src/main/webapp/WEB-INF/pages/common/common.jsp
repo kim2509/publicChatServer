@@ -90,6 +90,7 @@ function printNumOfUsers( numOfUsers )
 				<div id="readCount">조회수: {{readCount}}</div>
 				<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
 				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span>{{printNumOfUsers numOfUsers}}{{printRepeat repetitiveYN}}</div>
+				<div id="addressInfo">{{fromAddress}} >> {{toAddress}}</div>
 			</div>
 		</dd>
 		{{/each}}

@@ -40,7 +40,7 @@
 	<link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/category.css?v=3" />
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=1" />	
+	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=2" />	
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -237,7 +237,7 @@ if ("Y".equals( showSearchDiv ) )
 						String title = regionList.get(i).get("regionName").toString();
 						String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 						String regionCount = regionList.get(i).get("regionCount").toString();
-						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
+						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?lRegionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
 						int newCount = Util.getInt( regionList.get(i).get("newCount") );
 	%>
 					<li>

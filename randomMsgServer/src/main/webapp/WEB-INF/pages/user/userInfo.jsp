@@ -40,7 +40,7 @@
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />
 <link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/userInfo.css?v=3" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/searchDestination.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/searchDestination.css?v=4" />
 <link rel="stylesheet" href="<%=Constants.SECURE_CSS_PATH%>/w3.css">
 		
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>

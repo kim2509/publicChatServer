@@ -4,7 +4,7 @@
 <%@ page import="java.util.*"%>
 
 <%
-	String regionNo = request.getParameter("regionNo");
+	String lRegionNo = request.getParameter("lRegionNo");
 	String longitude = request.getParameter("longitude");
 	String address = request.getParameter("address");
 	String isApp = request.getParameter("isApp");
@@ -20,6 +20,17 @@
 	String isHotspot = regionInfo.get("isHotSpot") == null ? "" : regionInfo.get("isHotSpot").toString();
 	
 	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
+	
+	List<HashMap> childRegionList = null;
+	if ( request.getAttribute("childRegionList") != null )
+	{
+		childRegionList = (List<HashMap>) request.getAttribute("childRegionList");
+	}
+	
+	String listRegionLink = Constants.getServerURL() + "/taxi/listRegion.do?isApp=" + isApp + "&appVersion=" + version;
+	String mRegionNo = request.getParameter("mRegionNo");
+	String sRegionNo = request.getParameter("sRegionNo");
+	String tRegionNo = request.getParameter("tRegionNo");
 %>
 <html>
 
@@ -28,10 +39,54 @@
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
+
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
-	<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/searchDestination.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=2" />
+	
+<style type="text/css">
+	body{
+		background:#eeeeee;
+	}
+	
+	#regionList{
+		margin:10px;
+		background:#white;
+		border: 1px solid gray;
+		padding:10px;
+		border-radius: 10px;
+		overflow:auto;
+	}
+	
+	#regionItem{
+		float:left;
+		display: list-item;
+		width:32%;
+		text-align: -webkit-match-parent;
+		padding:2px;
+	}
+	
+	#postList{
+		clear:both;
+		display:block;
+		margin:10px;
+		background:#white;
+		border-radius: 10px;
+		border: 1px solid gray;
+		overflow:auto;
+	}
+	
+	#title{
+	    color: #4d4da0;
+    	text-align: center;
+	}
+	
+	.region{
+		font-size:14px;
+	}
+</style>
+
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
@@ -51,6 +106,7 @@
 
 	var pageNo = 1;
 	var bLoading = false;
+	var bEmpty = false;
 	
 	function getPosts()
 	{
@@ -66,7 +122,10 @@
 			type : "POST",
 			url : "/nearhere/taxi/getPostsNearHereAjax.do",
 			data : JSON.stringify({
-				"regionNo" : <%= regionNo %>,
+				"lRegionNo" : <%= lRegionNo %>,
+				"mRegionNo" : <%= mRegionNo %>,
+				"sRegionNo" : <%= sRegionNo %>,
+				"tRegionNo" : <%= tRegionNo %>,
 				"pageNo" : pageNo
 			}),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
@@ -88,10 +147,14 @@
 
 					$(window).bind('scroll', function()
 		            {
-						if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-							        // you're at the bottom of the page
-							pageNo++;
-							getPosts();
+						if ( bEmpty == false )
+						{
+							if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+								// you're at the bottom of the page
+								pageNo++;
+								getPosts();
+							}
+						
 						}
 					});
 				} catch (ex) {
@@ -114,7 +177,12 @@
 		if ( data == null || data.data.postsNearHere == null || data.data.postsNearHere.length < 1 )
 		{
 			if ( pageNo == 1 )
+			{
 				$('#empty').show();
+				bEmpty = true;
+				$('#postList').hide();
+			}
+			
 			return;
 		}
 		
@@ -168,13 +236,13 @@
 		if ("Y".equals( isHotspot ) )
 		{
 %>
-			document.location.href='<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>&nextUrl=' + nextUrl;
+			document.location.href='<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>&nextUrl=' + nextUrl;
 <%
 		}
 		else
 		{
 %>
-			document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>&nextUrl=' + nextUrl;
+			document.location.href='<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>&nextUrl=' + nextUrl;
 <%
 		}
 %>		
@@ -188,13 +256,13 @@
 			if ("Y".equals( isHotspot ) )
 			{
 %>
-				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>');
+				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newHotspot.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>');
 <%
 			}
 			else
 			{
 %>
-				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= regionNo %>');
+				Android.setNewPostURL('<%= Constants.getServerURL() %>/taxi/newPost.do?isApp=<%= isApp %>&regionNo=<%= lRegionNo %>');
 <%
 			}
 %>			
@@ -218,6 +286,56 @@
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
 		
+		<div id="regionList" style="padding:10px;background:white;">
+		
+			<div id="title">목적지 상세지역</div>
+		
+			<ul style="list-style:none;display:block;text-align:center;margin-top:10px;">
+<%
+		if ( childRegionList != null ) {
+			for ( int i = 0; i < childRegionList.size(); i++ )
+			{
+				int childRegionCount = Integer.parseInt( childRegionList.get(i).get("childRegionCount").toString() );
+				String linkURL = listRegionLink + "&lRegionNo=" + lRegionNo;
+				String isSubParent = childRegionList.get(i).get("isSubParent").toString();
+				int itemCount = Integer.parseInt( childRegionList.get(i).get("cnt").toString() );
+				
+				if ("1".equals( request.getAttribute("level") ) )
+				{
+					linkURL += "&mRegionNo=" + childRegionList.get(i).get("regionNo");
+				}
+				else if ("2".equals( request.getAttribute("level") ) )
+				{
+					linkURL += "&mRegionNo=" + mRegionNo + "&sRegionNo=" + childRegionList.get(i).get("regionNo") + "&childRegionCount=" + childRegionCount;
+				}
+				else if ("3".equals( request.getAttribute("level") ) || "4".equals( request.getAttribute("level") ) )
+				{
+					linkURL += "&mRegionNo=" + mRegionNo + "&sRegionNo=" + sRegionNo + "&tRegionNo=" + childRegionList.get(i).get("regionNo") ;
+				}
+				
+				if ( !Util.isEmptyString( isSubParent ) ) {
+					linkURL += "&isSubParent=" + isSubParent;
+				}
+				
+				if ( itemCount > 0 )
+				{
+%>				
+				<li id="regionItem">
+				
+				<a href="<%= linkURL %>" class="region">
+					<%= childRegionList.get(i).get("regionName") %>
+					(<%= childRegionList.get(i).get("cnt") %>)
+				</a>
+				
+				</li>
+<%				
+				}
+			}
+		}
+%>			
+			</ul>
+		</div>
+		
 <%
 		if ( "N".equals( isApp ) )
 		{
@@ -229,14 +347,14 @@
 		}
 %>		
 		
-		<div id="postList">
+		<div id="postList" style="padding:10px;background:white;">
 		</div>
 
 		<div id="loading" style="display:none">
 			로딩중입니다.
 		</div>
 		
-		<div id="empty" style="display:none">
+		<div id="empty" style="display:none;background:white;border-radius: 10px;padding-top:80px;padding-bottom:100px;border: 1px solid gray;">
 			등록된 내역이 없습니다.
 		</div>
 	</div>
