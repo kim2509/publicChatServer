@@ -55,13 +55,14 @@
 		background:#white;
 		border: 1px solid gray;
 		padding:10px;
+		border-radius: 10px;
 		overflow:auto;
 	}
 	
 	#regionItem{
 		float:left;
 		display: list-item;
-		width:100px;
+		width:32%;
 		text-align: -webkit-match-parent;
 		padding:2px;
 	}

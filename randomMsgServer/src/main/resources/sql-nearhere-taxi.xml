@@ -191,8 +191,10 @@
 		SELECT
 		*
 		FROM (
-			SELECT P.postID, P.userID, P.type, message, content, fromLatitude, fromLongitude, fromAddress,
-				P.latitude, P.longitude, toAddress, reward, P.createdDate, P.userID as 'user.userID',
+			SELECT P.postID, P.userID, P.type, message, content
+				, pr3.latitude as fromLatitude, pr3.longitude as fromLongitude, pr3.address as fromAddress
+				, pr2.latitude as latitude, pr2.longitude as longitude, pr2.address as toAddress
+				, reward, P.createdDate, P.userID as 'user.userID',
 				U.profileImageURL as 'user.profileImageURL', U.userName as 'user.userName', U.sex as 'user.sex', U.kakaoID as 'user.kakaoID',
 				YEAR(NOW())-YEAR(U.birthday)+1 as 'user.age' , PR.cnt as "replyCount", sexInfo, numOfUsers, departureDate,
 				departureTime, departureDateTime
@@ -218,6 +220,7 @@
 					on P.postID=RC.postID
 				left outer join post_region pr2 on P.postID=pr2.postID and pr2.regionName='도착지'
 				left outer join region rm on rm.regionNo = pr2.mRegionNo
+				left outer join post_region pr3 on P.postID=pr3.postID and pr3.regionName='출발지'
 			WHERE
 			fromLatitude is not null
 			and fromLongitude is not null

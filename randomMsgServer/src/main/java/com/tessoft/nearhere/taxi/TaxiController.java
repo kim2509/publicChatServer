@@ -2571,6 +2571,18 @@ public class TaxiController {
 				departureDateTime = Util.getDepartureDateTime(departureDateTime);
 				
 				item.setDepartureDateTime(departureDateTime);
+				
+				String fromAddress = Util.stripBunji( item.getFromAddress() );
+				String[] fromRegion = Util.splitRegions(fromAddress);
+				if ( fromRegion != null && fromRegion.length > 1 )
+					fromAddress = fromRegion[0] + " " + fromRegion[1];
+				item.setFromAddress( fromAddress );
+				
+				String toAddress = Util.stripBunji( item.getToAddress() );
+				String[] toRegion = Util.splitRegions(toAddress);
+				if ( toRegion != null && toRegion.length > 1 )
+					toAddress = toRegion[0] + " " + toRegion[1];
+				item.setToAddress( toAddress );
 			}
 			
 			additionalData.put("postsNearHere", postsNearHere );
@@ -2751,6 +2763,18 @@ public class TaxiController {
 				departureDateTime = Util.getDepartureDateTime(departureDateTime);
 				
 				item.setDepartureDateTime(departureDateTime);
+				
+				String fromAddress = Util.stripBunji( item.getFromAddress() );
+				String[] fromRegion = Util.splitRegions(fromAddress);
+				if ( fromRegion != null && fromRegion.length > 1 )
+					fromAddress = fromRegion[0] + " " + fromRegion[1];
+				item.setFromAddress( fromAddress );
+				
+				String toAddress = Util.stripBunji( item.getToAddress() );
+				String[] toRegion = Util.splitRegions(toAddress);
+				if ( toRegion != null && toRegion.length > 1 )
+					toAddress = toRegion[0] + " " + toRegion[1];
+				item.setToAddress( toAddress );
 			}
 			
 			additionalData.put("postsNearHere", postsNearHere );

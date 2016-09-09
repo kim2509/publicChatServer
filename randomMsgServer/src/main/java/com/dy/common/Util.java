@@ -3,6 +3,7 @@ package com.dy.common;
 import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -356,5 +357,113 @@ public class Util {
 		messageDigest.update(stringToEncrypt.getBytes());
 		byte[] data = Base64.encodeBase64( messageDigest.digest() );
 		return new String( data );
+	}
+	
+	public static String stripBunji( String address ) throws Exception
+	{
+		String result = "";
+		
+		String[] tokens = address.split(" ");
+		
+		int gu = 0;
+		int si = 0;
+		int dong = 0;
+		int myeon = 0;
+		int li = 0;
+		
+		for( int i = 0; i < tokens.length; i++ )
+		{
+			String token = tokens[i].trim();
+			
+			if ( token.endsWith("구") && gu == 0 ) gu = i;
+			if ( token.endsWith("시") && si == 0 ) si = i;
+			if ( ( token.endsWith("동") || token.indexOf("동") >= 0 && token.indexOf("가") >= 0 || token.indexOf("로") >= 0 && token.indexOf("가") >= 0 ) && dong == 0 ) dong = i;
+			if ( token.endsWith("면") && myeon == 0 ) myeon = i;
+			if ( token.endsWith("리") && li == 0 ) li = i;
+		}
+		
+		if ( li > 0 )
+		{
+			for ( int i = 0; i <= li; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else if ( dong > 0 )
+		{
+			for ( int i = 0; i <= dong; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else if ( si > 0 )
+		{
+			for ( int i = 0; i <= si; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else if ( gu > 0 )
+		{
+			for ( int i = 0; i <= gu; i++ )
+				result += tokens[i].trim() + " ";
+		}
+		else
+			throw new Exception( address );
+		
+		return result.trim();
+	}
+	
+	public static String[] splitRegions( String address )
+	{
+		String[] tokens = address.split(" ");
+		
+		for( int i = 0; i < tokens.length; i++ )
+			tokens[i] = tokens[i].trim();
+		
+		ArrayList list = new ArrayList();
+		
+		// 리 가 있는지 체크
+		if ( !Util.isEmptyString( tokens[tokens.length - 1 ] ) && tokens[tokens.length - 1 ].endsWith("리"))
+		{
+			if ( tokens.length == 4 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1]);
+				list.add(tokens[2]);
+				list.add(tokens[3]);
+			}
+			else if ( tokens.length == 5 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1] + " " + tokens[2]);
+				list.add(tokens[3]);
+				list.add(tokens[4]);
+			}
+			else
+			{
+				for ( int i = 0; i < tokens.length; i++ )
+					list.add(tokens[i]);
+
+			}
+		}
+		else
+		{
+			if ( tokens.length == 3 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1]);
+				list.add(tokens[2]);
+			}
+			else if ( tokens.length == 4 )
+			{
+				list.add(tokens[0]);
+				list.add(tokens[1] + " " + tokens[2]);
+				list.add(tokens[3]);
+			}
+			else
+			{
+				for ( int i = 0; i < tokens.length; i++ )
+					list.add(tokens[i]);
+			}
+		}
+		
+		String[] result = (String[]) list.toArray(new String[list.size()]);
+		
+		return result;
 	}
 }
