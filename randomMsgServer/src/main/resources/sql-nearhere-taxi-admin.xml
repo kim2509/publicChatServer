@@ -146,4 +146,9 @@
 		value (#{postID}, #{regionName}, #{lRegionNo}, #{mRegionNo}, #{sRegionNo}, #{tRegionNo}, #{latitude}, #{longitude}, #{address}, NOW());
 	</insert>
 	
+	<insert id="deletePostRegion" parameterType="java.util.HashMap">
+		delete from post_region
+		where postID=#{postID} and regionName=#{regionName}
+	</insert>
+	
 </mapper>

@@ -1,25 +1,14 @@
 package com.tessoft.nearhere.taxi;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -48,22 +37,11 @@ import com.nearhere.domain.UserPushMessage;
 import com.nearhere.domain.UserSetting;
 
 @Controller
-public class TaxiController {
-
-	private SecureRandom random = new SecureRandom();
-
-	@Autowired
-	private SqlSession sqlSession;
-	ObjectMapper mapper = null;
-	protected static Logger logger = Logger.getLogger(TaxiController.class.getName());
+public class TaxiController extends BaseController {
 
 	public TaxiController()
 	{
 		mapper = new ObjectMapper();
-	}
-
-	public String getLogIdentifier() {
-		return new BigInteger(130, random).toString(32);
 	}
 
 	@RequestMapping( value ="/app/appInfo.do")
@@ -408,24 +386,6 @@ public class TaxiController {
 			logger.error( ex );
 			return response;
 		}
-	}
-
-	private String requestLogging(HttpServletRequest request, String bodyString) {
-		
-		String logIdentifier = "";
-		
-		try
-		{
-			logIdentifier = getLogIdentifier();
-			logger.info( "REQUEST URL [" + request.getRemoteAddr() + "][" + logIdentifier + "]:" + makeUrl( request ) );
-			logger.info( "REQUEST[" + logIdentifier + "]:" + bodyString );	
-		}
-		catch( Exception ex )
-		{
-			logger.error(ex);
-		}
-		
-		return logIdentifier;
 	}
 
 	@RequestMapping( value ="/taxi/getUserTerms.do")
@@ -824,8 +784,13 @@ public class TaxiController {
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostV2", postData );
 
+			updatePostRegion(postData, "출발지");
+			updatePostRegion(postData, "도착지");
+			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", postData);
-			sendPushMessageOnNewPost(post);
+			
+			if ( Constants.bReal )
+				sendPushMessageOnNewPost(post);
 
 			response.setData( result );
 
@@ -839,6 +804,40 @@ public class TaxiController {
 		}
 		
 		return response;
+	}
+
+	private void updatePostRegion(HashMap postData, String regionName) throws Exception {
+		
+		String latitudeFieldName = "출발지".equals(regionName) ? "fromLatitude":"toLatitude";
+		String longitudeFieldName = "출발지".equals(regionName) ? "fromLongitude":"toLongitude";
+		
+		String latitude = postData.get( latitudeFieldName ).toString();
+		String longitude = postData.get( longitudeFieldName).toString();
+		String fromAddress = getFullAddress(latitude, longitude);
+		
+		HashMap param = new HashMap();
+		param.put("postID", postData.get("postID").toString() );
+		param.put("regionName", regionName );
+		param.put("address", fromAddress );
+		
+		HashMap regionInfo = getRegionInfo(fromAddress);
+		
+		if ( regionInfo == null ) return;
+		
+		if ( regionInfo.get("lRegion") != null )
+			param.put("lRegionNo", ( (HashMap) regionInfo.get("lRegion") ).get("regionNo") );
+		if ( regionInfo.get("mRegion") != null )
+			param.put("mRegionNo", ( (HashMap) regionInfo.get("mRegion") ).get("regionNo") );
+		if ( regionInfo.get("sRegion") != null )
+			param.put("sRegionNo", ( (HashMap) regionInfo.get("sRegion") ).get("regionNo") );
+		if ( regionInfo.get("tRegion") != null )
+			param.put("tRegionNo", ( (HashMap) regionInfo.get("tRegion") ).get("regionNo") );
+		
+		param.put("latitude", latitude );
+		param.put("longitude", longitude );
+		
+		sqlSession.insert("com.tessoft.nearhere.taxi.admin.deletePostRegion", param );
+		sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertPostRegion", param );
 	}
 	
 	@RequestMapping( value ="/taxi/modifyPostAjax.do")
@@ -873,6 +872,9 @@ public class TaxiController {
 			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePostV2", post );
 
+			updatePostRegion(post, "출발지");
+			updatePostRegion(post, "도착지");
+			
 			response.setData(result);
 
 			// 새 글 푸쉬 메시지를 전송한다.
