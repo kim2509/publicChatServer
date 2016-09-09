@@ -21,7 +21,7 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
 	<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/searchDestination.css" />
+	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=2" />
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"

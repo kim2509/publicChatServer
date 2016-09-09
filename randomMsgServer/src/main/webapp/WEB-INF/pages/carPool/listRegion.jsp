@@ -43,7 +43,7 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common.css" />
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/searchDestination.css" />
+	href="<%=Constants.CSS_PATH%>/searchDestination.css?v=2" />
 	
 <style type="text/css">
 	body{
@@ -74,6 +74,7 @@
 		background:#white;
 		border-radius: 10px;
 		border: 1px solid gray;
+		overflow:auto;
 	}
 	
 	#title{
@@ -105,6 +106,7 @@
 
 	var pageNo = 1;
 	var bLoading = false;
+	var bEmpty = false;
 	
 	function getPosts()
 	{
@@ -145,10 +147,14 @@
 
 					$(window).bind('scroll', function()
 		            {
-						if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-							        // you're at the bottom of the page
-							pageNo++;
-							getPosts();
+						if ( bEmpty == false )
+						{
+							if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+								// you're at the bottom of the page
+								pageNo++;
+								getPosts();
+							}
+						
 						}
 					});
 				} catch (ex) {
@@ -171,7 +177,12 @@
 		if ( data == null || data.data.postsNearHere == null || data.data.postsNearHere.length < 1 )
 		{
 			if ( pageNo == 1 )
+			{
 				$('#empty').show();
+				bEmpty = true;
+				$('#postList').hide();
+			}
+			
 			return;
 		}
 		
@@ -287,6 +298,7 @@
 				int childRegionCount = Integer.parseInt( childRegionList.get(i).get("childRegionCount").toString() );
 				String linkURL = listRegionLink + "&lRegionNo=" + lRegionNo;
 				String isSubParent = childRegionList.get(i).get("isSubParent").toString();
+				int itemCount = Integer.parseInt( childRegionList.get(i).get("cnt").toString() );
 				
 				if ("1".equals( request.getAttribute("level") ) )
 				{
@@ -304,6 +316,9 @@
 				if ( !Util.isEmptyString( isSubParent ) ) {
 					linkURL += "&isSubParent=" + isSubParent;
 				}
+				
+				if ( itemCount > 0 )
+				{
 %>				
 				<li id="regionItem">
 				
@@ -314,6 +329,7 @@
 				
 				</li>
 <%				
+				}
 			}
 		}
 %>			
@@ -338,7 +354,7 @@
 			로딩중입니다.
 		</div>
 		
-		<div id="empty" style="display:none">
+		<div id="empty" style="display:none;background:white;border-radius: 10px;padding-top:80px;padding-bottom:100px;border: 1px solid gray;">
 			등록된 내역이 없습니다.
 		</div>
 	</div>
