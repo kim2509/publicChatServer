@@ -290,7 +290,7 @@ if ("Y".equals( showSearchDiv ) )
 				String title = hotspotList.get(i).get("regionName").toString();
 				String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 				String regionCount = hotspotList.get(i).get("regionCount").toString();
-				String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?regionNo=" + regionNo, "UTF-8" );
+				String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?lRegionNo=" + regionNo, "UTF-8" );
 				int newCount = Util.getInt( hotspotList.get(i).get("newCount") );
 %>
 					<li>
