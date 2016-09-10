@@ -403,7 +403,7 @@ public class Util {
 				result += tokens[i].trim() + " ";
 		}
 		else
-			throw new Exception( address );
+			return address;
 		
 		return result.trim();
 	}
