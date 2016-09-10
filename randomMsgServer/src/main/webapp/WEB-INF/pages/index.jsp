@@ -23,7 +23,7 @@
 	else
 		showSearchDiv = "Y";
 	
-	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do?isApp=Y" + isApp + "&appVersion=" + appVersion;
+	String moreRecentPostPage = Constants.getServerURL() + "/taxi/moreRecentPosts.do?isApp=" + isApp + "&appVersion=" + appVersion;
 	moreRecentPostPage = URLEncoder.encode( moreRecentPostPage, "UTF-8" );
 	
 	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
