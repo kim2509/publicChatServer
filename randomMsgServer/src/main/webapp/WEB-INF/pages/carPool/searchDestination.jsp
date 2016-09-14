@@ -64,7 +64,7 @@
 			data : JSON.stringify({
 				"toLatitude" : <%= latitude %>,
 				"toLongitude" : <%= longitude %>,
-				"toDistance" : "20",
+				"toDistance" : "100",
 				"pageNo" : pageNo
 			}),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
