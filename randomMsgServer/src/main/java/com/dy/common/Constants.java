@@ -12,6 +12,9 @@ public class Constants {
 	public static String SECURE_IMAGE_PATH = "https://www.hereby.co.kr/nearhere/image/";
 	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
 	public static String SECURE_JS_PATH = "https://www.hereby.co.kr/nearhere/js/";
+	public static String SECURE_IMAGE_PATH = "http://" + ServerIP + ":8080/nearhere/image/";
+	public static String JS_PATH = "http://" + ServerIP + ":8080/nearhere/js/";
+	public static String SECURE_JS_PATH = "http://" + ServerIP + ":8080/nearhere/js/";
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static String DAUM_API_KEY = "a694766f82dd0fb809ccf02189747061";
 	//public static String DAUM_API_KEY = "d346cd447ad87016b635e77df459b155adb17509";
@@ -21,13 +24,13 @@ public class Constants {
 	public static String getServerURL()
 	{
 //		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
-		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://172.30.1.200:8080/nearhere";
+		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://" + ServerIP + ":8080/nearhere";
 	}
 	
 	public static String getServerSSLURL()
 	{
 //		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
-		return Constants.bReal ? "https://www.hereby.co.kr/nearhere" : "http://172.30.1.200:8080/nearhere";
+		return Constants.bReal ? "https://www.hereby.co.kr/nearhere" : "http://" + ServerIP + ":8080/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()

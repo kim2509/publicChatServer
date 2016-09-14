@@ -9,6 +9,7 @@
 	String address = request.getParameter("address");
 	String isApp = request.getParameter("isApp");
 	String version = request.getParameter("appVersion");
+	
 	double appVersion = 0;
 	if ( !Util.isEmptyString(version) )
 		appVersion = Double.parseDouble(version);
@@ -126,7 +127,8 @@
 				"mRegionNo" : <%= mRegionNo %>,
 				"sRegionNo" : <%= sRegionNo %>,
 				"tRegionNo" : <%= tRegionNo %>,
-				"pageNo" : pageNo
+				"pageNo" : pageNo,
+				"isHotSpot" : '<%= isHotspot %>'
 			}),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",
@@ -286,6 +288,7 @@
 			<div onclick="showOKDialog('확인','안녕하세요.','abc');">OKDialog</div>
 		</div-->
 		
+<% if ( !"Y".equals( isHotspot ) ) { %>		
 		<div id="regionList" style="padding:10px;background:white;">
 		
 			<div id="title">목적지 상세지역</div>
@@ -337,6 +340,8 @@
 		</div>
 		
 <%
+		}
+
 		if ( "N".equals( isApp ) )
 		{
 %>

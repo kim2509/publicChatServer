@@ -310,12 +310,15 @@
 			requestData.userID = getUserID();
 			requestData.message = $('#message').val();
 			requestData.region = $('#regionList').val();
+			requestData.address = $("#regionList option:selected").text();
 			requestData.sexInfo = $('#sexInfo').val();
 			requestData.numOfUsers = $('#numOfUsers').val();
 			requestData.vehicle = $('#vehicle').val();
 			requestData.fareOption = $('#fareOption').val();
 			requestData.repetitiveYN = $('#repetitiveYN').val();
 			requestData.status = $('#status').val();
+			requestData.isHotSpot = 'Y';
+			requestData.hotSpotDestination = hotSpotDestination;
 		
 			if ( validateInput() == false ) return;
 			

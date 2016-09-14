@@ -784,8 +784,24 @@ public class TaxiController extends BaseController {
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostV2", postData );
 
-			updatePostRegion(postData, "출발지");
-			updatePostRegion(postData, "도착지");
+			if ( "Y".equals( postData.get("isHotSpot") ) )
+			{
+				if ( Boolean.parseBoolean( postData.get("hotSpotDestination").toString() ) )
+				{
+					updatePostRegion(postData, "출발지", false );
+					updatePostRegion(postData, "도착지", true );
+				}
+				else
+				{
+					updatePostRegion(postData, "출발지", true);
+					updatePostRegion(postData, "도착지", false );
+				}
+			}
+			else
+			{
+				updatePostRegion(postData, "출발지", false);
+				updatePostRegion(postData, "도착지", false);	
+			}
 			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", postData);
 			
@@ -806,33 +822,43 @@ public class TaxiController extends BaseController {
 		return response;
 	}
 
-	private void updatePostRegion(HashMap postData, String regionName) throws Exception {
+	private void updatePostRegion(HashMap postData, String regionName, boolean isHotSpot ) throws Exception {
 		
 		String latitudeFieldName = "출발지".equals(regionName) ? "fromLatitude":"toLatitude";
 		String longitudeFieldName = "출발지".equals(regionName) ? "fromLongitude":"toLongitude";
 		
 		String latitude = postData.get( latitudeFieldName ).toString();
 		String longitude = postData.get( longitudeFieldName).toString();
-		String fromAddress = getFullAddress(latitude, longitude);
+		String fromAddress = "";
 		
 		HashMap param = new HashMap();
 		param.put("postID", postData.get("postID").toString() );
 		param.put("regionName", regionName );
+		
+		if ( isHotSpot )
+		{
+			fromAddress = postData.get( "address" ).toString();
+			param.put("lRegionNo", postData.get("region").toString() );
+		}
+		else
+		{
+			fromAddress = getFullAddress(latitude, longitude);
+			
+			HashMap regionInfo = getRegionInfo(fromAddress);
+			
+			if ( regionInfo == null ) return;
+			
+			if ( regionInfo.get("lRegion") != null )
+				param.put("lRegionNo", ( (HashMap) regionInfo.get("lRegion") ).get("regionNo") );
+			if ( regionInfo.get("mRegion") != null )
+				param.put("mRegionNo", ( (HashMap) regionInfo.get("mRegion") ).get("regionNo") );
+			if ( regionInfo.get("sRegion") != null )
+				param.put("sRegionNo", ( (HashMap) regionInfo.get("sRegion") ).get("regionNo") );
+			if ( regionInfo.get("tRegion") != null )
+				param.put("tRegionNo", ( (HashMap) regionInfo.get("tRegion") ).get("regionNo") );
+		}
+		
 		param.put("address", fromAddress );
-		
-		HashMap regionInfo = getRegionInfo(fromAddress);
-		
-		if ( regionInfo == null ) return;
-		
-		if ( regionInfo.get("lRegion") != null )
-			param.put("lRegionNo", ( (HashMap) regionInfo.get("lRegion") ).get("regionNo") );
-		if ( regionInfo.get("mRegion") != null )
-			param.put("mRegionNo", ( (HashMap) regionInfo.get("mRegion") ).get("regionNo") );
-		if ( regionInfo.get("sRegion") != null )
-			param.put("sRegionNo", ( (HashMap) regionInfo.get("sRegion") ).get("regionNo") );
-		if ( regionInfo.get("tRegion") != null )
-			param.put("tRegionNo", ( (HashMap) regionInfo.get("tRegion") ).get("regionNo") );
-		
 		param.put("latitude", latitude );
 		param.put("longitude", longitude );
 		
@@ -872,8 +898,24 @@ public class TaxiController extends BaseController {
 			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePostV2", post );
 
-			updatePostRegion(post, "출발지");
-			updatePostRegion(post, "도착지");
+			if ( "Y".equals( post.get("isHotSpot") ) )
+			{
+				if ( Boolean.parseBoolean( post.get("hotSpotDestination").toString() ) )
+				{
+					updatePostRegion(post, "출발지", false );
+					updatePostRegion(post, "도착지", true );
+				}
+				else
+				{
+					updatePostRegion(post, "출발지", true);
+					updatePostRegion(post, "도착지", false );
+				}
+			}
+			else
+			{
+				updatePostRegion(post, "출발지", false);
+				updatePostRegion(post, "도착지", false);	
+			}
 			
 			response.setData(result);
 
@@ -1044,8 +1086,6 @@ public class TaxiController extends BaseController {
 
 		try
 		{
-			String logIdentifier = requestLogging(request, bodyString);
-
 			HashMap requestData = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
 			int pageNo = 1;
@@ -1080,7 +1120,6 @@ public class TaxiController extends BaseController {
 			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
 			response.setData2( count );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
 		}
 		catch( Exception ex )
 		{

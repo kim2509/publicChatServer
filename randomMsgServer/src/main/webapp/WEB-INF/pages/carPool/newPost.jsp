@@ -101,6 +101,7 @@
 		requestData.fareOption = '<%= fareOption %>';
 		requestData.repetitiveYN = '<%= repetitiveYN %>';
 		requestData.status = '<%= status %>';
+		requestData.isHotSpot = 'N';
 		
 		if ( requestData.message.length > 0 )
 			$('#message').val( requestData.message );
