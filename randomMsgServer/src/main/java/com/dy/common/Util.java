@@ -363,6 +363,8 @@ public class Util {
 	{
 		String result = "";
 		
+		if ( address == null ) return "";
+		
 		String[] tokens = address.split(" ");
 		
 		int gu = 0;

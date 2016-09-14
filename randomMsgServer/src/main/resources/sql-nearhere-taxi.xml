@@ -211,6 +211,19 @@
 				)
 				) , 1) AS fromDistance
 			</if>
+			<if test="toLatitude != null and toLongitude != null">
+				,TRUNCATE((
+				6371 * acos ( cos ( radians( #{toLatitude} )
+				)
+				* cos( radians( pr2.latitude ) )
+				* cos( radians( pr2.longitude ) -
+				radians( #{toLongitude} ) )
+				+ sin ( radians( #{toLatitude} ) )
+				*
+				sin( radians( pr2.latitude ) )
+				)
+				) , 1) AS toDistance
+			</if>
 				,status, vehicle, fareOption, repetitiveYN, RC.readCount as readCount
 			FROM post P
 				left outer join (select count(replyID) as 'cnt', postID from post_reply where deletedDate is null group by postID ) PR 
@@ -226,24 +239,31 @@
 			and fromLongitude is not null
 			and P.type='taxi'
 			and deletedDate is null
-			<if test="lRegionNo != null">
-				AND pr2.lRegionNo = #{lRegionNo}
-			</if>
 			<choose>
-				<when test="mRegionNo == '999999'">
-					AND pr2.mRegionNo is null
+				<when test="lRegionNo != null and (isHotSpot eq 'Y'.toString())">
+					AND (pr2.lRegionNo = #{lRegionNo} or pr3.lRegionNo = #{lRegionNo})
 				</when>
-				<when test="mRegionNo != null">
-					AND ( pr2.mRegionNo = #{mRegionNo} or rm.parentNo2 = #{mRegionNo} )
-				</when>
-				<otherwise></otherwise>
+				<otherwise>
+					<if test="lRegionNo != null">
+						AND pr2.lRegionNo = #{lRegionNo}
+					</if>
+					<choose>
+						<when test="mRegionNo == '999999'">
+							AND pr2.mRegionNo is null
+						</when>
+						<when test="mRegionNo != null">
+							AND ( pr2.mRegionNo = #{mRegionNo} or rm.parentNo2 = #{mRegionNo} )
+						</when>
+						<otherwise></otherwise>
+					</choose>
+					<if test="sRegionNo != null">
+						AND pr2.sRegionNo = #{sRegionNo}
+					</if>
+					<if test="tRegionNo != null">
+						AND pr2.tRegionNo = #{tRegionNo}
+					</if>
+				</otherwise>
 			</choose>
-			<if test="sRegionNo != null">
-				AND pr2.sRegionNo = #{sRegionNo}
-			</if>
-			<if test="tRegionNo != null">
-				AND pr2.tRegionNo = #{tRegionNo}
-			</if>
 			<if test="status != null">
 				AND P.status = #{status}
 			</if>
@@ -256,9 +276,17 @@
 			test="fromLatitude != null and fromLongitude != null and fromDistance != null">
 			AND A.fromDistance &lt;= #{fromDistance}
 		</if>
+		<if
+			test="toLatitude != null and toLongitude != null and toDistance != null">
+			AND A.toDistance &lt;= #{toDistance}
+		</if>
 		<choose>
 			<when test="fromLatitude != null and fromLongitude != null">
 				order by fromDistance, A.status desc, createdDate
+				desc
+			</when>
+			<when test="toLatitude != null and toLongitude != null">
+				order by toDistance, A.status desc, createdDate
 				desc
 			</when>
 			<otherwise>order by A.status desc, createdDate desc</otherwise>
