@@ -29,6 +29,8 @@ public class NotificationController extends BaseController{
 
 		if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
 		
+		logger.info("[notification/list.do] userID:" + userID );
+		
 		List<HashMap> userPushMessageList = UserBiz.getInstance(sqlSession).getUserPushMessage(userID);
 		
 		mv.addObject("userPushMessageList", userPushMessageList );
