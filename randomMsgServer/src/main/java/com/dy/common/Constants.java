@@ -6,8 +6,8 @@ public class Constants {
 	
 	public static boolean bReal = true;
 	
-	public static String ServerIP = "172.30.1.200";
-//	public static String ServerIP = "192.168.43.137";
+	public static String CSS_PATH = "http://www.hereby.co.kr/nearhere/css/";
+	public static String SECURE_CSS_PATH = "https://www.hereby.co.kr/nearhere/css/";
 	public static String IMAGE_PATH = "http://www.hereby.co.kr/nearhere/image/";
 	public static String SECURE_IMAGE_PATH = "https://www.hereby.co.kr/nearhere/image/";
 	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
