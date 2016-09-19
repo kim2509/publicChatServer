@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.dy.common.Util;
 import com.google.android.gcm.server.Message;
 import com.nearhere.domain.UserSetting;
 
@@ -47,6 +48,7 @@ public class BackgroundJobBiz extends CommonBiz{
 			temp.put("latitude", postList.get(i).get("latitude") );
 			temp.put("longitude", postList.get(i).get("longitude") );
 			temp.put("userID", postList.get(i).get("userID") );
+			temp.put("postID", postList.get(i).get("postID") );
 			
 			getUserListAndSendPushForNewPost(postList, i, temp);
 			
@@ -64,7 +66,7 @@ public class BackgroundJobBiz extends CommonBiz{
 	}
 
 	private void getUserListAndSendPushForNewPost(List<HashMap> postList, int i, HashMap temp) throws Exception {
-		List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getUserListAroundPost", temp );
+		List<HashMap> userList = getUserListToNotifyForNewPost(postList, i, temp);
 		
 		if ( userList == null || userList.size() < 1 )
 			logger.info("userList for the pushID[" + postList.get(i).get("pushID") + "] is null.");
@@ -79,10 +81,18 @@ public class BackgroundJobBiz extends CommonBiz{
 				pushData.put("pushID", postList.get(i).get("pushID") );
 				pushData.put("postID", postList.get(i).get("param") );
 				pushData.put("userID", userList.get(j).get("userID") );
-				pushData.put("locationID", userList.get(j).get("locationID") );
-				pushData.put("locationName", userList.get(j).get("locationName") );
+				
+				if ( !Util.isEmptyForKey(userList.get(j), "locationID") )
+					pushData.put("locationID", userList.get(j).get("locationID") );
+				
+				if ( !Util.isEmptyForKey(userList.get(j), "locationName") )
+					pushData.put("locationName", userList.get(j).get("locationName") );
+				
 				pushData.put("regID", userList.get(j).get("regID") );
-				pushData.put("address", userList.get(j).get("address") );
+				
+				if ( !Util.isEmptyForKey(userList.get(j), "address") )
+					pushData.put("address", userList.get(j).get("address") );
+				
 				pushData.put("message", msg );
 
 				sqlSession.insert("com.tessoft.nearhere.taxi.background.insertNewPostPushData", pushData );
@@ -92,6 +102,36 @@ public class BackgroundJobBiz extends CommonBiz{
 			
 			sendPushMessageOnNewPost( postList.get(i) );
 		}
+	}
+
+	private List<HashMap> getUserListToNotifyForNewPost(List<HashMap> postList, int k, HashMap temp) {
+		
+		// user_location 테이블 기반의 사용자 조회
+		List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getUserListAroundPost", temp );
+
+		// user_favorite_region 테이블 기반의 사용자 조회
+		List<HashMap> userList2 = sqlSession.selectList("com.tessoft.nearhere.taxi.background.getUserListForFavoriteRegion", temp );
+		
+		for ( int i = 0; i < userList.size(); i++ )
+		{
+			for ( int j = userList2.size() - 1; j >= 0; j-- )
+			{
+				// 중복 사용자 제거.
+				if ( userList2.get(j).get("userID").equals( userList.get(i).get("userID") ) )
+					userList2.remove(j);
+			}
+		}
+
+		userList.addAll( userList2 );
+		
+		// 글 등록자 대상에서 제거
+		for ( int i = userList.size() - 1 ; i >= 0; i-- )
+		{
+			if ( userList.get(i).get("userID").equals(postList.get(k).get("userID")))
+				userList.remove(i);
+		}
+
+		return userList;
 	}
 	
 	public void sendPushMessageOnNewPost( HashMap postData ) throws Exception
@@ -109,9 +149,17 @@ public class BackgroundJobBiz extends CommonBiz{
 			
 			if ( setting == null || !"N".equals( setting.getRecommendPushReceiveYN() ) )
 			{
-				String pushResult = messageBiz.sendPushForNewPost(userList.get(i).get("regID").toString(), 
-						userList.get(i).get("message").toString(), userList.get(i).get("postID").toString());
-				userList.get(i).put("pushResult", pushResult);
+				String pushResult = "";
+				if ( !Util.isEmptyForKey(userList.get(i), "regID"))
+				{
+					pushResult = messageBiz.sendPushForNewPost(userList.get(i).get("regID").toString(), 
+							userList.get(i).get("message").toString(), userList.get(i).get("postID").toString());
+					userList.get(i).put("pushResult", pushResult);	
+				}
+				else
+				{
+					userList.get(i).put("pushResult", "regID is null");
+				}
 				
 				if ( pushResult.contains("NotRegistered") )
 				{
