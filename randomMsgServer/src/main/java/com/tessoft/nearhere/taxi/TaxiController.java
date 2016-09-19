@@ -805,7 +805,7 @@ public class TaxiController extends BaseController {
 			
 			Post post = sqlSession.selectOne("com.tessoft.nearhere.taxi.getPostDetail", postData);
 			
-			if ( Constants.bReal )
+//			if ( Constants.bReal )
 				sendPushMessageOnNewPost(post);
 
 			response.setData( result );
@@ -1009,11 +1009,14 @@ public class TaxiController extends BaseController {
 				sqlSession.insert("com.tessoft.nearhere.taxi.background.insertNewPushJob", post.getPostID() );	
 			}
 			
-			User daeyong = new User();
-			daeyong.setUserID("user27");
-			daeyong.setUserNo("27");
-			daeyong = selectUser( daeyong , false );
-			sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true , true );
+			if ( Constants.bReal )
+			{
+				User daeyong = new User();
+				daeyong.setUserID("user27");
+				daeyong.setUserNo("27");
+				daeyong = selectUser( daeyong , false );
+				sendPushMessage( daeyong, "newPostByDistance", "신규 글 등록알림", post.getPostID(), true , true );	
+			}
 		}
 		catch( Exception ex )
 		{

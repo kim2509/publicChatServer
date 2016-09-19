@@ -64,9 +64,13 @@
 	<!-- 푸쉬 보낼 합승내역을 읽어온다. -->
 	<select id="getPushJobList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		<![CDATA[
-			select j.*, p.fromLatitude, p.fromLongitude, p.fromAddress, p.latitude, p.longitude, p.toAddress, p.userID
+			select j.*, pr.latitude as fromLatitude, pr.longitude as fromLongitude, pr.address as fromAddress
+			, pr2.latitude as latitude, pr2.longitude as longitude, pr2.address as toAddress
+			, p.userID, p.postID
 			from push_job j
 				left outer join post p on p.postID=j.param
+				left outer join post_region pr on p.postID=pr.postID and pr.regionName='출발지'
+				left outer join post_region pr2 on p.postID=pr2.postID and pr2.regionName='도착지'
 			where j.pushType='newPostByDistance'
 			and (j.finishYN is null or j.finishYN <> 'Y')
 		]]> 	
@@ -101,6 +105,36 @@
 		]]> 	
 	</select>
 	
+	<!-- postID 로 관심지역 등록한 사용자 조회 -->
+	<select id="getUserListForFavoriteRegion" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+			select u.userID, u.regID, A.regionNo, r.regionName from (
+				select r1.userID, r1.regionNo from post_region pr
+					left outer join user_favorite_region r1 on r1.regionNo = pr.lRegionNo
+				where pr.postID=#{postID}
+				and r1.userID is not null
+				union
+				select r2.userID, r2.regionNo from post_region pr
+					left outer join user_favorite_region r2 on r2.regionNo = pr.mRegionNo
+				where pr.postID=#{postID}
+				and r2.userID is not null
+				union
+				select r3.userID, r3.regionNo from post_region pr
+					left outer join user_favorite_region r3 on r3.regionNo = pr.sRegionNo
+				where pr.postID=#{postID}
+				and r3.userID is not null
+				union
+				select r4.userID, r4.regionNo from post_region pr
+					left outer join user_favorite_region r4 on r4.regionNo = pr.tRegionNo
+				where pr.postID=#{postID}
+				and r4.userID is not null
+				) A
+				 left outer join user u on A.userID = u.userID
+				 left outer join region r on A.regionNo=r.regionNo
+			where u.regID is not null
+		]]> 	
+	</select>
+	
 	<update id="updatePushJobAsFinished" parameterType="java.util.HashMap">
 		<![CDATA[
 			update push_job set finishYN='Y', finishedDate = NOW()
@@ -108,7 +142,7 @@
 		]]> 	
 	</update>
 	
-	<!-- 푸쉬 메세지 보낼 대상 및 내역 -->
+	<!-- 푸쉬 insert -->
 	<insert id="insertNewPostPushData" parameterType="java.util.HashMap"
 	useGeneratedKeys="true" keyProperty="ID" keyColumn="ID">
 		insert into new_post_push_data( pushID, postID, userID, locationID, locationName, regID, address, message, createdDate )
