@@ -23,15 +23,9 @@
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <title>Insert title here</title>
 
-<link rel="stylesheet"
-	href="<%=Constants.CSS_PATH%>/jquery.mobile-1.4.5.min.css">
-
 <!-- Include the jQuery library -->
 <script type="text/javascript"
-	src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
-<!-- Include the jQuery Mobile library -->
-<script type="text/javascript"
-	src="<%=Constants.SECURE_JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
+	src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>
 
 <style type="text/css">
 span {
@@ -148,7 +142,7 @@ a {
 </head>
 <body>
 
-	<div id="wrapper" data-role="page">
+	<div id="wrapper">
 
 		<div class="section">
 		
@@ -163,35 +157,31 @@ a {
 				</div>
 				<div style="padding: 5px;" id="selectedRegionDiv">지역을 선택하세요.</div>
 			</div>
-
-			<%
-				for (int i = 0; i < cities.size(); i++) {
+			
+			<% for ( int i = 0; i < cities.size(); i++ ) { %>
+				<% if ( i == 0 ) { %>
+					<select name="selRegionLevel1" id="selRegionLevel1">
+						<option value="">선택하세요.</option>
+				<% } %>
+				<option value="<%= cities.get(i).get("regionNo") %>"><%= cities.get(i).get("regionName") %></option>
+				<% if ( i == cities.size() -1 ) { %>
+					</select>
+				<% } %>
+			<% } %>
+			
+			<select name="selRegionLevel2">
+				<option value="">선택하세요.</option>
+			</select>
+			<select name="selRegionLevel3">
+				<option value="">선택하세요.</option>
+				<option value="">선택하세요.2</option>
+			</select>
+			<select name="selRegionLevel4">
+				<option value="">선택하세요.</option>
+			</select>
 					
-					HashMap city = cities.get(i);
-					
-					ArrayList<HashMap> regionList = (ArrayList<HashMap>) city.get("regionList");
-			%>
-
-			<div data-role="collapsible" data-collapsed="true">
-				<h4><%=cities.get(i).get("regionName")%></h4>
-				<fieldset data-role="controlgroup">
-				
-					<% for ( int j = 0; j < regionList.size(); j++ ) { 
-						HashMap region = regionList.get(j);
-					%>
-					<input type="checkbox" name="ch<%= region.get("regionNo") %>" id="ch<%= region.get("regionNo")%>" regionNo="<%= region.get("regionNo")%>" regionName="<%= region.get("regionName")%>"> 
-					<label for="ch<%= region.get("regionNo")%>"><%= region.get("regionName") %></label>
-					<% } %>
-				</fieldset>
-			</div>
-
-			<%
-				}
-			%>
-
-			<fieldset>
-				<input type="button" id="btnSave" value="저장" /> <input type="button" id="btnCancel" value="취소" />
-			</fieldset>
+			<input type="button" id="btnSave" value="저장" /> <input type="button" id="btnCancel" value="취소" />
+			
 			
 		</div>
 
