@@ -8,10 +8,16 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.dy.common.ErrorCode;
+import com.nearhere.domain.APIResponse;
 
 @Controller
 public class RegionController extends BaseController{
@@ -26,23 +32,7 @@ public class RegionController extends BaseController{
 		try
 		{
 			bigCities = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getBigCities");
-			
-			for ( int i = 0; i < bigCities.size(); i++ )
-			{
-				HashMap region = (HashMap) bigCities.get(i);
-				ArrayList regionList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getRegionByParent", region.get("regionNo"));
-				
-				HashMap parentRegion = new HashMap();
-				parentRegion.put("regionNo", region.get("regionNo") );
-				parentRegion.put("regionName", region.get("regionName") );
-				parentRegion.put("hostURL", region.get("hostURL") );
-				parentRegion.put("useYN", region.get("useYN") );
-				
-				regionList.add(0, parentRegion);
-				
-				region.put("regionList", regionList);
-			}
-			
+
 			List list = (List) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", userID );
 			String favoriteRegions = "";
 			
@@ -71,4 +61,28 @@ public class RegionController extends BaseController{
 		return new ModelAndView("region/favoriteRegion", model);
 	}
 	
+	@RequestMapping( value ="/region/getRegionListByParent.do")
+	public @ResponseBody APIResponse getRegionListByParent( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			ArrayList regionList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getRegionByParent", hash.get("regionNo"));
+
+			response.setData(regionList);
+
+			logger.info( "[getRegionListByParent.do]" );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
 }

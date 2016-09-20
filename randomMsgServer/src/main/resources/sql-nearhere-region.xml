@@ -13,11 +13,15 @@
 	</select>
 	
 	<select id="getRegionByParent" parameterType="String" resultType="java.util.HashMap">
-		select r.*, sm.* from region r
-			left outer join scraping_master sm on r.regionNo=sm.regionNo
-		where parentNo = #{value}
-		and useYN='Y'
-		order by r.priority
+		select * from region
+		where parentNo=#{value} and parentNo2 is null
+		union
+		select * from region
+		where parentNo in (
+		select regionNo from region
+		where parentNo2=#{value}
+		)
+		order by regionName
 	</select>
 	
 	<select id="getParentRegion" parameterType="String" resultType="java.util.HashMap">

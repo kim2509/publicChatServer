@@ -79,7 +79,7 @@ a{
 		if ( isApp == 'Y' )
 		{
 			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
-			var url = '<%= Constants.getServerURL() %>/news/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
 		}
 		else
@@ -106,7 +106,7 @@ a{
 
 	<div id="wrapper">
 	
-	<form action="/nearhere/news/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
+	<form action="/nearhere/region/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
 	</form>
 	
 	<div class="section">

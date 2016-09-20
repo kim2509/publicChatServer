@@ -85,59 +85,91 @@ a {
 
 	<script language="javascript">
 	
-	var favoriteRegions = '<%= favoriteRegions %>';
-	
 		jQuery(document).ready( function() {
 			
-			var favRegionsAr = favoriteRegions.split(',');
-			
-			if ( favRegionsAr != null && favRegionsAr.length > 0 )
-			{
-				$('#selectedRegionDiv').html( favoriteRegions );
-				
-				$('input[type=checkbox]').each(function(){
-					for ( var i = 0; i < favRegionsAr.length; i++ )
-					{
-						if ( $(this).attr('regionName') == favRegionsAr[i] )
-							$(this).attr('checked', true).checkboxradio('refresh');
-					}
-				});
-			}
-			else
-				$('#selectedRegionDiv').html( '지역을 선택하세요.' );
-			
-			$("input[type=checkbox]").click(function(){
-				
-				var selectedRegion = '';
-				$('input[type=checkbox]:checked').each(function(){
-					selectedRegion += $(this).attr('regionName') + ',';
-				});
-				
-				// 콤마로 끝나면 콤마 제거
-				if ( selectedRegion.match(/,$/))
-					selectedRegion = selectedRegion.substring(0, selectedRegion.length -1 );
-				
-				if ( selectedRegion == '' ) selectedRegion = '지역을 선택하세요.';
-				
-		        $('#selectedRegionDiv').html( selectedRegion );
-		    });
-			
-			$('#btnSave').click(function(){
-				
-				document.fm.selectedRegionNo.value = '';
-				
-				$('input[type=checkbox]:checked').each(function(){
-					document.fm.selectedRegionNo.value += $(this).attr('regionNo') + ',';
-				});
-				
-				document.fm.submit();
+			$('#selRegionLevel1').change(function(){
+				if ( $(this).val() != '' )
+				{
+					$('#selRegionLevel2').empty();
+					$('#selRegionLevel2').append( '<option value="">선택하세요</option>' );
+					$('#selRegionLevel3').empty();
+					$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
+					$('#selRegionLevel4').empty();
+					$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+					
+					getRegionList('selRegionLevel2', $(this).val());
+				}
 			});
 			
-			$('#btnCancel').click(function(){
-				window.history.back();
+			$('#selRegionLevel2').change(function(){
+				if ( $(this).val() != '' )
+				{
+					$('#selRegionLevel3').empty();
+					$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
+					$('#selRegionLevel4').empty();
+					$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+					
+					getRegionList('selRegionLevel3', $(this).val());
+				}
 			});
 			
+			$('#selRegionLevel3').change(function(){
+				if ( $(this).val() != '' )
+				{
+					$('#selRegionLevel4').empty();
+					$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+					
+					getRegionList('selRegionLevel4', $(this).val());
+				}
+			});
+						
 		});
+		
+		function getRegionList( elementName, regionNo )
+		{
+			var param = {"regionNo":regionNo};
+			
+			jQuery.ajax({
+				type : "POST",
+				url : "/nearhere/region/getRegionListByParent.do",
+				data : JSON.stringify( param ),
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(result) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					// TODO
+					try {
+
+						if ( result == null || result.data == null || result.data.length == 0 )
+						{
+							return;
+						}
+						
+						for ( var i = 0; i < result.data.length ; i++ )
+						{
+							var optionElement = $('<option></option>');
+							
+							optionElement.val(result.data[i].regionNo);
+							optionElement.html(result.data[i].regionName);
+							
+							$('#' + elementName ).append( optionElement );					
+						}
+						
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+					
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생(getRegionList)" + error );
+				}
+			});
+		}
+		
 	</script>
 </head>
 <body>
@@ -169,14 +201,13 @@ a {
 				<% } %>
 			<% } %>
 			
-			<select name="selRegionLevel2">
+			<select name="selRegionLevel2" id="selRegionLevel2">
 				<option value="">선택하세요.</option>
 			</select>
-			<select name="selRegionLevel3">
+			<select name="selRegionLevel3" id="selRegionLevel3">
 				<option value="">선택하세요.</option>
-				<option value="">선택하세요.2</option>
 			</select>
-			<select name="selRegionLevel4">
+			<select name="selRegionLevel4" id="selRegionLevel4">
 				<option value="">선택하세요.</option>
 			</select>
 					
