@@ -34,7 +34,7 @@
 		where regionNo=#{value}
 	</select>
 	
-	<select id="getAllRegionInfo" parameterType="String" resultType="java.util.HashMap">
+	<select id="getFavoriteRegionByUser" parameterType="String" resultType="java.util.HashMap">
 		select 
 			r.regionNo as 'regionNo1', r.regionName as 'regionName1', r.parentNo as 'parentNo1', r.level as 'level1'
 			, p.regionNo as 'regionNo2', p.regionName as 'regionName2', p.parentNo as 'parentNo2', p.level as 'level2'
@@ -44,7 +44,7 @@
 			left outer join region p on r.parentNo=p.regionNo
 			left outer join region p2 on p.parentNo=p2.regionNo	
 			left outer join region p3 on p2.parentNo=p3.regionNo
-		where r.regionNo = #{value}
+		where r.regionNo in ( select regionNo from user_favorite_region where userID=#{userID} )
 	</select>
 	
 	<insert id="insertFavoriteRegion" parameterType="java.util.HashMap">
@@ -55,12 +55,6 @@
 	        </foreach>
 	 </insert>
  
- 	<select id="getFavoriteRegionByUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		select ur.*, r.regionName, r.level, r.parentNo from user_favorite_region ur
-			left outer join region r on ur.regionNo=r.regionNo
-		where ur.userID=#{userID}
-	</select>
-	
 	<delete id="deleteRegionByUser" parameterType="String">
 		delete from user_favorite_region
 		where userID=#{value}

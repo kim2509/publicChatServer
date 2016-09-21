@@ -80,7 +80,27 @@ public class RegionController extends BaseController{
 			
 			ArrayList regionList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", hash );
 
-			response.setData(regionList);
+			ArrayList resultData = new ArrayList();
+			
+			for ( int i = 0; i < regionList.size(); i++ ){
+				
+				HashMap region = (HashMap) regionList.get(i);
+				
+				String regionNo = region.get("regionNo1").toString();
+				
+				String address = "";
+				
+				int regionIndex = 1;
+				while( region.get("regionName" + regionIndex ) != null )
+					address = region.get("regionName" + regionIndex++ ).toString() + " " + address;
+				
+				HashMap item = new HashMap();
+				item.put("regionNo",  regionNo );
+				item.put("regionName",  address );
+				resultData.add(item);
+			}
+			
+			response.setData(resultData);
 
 			logger.info( "[getUserFavoriteRegionList.do]" );
 		}
