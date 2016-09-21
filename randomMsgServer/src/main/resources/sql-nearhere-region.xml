@@ -29,6 +29,24 @@
 		where regionNo=#{value}
 	</select>
 	
+	<select id="getRegionByNo" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where regionNo=#{value}
+	</select>
+	
+	<select id="getAllRegionInfo" parameterType="String" resultType="java.util.HashMap">
+		select 
+			r.regionNo as 'regionNo1', r.regionName as 'regionName1', r.parentNo as 'parentNo1', r.level as 'level1'
+			, p.regionNo as 'regionNo2', p.regionName as 'regionName2', p.parentNo as 'parentNo2', p.level as 'level2'
+			, p2.regionNo as 'regionNo3', p2.regionName as 'regionName3', p2.parentNo as 'parentNo3', p2.level as 'level3'
+			, p3.regionNo as 'regionNo4', p3.regionName as 'regionName4', p3.parentNo as 'parentNo4', p3.level as 'level4'
+		from region r
+			left outer join region p on r.parentNo=p.regionNo
+			left outer join region p2 on p.parentNo=p2.regionNo	
+			left outer join region p3 on p2.parentNo=p3.regionNo
+		where r.regionNo = #{value}
+	</select>
+	
 	<insert id="insertFavoriteRegion" parameterType="java.util.HashMap">
         insert into user_favorite_region(userID, regionNo, createdDate)
         values
@@ -37,12 +55,10 @@
 	        </foreach>
 	 </insert>
  
- 	<select id="getFavoriteRegionByUser" parameterType="String" resultType="java.util.HashMap">
-		select r.*, sm.hostURL from user_favorite_region ur
+ 	<select id="getFavoriteRegionByUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select ur.*, r.regionName, r.level, r.parentNo from user_favorite_region ur
 			left outer join region r on ur.regionNo=r.regionNo
-			left outer join scraping_master sm on sm.regionNo = ur.regionNo
-		where ur.userID=#{value}
-		order by priority
+		where ur.userID=#{userID}
 	</select>
 	
 	<delete id="deleteRegionByUser" parameterType="String">

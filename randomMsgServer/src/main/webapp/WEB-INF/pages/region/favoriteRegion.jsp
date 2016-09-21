@@ -8,12 +8,6 @@
 
 	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
 	String userID = request.getParameter("userID");
-	
-	String favoriteRegions = request.getAttribute("favoriteRegions").toString();
-	if ( Util.isEmptyString(favoriteRegions) )
-	{
-		favoriteRegions = "설정된 지역이 없습니다.";
-	}
 %>
 
 <html>
@@ -122,7 +116,8 @@ a {
 					getRegionList('selRegionLevel4', $(this).val());
 				}
 			});
-						
+				
+			getUserFavoriteRegionList();
 		});
 		
 		function getRegionList( elementName, regionNo )
@@ -168,6 +163,51 @@ a {
 					alert("에러발생(getRegionList)" + error );
 				}
 			});
+		}
+		
+		function getUserFavoriteRegionList()
+		{
+			var param = {"userID":"<%= userID %>"};
+			
+			jQuery.ajax({
+				type : "POST",
+				url : "/nearhere/region/getUserFavoriteRegionList.do",
+				data : JSON.stringify( param ),
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(result) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					// TODO
+					try {
+
+						if ( result == null || result.data == null || result.data.length == 0 )
+						{
+							return;
+						}
+						
+						displayUserFavoriteRegionList( result.data );
+						
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+					
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생(getUserFavoriteRegionList)" + error );
+				}
+			});
+		}
+		
+		function displayUserFavoriteRegionList( data )
+		{
+			for ( var i = 0; i < data.length; i++ )
+			{
+				$('#userFavoriteRegionList').append("<li>" + data[i].regionName + "</li>");
+			}
 		}
 		
 	</script>
@@ -217,6 +257,17 @@ a {
 		</div>
 
 
+		<div class="section">
+			
+			<div id="userFavoriteRegionDiv">
+			
+				<ul id="userFavoriteRegionList">
+				
+				</ul>
+			
+			</div>
+			
+		</div>
 
 	</div>
 

@@ -570,7 +570,7 @@ public class AdminController extends BaseController{
 				if ( !Util.isEmptyString( region.get("code") ) )
 				{
 					// 부모 region 을 가져온다.  포항시 남구 의 경우 "경북",  강남구의 경우 "서울" 이 해당됨.
-					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", region.get("parentNo").toString() );
+					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.region.getRegionByNo", region.get("parentNo").toString() );
 					
 					result = getSidoList(2, parent.get("code").toString(), region.get("code").toString(), null );
 					
@@ -654,10 +654,10 @@ public class AdminController extends BaseController{
 				if ( !Util.isEmptyString( region.get("code") ) )
 				{
 					// 포항시 남구, 강남구 에 해당하는 region 을 가져온다.
-					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", region.get("parentNo").toString() );
+					HashMap parent = sqlSession.selectOne("com.tessoft.nearhere.region.getRegionByNo", region.get("parentNo").toString() );
 					
 					// 경북 과 같은 최상위 region 을 가져온다.
-					HashMap sidoParent = sqlSession.selectOne("com.tessoft.nearhere.taxi.admin.getRegionByNo", parent.get("parentNo").toString() );
+					HashMap sidoParent = sqlSession.selectOne("com.tessoft.nearhere.region.getRegionByNo", parent.get("parentNo").toString() );
 					
 					// 경북, 포항시 남구, 연일읍 의 하위 region 들을 조회
 					result = getSidoList(3, sidoParent.get("code").toString(), parent.get("code").toString(), region.get("code").toString() );

@@ -32,23 +32,6 @@ public class RegionController extends BaseController{
 		try
 		{
 			bigCities = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getBigCities");
-
-			List list = (List) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", userID );
-			String favoriteRegions = "";
-			
-			if ( list != null && list.size() > 0 )
-			{
-				for ( int i = 0; i < list.size(); i++ )
-				{
-					HashMap region = (HashMap) list.get(i);
-					favoriteRegions += region.get("regionName") + ",";
-				}
-				
-				if ( favoriteRegions.endsWith(",") )
-					favoriteRegions = favoriteRegions.substring(0, favoriteRegions.length() - 1 );
-			}
-			
-			request.setAttribute("favoriteRegions", favoriteRegions);
 		}
 		catch( Exception ex )
 		{
@@ -75,6 +58,31 @@ public class RegionController extends BaseController{
 			response.setData(regionList);
 
 			logger.info( "[getRegionListByParent.do]" );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+	
+	@RequestMapping( value ="/region/getUserFavoriteRegionList.do")
+	public @ResponseBody APIResponse getUserFavoriteRegionList( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			ArrayList regionList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", hash );
+
+			response.setData(regionList);
+
+			logger.info( "[getUserFavoriteRegionList.do]" );
 		}
 		catch( Exception ex )
 		{
