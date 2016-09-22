@@ -754,6 +754,9 @@ public class TaxiController extends BaseController {
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("사용자 아이디가 올바르지 않습니다.");
+					
+					logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+					
 					return response;
 				}
 				
@@ -764,6 +767,9 @@ public class TaxiController extends BaseController {
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("SNS 아이디가 존재하지 않습니다. SNS 로그인을 해 주세요.");
+					
+					logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+					
 					return response;
 				}
 				
@@ -771,6 +777,9 @@ public class TaxiController extends BaseController {
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("남성회원은 여자만 옵션을 선택할 수 없습니다.");
+					
+					logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+					
 					return response;
 				}
 				
@@ -784,6 +793,8 @@ public class TaxiController extends BaseController {
 			
 			int result = sqlSession.insert("com.tessoft.nearhere.taxi.insertPostV2", postData );
 
+			logger.info( "[insertPostAjax.do] insert 성공 postID:" + postData.get("postID"));
+			
 			if ( "Y".equals( postData.get("isHotSpot") ) )
 			{
 				if ( Boolean.parseBoolean( postData.get("hotSpotDestination").toString() ) )
@@ -881,6 +892,9 @@ public class TaxiController extends BaseController {
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("사용자 아이디가 올바르지 않습니다.");
+				
+				logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+				
 				return response;
 			}
 			
@@ -891,6 +905,9 @@ public class TaxiController extends BaseController {
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("남성회원은 여자만 옵션을 선택할 수 없습니다.");
+				
+				logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+				
 				return response;
 			}
 			
@@ -898,6 +915,8 @@ public class TaxiController extends BaseController {
 			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePostV2", post );
 
+			logger.info( "[modifyPostAjax.do] update 성공 postID:" + post.get("postID"));
+			
 			if ( "Y".equals( post.get("isHotSpot") ) )
 			{
 				if ( Boolean.parseBoolean( post.get("hotSpotDestination").toString() ) )
