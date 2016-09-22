@@ -47,14 +47,16 @@
 		where r.regionNo in ( select regionNo from user_favorite_region where userID=#{userID} )
 	</select>
 	
-	<insert id="insertFavoriteRegion" parameterType="java.util.HashMap">
+	<insert id="insertUserFavoriteRegion" parameterType="java.util.HashMap">
         insert into user_favorite_region(userID, regionNo, createdDate)
-        values
-	        <foreach collection="list" item="item" separator=" , ">
-	            (#{item.userID}, #{item.regionNo}, NOW() )
-	        </foreach>
+        values(#{userID}, #{regionNo}, NOW() );
 	 </insert>
  
+ 	<delete id="deleteUserFavoriteRegion" parameterType="HashMap">
+		delete from user_favorite_region
+		where userID=#{userID} and regionNo=#{regionNo}
+	</delete>
+	
 	<delete id="deleteRegionByUser" parameterType="String">
 		delete from user_favorite_region
 		where userID=#{value}

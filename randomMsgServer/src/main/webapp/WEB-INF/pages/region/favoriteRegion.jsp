@@ -20,7 +20,9 @@
 <!-- Include the jQuery library -->
 <script type="text/javascript"
 	src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>
-
+<script type="text/javascript"
+	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
+	
 <style type="text/css">
 span {
 	padding: 5px;
@@ -66,8 +68,13 @@ span {
 	color: #707b8b
 }
 
+ul{
+	padding:0px;
+}
+
 li {
 	padding: 3px;
+	list-style:none;
 }
 
 a {
@@ -182,10 +189,12 @@ a {
 
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
+							$('#emptyDiv').show();
 							return;
 						}
 						
-						displayUserFavoriteRegionList( result.data );
+						$('#emptyDiv').hide();
+						displayUserFavoriteRegionList( result );
 						
 					} catch (ex) {
 						alert(ex.message);
@@ -202,14 +211,126 @@ a {
 			});
 		}
 		
-		function displayUserFavoriteRegionList( data )
+		function displayUserFavoriteRegionList( result )
 		{
-			for ( var i = 0; i < data.length; i++ )
-			{
-				$('#userFavoriteRegionList').append("<li>" + data[i].regionName + "</li>");
-			}
+			var source = $('#regionInfoT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+			$('#userFavoriteRegionDiv').html( html );
 		}
 		
+		function deleteRegion( regionNo )
+		{
+			var param = {"userID":"<%= userID %>","regionNo": regionNo };
+			
+			jQuery.ajax({
+				type : "POST",
+				url : "/nearhere/region/deleteUserFavoriteRegion.do",
+				data : JSON.stringify( param ),
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(result) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					// TODO
+					try {
+
+						if ( result == null || result.data == null || result.data.length == 0 )
+						{
+							$('#emptyDiv').show();
+							return;
+						}
+						
+						$('#emptyDiv').hide();
+						displayUserFavoriteRegionList( result );
+						
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+					
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생(getUserFavoriteRegionList)" + error );
+				}
+			});
+		}
+		
+		function getSelectedRegion()
+		{
+			if ( $('#selRegionLevel4').val().length > 0 )
+				return $('#selRegionLevel4').val();
+				
+			if ( $('#selRegionLevel3').val().length > 0 )
+				return $('#selRegionLevel3').val();
+			if ( $('#selRegionLevel2').val().length > 0 )
+				return $('#selRegionLevel2').val();
+			if ( $('#selRegionLevel1').val().length > 0 )
+				return $('#selRegionLevel1').val();
+			
+			return '';
+		}
+		
+		function insertRegion()
+		{
+			var regionNo = getSelectedRegion();
+			
+			if ( regionNo == '' )
+			{
+				alert('관심지역을 선택해 주십시오.');
+				return;
+			}
+			
+			var param = {"userID":"<%= userID %>","regionNo": regionNo };
+			
+			jQuery.ajax({
+				type : "POST",
+				url : "/nearhere/region/insertUserFavoriteRegion.do",
+				data : JSON.stringify( param ),
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(result) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					// TODO
+					try {
+
+						if ( result == null || result.data == null || result.data.length == 0 )
+						{
+							$('#emptyDiv').show();
+							return;
+						}
+						
+						$('#emptyDiv').hide();
+						displayUserFavoriteRegionList( result );
+						
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+					
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생(getUserFavoriteRegionList)" + error );
+				}
+			});
+		}
+		
+	</script>
+	
+	<script id="regionInfoT" type="text/x-handlebars-template">
+	<ul id="userFavoriteRegionList">
+		{{#each data}}
+			<li>
+				<div style="float:right;"><input type="button" value="삭제" onclick="deleteRegion('{{regionNo}}');"/></div>
+				<div>{{regionName}}</div>
+			</li>
+		{{/each}}
+	</ul>
 	</script>
 </head>
 <body>
@@ -217,17 +338,11 @@ a {
 	<div id="wrapper">
 
 		<div class="section">
-		
-			<form action="/nearhere/news/setFavoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>" method="post" name="fm">
-				<input type="hidden" name="returnURL" value="/nearhere/news/list.do?userID=<%= userID %>" />
-				<input type="hidden" name="selectedRegionNo" value="" />
-			</form>
 			
 			<div id="menu_category">
 				<div class="title">
 					<span class="s_tit">관심지역 설정</span>
 				</div>
-				<div style="padding: 5px;" id="selectedRegionDiv">지역을 선택하세요.</div>
 			</div>
 			
 			<% for ( int i = 0; i < cities.size(); i++ ) { %>
@@ -251,7 +366,7 @@ a {
 				<option value="">선택하세요.</option>
 			</select>
 					
-			<input type="button" id="btnSave" value="저장" /> <input type="button" id="btnCancel" value="취소" />
+			<input type="button" id="btnSave" value="추가" onclick="insertRegion();"/>
 			
 			
 		</div>
@@ -259,14 +374,22 @@ a {
 
 		<div class="section">
 			
-			<div id="userFavoriteRegionDiv">
-			
-				<ul id="userFavoriteRegionList">
-				
-				</ul>
-			
+			<div id="menu_category">
+				<div class="title">
+					<span class="s_tit">관심지역</span>
+				</div>
 			</div>
 			
+			<div id="userFavoriteRegionDiv">
+			</div>
+			
+			<div id="emptyDiv" style="padding: 40px;text-align: center;font-weight:bold;display:none;">
+			설정된 관심지역이 없습니다.
+			</div>
+			
+			<div id="infoDiv" style="padding:10px;background: #b2dcf5;color: #195a73;border-radius: 10px;">
+			관심지역을 추가하시면 해당지역의 카풀/합승 글이 등록될때 알림을 받으실 수 있습니다.
+			</div>
 		</div>
 
 	</div>

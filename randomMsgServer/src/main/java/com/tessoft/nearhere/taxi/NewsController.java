@@ -72,46 +72,4 @@ public class NewsController extends BaseController{
 		
 		return new ModelAndView("news/list", model);
 	}
-	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
-	@RequestMapping( value ="/news/setFavoriteRegion.do")
-	public ModelAndView setFavoriteRegion ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
-	{
-		try
-		{
-			String selectedRegionNo = request.getParameter("selectedRegionNo");
-			String[] regions = selectedRegionNo.split("\\,");
-
-			ArrayList ar = new ArrayList();
-			
-			for ( int i = 0; i < regions.length; i++ )
-			{
-				if ( !Util.isEmptyString( regions[i] ) )
-				{
-					HashMap map = new HashMap();
-					map.put("userID", userID);
-					map.put("regionNo", regions[i]);	
-					ar.add(map);
-				}
-			}
-			
-			if ( !Util.isEmptyString(userID) )
-			{
-				sqlSession.delete("com.tessoft.nearhere.region.deleteRegionByUser", userID );
-				
-				if ( ar != null && ar.size() > 0 )
-				{
-					int result = sqlSession.insert("com.tessoft.nearhere.news.insertFavoriteRegion", ar );	
-				}
-			}
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		
-		return new ModelAndView("news/redirect", model);
-	}
 }
