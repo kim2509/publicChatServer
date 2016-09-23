@@ -24,6 +24,11 @@
 	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 	
 <style type="text/css">
+
+body{
+	background:#eeeeee;
+}
+
 span {
 	padding: 5px;
 }
@@ -36,36 +41,12 @@ span {
 	margin-bottom: 10px;
 }
 
-#menu_category {
-	background: #fff;
-}
-
-#menu_category .title {
-	position: relative;
-	height: 33px;
-	padding: 0 12px 0 12px;
-	background: #dee2e8;
-	border-top: 1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/
-	display: box;
-	box-orient: vertical;
-	box-pack: center;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-box-pack: center;
-	display: -moz-box;
-	-moz-box-orient: vertical;
-	-moz-box-pack: center;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-ms-box-sizing: border-box
-}
-
-#menu_category .title .s_tit {
-	display: block;
-	font-weight: normal;
-	font-size: 0.81em;
-	letter-spacing: -1px;
-	color: #707b8b
+.title{
+	font-weight:bold;
+	font-size:16px;
+	padding-bottom:10px;
+	margin-bottom:10px;
+	border-bottom: 2px solid gray;
 }
 
 ul{
@@ -73,8 +54,9 @@ ul{
 }
 
 li {
-	padding: 3px;
+	padding: 10px;
 	list-style:none;
+	border-bottom: 1px solid gray;
 }
 
 a {
@@ -82,6 +64,25 @@ a {
 	color: #2e4986;
 	line-height: 1.2em;
 }
+
+#infoDiv{
+	padding: 5px;
+    background: #3572b0;
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.th1{
+	font-weight: bold;
+    font-size: 14px;
+}
+
+.th2{
+	text-align:center;
+}
+
 </style>
 
 	<script language="javascript">
@@ -339,34 +340,57 @@ a {
 
 		<div class="section">
 			
-			<div id="menu_category">
-				<div class="title">
-					<span class="s_tit">관심지역 설정</span>
-				</div>
+			<div class="title">관심지역 등록</div>
+			
+			<table style="width:100%;">
+				<colgroup>
+					<col width="120px;"></col>
+					<col width="*"></col>
+				</colgroup>
+				<tr>
+					<td class="th1">시/도</td>
+					<td class="th2">
+						<% for ( int i = 0; i < cities.size(); i++ ) { %>
+							<% if ( i == 0 ) { %>
+								<select name="selRegionLevel1" id="selRegionLevel1" style="width:100%;">
+									<option value="">선택하세요.</option>
+							<% } %>
+							<option value="<%= cities.get(i).get("regionNo") %>"><%= cities.get(i).get("regionName") %></option>
+							<% if ( i == cities.size() -1 ) { %>
+								</select>
+							<% } %>
+						<% } %>
+					</td>
+				</tr>
+				<tr>
+					<td class="th1">시/구/군</td>
+					<td class="th2">
+						<select name="selRegionLevel2" id="selRegionLevel2" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="th1">동/읍/면</td>
+					<td class="th2">
+						<select name="selRegionLevel3" id="selRegionLevel3" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="th1">리</td>
+					<td class="th2">
+						<select name="selRegionLevel4" id="selRegionLevel4" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			
+			<div style="margin:5px;">
+				<input type="button" id="btnSave" value="추가" onclick="insertRegion();" style="width:100%;padding:5px;"/>
 			</div>
-			
-			<% for ( int i = 0; i < cities.size(); i++ ) { %>
-				<% if ( i == 0 ) { %>
-					<select name="selRegionLevel1" id="selRegionLevel1">
-						<option value="">선택하세요.</option>
-				<% } %>
-				<option value="<%= cities.get(i).get("regionNo") %>"><%= cities.get(i).get("regionName") %></option>
-				<% if ( i == cities.size() -1 ) { %>
-					</select>
-				<% } %>
-			<% } %>
-			
-			<select name="selRegionLevel2" id="selRegionLevel2">
-				<option value="">선택하세요.</option>
-			</select>
-			<select name="selRegionLevel3" id="selRegionLevel3">
-				<option value="">선택하세요.</option>
-			</select>
-			<select name="selRegionLevel4" id="selRegionLevel4">
-				<option value="">선택하세요.</option>
-			</select>
-					
-			<input type="button" id="btnSave" value="추가" onclick="insertRegion();"/>
 			
 			
 		</div>
@@ -374,11 +398,7 @@ a {
 
 		<div class="section">
 			
-			<div id="menu_category">
-				<div class="title">
-					<span class="s_tit">관심지역</span>
-				</div>
-			</div>
+			<div class="title">관심지역 리스트</div>
 			
 			<div id="userFavoriteRegionDiv">
 			</div>
@@ -387,7 +407,7 @@ a {
 			설정된 관심지역이 없습니다.
 			</div>
 			
-			<div id="infoDiv" style="padding:10px;background: #b2dcf5;color: #195a73;border-radius: 10px;">
+			<div id="infoDiv">
 			관심지역을 추가하시면 해당지역의 카풀/합승 글이 등록될때 알림을 받으실 수 있습니다.
 			</div>
 		</div>
