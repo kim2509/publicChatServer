@@ -143,7 +143,7 @@ a {
 					// TODO
 					try {
 
-						if ( result == null || result.data == null || result.data.length == 0 )
+						if ( result == null || result.data == null  )
 						{
 							return;
 						}
@@ -191,6 +191,7 @@ a {
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
+							$('#userFavoriteRegionDiv').empty();
 							return;
 						}
 						
@@ -238,6 +239,7 @@ a {
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
+							$('#userFavoriteRegionDiv').empty();
 							return;
 						}
 						
@@ -300,6 +302,7 @@ a {
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
+							$('#userFavoriteRegionDiv').empty();
 							return;
 						}
 						
