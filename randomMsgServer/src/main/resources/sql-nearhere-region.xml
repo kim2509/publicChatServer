@@ -62,4 +62,15 @@
 		where userID=#{value}
 	</delete>
 	
+	<select id="getFavoriteRegionInfo" parameterType="HashMap" resultType="java.util.HashMap">
+		select r.*, ur.regionNo
+		, case 
+			when ur.regionNo IS NULL then 'N'
+			else 'Y'
+			end as registeredYN
+		from region r
+			left outer join user_favorite_region ur on r.regionNo=ur.regionNo and ur.userID=#{userID}
+		where r.regionNo=#{regionNo}
+	</select>
+	
 </mapper>

@@ -88,12 +88,13 @@
 		font-size:14px;
 	}
 	
-	#favoriteRegionDiv{
+	.favoriteRegion{
 		border-radius: 10px;
 		background:#ffffff;
 		padding:10px;
 		margin:10px;
 		border: 1px solid gray;
+		display:none;
 	}
 	
 	.btn1{
@@ -119,6 +120,7 @@
 		text-align:center;
 		margin-left:10px;
 		margin-right:10px;
+		display:none;
 	}
 	
 </style>
@@ -137,6 +139,8 @@
 	jQuery(document).ready(function() {
 
 		getPosts();
+		
+		getFavoriteRegionInfo();
 		
 	});
 
@@ -321,6 +325,55 @@
 		}
 	}
 	
+	function getFavoriteRegionInfo()
+	{
+		$('#loadingDiv').show();
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/region/getFavoriteRegionInfo.do",
+			data : JSON.stringify({
+				"lRegionNo" : <%= lRegionNo %>,
+				"mRegionNo" : <%= mRegionNo %>,
+				"sRegionNo" : <%= sRegionNo %>,
+				"tRegionNo" : <%= tRegionNo %>,
+				"isHotSpot" : '<%= isHotspot %>',
+				"userID" : '<%= userID %>'
+			}),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					$('#loadingDiv').hide();
+					
+					if ( result != null && result.data != null )
+					{
+						if (result.data.registeredYN == 'Y' )
+							$('#favoriteRegionDivY').show();
+						else
+							$('#favoriteRegionDivN').show();	
+						
+						$('.favoriteRegion').find('#regionName').html( result.data.regionName );
+					}
+
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				$('#loadingDiv').hide();
+			},
+			error : function(xhr, status, error) {
+				$('#loadingDiv').hide();
+				//$('#loading').hide();
+			}
+		});
+	}
+	
 </script>
 
 	<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
@@ -391,8 +444,8 @@
 		
 		<% if (!Util.isEmptyString(userID)){ %>
 		
-		<div id="favoriteRegionDiv">
-			<div><span>경기도</span>를 관심지역으로 추가하시겠습니까?</div>
+		<div id="favoriteRegionDivN" class="favoriteRegion">
+			<div><span id="regionName"></span>를 관심지역으로 추가하시겠습니까?</div>
 			<div style="margin-top:10px;margin-bottom:10px;">
 				<input type="button" value="예" class="btn1"/>
 				<input type="button" value="관심지역 전체보기" class="btn1" onclick="goFavoriteRegionPage();"/>
@@ -402,8 +455,8 @@
 			</div>
 		</div>
 		
-		<div id="favoriteRegionDiv">
-			<div><span>경기도</span>가 관심지역으로 설정되어 있습니다.<br/>해제하시겠습니까?</div>
+		<div id="favoriteRegionDivY" class="favoriteRegion">
+			<div><span id="regionName"></span>가 관심지역으로 설정되어 있습니다.<br/>해제하시겠습니까?</div>
 			<div style="margin-top:10px;">
 				<input type="button" value="예" class="btn1"/>
 				<input type="button" value="관심지역 전체보기" class="btn1" onclick="goFavoriteRegionPage();"/>

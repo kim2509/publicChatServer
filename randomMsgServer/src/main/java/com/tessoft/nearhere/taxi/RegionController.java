@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dy.common.ErrorCode;
+import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 
 @Controller
@@ -166,5 +167,44 @@ public class RegionController extends BaseController{
 		}
 		
 		response.setData(resultData);
+	}
+	
+	@RequestMapping( value ="/region/getFavoriteRegionInfo.do")
+	public @ResponseBody APIResponse getFavoriteRegionInfo( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String regionNo = "";
+			
+			if ( !Util.isEmptyForKey(hash, "tRegionNo") )
+				regionNo = hash.get("tRegionNo").toString();
+			else if ( !Util.isEmptyForKey(hash, "sRegionNo") )
+				regionNo = hash.get("sRegionNo").toString();
+			else if ( !Util.isEmptyForKey(hash, "mRegionNo") )
+				regionNo = hash.get("mRegionNo").toString();
+			else if ( !Util.isEmptyForKey(hash, "lRegionNo") )
+				regionNo = hash.get("lRegionNo").toString();
+
+			HashMap param = new HashMap();
+			param.put("regionNo", regionNo);
+			param.put("userID", hash.get("userID"));
+			
+			HashMap result = sqlSession.selectOne("com.tessoft.nearhere.region.getFavoriteRegionInfo", param );
+			response.setData( result );
+			
+			logger.info( "[isFavoriteRegionRegistered.do]" );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
 	}
 }
