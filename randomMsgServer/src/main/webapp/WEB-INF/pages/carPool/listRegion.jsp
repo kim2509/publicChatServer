@@ -32,6 +32,7 @@
 	String mRegionNo = request.getParameter("mRegionNo");
 	String sRegionNo = request.getParameter("sRegionNo");
 	String tRegionNo = request.getParameter("tRegionNo");
+	String userID = request.getParameter("userID");
 %>
 <html>
 
@@ -86,6 +87,40 @@
 	.region{
 		font-size:14px;
 	}
+	
+	#favoriteRegionDiv{
+		border-radius: 10px;
+		background:#ffffff;
+		padding:10px;
+		margin:10px;
+		border: 1px solid gray;
+	}
+	
+	.btn1{
+		padding:3px;
+		border-radius: 5px;
+	}
+	
+	#infoDiv{
+		padding: 5px;
+	    background: #3572b0;
+	    color: #ffffff;
+	    border-radius: 10px;
+	    font-weight: bold;
+	    font-size: 14px;
+	}
+	
+	#loadingDiv{
+		padding-top:30px;
+		padding-bottom:30px;
+		background:white;
+		border: 1px solid gray;
+		border-radius: 10px;
+		text-align:center;
+		margin-left:10px;
+		margin-right:10px;
+	}
+	
 </style>
 
 <script type="text/javascript"
@@ -271,6 +306,21 @@
 		}
 	}
 	
+	function goFavoriteRegionPage()
+	{
+		if ( isApp == 'Y' )
+		{
+			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
+			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
+		}
+		else
+		{
+			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			document.location.href= url;
+		}
+	}
+	
 </script>
 
 	<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
@@ -338,6 +388,33 @@
 %>			
 			</ul>
 		</div>
+		
+		<% if (!Util.isEmptyString(userID)){ %>
+		
+		<div id="favoriteRegionDiv">
+			<div><span>경기도</span>를 관심지역으로 추가하시겠습니까?</div>
+			<div style="margin-top:10px;margin-bottom:10px;">
+				<input type="button" value="예" class="btn1"/>
+				<input type="button" value="관심지역 전체보기" class="btn1" onclick="goFavoriteRegionPage();"/>
+			</div>
+			<div id="infoDiv">
+			관심지역을 추가하시면 해당지역의 카풀/합승 글이 등록될때 알림을 받으실 수 있습니다.
+			</div>
+		</div>
+		
+		<div id="favoriteRegionDiv">
+			<div><span>경기도</span>가 관심지역으로 설정되어 있습니다.<br/>해제하시겠습니까?</div>
+			<div style="margin-top:10px;">
+				<input type="button" value="예" class="btn1"/>
+				<input type="button" value="관심지역 전체보기" class="btn1" onclick="goFavoriteRegionPage();"/>
+			</div>
+		</div>
+		
+		<div id="loadingDiv">
+			<div><img src="<%= Constants.IMAGE_PATH %>/loading.gif" /></div>
+		</div>
+		
+		<% } %>
 		
 <%
 		}

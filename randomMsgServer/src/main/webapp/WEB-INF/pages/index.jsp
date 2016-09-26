@@ -51,6 +51,7 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
+	var userID = '';
 	
 	jQuery(document).ready(function() {
 
@@ -62,15 +63,18 @@
 <%
 	}
 %>
+
+	userID = getUserID();
+	userID = 'user27';
 	
 	});
 
 	function goRegionPage( titleUrlEncoded, url )
 	{
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y';
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y&userID=' + userID;
 		else
-			document.location.href = decodeURIComponent(url);
+			document.location.href = decodeURIComponent(url + '&userID=' + userID);
 	}
 	
 	function showMoreRecentPosts()
@@ -165,6 +169,16 @@
 			document.location.href = decodeURIComponent(url);
 		
 		<% }%>
+	}
+	
+	function getUserID()
+	{
+		if ( typeof Android != 'undefined')
+		{
+			return Android.getUserID();
+		}
+		
+		return '';
 	}
 	
 </script>
