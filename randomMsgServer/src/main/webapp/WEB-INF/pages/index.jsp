@@ -65,14 +65,13 @@
 %>
 
 	userID = getUserID();
-	userID = 'user27';
 	
 	});
 
 	function goRegionPage( titleUrlEncoded, url )
 	{
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y&userID=' + userID;
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y';
 		else
 			document.location.href = decodeURIComponent(url + '&userID=' + userID);
 	}
@@ -251,7 +250,8 @@ if ("Y".equals( showSearchDiv ) )
 						String title = regionList.get(i).get("regionName").toString();
 						String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 						String regionCount = regionList.get(i).get("regionCount").toString();
-						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?isHotSpot=Y&lRegionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
+						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?isHotSpot=Y&lRegionNo=" + 
+							regionNo + "&isApp=" + isApp + "&appVersion=" + version, "UTF-8" );
 						int newCount = Util.getInt( regionList.get(i).get("newCount") );
 	%>
 					<li>

@@ -135,15 +135,28 @@
 <script language="javascript">
 
 	var isApp ='<%= isApp %>';
+	var userID = '';
 	
 	jQuery(document).ready(function() {
 
 		getPosts();
 		
+		userID = getUserID();
+		
 		getFavoriteRegionInfo();
 		
 	});
 
+	function getUserID()
+	{
+		if ( typeof Android != 'undefined')
+		{
+			return Android.getUserID();
+		}
+		
+		return '';
+	}
+	
 	var pageNo = 1;
 	var bLoading = false;
 	var bEmpty = false;
@@ -338,7 +351,7 @@
 				"sRegionNo" : <%= sRegionNo %>,
 				"tRegionNo" : <%= tRegionNo %>,
 				"isHotSpot" : '<%= isHotspot %>',
-				"userID" : '<%= userID %>'
+				"userID" : userID
 			}),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",
@@ -442,8 +455,6 @@
 			</ul>
 		</div>
 		
-		<% if (!Util.isEmptyString(userID)){ %>
-		
 		<div id="favoriteRegionDivN" class="favoriteRegion">
 			<div><span id="regionName"></span>를 관심지역으로 추가하시겠습니까?</div>
 			<div style="margin-top:10px;margin-bottom:10px;">
@@ -466,8 +477,6 @@
 		<div id="loadingDiv">
 			<div><img src="<%= Constants.IMAGE_PATH %>/loading.gif" /></div>
 		</div>
-		
-		<% } %>
 		
 <%
 		}
