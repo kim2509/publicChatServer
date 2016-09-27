@@ -142,8 +142,13 @@
 		getPosts();
 		
 		userID = getUserID();
+
+		userID = 'user27';
 		
-		getFavoriteRegionInfo();
+		if ( userID != null && userID != '' )
+		{
+			getFavoriteRegionInfo();
+		}
 		
 	});
 
@@ -328,15 +333,17 @@
 		if ( isApp == 'Y' )
 		{
 			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
-			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=' + userID + '&isApp=<%= isApp %>';
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
 		}
 		else
 		{
-			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=' + userID + '&isApp=<%= isApp %>';
 			document.location.href= url;
 		}
 	}
+	
+	var currentRegionNo = '';
 	
 	function getFavoriteRegionInfo()
 	{
@@ -370,6 +377,7 @@
 							$('#favoriteRegionDivN').show();	
 						
 						$('.favoriteRegion').find('#regionName').html( result.data.regionName );
+						currentRegionNo = result.data.regionNo;
 					}
 
 				} catch (ex) {
@@ -383,6 +391,76 @@
 			error : function(xhr, status, error) {
 				$('#loadingDiv').hide();
 				//$('#loading').hide();
+			}
+		});
+	}
+	
+	function insertRegion()
+	{
+		var param = {"userID": userID ,"regionNo": currentRegionNo };
+		
+		$('#loadingDiv').show();
+		$('#favoriteRegionDivN').hide();
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/region/insertUserFavoriteRegion.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					getFavoriteRegionInfo();
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(insertRegion)" + error );
+			}
+		});
+	}
+	
+	function deleteRegion()
+	{
+		var param = {"userID": userID ,"regionNo": currentRegionNo };
+		
+		$('#loadingDiv').show();
+		$('#favoriteRegionDivY').hide();
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/region/deleteUserFavoriteRegion.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					getFavoriteRegionInfo();
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(deleteRegion)" + error );
 			}
 		});
 	}
@@ -458,7 +536,7 @@
 		<div id="favoriteRegionDivN" class="favoriteRegion">
 			<div><span id="regionName"></span>를 관심지역으로 추가하시겠습니까?</div>
 			<div style="margin-top:10px;margin-bottom:10px;">
-				<input type="button" value="예" class="btn1"/>
+				<input type="button" value="예" class="btn1" onclick="insertRegion();"/>
 				<input type="button" value="관심지역 전체보기" class="btn1" onclick="goFavoriteRegionPage();"/>
 			</div>
 			<div id="infoDiv">
@@ -469,7 +547,7 @@
 		<div id="favoriteRegionDivY" class="favoriteRegion">
 			<div><span id="regionName"></span>가 관심지역으로 설정되어 있습니다.<br/>해제하시겠습니까?</div>
 			<div style="margin-top:10px;">
-				<input type="button" value="예" class="btn1"/>
+				<input type="button" value="예" class="btn1" onclick="deleteRegion();"/>
 				<input type="button" value="관심지역 전체보기" class="btn1" onclick="goFavoriteRegionPage();"/>
 			</div>
 		</div>

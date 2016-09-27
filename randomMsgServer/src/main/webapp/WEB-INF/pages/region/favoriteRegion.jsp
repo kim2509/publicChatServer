@@ -83,6 +83,10 @@ a {
 	text-align:center;
 }
 
+select{
+	padding:5px;
+}
+
 </style>
 
 	<script language="javascript">
@@ -256,7 +260,7 @@ a {
 					
 				},
 				error : function(xhr, status, error) {
-					alert("에러발생(getUserFavoriteRegionList)" + error );
+					alert("에러발생(deleteRegion)" + error );
 				}
 			});
 		}
