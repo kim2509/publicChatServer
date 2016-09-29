@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -38,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
@@ -104,8 +109,39 @@ public class NewsController extends BaseController{
 		{
 			HashMap requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
+			ArrayList newsList  = callNaverAPI(resultText, requestHash, 1);
+			
+			ArrayList blogList = callNaverAPI(resultText, requestHash, 2);
+			
+			HashMap result = new HashMap();
+			result.put("newsList", newsList);
+			result.put("blogList", blogList);
+			
+			response.setData( result );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		return response;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ArrayList callNaverAPI(StringBuffer resultText, HashMap requestHash, int type ) {
+		
+		try
+		{
 			String url = "https://openapi.naver.com";
-			String apiURL = "/v1/search/news.xml";
+			String apiURL = "";
+			
+			if ( type == 1 )
+				apiURL = "/v1/search/news.xml";
+			else if ( type == 2 )
+				apiURL = "/v1/search/blog.xml";
+			
 			url += apiURL + "?query=" + requestHash.get("regionName") + "&display=10&start=1&sort=sim";
 			
 			HttpClient client = HttpClientBuilder.create().build();
@@ -132,7 +168,7 @@ public class NewsController extends BaseController{
 					DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			ByteArrayInputStream input =  new ByteArrayInputStream(
-					resultText.toString().getBytes("UTF-8"));
+					resultText.toString().trim().getBytes("UTF-8"));
 			Document doc = builder.parse(input);
 
 			NodeList nodeList = (NodeList) xPath.compile("/rss/channel/item").evaluate(doc, XPathConstants.NODESET);
@@ -141,24 +177,33 @@ public class NewsController extends BaseController{
 			for ( int i = 0; i < nodeList.getLength(); i++ )
 			{
 				HashMap hash = new HashMap();
-				hash.put("title", getXmlText("title", nodeList.item(i) ) );
-				hash.put("originallink", getXmlText("originallink", nodeList.item(i)));
-				hash.put("link", getXmlText("link", nodeList.item(i)));
-				hash.put("description", getXmlText("description", nodeList.item(i)));
-				hash.put("pubDate", getXmlText("pubDate", nodeList.item(i)));
+				
+				if ( type == 1 )
+				{
+					hash.put("title", getXmlText("title", nodeList.item(i) ) );
+					hash.put("originallink", getXmlText("originallink", nodeList.item(i)));
+					hash.put("link", getXmlText("link", nodeList.item(i)));
+					hash.put("description", getXmlText("description", nodeList.item(i)));
+					hash.put("pubDate", getXmlText("pubDate", nodeList.item(i)));	
+				}
+				else if ( type == 2 )
+				{
+					hash.put("title", getXmlText("title", nodeList.item(i) ) );
+					hash.put("link", getXmlText("link", nodeList.item(i)));
+					hash.put("description", getXmlText("description", nodeList.item(i)));
+					hash.put("bloggername", getXmlText("bloggername", nodeList.item(i)));
+					hash.put("bloggerlink", getXmlText("bloggerlink", nodeList.item(i)));
+				}
+				
 				result.add(hash);
 			}
-			
-			response.setData( result );
+			return result;
 		}
 		catch( Exception ex )
 		{
-			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
-			logger.error( ex );
+			logger.error(ex);
+			return new ArrayList();
 		}
-
-		return response;
 	}
 	
 	private String getXmlText( String keyName, Object obj ) throws Exception

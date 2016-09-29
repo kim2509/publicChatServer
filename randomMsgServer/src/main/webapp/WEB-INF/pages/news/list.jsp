@@ -114,7 +114,7 @@ li {
 	
 	function getRegionNews()
 	{
-		var param = {"regionName": encodeURIComponent('포항시') };
+		var param = {"regionName": encodeURIComponent('서울시') };
 		
 		jQuery.ajax({
 			type : "POST",
@@ -156,7 +156,15 @@ li {
 	
 	<script id="regionInfoT" type="text/x-handlebars-template">
 	<ul id="regionInfoList">
-		{{#each data}}
+		{{#each data.newsList}}
+			<li>
+				<div>{{plainText title}}</div>
+				<div>{{plainText description}}</div>
+			</li>
+		{{/each}}
+	</ul>
+	<ul id="regionInfoList2">
+		{{#each data.blogList}}
 			<li>
 				<div>{{plainText title}}</div>
 				<div>{{plainText description}}</div>
