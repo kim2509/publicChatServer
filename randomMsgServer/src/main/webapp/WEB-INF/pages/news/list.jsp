@@ -5,9 +5,6 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-
-	ArrayList<HashMap> newsList = (ArrayList<HashMap>) request.getAttribute("newsList");
-
 	String userID = request.getParameter("userID");
 	String favoriteRegions = request.getAttribute("favoriteRegions").toString();
 	if ( Util.isEmptyString(favoriteRegions) )
@@ -25,7 +22,9 @@
 
 
 <!-- Include the jQuery library -->
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH %>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+
 
 <style type="text/css">
 
@@ -62,6 +61,16 @@ a{
     margin: 10px;
 }
 
+ul{
+	padding:0px;
+}
+
+li {
+	padding: 10px;
+	list-style:none;
+	border-bottom: 1px solid gray;
+}
+
 </style>
 
 	<script language="javascript">
@@ -70,8 +79,11 @@ a{
 	
 	jQuery(document).ready(function(){
 		
-		console.log('ready');
+		getRegionNews();
 		
+		Handlebars.registerHelper('plainText', function(text) {
+			  return new Handlebars.SafeString(text);
+			});
 	});
 	
 	function goFavoriteRegionPage()
@@ -100,69 +112,82 @@ a{
 		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
+	function getRegionNews()
+	{
+		var param = {"regionName": encodeURIComponent('포항시') };
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/news/getRegionNews.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					displayUserFavoriteRegionList( result );
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(deleteRegion)" + error );
+			}
+		});
+	}
+	
+	function displayUserFavoriteRegionList( result )
+	{
+		var source = $('#regionInfoT').html();
+		var template = Handlebars.compile(source);
+		var html = template(result);
+		$('#regionInfoDiv').html( html );
+	}
+	
+	</script>
+	
+	<script id="regionInfoT" type="text/x-handlebars-template">
+	<ul id="regionInfoList">
+		{{#each data}}
+			<li>
+				<div>{{plainText title}}</div>
+				<div>{{plainText description}}</div>
+			</li>
+		{{/each}}
+	</ul>
 	</script>
 </head>
 <body>
 
 	<div id="wrapper">
 	
-	<form action="/nearhere/region/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
-	</form>
+		<form action="/nearhere/region/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
+		</form>
 	
-	<div class="section">
-		<div id="menu_category">
-			<div class="title">
-				<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
-				<span class="s_tit">관심지역</span>
-			</div>
-			<div style="padding-top:10px;padding-left:10px;padding-right:10px;"><%= favoriteRegions %></div>
-		</div>
-		
-	</div>
-	
-	<% for ( int i = 0; i < newsList.size(); i++ ) { 
-		
-		HashMap regionItem = newsList.get(i);
-		
-		String hostURL = Util.isEmptyString(regionItem.get("hostURL")) ? "" : regionItem.get("hostURL").toString();
-		
-		ArrayList<HashMap> news = (ArrayList<HashMap>) regionItem.get("news");	
-	%>
-	
-	<div class="section">
-		<div id="menu_category">
-			<div class="title">
-				<!-- span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;"><a href="www.naver.com">홈페이지 이동</a></span-->
-				<span class="s_tit"><%= regionItem.get("regionName") %></span>
+		<div class="section">
+			<div id="menu_category">
+				<div class="title">
+					<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
+					<span class="s_tit">관심지역</span>
+				</div>
+				<div style="padding-top:10px;padding-left:10px;padding-right:10px;"><%= favoriteRegions %></div>
 			</div>
 		</div>
-		
-		<div>
-				<ul style="list-style:none;padding:0px;">
-<%
-	for ( int j = 0; j < news.size(); j++ ) {
-		
-		HashMap<String,String> hash = news.get(j);
-		String title = hash.get("title");
-		title = title.replaceAll("\\\"", "");
-		String link = hash.get("link");
-%>
-					<li><a href="javascript:void(0)" onclick="openURL('상세','<%= link %>');"><%= hash.get("title") %></a></li>		
-<%
-	}
-%>
-				</ul>
-		</div>
-		
-		<% if ( !Util.isEmptyString( hostURL ) ) { %>
-		<div style="text-align:center; width:100%;font-weight:bold;margin-bottom:10px;margin-top:10px;">
-			<a href="javascript:void(0)" onclick="goHostURL('<%= hostURL %>');" class="hostURL"><%= regionItem.get("regionName") %> 바로가기</a>
-		</div>	
-		<% } %>
-	</div>
 	
-	<% } %>
-
+		<div class="section">
+		
+			<div id="regionInfoDiv">
+			</div>
+			
+		</div>
 	
 	</div>
 

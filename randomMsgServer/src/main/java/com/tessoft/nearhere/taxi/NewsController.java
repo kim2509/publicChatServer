@@ -1,14 +1,21 @@
 package com.tessoft.nearhere.taxi;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -19,7 +26,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.codehaus.jackson.type.TypeReference;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
@@ -30,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
@@ -46,8 +54,6 @@ public class NewsController extends BaseController{
 	{
 		try
 		{
-			getRegionNews(null, null, null );
-			
 			List list = (List) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", userID );
 			String favoriteRegions = "";
 			
@@ -56,9 +62,7 @@ public class NewsController extends BaseController{
 				for ( int i = 0; i < list.size(); i++ )
 				{
 					HashMap region = (HashMap) list.get(i);
-					favoriteRegions += region.get("regionName") + ",";
-					
-					region.put("news", sqlSession.selectList("com.tessoft.nearhere.news.getNewsByRegion", region.get("regionNo")) );
+					favoriteRegions += region.get("regionName1") + ",";
 				}
 				
 				if ( favoriteRegions.endsWith(",") )
@@ -69,17 +73,14 @@ public class NewsController extends BaseController{
 				HashMap region = new HashMap();
 				region.put("regionNo", "40");
 				region.put("regionName", "서울");
-				region.put("news", sqlSession.selectList("com.tessoft.nearhere.news.getNewsByRegion", "40" ));
 				list.add(region);
 				
 				region = new HashMap();
 				region.put("regionNo", "18");
 				region.put("regionName", "경기도");
-				region.put("news", sqlSession.selectList("com.tessoft.nearhere.news.getNewsByRegion", "18" ));
 				list.add(region);
 			}
 			
-			request.setAttribute("newsList", list);
 			request.setAttribute("favoriteRegions", favoriteRegions);
 		}
 		catch( Exception ex )
@@ -90,7 +91,10 @@ public class NewsController extends BaseController{
 		return new ModelAndView("news/list", model);
 	}
 	
-	@RequestMapping( value ="/region/getRegionNews.do")
+	XPath xPath =  XPathFactory.newInstance().newXPath();
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/news/getRegionNews.do")
 	public @ResponseBody APIResponse getRegionNews( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -98,11 +102,11 @@ public class NewsController extends BaseController{
 		
 		try
 		{
-//			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			HashMap requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
 			String url = "https://openapi.naver.com";
 			String apiURL = "/v1/search/news.xml";
-			url += apiURL + "?query=%ED%8F%AC%ED%95%AD%EC%8B%9C&display=10&start=1&sort=sim";
+			url += apiURL + "?query=" + requestHash.get("regionName") + "&display=10&start=1&sort=sim";
 			
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet req = new HttpGet(url);
@@ -124,7 +128,28 @@ public class NewsController extends BaseController{
 				resultText.append(line);
 			}
 			
-			logger.info( "[getRegionNews.do]" + resultText.toString() );
+			DocumentBuilderFactory factory =
+					DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			ByteArrayInputStream input =  new ByteArrayInputStream(
+					resultText.toString().getBytes("UTF-8"));
+			Document doc = builder.parse(input);
+
+			NodeList nodeList = (NodeList) xPath.compile("/rss/channel/item").evaluate(doc, XPathConstants.NODESET);
+			
+			ArrayList result = new ArrayList();
+			for ( int i = 0; i < nodeList.getLength(); i++ )
+			{
+				HashMap hash = new HashMap();
+				hash.put("title", getXmlText("title", nodeList.item(i) ) );
+				hash.put("originallink", getXmlText("originallink", nodeList.item(i)));
+				hash.put("link", getXmlText("link", nodeList.item(i)));
+				hash.put("description", getXmlText("description", nodeList.item(i)));
+				hash.put("pubDate", getXmlText("pubDate", nodeList.item(i)));
+				result.add(hash);
+			}
+			
+			response.setData( result );
 		}
 		catch( Exception ex )
 		{
@@ -134,5 +159,13 @@ public class NewsController extends BaseController{
 		}
 
 		return response;
+	}
+	
+	private String getXmlText( String keyName, Object obj ) throws Exception
+	{
+		String result = xPath.compile(keyName).evaluate(obj);
+		result = result.replaceAll("&gt;", ">");
+		result = result.replaceAll("&lt;", "<");
+		return result;
 	}
 }
