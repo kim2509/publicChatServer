@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -111,6 +115,8 @@ public class NewsController extends BaseController{
 			
 			ArrayList newsList  = callNaverAPI(resultText, requestHash, 1);
 			
+			resultText = new StringBuffer();
+			
 			ArrayList blogList = callNaverAPI(resultText, requestHash, 2);
 			
 			HashMap result = new HashMap();
@@ -164,11 +170,13 @@ public class NewsController extends BaseController{
 				resultText.append(line);
 			}
 			
+			String responseString = resultText.toString();
+			
 			DocumentBuilderFactory factory =
 					DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			ByteArrayInputStream input =  new ByteArrayInputStream(
-					resultText.toString().trim().getBytes("UTF-8"));
+					responseString.getBytes("UTF-8"));
 			Document doc = builder.parse(input);
 
 			NodeList nodeList = (NodeList) xPath.compile("/rss/channel/item").evaluate(doc, XPathConstants.NODESET);
@@ -180,19 +188,19 @@ public class NewsController extends BaseController{
 				
 				if ( type == 1 )
 				{
-					hash.put("title", getXmlText("title", nodeList.item(i) ) );
-					hash.put("originallink", getXmlText("originallink", nodeList.item(i)));
-					hash.put("link", getXmlText("link", nodeList.item(i)));
-					hash.put("description", getXmlText("description", nodeList.item(i)));
-					hash.put("pubDate", getXmlText("pubDate", nodeList.item(i)));	
+					hash.put("title", getXmlText("title", nodeList.item(i), false ) );
+					hash.put("originallink", getXmlText("originallink", nodeList.item(i), false));
+					hash.put("link", getXmlText("link", nodeList.item(i) , false ));
+					hash.put("description", getXmlText("description", nodeList.item(i), false ));
+					hash.put("pubDate", getXmlText("pubDate", nodeList.item(i), true ));	
 				}
 				else if ( type == 2 )
 				{
-					hash.put("title", getXmlText("title", nodeList.item(i) ) );
-					hash.put("link", getXmlText("link", nodeList.item(i)));
-					hash.put("description", getXmlText("description", nodeList.item(i)));
-					hash.put("bloggername", getXmlText("bloggername", nodeList.item(i)));
-					hash.put("bloggerlink", getXmlText("bloggerlink", nodeList.item(i)));
+					hash.put("title", getXmlText("title", nodeList.item(i), false ) );
+					hash.put("link", getXmlText("link", nodeList.item(i), false));
+					hash.put("description", getXmlText("description", nodeList.item(i), false ));
+					hash.put("bloggername", getXmlText("bloggername", nodeList.item(i), false ));
+					hash.put("bloggerlink", getXmlText("bloggerlink", nodeList.item(i), false ));
 				}
 				
 				result.add(hash);
@@ -206,11 +214,19 @@ public class NewsController extends BaseController{
 		}
 	}
 	
-	private String getXmlText( String keyName, Object obj ) throws Exception
+	private String getXmlText( String keyName, Object obj, boolean bDate ) throws Exception
 	{
 		String result = xPath.compile(keyName).evaluate(obj);
 		result = result.replaceAll("&gt;", ">");
 		result = result.replaceAll("&lt;", "<");
+		
+		if ( bDate )
+		{
+			DateFormat sdf = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss", Locale.US );
+			Date date = sdf.parse(result);
+			result = Util.getDateStringFromDate(date, "yyyy-MM-dd");
+		}
+		
 		return result;
 	}
 }

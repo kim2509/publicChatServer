@@ -28,6 +28,8 @@
 
 <style type="text/css">
 
+body{background:#eeeeee;}
+
 span{ padding:5px; }
 
 .section{
@@ -42,33 +44,50 @@ span{ padding:5px; }
 #menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}
 #menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
 
-li{
-	padding:3px;
-	border-bottom: 1px solid #eeeeee;
-}
 a{
 	text-decoration: none;color:black;
 	line-height: 1.4em;
 }
 
-.hostURL{
-    color: #ffffff;
-    background: #5c5aa7;
-    border: 1;
-    border: 1px solid #7f9bea;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-}
-
 ul{
 	padding:0px;
+	margin:0px;
 }
 
 li {
-	padding: 10px;
 	list-style:none;
-	border-bottom: 1px solid gray;
+	padding: 10px;
+	clear:both;
+}
+
+.title{
+	color: #005fc1;
+	display: -webkit-box;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	font-size: 16px;
+  	line-height: 1.4;
+	-webkit-line-clamp: 1;
+  	-webkit-box-orient: vertical;
+  	margin-bottom:10px;
+}
+
+.desc{
+	color: #666;
+	display: -webkit-box;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	font-size: 16px;
+  	line-height: 1.4;
+	-webkit-line-clamp: 2;
+  	-webkit-box-orient: vertical;
+}
+
+.date{
+	font-size:13px;
+	margin-top:5px;
+	float:right;
+	color: #666;
 }
 
 </style>
@@ -152,22 +171,31 @@ li {
 		$('#regionInfoDiv').html( html );
 	}
 	
+	function goLink( url )
+	{
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent('뉴스') + '&url=' + url + '&showNewButton=Y';
+		else
+			document.location.href = url;
+	}
+	
 	</script>
 	
 	<script id="regionInfoT" type="text/x-handlebars-template">
 	<ul id="regionInfoList">
 		{{#each data.newsList}}
-			<li>
-				<div>{{plainText title}}</div>
-				<div>{{plainText description}}</div>
+			<li onclick="goLink('{{originallink}}')">
+				<div class="title">{{plainText title}}</div>
+				<div class="desc">{{plainText description}}</div>
+				<div class="date">{{pubDate}}</div>
 			</li>
 		{{/each}}
 	</ul>
 	<ul id="regionInfoList2">
 		{{#each data.blogList}}
 			<li>
-				<div>{{plainText title}}</div>
-				<div>{{plainText description}}</div>
+				<div class="title">{{plainText title}}</div>
+				<div class="desc">{{plainText description}}</div>
 			</li>
 		{{/each}}
 	</ul>
