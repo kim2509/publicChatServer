@@ -122,6 +122,7 @@ public class NewsController extends BaseController{
 			HashMap result = new HashMap();
 			result.put("newsList", newsList);
 			result.put("blogList", blogList);
+			result.put("regionName", URLDecoder.decode( requestHash.get("regionName").toString(), "UTF-8") );
 			
 			response.setData( result );
 		}
