@@ -114,7 +114,7 @@ li {
 			  return new Handlebars.SafeString(text);
 			});
 		
-<% 	if ( !Util.isEmptyString( favoriteRegions ) ) {
+<% 	if ( !Util.isEmptyString( favoriteRegions ) && !"설정된 지역이 없습니다.".equals(favoriteRegions)) {
 	
 		String[] favoriteRegionList = favoriteRegions.split("\\,");
 		
