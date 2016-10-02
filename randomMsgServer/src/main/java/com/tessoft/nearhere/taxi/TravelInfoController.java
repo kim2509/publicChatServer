@@ -78,7 +78,7 @@ public class TravelInfoController extends BaseController{
 			if ( !Util.isEmptyString(userID) )
 			{
 				// favorite region 을 가져옴.
-				List list = (List) sqlSession.selectList("com.tessoft.nearhere.news.getFavoriteRegionByUser", userID );
+				List list = (List) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", userID );
 				if ( list != null && list.size() > 0 )
 				{
 					HashMap hash = (HashMap) list.get(0);
