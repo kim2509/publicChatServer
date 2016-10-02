@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.region">
+
+	<select id="getBigCities" resultType="java.util.HashMap">
+		select r.*, sm.hostURL, sm.useYN from region r
+			left outer join scraping_master sm on r.regionNo=sm.regionNo
+		where parentNo is null
+		and isHotSpot is null
+		order by priority 
+	</select>
+	
+	<select id="getRegionByParent" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where parentNo=#{value} and parentNo2 is null
+		union
+		select * from region
+		where parentNo in (
+		select regionNo from region
+		where parentNo2=#{value}
+		)
+		order by regionName
+	</select>
+	
+	<select id="getParentRegion" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where regionNo=#{value}
+	</select>
+	
+	<select id="getRegionByNo" parameterType="String" resultType="java.util.HashMap">
+		select * from region
+		where regionNo=#{value}
+	</select>
+	
+	<select id="getFavoriteRegionByUser" parameterType="String" resultType="java.util.HashMap">
+		select 
+			r.regionNo as 'regionNo1', r.regionName as 'regionName1', r.parentNo as 'parentNo1', r.level as 'level1'
+			, p.regionNo as 'regionNo2', p.regionName as 'regionName2', p.parentNo as 'parentNo2', p.level as 'level2'
+			, p2.regionNo as 'regionNo3', p2.regionName as 'regionName3', p2.parentNo as 'parentNo3', p2.level as 'level3'
+			, p3.regionNo as 'regionNo4', p3.regionName as 'regionName4', p3.parentNo as 'parentNo4', p3.level as 'level4'
+		from region r
+			left outer join region p on r.parentNo=p.regionNo
+			left outer join region p2 on p.parentNo=p2.regionNo	
+			left outer join region p3 on p2.parentNo=p3.regionNo
+		where r.regionNo in ( select regionNo from user_favorite_region where userID=#{userID} )
+	</select>
+	
+	<insert id="insertUserFavoriteRegion" parameterType="java.util.HashMap">
+        insert into user_favorite_region(userID, regionNo, createdDate)
+        values(#{userID}, #{regionNo}, NOW() );
+	 </insert>
+ 
+ 	<delete id="deleteUserFavoriteRegion" parameterType="HashMap">
+		delete from user_favorite_region
+		where userID=#{userID} and regionNo=#{regionNo}
+	</delete>
+	
+	<delete id="deleteRegionByUser" parameterType="String">
+		delete from user_favorite_region
+		where userID=#{value}
+	</delete>
+	
+	<select id="getFavoriteRegionInfo" parameterType="HashMap" resultType="java.util.HashMap">
+		select r.*, ur.regionNo
+		, case 
+			when ur.regionNo IS NULL then 'N'
+			else 'Y'
+			end as registeredYN
+		from region r
+			left outer join user_favorite_region ur on r.regionNo=ur.regionNo and ur.userID=#{userID}
+		where r.regionNo=#{regionNo}
+	</select>
+	
+</mapper>

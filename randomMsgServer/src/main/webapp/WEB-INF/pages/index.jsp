@@ -51,6 +51,7 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
+	var userID = '';
 	
 	jQuery(document).ready(function() {
 
@@ -62,6 +63,8 @@
 <%
 	}
 %>
+
+	userID = getUserID();
 	
 	});
 
@@ -70,7 +73,7 @@
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '&showNewButton=Y';
 		else
-			document.location.href = decodeURIComponent(url);
+			document.location.href = decodeURIComponent(url + '&userID=' + userID);
 	}
 	
 	function showMoreRecentPosts()
@@ -167,6 +170,16 @@
 		<% }%>
 	}
 	
+	function getUserID()
+	{
+		if ( typeof Android != 'undefined')
+		{
+			return Android.getUserID();
+		}
+		
+		return '';
+	}
+	
 </script>
 
 	<jsp:include page="common/common.jsp" flush="true"></jsp:include>
@@ -237,7 +250,8 @@ if ("Y".equals( showSearchDiv ) )
 						String title = regionList.get(i).get("regionName").toString();
 						String titleUrlEncoded = URLEncoder.encode( title, "UTF-8" );
 						String regionCount = regionList.get(i).get("regionCount").toString();
-						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?isHotSpot=Y&lRegionNo=" + regionNo + "&isApp=" + isApp + "&appVersion=" + version , "UTF-8" );
+						String url = URLEncoder.encode( Constants.getServerURL() + "/taxi/listRegion.do?isHotSpot=Y&lRegionNo=" + 
+							regionNo + "&isApp=" + isApp + "&appVersion=" + version, "UTF-8" );
 						int newCount = Util.getInt( regionList.get(i).get("newCount") );
 	%>
 					<li>

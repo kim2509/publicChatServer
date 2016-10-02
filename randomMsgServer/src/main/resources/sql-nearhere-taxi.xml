@@ -1354,11 +1354,6 @@
 		group by tRegionNo
 	</select>
 	
-	<select id="getRegionByNo" parameterType="String" resultType="java.util.HashMap">
-		select * from region
-		where regionNo=#{value}
-	</select>
-	
 	<select id="getRecentPosts" resultType="com.nearhere.domain.Post" parameterType="Integer">
 		SELECT
 		*

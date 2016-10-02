@@ -5,9 +5,6 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-
-	ArrayList<HashMap> newsList = (ArrayList<HashMap>) request.getAttribute("newsList");
-
 	String userID = request.getParameter("userID");
 	String favoriteRegions = request.getAttribute("favoriteRegions").toString();
 	if ( Util.isEmptyString(favoriteRegions) )
@@ -25,9 +22,13 @@
 
 
 <!-- Include the jQuery library -->
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH %>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+
 
 <style type="text/css">
+
+body{background:#eeeeee;}
 
 span{ padding:5px; }
 
@@ -43,23 +44,62 @@ span{ padding:5px; }
 #menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}
 #menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
 
-li{
-	padding:3px;
-	border-bottom: 1px solid #eeeeee;
-}
 a{
 	text-decoration: none;color:black;
 	line-height: 1.4em;
 }
 
-.hostURL{
-    color: #ffffff;
-    background: #5c5aa7;
-    border: 1;
-    border: 1px solid #7f9bea;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
+ul{
+	padding:0px;
+	margin:0px;
+}
+
+li {
+	list-style:none;
+	padding: 10px;
+	clear:both;
+}
+
+.title{
+	color: #005fc1;
+	display: -webkit-box;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	font-size: 16px;
+  	line-height: 1.4;
+	-webkit-line-clamp: 1;
+  	-webkit-box-orient: vertical;
+  	margin-bottom:10px;
+}
+
+.subject {
+    font-weight: bold;
+    font-size: 16px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid gray;
+    clear:both;
+    margin-left:10px;
+    margin-right:10px;
+    margin-top:10px;
+}
+
+.desc{
+	color: #666;
+	display: -webkit-box;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	font-size: 16px;
+  	line-height: 1.4;
+	-webkit-line-clamp: 2;
+  	-webkit-box-orient: vertical;
+}
+
+.date{
+	font-size:13px;
+	margin-top:5px;
+	float:right;
+	color: #666;
 }
 
 </style>
@@ -70,7 +110,21 @@ a{
 	
 	jQuery(document).ready(function(){
 		
-		console.log('ready');
+		Handlebars.registerHelper('plainText', function(text) {
+			  return new Handlebars.SafeString(text);
+			});
+		
+<% 	if ( !Util.isEmptyString( favoriteRegions ) ) {
+	
+		String[] favoriteRegionList = favoriteRegions.split("\\,");
+		
+		for ( int i = 0; i < favoriteRegionList.length; i++ ) {
+%>
+		getRegionNews('<%= favoriteRegionList[i] %>');
+<%
+		}	
+	} 
+%>
 		
 	});
 	
@@ -79,7 +133,7 @@ a{
 		if ( isApp == 'Y' )
 		{
 			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
-			var url = '<%= Constants.getServerURL() %>/news/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
 		}
 		else
@@ -100,69 +154,94 @@ a{
 		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
+	function getRegionNews( regionName )
+	{
+		var param = {"regionName": encodeURIComponent( regionName ) };
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/news/getRegionNews.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					displayUserFavoriteRegionList( result );
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(deleteRegion)" + error );
+			}
+		});
+	}
+	
+	function displayUserFavoriteRegionList( result )
+	{
+		var source = $('#regionInfoT').html();
+		var template = Handlebars.compile(source);
+		var html = template(result);
+		$('#wrapper').append( html );
+	}
+	
+	function goLink( title, url )
+	{
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent( title ) + '&url=' + encodeURIComponent(url);
+		else
+			document.location.href = url;
+	}
+	
+	</script>
+	
+	<script id="regionInfoT" type="text/x-handlebars-template">
+	<div class="section">
+		<div class="subject">{{data.regionName}} 뉴스</div>
+		<ul id="regionInfoList">
+			{{#each data.newsList}}
+				<li onclick="goLink('뉴스', '{{originallink}}')">
+					<div class="title">{{plainText title}}</div>
+					<div class="desc">{{plainText description}}</div>
+					<div class="date">{{pubDate}}</div>
+				</li>
+			{{/each}}
+		</ul>
+
+		<div class="subject">{{data.regionName}} 블로그</div>
+		<ul id="regionInfoList2">
+			{{#each data.blogList}}
+				<li onclick="goLink('블로그','{{link}}')">
+					<div class="title">{{plainText title}}</div>
+					<div class="desc">{{plainText description}}</div>
+				</li>
+			{{/each}}
+		</ul>
+	</div>
 	</script>
 </head>
 <body>
 
 	<div id="wrapper">
 	
-	<form action="/nearhere/news/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
-	</form>
+		<form action="/nearhere/region/favoriteRegion.do?userID=<%= userID %>" method="post" name="fm">
+		</form>
 	
-	<div class="section">
-		<div id="menu_category">
-			<div class="title">
-				<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
-				<span class="s_tit">관심지역</span>
-			</div>
-			<div style="padding-top:10px;padding-left:10px;padding-right:10px;"><%= favoriteRegions %></div>
+		<div class="section">
+			
+			<div class="subject">관심지역 리스트</div>
+			<div style="padding-left:10px;padding-right:10px;color:#005fc1"><%= favoriteRegions %></div>
+			<input type="button" value="설정 바로가기" onclick="goFavoriteRegionPage();" style="width:60%;margin-left:10px;padding:5px;"/>
 		</div>
-		
-	</div>
-	
-	<% for ( int i = 0; i < newsList.size(); i++ ) { 
-		
-		HashMap regionItem = newsList.get(i);
-		
-		String hostURL = Util.isEmptyString(regionItem.get("hostURL")) ? "" : regionItem.get("hostURL").toString();
-		
-		ArrayList<HashMap> news = (ArrayList<HashMap>) regionItem.get("news");	
-	%>
-	
-	<div class="section">
-		<div id="menu_category">
-			<div class="title">
-				<!-- span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;"><a href="www.naver.com">홈페이지 이동</a></span-->
-				<span class="s_tit"><%= regionItem.get("regionName") %></span>
-			</div>
-		</div>
-		
-		<div>
-				<ul style="list-style:none;padding:0px;">
-<%
-	for ( int j = 0; j < news.size(); j++ ) {
-		
-		HashMap<String,String> hash = news.get(j);
-		String title = hash.get("title");
-		title = title.replaceAll("\\\"", "");
-		String link = hash.get("link");
-%>
-					<li><a href="javascript:void(0)" onclick="openURL('상세','<%= link %>');"><%= hash.get("title") %></a></li>		
-<%
-	}
-%>
-				</ul>
-		</div>
-		
-		<% if ( !Util.isEmptyString( hostURL ) ) { %>
-		<div style="text-align:center; width:100%;font-weight:bold;margin-bottom:10px;margin-top:10px;">
-			<a href="javascript:void(0)" onclick="goHostURL('<%= hostURL %>');" class="hostURL"><%= regionItem.get("regionName") %> 바로가기</a>
-		</div>	
-		<% } %>
-	</div>
-	
-	<% } %>
-
 	
 	</div>
 
