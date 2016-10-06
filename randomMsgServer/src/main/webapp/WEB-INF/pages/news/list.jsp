@@ -22,8 +22,8 @@
 
 
 <!-- Include the jQuery library -->
-<script type="text/javascript" src="<%=Constants.JS_PATH %>/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH %>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 
 <style type="text/css">
@@ -72,6 +72,18 @@ li {
   	margin-bottom:10px;
 }
 
+.subject {
+    font-weight: bold;
+    font-size: 16px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid gray;
+    clear:both;
+    margin-left:10px;
+    margin-right:10px;
+    margin-top:10px;
+}
+
 .desc{
 	color: #666;
 	display: -webkit-box;
@@ -98,11 +110,22 @@ li {
 	
 	jQuery(document).ready(function(){
 		
-		getRegionNews();
-		
 		Handlebars.registerHelper('plainText', function(text) {
 			  return new Handlebars.SafeString(text);
 			});
+		
+<% 	if ( !Util.isEmptyString( favoriteRegions ) && !"설정된 지역이 없습니다.".equals(favoriteRegions)) {
+	
+		String[] favoriteRegionList = favoriteRegions.split("\\,");
+		
+		for ( int i = 0; i < favoriteRegionList.length; i++ ) {
+%>
+		getRegionNews('<%= favoriteRegionList[i] %>');
+<%
+		}	
+	} 
+%>
+		
 	});
 	
 	function goFavoriteRegionPage()
@@ -131,9 +154,9 @@ li {
 		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
-	function getRegionNews()
+	function getRegionNews( regionName )
 	{
-		var param = {"regionName": encodeURIComponent('서울시') };
+		var param = {"regionName": encodeURIComponent( regionName ) };
 		
 		jQuery.ajax({
 			type : "POST",
@@ -168,13 +191,13 @@ li {
 		var source = $('#regionInfoT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result);
-		$('#regionInfoDiv').html( html );
+		$('#wrapper').append( html );
 	}
 	
-	function goLink( url )
+	function goLink( title, url )
 	{
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + encodeURIComponent('뉴스') + '&url=' + url + '&showNewButton=Y';
+			document.location.href='nearhere://openURL?title=' + encodeURIComponent( title ) + '&url=' + encodeURIComponent(url);
 		else
 			document.location.href = url;
 	}
@@ -182,23 +205,28 @@ li {
 	</script>
 	
 	<script id="regionInfoT" type="text/x-handlebars-template">
-	<ul id="regionInfoList">
-		{{#each data.newsList}}
-			<li onclick="goLink('{{originallink}}')">
-				<div class="title">{{plainText title}}</div>
-				<div class="desc">{{plainText description}}</div>
-				<div class="date">{{pubDate}}</div>
-			</li>
-		{{/each}}
-	</ul>
-	<ul id="regionInfoList2">
-		{{#each data.blogList}}
-			<li>
-				<div class="title">{{plainText title}}</div>
-				<div class="desc">{{plainText description}}</div>
-			</li>
-		{{/each}}
-	</ul>
+	<div class="section">
+		<div class="subject">{{data.regionName}} 뉴스</div>
+		<ul id="regionInfoList">
+			{{#each data.newsList}}
+				<li onclick="goLink('뉴스', '{{originallink}}')">
+					<div class="title">{{plainText title}}</div>
+					<div class="desc">{{plainText description}}</div>
+					<div class="date">{{pubDate}}</div>
+				</li>
+			{{/each}}
+		</ul>
+
+		<div class="subject">{{data.regionName}} 블로그</div>
+		<ul id="regionInfoList2">
+			{{#each data.blogList}}
+				<li onclick="goLink('블로그','{{link}}')">
+					<div class="title">{{plainText title}}</div>
+					<div class="desc">{{plainText description}}</div>
+				</li>
+			{{/each}}
+		</ul>
+	</div>
 	</script>
 </head>
 <body>
@@ -209,20 +237,10 @@ li {
 		</form>
 	
 		<div class="section">
-			<div id="menu_category">
-				<div class="title">
-					<span style="color:#2e4986;position: absolute;right: 10px;font-weight:bold;" onclick="goFavoriteRegionPage();">설정</span>
-					<span class="s_tit">관심지역</span>
-				</div>
-				<div style="padding-top:10px;padding-left:10px;padding-right:10px;"><%= favoriteRegions %></div>
-			</div>
-		</div>
-	
-		<div class="section">
-		
-			<div id="regionInfoDiv">
-			</div>
 			
+			<div class="subject">관심지역 리스트</div>
+			<div style="padding-left:10px;padding-right:10px;color:#005fc1"><%= favoriteRegions %></div>
+			<input type="button" value="설정 바로가기" onclick="goFavoriteRegionPage();" style="width:60%;margin-left:10px;padding:5px;"/>
 		</div>
 	
 	</div>

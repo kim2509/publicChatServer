@@ -142,8 +142,6 @@
 		getPosts();
 		
 		userID = getUserID();
-
-		userID = 'user27';
 		
 		if ( userID != null && userID != '' )
 		{
