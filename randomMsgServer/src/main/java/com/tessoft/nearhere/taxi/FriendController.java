@@ -50,6 +50,8 @@ public class FriendController extends BaseController{
 
 			response.setData( additionalData );
 			
+			insertHistory("/friend/getFriendRequestList.do", userID , null , null, null );
+			
 			return response;
 
 		}
@@ -79,6 +81,8 @@ public class FriendController extends BaseController{
 			additionalData.put("userList", userList );
 
 			response.setData( additionalData );
+			
+			insertHistory("/friend/searchUsers.do", keyword , null , null, null );
 			
 			return response;
 
@@ -145,6 +149,8 @@ public class FriendController extends BaseController{
 
 			response.setData( additionalData );
 			
+			insertHistory("/friend/askFriendRequest.do", userID , userID2 , null, null );
+			
 			return response;
 
 		}
@@ -186,6 +192,8 @@ public class FriendController extends BaseController{
 
 			response.setData( additionalData );
 			
+			insertHistory("/friend/acceptFriendRequest.do", fromUser.getUserID() , toUser.getUserID() , null, null );
+			
 			return response;
 
 		}
@@ -212,6 +220,8 @@ public class FriendController extends BaseController{
 			additionalData.put("friendsList", friendsList );
 
 			response.setData( additionalData );
+			
+			insertHistory("/friend/getFriendsList.do", userID , null , null, null );
 			
 			return response;
 
@@ -247,6 +257,8 @@ public class FriendController extends BaseController{
 				result = "";
 			
 			response.setData( result );
+			
+			insertHistory("/friend/getFriendStatus.do", Util.getStringFromHash(requestInfo, "userID") , Util.getStringFromHash(requestInfo, "userID2"), null, null );
 			
 			return response;
 

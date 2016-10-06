@@ -97,6 +97,8 @@ public class NewsController extends BaseController{
 			logger.error( ex );
 		}
 		
+		insertHistory("/news/list.do", userID , null , null, null );
+		
 		return new ModelAndView("news/list", model);
 	}
 	
@@ -108,10 +110,11 @@ public class NewsController extends BaseController{
 	{
 		APIResponse response = new APIResponse();
 		StringBuffer resultText = new StringBuffer();
+		HashMap requestHash = null;
 		
 		try
 		{
-			HashMap requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
 			ArrayList newsList  = callNaverAPI(resultText, requestHash, 1);
 			
@@ -132,6 +135,8 @@ public class NewsController extends BaseController{
 			logger.error( ex );
 		}
 
+		insertHistory("/news/getRegionNews.do", Util.getStringFromHash(requestHash, "regionName") , null , null, null );
+		
 		return response;
 	}
 

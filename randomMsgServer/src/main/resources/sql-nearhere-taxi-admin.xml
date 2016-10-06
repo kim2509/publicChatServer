@@ -146,4 +146,9 @@
 		where postID=#{postID} and regionName=#{regionName}
 	</insert>
 	
+	<insert id="insertHistory" parameterType="java.util.HashMap">
+		insert into history(name, param1, param2, param3, param4, createdDate )
+		value (#{name}, #{param1}, #{param2}, #{param3}, #{param4},  NOW() );
+	</insert>
+	
 </mapper>

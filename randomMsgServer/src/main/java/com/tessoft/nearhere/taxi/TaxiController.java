@@ -56,7 +56,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(appInfo);
 
-			logger.info( "[appInfo.do]" );
+			insertHistory("appInfo.do", Util.getStringFromHash(hash, "os") , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -97,7 +97,7 @@ public class TaxiController extends BaseController {
 
 			getRandomIDCommon( hash, user, response, logIdentifier);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getRandomIDV2.do", Util.getStringFromHash(hash, "user") , null , null, null );
 
 			return response;
 
@@ -128,7 +128,7 @@ public class TaxiController extends BaseController {
 			
 			getRandomIDCommon( hash, user, response, logIdentifier );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getRandomIDForGuest.do", Util.getStringFromHash(hash, "user") , null , null, null );
 
 			return response;
 
@@ -326,7 +326,7 @@ public class TaxiController extends BaseController {
 
 			getRandomIDCommon( null, user, response, logIdentifier);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getRandomID.do", user.getUserID() , null , null, null );
 
 			return response;
 
@@ -374,7 +374,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( user );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("registerUser.do", user.getUserID() , null , null, null );
 
 			return response;
 
@@ -405,7 +405,7 @@ public class TaxiController extends BaseController {
 			else
 				view = "user_terms_" + version;
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + view );
+			insertHistory("getUserTerms.do", version , type , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -430,7 +430,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("insertTermsAgreement.do", Util.getStringFromHash(hash, "userID") , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -466,8 +466,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result + "|" + result2 );
 
-			logger.info( "[updateUserLocation]userID:" + location.getUser().getUserID() + " locationName:" + location.getLocationName() + 
-					" lat:" + location.getLatitude() + " lon:" + location.getLongitude());
+			insertHistory("updateUserLocation.do", location.getUser().getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -500,7 +499,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(user);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("login.do", Util.getStringFromHash( requestData, "userID") , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -551,7 +550,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData2(addInfo);
 
-			logger.info( "[login_bg.do]:" + user.getUserID() );
+			insertHistory("login_bg.do", user.getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -639,7 +638,7 @@ public class TaxiController extends BaseController {
 			user.setProfilePoint(profilePoint);
 			response.setData(user);
 			
-			logger.info( "[login_bg.do2]:" + user.getUserID() );
+			insertHistory("login_bg2.do", user.getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -677,7 +676,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData2( selectUser( user, false ) );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("logout.do", user.getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -725,7 +724,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("insertPost.do", post.getUser().getUserID() , post.getPostID() , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -778,7 +777,7 @@ public class TaxiController extends BaseController {
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("남성회원은 여자만 옵션을 선택할 수 없습니다.");
 					
-					logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+					insertHistory("insertPostAjax.do", user.getUserID() , "여자만선택" , null, null );
 					
 					return response;
 				}
@@ -821,7 +820,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("insertPostAjax.do", post.getUser().getUserID() , post.getPostID() , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -975,7 +974,7 @@ public class TaxiController extends BaseController {
 			}
 			*/
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("modifyPostAjax.do", user.getUserID() , Util.getStringFromHash(post, "postID") , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1089,7 +1088,7 @@ public class TaxiController extends BaseController {
 			else
 				response.setData2("false|" + count);
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("modifyPostAjax.do", Util.getStringFromHash( requestData, "userID"), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1142,6 +1141,8 @@ public class TaxiController extends BaseController {
 			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
 			response.setData2( count );
 
+			insertHistory("getPostsNearHere.do", null, null , null, null );
+			
 		}
 		catch( Exception ex )
 		{
@@ -1201,7 +1202,7 @@ public class TaxiController extends BaseController {
 			int count = sqlSession.selectOne("com.tessoft.nearhere.taxi.searchUserCountByDistance", requestData);
 			response.setData3( count );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getPostsNearHereV2.do", null, null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1292,6 +1293,8 @@ public class TaxiController extends BaseController {
 			}
 			
 			logger.info( "[getPostDetail.do] userID:" + userID + " postID:" + postID + " title:" + post.getMessage() );
+			
+			insertHistory("getPostDetail.do", userID, postID , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1334,7 +1337,7 @@ public class TaxiController extends BaseController {
 					sendPushMessage( user, "postReply", post.getMessage(), post.getPostID(), false, true );
 			}
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("insertPostReply.do", post.getUser().getUserID(), post.getPostID() , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1397,6 +1400,8 @@ public class TaxiController extends BaseController {
 			temp.put("userID", userID);
 			temp.put("fromUserID", userToInquiry.getUserID());
 			int result2 = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead4", temp );
+			
+			insertHistory("getUserInfoV2.do", userID, userToInquiry.getUserID() , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1456,7 +1461,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(resHash);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getUserInfoV2.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1483,7 +1488,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("updateUserSex.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1510,7 +1515,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("updateUserJobTitle.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1537,7 +1542,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( result );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("updateUserBirthday.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1562,7 +1567,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(noticeList);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getNoticeList.do", null, null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1603,7 +1608,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(messageList);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getUserMessageList.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1634,7 +1639,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData2( result + "|" + result2 );
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getUserMessage.do", Util.getStringFromHash(messageInfo, "userID"), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1660,7 +1665,7 @@ public class TaxiController extends BaseController {
 			List<UserMessage> messageList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserPushMessage", user );
 			response.setData(messageList);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getUserPushMessage.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1687,7 +1692,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(setting);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("getUserSetting.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1714,7 +1719,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(result);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("updateUserSetting.do", setting.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1750,7 +1755,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(result + "|" + result2);
 
-			logger.info( "[updateUserRegID.do]: " + user.getUserID() + " regID:" + user.getRegID() );
+			insertHistory("updateUserSetting.do", user.getUserID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1792,7 +1797,7 @@ public class TaxiController extends BaseController {
 			response.setData(messageList);
 			response.setData2(result);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("sendUserMessage.do", message.getFromUser().getUserID(), message.getToUser().getUserID() , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -1982,7 +1987,7 @@ public class TaxiController extends BaseController {
 				
 			}
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("modifyPost.do", post.getPostID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2009,7 +2014,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(result);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("deletePost.do", post.getPostID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2047,7 +2052,7 @@ public class TaxiController extends BaseController {
 				response.setData2( result );
 			}
 
-			logger.info( "[getUnreadCount.do] " + info.get("userID") );
+			insertHistory("getUnreadCount.do", Util.getStringFromHash(info, "userID"), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2073,7 +2078,7 @@ public class TaxiController extends BaseController {
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead", message );
 			response.setData(result);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("updatePushMessageAsRead.do", message.getPushNo(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2100,7 +2105,7 @@ public class TaxiController extends BaseController {
 
 			response.setData(result);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("deletePostReply.do", postReply.getReplyID(), null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2151,7 +2156,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData2(addInfo);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("updateUserInfo.do", user.getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2189,6 +2194,8 @@ public class TaxiController extends BaseController {
 		
 		if ( "EVENT".equals( notice.getType() ) )
 			return new ModelAndView( notice.getLandingURL() );
+		
+		insertHistory("getNotice.do", noticeID , null , null, null );
 		
 		return new ModelAndView("notice", "notice", notice);
 	}
@@ -2255,6 +2262,8 @@ public class TaxiController extends BaseController {
 			}
 			
 			int result = sqlSession.update("com.tessoft.nearhere.taxi.updatePushMessageAsRead", message );
+			
+			insertHistory("eventDetail.do", pushNo , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2287,6 +2296,9 @@ public class TaxiController extends BaseController {
 			daeyong.setUserNo("27");
 			daeyong = selectUser( daeyong, false );
 			sendPushMessage( daeyong, "newPostByDistance", "이벤트 신청알림 " + requestInfo.get("userID"), requestInfo.get("userID") , true, true );
+			
+			
+			insertHistory("eventApply.do", Util.getStringFromHash(requestInfo, "userID") , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2316,7 +2328,7 @@ public class TaxiController extends BaseController {
 			responseInfo.put("UserAgreed", userAgreed);
 			response.setData(responseInfo);
 			
-			logger.info( "[getMainInfo.do]: " + requestInfo.get("userID") );
+			insertHistory("getMainInfo.do", Util.getStringFromHash(registerUserInfo, "userID") , null , null, null );
 
 			return response;
 
@@ -2342,18 +2354,24 @@ public class TaxiController extends BaseController {
 		List<HashMap> hotspotList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotList");
 		model.addAttribute("hotspotList", hotspotList );
 		
+		insertHistory("/taxi/index.do", null , null , null, null );
+		
 		return new ModelAndView("index", model);
 	}
 	
 	@RequestMapping( value ="/taxi/searchDestination.do")
 	public ModelAndView searchDestination( String isApp )
 	{
+		insertHistory("/taxi/searchDestination.do", isApp , null , null, null );
+		
 		return new ModelAndView("carPool/searchDestination");
 	}
 	
 	@RequestMapping( value ="/taxi/moreRecentPosts.do")
 	public ModelAndView moreRecentPosts( String isApp )
 	{
+		insertHistory("/taxi/moreRecentPosts.do", isApp , null , null, null );
+		
 		return new ModelAndView("carPool/moreRecentPosts");
 	}
 	
@@ -2420,6 +2438,8 @@ public class TaxiController extends BaseController {
 		
 		model.addAttribute("childRegionList", childRegionList);
 		
+		insertHistory("/taxi/listRegion.do", lRegionNo , mRegionNo , sRegionNo, tRegionNo );
+		
 		return new ModelAndView("carPool/listRegion", model );
 	}
 
@@ -2479,6 +2499,8 @@ public class TaxiController extends BaseController {
 		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getRegionList");
 		model.addAttribute("regionList", regionList);
 		
+		insertHistory("/taxi/newPost.do", null , null , null, null );
+		
 		return new ModelAndView("carPool/newPost", model );
 	}
 	
@@ -2499,6 +2521,8 @@ public class TaxiController extends BaseController {
 		HashMap regionInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.getRegionInfo", post.getRegion() );
 		
 		model.addAttribute("regionNo", post.getRegion() );
+		
+		insertHistory("/taxi/editPost.do", postID , null , null, null );
 		
 		if ( "Y".equals( regionInfo.get("isHotSpot") ) )
 		{
@@ -2524,12 +2548,16 @@ public class TaxiController extends BaseController {
 		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotRegionList");
 		model.addAttribute("regionList", regionList);
 		
+		insertHistory("/taxi/newHotspot.do", regionNo , null , null, null );
+		
 		return new ModelAndView("carPool/newHotspot", model );
 	}
 	
 	@RequestMapping( value ="/taxi/viewMoreUsers.do")
 	public ModelAndView viewMoreUsers()
 	{
+		insertHistory("/taxi/viewMoreUsers.do", null , null , null, null );
+		
 		return new ModelAndView("viewMoreUsers");
 	}
 	
@@ -2546,7 +2574,7 @@ public class TaxiController extends BaseController {
 		
 		String regionName = request.getParameter("regionName");
 		
-		logger.info( "[viewRegion.do]" + regionName );
+		insertHistory("/taxi/viewRegion.do", regionName , null , null, null );
 		
 		return new ModelAndView("viewRegion");
 	}
@@ -2575,7 +2603,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData( additionalData );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("/taxi/getMoreUsers.do", null , null , null, null );
 
 			return response;
 
@@ -2653,6 +2681,7 @@ public class TaxiController extends BaseController {
 			response.setData( additionalData );
 			
 			logger.info( "[getPostsNearHereAjax.do]: " + requestInfo.get("userID") );
+			insertHistory("/taxi/getPostsNearHereAjax.do", Util.getStringFromHash(requestInfo, "userID") , null , null, null );
 
 			return response;
 
@@ -2685,7 +2714,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( additionalData );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("/taxi/getPostsInRegion.do", Util.getStringFromHash(requestInfo, "regionName") , null , null, null );
 
 			return response;
 
@@ -2724,7 +2753,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData(addInfo);
 
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("/taxi/updateFacebookInfo.do", user.getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -2755,7 +2784,7 @@ public class TaxiController extends BaseController {
 			
 			response.setData( data );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("/taxi/insertDestination.do", null , null , null, null );
 
 			return response;
 
@@ -2788,7 +2817,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( data );
 			
-			logger.info( "RESPONSE[" + logIdentifier + "]: " + mapper.writeValueAsString(response) );
+			insertHistory("/taxi/getUserDestinations.do", null , null , null, null );
 
 			return response;
 
@@ -2844,7 +2873,7 @@ public class TaxiController extends BaseController {
 
 			response.setData( additionalData );
 			
-			logger.info( "[getRecentPosts.do]: " + bodyString );
+			insertHistory("/taxi/getRecentPosts.do", null , null , null, null );
 
 			return response;
 
