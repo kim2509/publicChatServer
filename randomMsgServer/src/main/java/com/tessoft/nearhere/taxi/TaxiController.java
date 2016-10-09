@@ -97,7 +97,7 @@ public class TaxiController extends BaseController {
 
 			getRandomIDCommon( hash, user, response, logIdentifier);
 
-			insertHistory("getRandomIDV2.do", Util.getStringFromHash(hash, "user") , null , null, null );
+			insertHistory("getRandomIDV2.do", user.getUserID() , null , null, null );
 
 			return response;
 
