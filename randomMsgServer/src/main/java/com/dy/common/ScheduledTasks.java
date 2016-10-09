@@ -315,6 +315,7 @@ public class ScheduledTasks {
 	}
 
 	// 뉴스 읽어오기 (1시간마다)
+	/*
 	@Scheduled(fixedRate = 1000 * 60 * 60 )
 	public void scrapNews() {
 		try
@@ -327,4 +328,5 @@ public class ScheduledTasks {
 			logger.error( ex );
 		}
 	}
+	*/
 }
