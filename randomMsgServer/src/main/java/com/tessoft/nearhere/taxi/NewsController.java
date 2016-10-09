@@ -112,6 +112,8 @@ public class NewsController extends BaseController{
 		StringBuffer resultText = new StringBuffer();
 		HashMap requestHash = null;
 		
+		String regionName = "";
+		
 		try
 		{
 			requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
@@ -122,10 +124,12 @@ public class NewsController extends BaseController{
 			
 			ArrayList blogList = callNaverAPI(resultText, requestHash, 2);
 			
+			regionName = URLDecoder.decode( requestHash.get("regionName").toString(), "UTF-8");
+			
 			HashMap result = new HashMap();
 			result.put("newsList", newsList);
 			result.put("blogList", blogList);
-			result.put("regionName", URLDecoder.decode( requestHash.get("regionName").toString(), "UTF-8") );
+			result.put("regionName", regionName );
 			
 			response.setData( result );
 		}
@@ -136,7 +140,7 @@ public class NewsController extends BaseController{
 			logger.error( ex );
 		}
 
-		insertHistory("/news/getRegionNews.do", Util.getStringFromHash(requestHash, "regionName") , null , null, null );
+		insertHistory("/news/getRegionNews.do", regionName , null , null, null );
 		
 		return response;
 	}
