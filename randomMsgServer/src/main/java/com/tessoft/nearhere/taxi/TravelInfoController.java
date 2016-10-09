@@ -57,7 +57,7 @@ public class TravelInfoController extends BaseController{
 
 	String serverKey = "PRem9doP9qUgRcGuqNrfphUA0nH7IQfN7OXu%2BaDIdwpAWahZXfOrFNO8M6hhFU6ZIO%2BCwYQqTNb0FFNFOKp6Zg%3D%3D";
 
-	@SuppressWarnings({ "unused", "unused" })
+	@SuppressWarnings({ "unused", "unused", "rawtypes", "unchecked" })
 	@RequestMapping( value ="/travelInfo/index.do")
 	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
 			String userID, ModelMap model ) throws IOException
@@ -90,7 +90,7 @@ public class TravelInfoController extends BaseController{
 					}
 					else
 					{
-						regionName = hash.get("regionName").toString(); 
+						regionName = hash.get("regionName1").toString(); 
 					}
 				}
 				
