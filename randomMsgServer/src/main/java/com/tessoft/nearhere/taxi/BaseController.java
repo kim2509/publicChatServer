@@ -379,4 +379,23 @@ public class BaseController {
 		
 		return result;
 	}
+	
+	protected int insertHistory( String name, String param1, String param2, String param3, String param4 )
+	{
+		try
+		{
+			HashMap params = new HashMap();
+			params.put("name", name);
+			params.put("param1", param1);
+			params.put("param2", param2);
+			params.put("param3", param3);
+			params.put("param4", param4);
+			return sqlSession.insert("com.tessoft.nearhere.taxi.admin.insertHistory", params);
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+			return -1;
+		}
+	}
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -62,13 +63,20 @@ public class Util {
 		return false;
 	}
 	
-	public static boolean isEmptyForKey( HashMap hash, String key )
+	public static boolean isEmptyForKey( Map hash, String key )
 	{
 		if ( hash == null ) return true;
 		
 		if ( !hash.containsKey(key) || Util.isEmptyString(hash.get(key)) ) return true;
 		
 		return false;
+	}
+	
+	public static String getStringFromHash( Map hash, String key )
+	{
+		if ( Util.isEmptyForKey(hash, key) ) return "";
+		
+		return hash.get(key).toString();
 	}
 	
 	public static int getInt( Object val )

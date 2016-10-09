@@ -115,6 +115,8 @@ public class TravelInfoController extends BaseController{
 			}
 		
 			request.setAttribute("selectedAreaCode", getAreaCodeByName(regionName));
+			
+			insertHistory("/travelInfo/index.do", userID , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -168,6 +170,8 @@ public class TravelInfoController extends BaseController{
 				
 			response.setData(cityList);
 			
+			insertHistory("/travelInfo/getCityList.do", Util.getStringFromHash(requestInfo, "areaCode") , null , null, null );
+			
 			return response;
 
 		}
@@ -200,10 +204,19 @@ public class TravelInfoController extends BaseController{
 		if ( requestInfo.containsKey("contentTypeID") && !Util.isEmptyString(requestInfo.get("contentTypeID") ) )
 			params.put("contentTypeId", requestInfo.get("contentTypeID"));
 		
-		params.put("arrange", "P");
+		if ( requestInfo.containsKey("arrange") && !Util.isEmptyString(requestInfo.get("arrange") ) )
+			params.put("arrange", requestInfo.get("arrange"));
+		else
+			params.put("arrange", "P");
+		
 		HashMap travelInfo = callAPI("areaBasedList", 20, 10, pageNo , 1, params);
 		
 		response.setData(travelInfo);
+		
+		insertHistory("/travelInfo/getTravelInfo.do", Util.getStringFromHash(requestInfo, "areaCode") , 
+				Util.getStringFromHash(requestInfo, "cityCode") , 
+				Util.getStringFromHash(requestInfo, "contentTypeID") , 
+				Util.getStringFromHash(requestInfo, "arrange") );
 		
 		return response;
 	}
@@ -252,6 +265,8 @@ public class TravelInfoController extends BaseController{
 		{
 			logger.error( ex );
 		}
+		
+		insertHistory("/travelInfo/detail.do", contentTypeID , contentID , null, null );
 		
 		return new ModelAndView("travelInfo/detail");
 	}

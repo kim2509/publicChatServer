@@ -121,6 +121,7 @@ dl {
 	<script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	var arrange = 'Q';
 	
 	jQuery(document).ready(function(){
 		
@@ -148,6 +149,12 @@ dl {
 			pageNo = 1;
 			searchTravelInfo();
 		});
+		
+		$('input[name=arrange]').click( function() {
+			arrange = $(this).val();
+			searchTravelInfo();
+		});
+		
 		
 		Handlebars.registerHelper('getTypeName', getTypeName );
 		Handlebars.registerHelper('numberWithCommas', numberWithCommas );
@@ -222,7 +229,7 @@ dl {
 			return;
 		}
 		
-		var param = {"areaCode": areaCode, "cityCode" : cityCode , "pageNo": pageNo, "contentTypeID":contentTypeID };
+		var param = {"areaCode": areaCode, "cityCode" : cityCode , "pageNo": pageNo, "contentTypeID":contentTypeID, "arrange":arrange };
 		
 		jQuery.ajax({
 			type : "POST",
@@ -361,6 +368,9 @@ dl {
 	}
 	
 	function numberWithCommas(x) {
+		if ( typeof x == 'undefined' )
+			return '';
+		
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
 	
@@ -403,70 +413,93 @@ dl {
 	
 		<div id="searchCondition">
 		
-		<div style="float:left;">지역</div> 
+			<div style="float:left;">지역</div> 
+			
+			<div style="margin-left:40px;">
+			<select name="provinceList" id="provinceList">
 		
-		<div style="margin-left:40px;">
-		<select name="provinceList" id="provinceList">
-	
-			<option value=''>선택하세요</option>
-		<%	for ( int i = 0; i < provinces.size(); i++ ) {
-				HashMap province = provinces.get(i);
-				
-				String selected = "";
-				
-				if ( !Util.isEmptyString(selectedAreaCode) && selectedAreaCode.equals(province.get("code")))
-				{
-					selected = "selected";	
+				<option value=''>선택하세요</option>
+			<%	for ( int i = 0; i < provinces.size(); i++ ) {
+					HashMap province = provinces.get(i);
+					
+					String selected = "";
+					
+					if ( !Util.isEmptyString(selectedAreaCode) && selectedAreaCode.equals(province.get("code")))
+					{
+						selected = "selected";	
+					}
+					
+			%>
+				<option value="<%= province.get("code") %>" <%= selected %>><%= province.get("name") %></option>
+			<%	
 				}
+			%>
+			</select>
+			
+			시군구
+			<select id="cityList">
+				<option>선택하세요</option>
+			</select>
+			
+			</div>
+			
+			<div style="margin-top:10px;margin-bottom:10px;">
+			
+				<div style="float:left;">분류</div> 
 				
-		%>
-			<option value="<%= province.get("code") %>" <%= selected %>><%= province.get("name") %></option>
-		<%	
-			}
-		%>
-		</select>
-		
-		시군구
-		<select id="cityList">
-			<option>선택하세요</option>
-		</select>
-		
-		</div>
-		
-		<div style="margin-top:10px;margin-bottom:10px;">
-		<div style="float:left;">분류</div> 
-		
-		<div style="margin-left:40px;">
+				<div style="margin-left:40px;">
+					
+					<input type="radio" name="contentTypeID" id="contentTypeAll" value="" checked="checked">
+					<label for="contentTypeAll">전체</label>
+					
+					<input type="radio" name="contentTypeID" id="contentType12" value="12">
+					<label for="contentType12">관광지</label>
+					
+					<input type="radio" name="contentTypeID" id="contentType14" value="14">
+					<label for="contentType14">문화시설</label><br/>
+					
+					<input type="radio" name="contentTypeID" id="contentType15" value="15">
+					<label for="contentType15">축제/행사</label>
+					
+					<input type="radio" name="contentTypeID" id="contentType25" value="25">
+					<label for="contentType25">여행코스</label>
+					
+					<input type="radio" name="contentTypeID" id="contentType28" value="28">
+					<label for="contentType28">레포츠</label><br/>
+					
+					<input type="radio" name="contentTypeID" id="contentType32" value="32">
+					<label for="contentType32">숙박</label>
+					
+					<input type="radio" name="contentTypeID" id="contentType38" value="38">
+					<label for="contentType38">쇼핑</label>
+					
+					<input type="radio" name="contentTypeID" id="contentType39" value="39">
+					<label for="contentType39">음식</label>
+				</div>
 			
-			<input type="radio" name="contentTypeID" id="contentTypeAll" value="" checked="checked">
-			<label for="contentTypeAll">전체</label>
+			</div>
 			
-			<input type="radio" name="contentTypeID" id="contentType12" value="12">
-			<label for="contentType12">관광지</label>
+			<div style="margin-top:10px;margin-bottom:10px;">
 			
-			<input type="radio" name="contentTypeID" id="contentType14" value="14">
-			<label for="contentType14">문화시설</label><br/>
+				<div style="float:left;">정렬</div> 
+				
+				<div style="margin-left:40px;">
+					
+					<input type="radio" name="arrange" id="arrange3" value="Q" checked="checked">
+					<label for="arrange3">수정일순</label>
+					
+					<input type="radio" name="arrange" id="arrange4" value="R">
+					<label for="arrange4">생성일순</label><br/>
+					
+					<input type="radio" name="arrange" id="arrange2" value="P">
+					<label for="arrange2">조회순</label>
+					
+					<input type="radio" name="arrange" id="arrange1" value="O">
+					<label for="arrange1">제목순</label>
+					
+				</div>
 			
-			<input type="radio" name="contentTypeID" id="contentType15" value="15">
-			<label for="contentType15">축제/행사</label>
-			
-			<input type="radio" name="contentTypeID" id="contentType25" value="25">
-			<label for="contentType25">여행코스</label>
-			
-			<input type="radio" name="contentTypeID" id="contentType28" value="28">
-			<label for="contentType28">레포츠</label><br/>
-			
-			<input type="radio" name="contentTypeID" id="contentType32" value="32">
-			<label for="contentType32">숙박</label>
-			
-			<input type="radio" name="contentTypeID" id="contentType38" value="38">
-			<label for="contentType38">쇼핑</label>
-			
-			<input type="radio" name="contentTypeID" id="contentType39" value="39">
-			<label for="contentType39">음식</label>
-		</div>
-		
-		</div>
+			</div>
 	
 		</div>
 		
