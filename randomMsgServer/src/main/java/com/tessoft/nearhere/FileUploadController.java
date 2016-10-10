@@ -1,4 +1,4 @@
-package com.tessoft.nearhere.taxi;
+package com.tessoft.nearhere;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

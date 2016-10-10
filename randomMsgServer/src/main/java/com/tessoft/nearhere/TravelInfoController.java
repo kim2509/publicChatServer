@@ -1,4 +1,4 @@
-package com.tessoft.nearhere.taxi;
+package com.tessoft.nearhere;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
