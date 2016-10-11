@@ -34,6 +34,57 @@ span{ padding:5px; }
     text-align: center;
 }
 
+ul {
+	margin:0;
+	padding:0;
+	text-align:center;
+	display:block;
+	overflow:hidden;
+	list-style:none;
+}
+
+.cafeItem {
+	float: left;
+    height: 130px;
+    width: 32%;
+    text-align:center;
+}
+
+li img{
+	border-radius: 10px;
+}
+
+.slide_lst{
+	margin-top:10px;
+}
+
+.slide_lst2{
+	clear:both;
+}
+
+.desc{
+	margin-top:5px;
+	text-align:center;
+	overflow:hidden;
+}
+
+.date{
+	border:1px solid gray;
+	border-radius: 5px;
+	padding:5px;
+	font-size:12px;
+	font-weight:bold;
+	float:left;
+}
+
+.postTitle{
+	text-align:left;
+	margin-left:80px;
+}
+
+.cafeName{
+	float:right;
+}
 </style>
 
 	
@@ -41,21 +92,19 @@ span{ padding:5px; }
 </head>
 <body>
 
-	<script id="itemT" type="text/x-handlebars-template">
-	<dl class="slide_lst">
+	<script id="cafeItemT" type="text/x-handlebars-template">
+	<ul class="slide_lst">
 		{{#each items}}
-		<dd onclick="openDetailView('{{contenttypeid}}','{{contentid}}');" class="item">
-			<div class="thumbnail" {{displayThumnailYN firstimage2}}>
-				<img src='{{firstimage2}}' width="80" height="80"/>
+		<li>
+			<div class="thumbnail">
+				<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
 			</div>
-			<div class='desc' {{putLeftYN firstimage2}}>
-				<strong class="tit">{{title}}</strong>
-				<div style="font-size:14px;margin-top:10px;">분류 : {{getTypeName contenttypeid}}</div>
-				<div style="font-size:14px;margin-top:5px;font-weight:bold;">조회수 : {{numberWithCommas readcount}}</div>
+			<div class='desc'>
+				카페1
 			</div>
-		</dd>
+		</li>
 		{{/each}}
-	</dl>
+	</ul>
 </script>
 
 	<div id="wrapper" style="padding-bottom:10px;">
@@ -75,8 +124,83 @@ span{ padding:5px; }
 		
 		<div id="section">
 
+			<div style="float:right;margin-right:5px;font-weight:bold;">더 보기</div>
 			<div class="sectionTitle">내 가입 카페</div>
 
+			<ul class="slide_lst">
+				<li class="cafeItem">
+					<div class="thumbnail">
+						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+					</div>
+					<div class='desc'>
+						카페1이구나야fdsafdsa
+					</div>
+				</li>
+				<li class="cafeItem">
+					<div class="thumbnail">
+						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+					</div>
+					<div class='desc'>
+						카페1
+					</div>
+				</li>
+				<li class="cafeItem">
+					<div class="thumbnail">
+						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+					</div>
+					<div class='desc'>
+						카페1
+					</div>
+				</li>
+				<li class="cafeItem">
+					<div class="thumbnail">
+						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+					</div>
+					<div class='desc'>
+						카페1
+					</div>
+				</li>
+				<li class="cafeItem">
+					<div class="thumbnail">
+						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+					</div>
+					<div class='desc'>
+						카페1
+					</div>
+				</li>
+				<li class="cafeItem">
+					<div class="thumbnail">
+						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+					</div>
+					<div class='desc'>
+						카페1
+					</div>
+				</li>
+			</ul>
+		</div>
+		
+		
+		<div id="section">
+
+			<div style="float:right;margin-right:5px;font-weight:bold;">더 보기</div>
+			<div class="sectionTitle">이근처 정모</div>
+
+			<ul class="slide_lst2">
+				<li>
+					<div class='date'>
+						화요일<br/>
+						19<br/>
+						오후 7:00
+					</div>
+					<div class="postTitle">
+						불금에 삼겹살에 소주 한잔~
+					</div>
+					<div class='cafeName'>
+						역삼모임
+					</div>
+				</li>
+				
+			</ul>
 		</div>
 
 	</div>
