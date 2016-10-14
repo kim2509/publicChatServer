@@ -45,7 +45,7 @@ ul {
 
 .cafeItem {
 	float: left;
-    height: 130px;
+    height: 135px;
     width: 32%;
     text-align:center;
 }
@@ -59,13 +59,30 @@ li img{
 }
 
 .slide_lst2{
+	
+	
+}
+
+.slide_lst2 li {
+	position:relative;
 	clear:both;
+	height:60px;
+	padding-top:10px;
+	padding-bottom:5px;
+	border-bottom: 1px solid gray;
 }
 
 .desc{
 	margin-top:5px;
 	text-align:center;
 	overflow:hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    padding-left:10px;
+    padding-right:10px;
 }
 
 .date{
@@ -78,12 +95,23 @@ li img{
 }
 
 .postTitle{
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+    text-overflow: ellipsis;
 	text-align:left;
-	margin-left:80px;
+	margin-left:70px;
+	font-size:12px;
 }
 
 .cafeName{
-	float:right;
+	position:absolute;
+	margin-left:70px;
+	font-size:12px;
+	font-weight:bold;
+	bottom:10px;
+	right:10px
 }
 </style>
 
@@ -133,7 +161,7 @@ li img{
 						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
 					</div>
 					<div class='desc'>
-						카페1이구나야fdsafdsa
+						카페1이구나야fdsafdsa카페1이구나야fdsafdsa
 					</div>
 				</li>
 				<li class="cafeItem">
@@ -183,26 +211,52 @@ li img{
 		<div id="section">
 
 			<div style="float:right;margin-right:5px;font-weight:bold;">더 보기</div>
-			<div class="sectionTitle">이근처 정모</div>
+			<div class="sectionTitle" style="margin-bottom:0px;">이근처 정모</div>
 
 			<ul class="slide_lst2">
 				<li>
 					<div class='date'>
 						화요일<br/>
 						19<br/>
-						오후 7:00
+						PM 7:00
 					</div>
 					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~
+						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
 					</div>
 					<div class='cafeName'>
 						역삼모임
 					</div>
 				</li>
-				
+				<li>
+					<div class='date'>
+						화요일<br/>
+						19<br/>
+						PM 7:00
+					</div>
+					<div class="postTitle">
+						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
+					</div>
+					<div class='cafeName'>
+						역삼모임
+					</div>
+				</li>
+				<li>
+					<div class='date'>
+						화요일<br/>
+						19<br/>
+						PM 7:00
+					</div>
+					<div class="postTitle">
+						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
+					</div>
+					<div class='cafeName'>
+						역삼모임
+					</div>
+				</li>
 			</ul>
+			
 		</div>
-
+			
 	</div>
 
 	
