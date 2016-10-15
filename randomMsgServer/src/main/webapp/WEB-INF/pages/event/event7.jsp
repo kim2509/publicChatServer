@@ -11,6 +11,7 @@
 	
 	<style type="text/css">
 		body{background:#ffffff}
+		#wrapper{margin:10px;}
 		#title{font-weight:bold;text-align:center;font-size:17px;}
 		#subTitle{text-align:center;}
 		#content{margin-top:20px;text-indent:-1em;margin-left:15px;line-height:150%;}
@@ -22,37 +23,41 @@
 <body>
 
 <div id="wrapper">
-	<div id="title">카카오 계정 연동하면 상품권을 드립니다.</div>
-	<div id="subTitle">(2015-09-06 ~ 2015-09-30)</div>
+	<div id="title">1. 여행정보 탭이 추가되었습니다.</div>
 	<div id="promotionImg">
 		<table style="width:100%">
 			<tr>
-				<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/culturecoupon5000.jpg" width="50%"/></td>
-			</tr>
-			<tr>
-				<td style="width:50%;text-align:center;padding-top:10px;font-size:12px;">사용처 : 인터파크,지마켓,옥션,GSSHOP,이마트몰 등
-				</td>
-			</tr>
-			<tr>
-				<td style="text-align:center;padding-top:10px;"><img src="<%= Constants.IMAGE_PATH %>/starbucks.jpg" width="50%"/></td>
-			</tr>
-			<tr>
-				<td style="width:50%;text-align:center;padding-top:10px;font-size:12px;">스타벅스 아메리카노
-				</td>
-			</tr>
-			<tr>
-				<td style="text-align:center;padding-top:10px;"><img src="<%= Constants.IMAGE_PATH %>/s-oil.jpg" width="50%"/></td>
-			</tr>
-			<tr>
-				<td style="width:50%;text-align:center;padding-top:10px;font-size:12px;">S-OIL 주유할인권(5천원)</td>
-			</tr>
-			</tr>
-				<td colspan="2" style="width:50%;text-align:center;font-size:12px;padding-top:20px;" >&lt;3개중 택1&gt;</td>
+				<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/notice4.png" width="90%"/></td>
 			</tr>
 		</table>
 	</div>
-	<div id="content">* <font color="blue">선착순 50명</font>에게 상품권을 드립니다.</div>
-	<div id="content">* 카카오 연동은 최신버전(1.39) 에서 가능합니다.</div>
+	<br/>
+	<div id="title">2. 상세지역별 조회가 가능합니다.</div>
+	<div id="promotionImg">
+		<table style="width:100%">
+			<tr>
+				<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/notice1.png" width="90%"/></td>
+			</tr>
+		</table>
+	</div>
+	<br/>
+	<div id="title">3. 관심지역별로 뉴스 및<br/>블로그를 보실 수 있습니다.</div>
+	<div id="promotionImg">
+		<table style="width:100%">
+			<tr>
+				<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/notice5.png" width="90%"/></td>
+			</tr>
+			<tr>
+				<td style="text-align:center">&nbsp;</td>
+			</tr>
+			<tr>
+				<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/notice6.png" width="90%"/></td>
+			</tr>
+			<tr>
+				<td style="width:50%;text-align:center;padding-top:10px;font-size:12px;">보다 더 발전하는 이근처 합승이 되겠습니다.</td>
+			</tr>
+		</table>
+	</div>
 </div>
 
 </body>

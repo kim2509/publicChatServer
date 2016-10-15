@@ -272,7 +272,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "event", "이벤트", requestInfo.get("title"), requestInfo.get("eventID"), true, true, true );
+				sendPushMessage(receiver, "event", "업데이트 공지", requestInfo.get("title"), requestInfo.get("eventID"), true, false, false);
 			}
 			
 			response.setData( "success" );
