@@ -272,7 +272,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "event", requestInfo.get("title"), requestInfo.get("eventID"), true );
+				sendPushMessage(receiver, "event", "이벤트", requestInfo.get("title"), requestInfo.get("eventID"), true, true, true );
 			}
 			
 			response.setData( "success" );
@@ -305,7 +305,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAdmin] sending to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "event", requestInfo.get("title"), requestInfo.get("eventID"), true );
+				sendPushMessage(receiver, "event", "업데이트 공지", requestInfo.get("title"), requestInfo.get("eventID"), true, false, false );
 			}
 			
 			response.setData( "success" );
@@ -338,7 +338,7 @@ public class AdminController extends BaseController{
 			
 			for ( int i = 0; i < userList.size(); i++ )
 			{
-				sendPushMessage(userList.get(i), "eventssl", data.get("title").toString() , eventSeq + "Result", true );
+				sendPushMessage(userList.get(i), "eventssl", "이벤트", data.get("title").toString() , eventSeq + "Result", true, true, true );
 			}
 			
 			response.setData(userList);
@@ -374,7 +374,7 @@ public class AdminController extends BaseController{
 			
 			logger.error( "[sendLocationUpdateToUser]" + user );
 			
-			sendPushMessage( user, "locationUpdate", "합승 등록 이벤트를 진행합니다!!!", "", true );
+			sendPushMessage( user, "locationUpdate", "이벤트", "합승 등록 이벤트를 진행합니다!!!", "", true, true, true );
 			
 			logger.error( "[sendLocationUpdateToUser] finished");
 			
@@ -408,7 +408,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "locationUpdate", "합승 등록 이벤트를 진행합니다!!!", "", true );
+				sendPushMessage(receiver, "locationUpdate", "이벤트", "합승 등록 이벤트를 진행합니다!!!", "", true, true, true );
 			}
 			
 			response.setData( "success" );

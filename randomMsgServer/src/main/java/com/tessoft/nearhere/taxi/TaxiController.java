@@ -2240,7 +2240,21 @@ public class TaxiController extends BaseController {
 			UserPushMessage message = new UserPushMessage();
 			message.setPushNo(pushNo);
 			
-			mv.setViewName("event" + eventSeq );
+			int seq = 0;
+			if ( !Util.isEmptyString( eventSeq ) )
+			{
+				seq = Integer.parseInt(eventSeq);
+			}
+			
+			if ( seq > 6 )
+			{
+				mv.setViewName("event/event" + eventSeq );
+			}
+			else
+			{
+				mv.setViewName("event" + eventSeq );	
+			}
+			
 			mv.addObject("eventSeq", eventSeq);
 			mv.addObject("pushNo", pushNo);
 			
