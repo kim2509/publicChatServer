@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="<%= Constants.CSS_PATH %>/common.css" />
 	
 	<style type="text/css">
+		body{background:#ffffff;padding-top:10px;}
 		#title{font-weight:bold;text-align:center;font-size:17px;}
 		#subTitle{text-align:center;}
 		#content{margin-top:20px;text-indent:-1em;margin-left:15px;line-height:150%;}

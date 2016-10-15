@@ -85,7 +85,8 @@ public class BaseController {
 		return user;
 	}
 	
-	protected void sendPushMessage( User receiver, String type, String msg, String param, boolean bSendPush ) throws Exception
+	protected void sendPushMessage( User receiver, String type, String title, String msg, String param, 
+			boolean bSendPush, boolean bSound, boolean bVibrate ) throws Exception
 	{
 		try
 		{
@@ -156,13 +157,13 @@ public class BaseController {
 					}
 					else if ( "event".equals( type ) || "eventssl".equals( type ) )
 					{
-						message = new Message.Builder().addData("title", "이벤트")
+						message = new Message.Builder().addData("title", title )
 								.addData("message",  pushMessage.getMessage() )
 								.addData("type",  type )
 								.addData("eventSeq",  param )
 								.addData("pushNo",  pushMessage.getPushNo() )
-								.addData("sound", "on")
-								.addData("vibrate", "on")
+								.addData("sound", bSound ? "on" : "off")
+								.addData("vibrate", bVibrate ? "on" : "off")
 								.build();
 					}
 					else if ( "inquiryUser".equals( type ) )

@@ -135,9 +135,9 @@
 	
 	<br/><br/><br/>
 	
-	<input type="text" size="100" name="title" value="카카오톡 연동 이벤트를 진행합니다!!"/><br/>
+	<input type="text" size="100" name="title" value="여행정보, 뉴스, 관심지역 설정 기능이 업데이트 되었습니다."/><br/>
 	<input type="text" size="20" name="userID" value="user27"/>
-	<input type="text" size="10" name="eventSeq" value="6"/>
+	<input type="text" size="10" name="eventSeq" value="7"/>
 	<input type="button" value="이벤트접수푸쉬" onclick="sendEventApplyPushToUser();"/>
 
 	<br/><br/><br/>
