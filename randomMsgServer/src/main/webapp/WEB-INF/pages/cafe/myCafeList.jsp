@@ -111,13 +111,6 @@ li img{
 	font-size:12px;
 	font-weight:bold;
 	bottom:10px;
-}
-
-.regionName{
-	position:absolute;
-	font-size:12px;
-	font-weight:bold;
-	bottom:10px;
 	right:10px
 }
 
@@ -131,24 +124,12 @@ li img{
 
 </style>
 
-<script language="javascript">
-		
-	function goSearchByName()
-	{
-		document.location.href="/nearhere/cafe/searchByName.do";
-	}
-	
-	function goSearchByRegion()
-	{
-		document.location.href="/nearhere/cafe/searchByRegion.do";
-	}
-	
-	function goMyCafeList()
-	{
-		document.location.href="/nearhere/cafe/myCafeList.do";
-	}
-	
-</script>
+	<script language="javascript">
+		function goMyCafeList()
+		{
+			document.location.href="/nearhere/cafe/myCafeList.do";
+		}
+	</script>
 
 </head>
 <body>
@@ -169,25 +150,6 @@ li img{
 </script>
 
 	<div id="wrapper" style="padding-bottom:10px;">
-
-		<div id="section">
-
-			<div class="sectionTitle">카페 검색</div>
-			<div style="text-align:center;width:100%;">
-				<!-- input type="text" hint="이름으로 검색" style="width:95%;height:25px;color:gray;padding:2px;" value="이름으로 검색" readonly onclick="alert('click');"/-->
-				<input type="button" value="이름으로 검색" style="width:43%;padding:7px;" onclick="goSearchByName();"/>
-				<input type="button" value="지역으로 검색" style="width:43%;padding:7px;" onclick="goSearchByRegion();"/>
-			</div>
-					
-
-		</div>	
-		
-		<div id="section">
-
-			<div style="float:right;margin-right:10px;"><input type="button" value="카페 만들기" class="btn1" /></div>
-			<div style="padding: 5px;font-weight:bold;">이근처 사람들과 모여모여~</div>
-
-		</div>
 		
 		<div id="section">
 
@@ -244,65 +206,6 @@ li img{
 					</div>
 				</li>
 			</ul>
-		</div>
-		
-		
-		<div id="section">
-
-			<div style="float:right;margin-right:5px;font-weight:bold;">더 보기</div>
-			<div class="sectionTitle" style="margin-bottom:0px;">관심지역 정모</div>
-
-			<ul class="slide_lst2">
-				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						서울시 강남구
-					</div>
-				</li>
-				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						경북 포항시
-					</div>
-				</li>
-				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						대구광역시
-					</div>
-				</li>
-			</ul>
-			
 		</div>
 			
 	</div>

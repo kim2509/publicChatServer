@@ -34,4 +34,60 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/index", model);
 	}
 	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/cafe/searchByName.do")
+	public ModelAndView searchByName ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/searchByName.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/searchByName", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/cafe/searchByRegion.do")
+	public ModelAndView searchByRegion ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/searchByRegion.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/searchByRegion", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/cafe/myCafeList.do")
+	public ModelAndView myCafeList ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/mycafeList.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/myCafeList", model);
+	}
 }
