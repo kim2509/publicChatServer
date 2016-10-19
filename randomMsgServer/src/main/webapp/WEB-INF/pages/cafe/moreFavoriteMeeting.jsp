@@ -153,11 +153,6 @@ li img{
 		document.location.href="/nearhere/cafe/moreFavoriteMeeting.do";
 	}
 	
-	function goNewCafe()
-	{
-		document.location.href="/nearhere/cafe/newCafe.do";
-	}
-	
 </script>
 
 </head>
@@ -179,87 +174,11 @@ li img{
 </script>
 
 	<div id="wrapper" style="padding-bottom:10px;">
-
-		<div id="section">
-
-			<div class="sectionTitle">카페 검색</div>
-			<div style="text-align:center;width:100%;">
-				<!-- input type="text" hint="이름으로 검색" style="width:95%;height:25px;color:gray;padding:2px;" value="이름으로 검색" readonly onclick="alert('click');"/-->
-				<input type="button" value="이름으로 검색" style="width:43%;padding:7px;" onclick="goSearchByName();"/>
-				<input type="button" value="지역으로 검색" style="width:43%;padding:7px;" onclick="goSearchByRegion();"/>
-			</div>
-					
-
-		</div>	
-		
-		<div id="section">
-
-			<div style="float:right;margin-right:10px;"><input type="button" value="카페 만들기" class="btn1" onclick="goNewCafe();" /></div>
-			<div style="padding: 5px;font-weight:bold;">이근처 사람들과 모여모여~</div>
-
-		</div>
-		
-		<div id="section">
-
-			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMyCafeList();">더 보기</div>
-			<div class="sectionTitle">내 가입 카페</div>
-
-			<ul class="slide_lst">
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1이구나야fdsafdsa카페1이구나야fdsafdsa
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-			</ul>
-		</div>
 		
 		
 		<div id="section">
 
-			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMoreFavoriteMeeting();">더 보기</div>
+			<div style="float:right;margin-right:5px;font-weight:bold;">더 보기</div>
 			<div class="sectionTitle" style="margin-bottom:0px;">관심지역 정모</div>
 
 			<ul class="slide_lst2">

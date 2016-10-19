@@ -90,4 +90,42 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("cafe/myCafeList", model);
 	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/cafe/moreFavoriteMeeting.do")
+	public ModelAndView moreFavoriteMeeting ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/moreFavoriteMeeting.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/moreFavoriteMeeting", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/cafe/newCafe.do")
+	public ModelAndView newCafe ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/newCafe.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/newCafe", model);
+	}
 }
