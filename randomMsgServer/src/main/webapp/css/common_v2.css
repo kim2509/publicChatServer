@@ -9,6 +9,7 @@ body{
 	padding:10px;
 	margin-bottom:10px;
 	overflow:auto;
+	clear:both;
 }
 
 
@@ -25,4 +26,15 @@ body{
     color: white;
     background: #00c73c;
     border: 0;
+}
+
+#pagingInfo a {
+    border: 1px solid #ccc;
+    text-decoration: none;
+    margin: 2px;
+    background: white;
+}
+
+.pageSelected {
+    color: blue;
 }

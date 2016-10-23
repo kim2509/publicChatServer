@@ -18,8 +18,7 @@
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
-
-
+	
 <style type="text/css">
 
 span{ padding:5px; }
@@ -122,6 +121,36 @@ li img{
 	margin-top:3px;
 }
 
+#pageInfo{
+	text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+a {
+	text-decoration: none;
+    color: black;
+    line-height: 1.4em;
+}
+
+.tab{
+	padding:10px;
+	text-align:center;
+}
+
+.tabItem{
+	background:white;
+	margin:5px;
+	float:left;
+	padding:10px;
+	border-radius:10px;
+}
+
+.selected{
+	border:1px solid blue;
+	color:blue;
+}
+
 </style>
 
 	<script language="javascript">
@@ -151,10 +180,18 @@ li img{
 
 	<div id="wrapper" style="padding-bottom:10px;">
 		
+		<div style="margin-top:10px;margin-bottom:10px;">
+			<ul class="tab">
+				<li class="tabItem selected">
+					<div>내 가입 카페</div>
+				</li>
+				<li class="tabItem">
+					<div>운영 카페</div>
+				</li>
+			</ul>
+		</div>
+		
 		<div id="section">
-
-			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMyCafeList();">더 보기</div>
-			<div class="sectionTitle">내 가입 카페</div>
 
 			<ul class="slide_lst">
 				<li class="cafeItem">
@@ -206,6 +243,17 @@ li img{
 					</div>
 				</li>
 			</ul>
+			
+		</div>
+		
+		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
+			<b><a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;" class="pageSelected">1</a></b>
+			<a href="javascript:void(0)" onclick="goPage(2);" style="padding:5px;">2</a>
+			<a href="javascript:void(0)" onclick="goPage(3);" style="padding:5px;">3</a>
+			<a href="javascript:void(0)" onclick="goPage(4);" style="padding:5px;">4</a>
+			<a href="javascript:void(0)" onclick="goPage(5);" style="padding:5px;">5</a>
+			<a href="javascript:void(0)" onclick="goPage(6);" style="padding:5px;">&gt;</a>
+			<a href="javascript:void(0)" onclick="goPage(176);" style="padding:5px;">&gt;&gt;</a>
 		</div>
 			
 	</div>

@@ -129,6 +129,12 @@ li img{
 	margin-top:3px;
 }
 
+a {
+	text-decoration: none;
+    color: black;
+    line-height: 1.4em;
+}
+
 </style>
 
 <script language="javascript">
@@ -178,7 +184,6 @@ li img{
 		
 		<div id="section">
 
-			<div style="float:right;margin-right:5px;font-weight:bold;">더 보기</div>
 			<div class="sectionTitle" style="margin-bottom:0px;">관심지역 정모</div>
 
 			<ul class="slide_lst2">
@@ -233,7 +238,17 @@ li img{
 			</ul>
 			
 		</div>
-			
+		
+		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
+			<b><a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;" class="pageSelected">1</a></b>
+			<a href="javascript:void(0)" onclick="goPage(2);" style="padding:5px;">2</a>
+			<a href="javascript:void(0)" onclick="goPage(3);" style="padding:5px;">3</a>
+			<a href="javascript:void(0)" onclick="goPage(4);" style="padding:5px;">4</a>
+			<a href="javascript:void(0)" onclick="goPage(5);" style="padding:5px;">5</a>
+			<a href="javascript:void(0)" onclick="goPage(6);" style="padding:5px;">&gt;</a>
+			<a href="javascript:void(0)" onclick="goPage(176);" style="padding:5px;">&gt;&gt;</a>
+		</div>
+		
 	</div>
 
 	
