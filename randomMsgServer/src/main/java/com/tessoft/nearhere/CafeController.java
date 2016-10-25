@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -127,5 +128,22 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/newCafe.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/newCafe", model);
+	}
+	
+	@RequestMapping( value ="/cafe/{cafeName}")
+	public ModelAndView cafeHome ( @PathVariable(value="cafeName") String cafeName , String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/" + cafeName, userID , null , null, null );
+		
+		return new ModelAndView("cafe/cafeHome", model);
 	}
 }

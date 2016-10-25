@@ -158,6 +158,11 @@ li img{
 		document.location.href="/nearhere/cafe/newCafe.do";
 	}
 	
+	function goCafeHome()
+	{
+		document.location.href="/nearhere/cafe/junggo";
+	}
+	
 </script>
 
 </head>
@@ -205,7 +210,7 @@ li img{
 			<div class="sectionTitle">내 가입 카페</div>
 
 			<ul class="slide_lst">
-				<li class="cafeItem">
+				<li class="cafeItem" onclick="goCafeHome();">
 					<div class="thumbnail">
 						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
 					</div>
