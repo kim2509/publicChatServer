@@ -25,24 +25,33 @@
 body{
 	background:white;
 	margin:0;
+	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+}
+
+
+.menu{
+	height:45px;
+	border-bottom:1px solid #A3A3A3
 }
 
 ul{
-	margin:0;
 	padding:0;
+	margin: 0 15px;
+	margin-right:105px;
+	height:45px;
 }
 
 #wrapper{
 }
 
-li{ list-style:none; }
-
-.menu{
+li{ 
+	list-style:none;
 }
+
 
 .menuItem{
 	float:left;
-	width:30%;
+	width:33.33%;
 }
 
 .link_tab::before{
@@ -63,18 +72,18 @@ a{
 	box-sizing: border-box;
 	position: relative;
     height: 45px;
-    font-weight: bold;
     display: block;
     font-size: 16px;
     line-height: 45px;
     text-align: center;
     text-decoration: none;
+    color:black;
 }
 
 .titleDiv{
-	background:#d40700;
+	background:#E24C45;
 	color:white;
-	height:42px;
+	height:50px;
 	text-align:center;
 	display: table; 
 	width: 100%;
@@ -82,8 +91,20 @@ a{
 
 .title{
 	font-weight:bold;
+	font-size:20px;
 	vertical-align:middle;
 	display: table-cell;
+}
+
+.link_bnr
+{
+	display: block;
+    margin-right: 43px;
+    padding-left: 15px;
+    font-size: 14px;
+    line-height: 44px;
+    color: #333;
+    text-align: center;
 }
 
 </style>
@@ -129,6 +150,11 @@ a{
 					<a href="">이미지</a>
 				</li>
 			</ul>
+		</div>
+		
+		<div class="cafe_bnr" style="background-color:#ffffc3">
+			<button type="button" style="float:right;"><span class="ico_cafe ico_close">닫기</span></button>
+			<a href="" class="link_bnr"><span class="ico_cafe ico_bnr">알림</span>게시판 새글 소식을 빨리 받고 싶다면!</a>
 		</div>
 			
 	</div>
