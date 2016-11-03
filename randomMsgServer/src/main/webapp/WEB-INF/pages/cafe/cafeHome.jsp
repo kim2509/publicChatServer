@@ -68,7 +68,7 @@ li{
 	color: #e8291c;
 }
 
-a{
+.menu a, .cafe_bnr a{
 	box-sizing: border-box;
 	position: relative;
     height: 45px;
@@ -107,10 +107,41 @@ a{
     text-align: center;
 }
 
+
+#boardList{
+	margin-top:10px;
+}
+
+#boardList p{
+	padding-top:5px;
+	padding-left:10px;
+}
+
+#boardList ul{
+	border-top:1px solid #d3d3d3;
+	margin:0;
+	margin-top:10px;
+}
+
+#boardList ul li{
+	line-height:30px;
+	border-bottom:1px solid #d3d3d3;
+	padding:5px 10px;
+}
+
+#boardList ul li a{
+	text-decoration:none;
+	color:black;
+}
+
 </style>
 
 <script language="javascript">
 		
+	function goBoardHome( boardNo )
+	{
+		document.location.href="/nearhere/board/3";
+	}
 </script>
 
 </head>
@@ -157,6 +188,22 @@ a{
 			<a href="" class="link_bnr"><span class="ico_cafe ico_bnr">알림</span>게시판 새글 소식을 빨리 받고 싶다면!</a>
 		</div>
 			
+		<div id="boardList">
+			
+			<p>전체 게시판</p>
+		
+			<ul>
+				<li>
+					<a href="javascript:void(0)" onclick="goBoardHome();">공지사항</a> 
+				</li>
+				<li>
+					<a href="javascript:void(0)" onclick="goBoardHome();">휴대폰/악세사리</a> 
+				</li>
+				<li>
+					<a href="javascript:void(0)" onclick="goBoardHome();">문의 게시판</a> 
+				</li>
+			</ul>
+		</div>
 	</div>
 
 	
