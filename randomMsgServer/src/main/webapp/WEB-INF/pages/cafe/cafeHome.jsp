@@ -81,7 +81,7 @@ li{
 }
 
 .titleDiv{
-	background:#E24C45;
+	background:#45a8e2;;
 	color:white;
 	height:50px;
 	text-align:center;
@@ -132,6 +132,8 @@ li{
 #boardList ul li a{
 	text-decoration:none;
 	color:black;
+	display:block;
+	line-height:30px;
 }
 
 </style>

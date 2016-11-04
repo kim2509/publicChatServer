@@ -1,0 +1,108 @@
+body{
+	background:white;
+	margin:0;
+	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+}
+
+
+.titleDiv{
+	background:#45a8e2;;
+	color:white;
+	height:50px;
+	text-align:center;
+	display: table; 
+	width: 100%;
+}
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	vertical-align:middle;
+	display: table-cell;
+}
+
+#menu{
+	border-bottom:1px solid #d3d3d3;
+	height:44px;
+	font-size:14px;
+	color:gray;
+}
+
+#menu div{
+	line-height:30px;
+	margin-top:7px;
+}
+
+#navBack{
+	float:left;
+	margin-left:10px;
+	color:#5a5a98;
+	font-weight:bold;
+}
+
+#btnNoti{
+	float:right;
+	margin:0px 5px;
+	border:1px solid #d3d3d3;
+	padding-left:5px;
+	padding-right:5px;
+	border-radius:10px;
+}
+
+#btnNew{
+	float:right;
+	margin:0px 5px;
+	border:1px solid #d3d3d3;
+	padding-left:5px;
+	padding-right:5px;
+	border-radius:10px;
+	margin-right:10px;
+}
+
+#postContainerDiv ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+#postContainerDiv li{
+	padding:10px;
+	border-bottom:1px solid #d3d3d3;
+	height:80px;
+}
+
+#postContainerDiv li #commentCount{
+	float:right;
+	color:#6d6550;
+	border:1px solid #b3aa43;
+	border-radius:30px;
+	padding:10px;
+	margin-top:20px;
+	font-size:12px;
+	font-weight:bold;
+	background:beige;
+}
+
+#postContainerDiv li #postDiv{
+	margin-right:50px;
+	line-height:25px;
+}
+
+#postContainerDiv li #noti{
+	background:black;
+	color:white;
+	font-size:12px;
+	padding:2px 5px;
+	border-radius:20px;
+	margin:0px 5px;
+}
+
+#postContainerDiv li #postInfo{
+	margin-top:10px;
+	font-size:14px;
+	color:#909090;
+}
+
+#postContainerDiv li #postInfo span{
+	margin-left:5px;
+}
