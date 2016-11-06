@@ -6,7 +6,7 @@ public class Constants {
 	
 	public static boolean bReal = false;
 	
-	public static String ServerIP = "172.30.1.200";
+	public static String ServerIP = "192.168.0.200";
 //	public static String ServerIP = "192.168.43.137";
 	
 	public static String CSS_PATH = "http://" + ServerIP + ":8080/nearhere/css/";
