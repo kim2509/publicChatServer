@@ -3,6 +3,9 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+	String isApp = request.getParameter("isApp");
+%>
 
 <html>
 <head>
@@ -29,10 +32,18 @@
 
 	<div id="wrapper" style="padding-bottom:10px;">
 
+<%
+	if ( "Y".equals( isApp ) )
+	{
+%>
 		<div class="titleDiv">
-			<span class="title">중고나라</span>
+			<span class="title">자유게시판</span>
 		</div>
-			
+	
+<%		
+	}
+%>	
+		
 		<div id="menu">
 			<div id="navBack">&lt; 자유게시판</div>
 			<div id="btnNew">글쓰기</div>

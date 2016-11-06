@@ -3,7 +3,9 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-
+<%
+	String isApp = request.getParameter("isApp");
+%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -133,6 +135,8 @@ li img{
 
 <script language="javascript">
 		
+	var isApp = '<%= isApp %>';
+
 	function goSearchByName()
 	{
 		document.location.href="/nearhere/cafe/searchByName.do";
@@ -158,9 +162,13 @@ li img{
 		document.location.href="/nearhere/cafe/newCafe.do";
 	}
 	
-	function goCafeHome()
+	function goCafeHome( title, url )
 	{
-		document.location.href="/nearhere/cafe/junggo";
+		var titleUrlEncoded = encodeURIComponent( title );
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/junggo";
 	}
 	
 </script>
@@ -210,7 +218,7 @@ li img{
 			<div class="sectionTitle">내 가입 카페</div>
 
 			<ul class="slide_lst">
-				<li class="cafeItem" onclick="goCafeHome();">
+				<li class="cafeItem" onclick="goCafeHome('중고나라', '<%= Constants.getServerURL() + "/cafe/junggo?isApp=" + isApp %>');">
 					<div class="thumbnail">
 						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
 					</div>

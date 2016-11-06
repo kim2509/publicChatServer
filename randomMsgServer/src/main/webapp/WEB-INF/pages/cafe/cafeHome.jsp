@@ -3,6 +3,9 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+	String isApp = request.getParameter("isApp");
+%>
 
 <html>
 <head>
@@ -140,9 +143,15 @@ li{
 
 <script language="javascript">
 		
-	function goBoardHome( boardNo )
+	var isApp = '<%= isApp %>';
+
+	function goBoardHome( boardNo, boardName, url )
 	{
-		document.location.href="/nearhere/board/3";
+		var titleUrlEncoded = encodeURIComponent( boardName );
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		else
+			document.location.href="/nearhere/board/3";
 	}
 </script>
 
@@ -166,10 +175,17 @@ li{
 
 	<div id="wrapper">
 		
-		
+<%
+	if ( "Y".equals( isApp ) )
+	{
+%>
 		<div class="titleDiv">
 			<span class="title">중고나라</span>
 		</div>
+	
+<%		
+	}
+%>		
 		
 		<div class="menu">
 			<ul>
@@ -196,7 +212,7 @@ li{
 		
 			<ul>
 				<li>
-					<a href="javascript:void(0)" onclick="goBoardHome();">공지사항</a> 
+					<a href="javascript:void(0)" onclick="goBoardHome('','공지사항','<%= Constants.getServerURL() + "/board/3?isApp=" + isApp %>');">공지사항</a> 
 				</li>
 				<li>
 					<a href="javascript:void(0)" onclick="goBoardHome();">휴대폰/악세사리</a> 
