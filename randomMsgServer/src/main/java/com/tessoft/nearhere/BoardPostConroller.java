@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class BoardConroller extends BaseController {
+public class BoardPostConroller extends BaseController {
 
-	@RequestMapping( value ="/cafe/board/{boardNo}")
-	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , String userID, ModelMap model ) throws IOException
+	@RequestMapping( value ="/cafe/boardPost/detail/{postNo}")
+	public ModelAndView detail ( @PathVariable(value="postNo") String postNo , String userID, ModelMap model ) throws IOException
 	{
 		try
 		{
@@ -25,9 +25,9 @@ public class BoardConroller extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/board/" + boardNo, userID , null , null, null );
+		insertHistory("/cafe/boardPost/detail/" + postNo, userID , null , null, null );
 		
-		return new ModelAndView("board/boardHome", model);
+		return new ModelAndView("boardPost/detail", model);
 	}
 
 }
