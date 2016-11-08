@@ -108,9 +108,23 @@ body{
 }
 
 /* detail */
+
+#boardNavi{
+	border-bottom:1px solid #d9d9d9;
+	height:44px;
+}
+
+#boardNavi #naviTitle{
+	padding-left:10px;
+	color:#e74337;
+	font-weight:bold;
+	font-size:14px;
+	line-height:44px;
+}
+
 #postHeaderDiv{
 	background:#fbfbfb;
-	padding:10px;
+	padding:15px;
 	border-bottom:1px solid #d9d9d9;
 }
 
@@ -123,10 +137,33 @@ body{
 
 #postHeaderDiv #postInfo{
 	margin-top:10px;
+	color:#909090;
+}
+
+#postHeaderDiv #postInfo span{
+	margin:0px 10px;
+	font-size:13px;
+}
+
+#postHeaderDiv #postInfo span:nth-child(1){
+	margin-left:0px;
+}
+
+#postHeaderDiv #btns{
+	margin-top:20px;
+}
+
+#postHeaderDiv #btns #listBtn{
+	padding:5px 10px;
+	border:1px solid #d9d9d9;
+	border-radius:15px;
+	display:inline;
+	background:white;
+	font-size:14px;
 }
 
 #postBodyDiv{
-	padding:10px;
+	padding:15px;
 }
 
 #postReplyDiv ul{
@@ -146,23 +183,26 @@ body{
 	margin:0;
 	display:block;
 	float:left;
-	width:49%;
+	width:50%;
 	line-height:40px;
 	text-align:center;
 }
 
 #postReplyDiv #replyBtns li:nth-child(even){
+	float:none;
+	overflow:hidden;
+	width:auto;
 	border-left:1px solid #d9d9d9;
+	background:#f2f2f2;
 }
 
 #postReplyDiv #replies{
-	margin-top:10px;
-	border-bottom:1px solid #d9d9d9;
+	font-size:15px;
 }
 
 #postReplyDiv #replies li{
-	padding:10px;
-	border-top:1px solid #d9d9d9;
+	padding:15px;
+	border-bottom:1px solid #d9d9d9;
 }
 
 #postReplyDiv #goReply{
@@ -171,9 +211,20 @@ body{
 	border-bottom:1px solid #d9d9d9;
 }
 
+#postReplyDiv #replyInfo{
+	color:#909090;
+	font-size:13px;
+	margin-bottom:10px;
+}
 
+#postReplyDiv #replyInfo span{
+	color:#909090;
+	font-size:13px;
+	margin:0px 10px;
+}
 
-
-
+#postReplyDiv #replyInfo span:nth-child(1){
+	margin-left:0px;	
+}
 
 

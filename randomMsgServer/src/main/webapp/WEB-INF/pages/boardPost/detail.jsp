@@ -32,23 +32,19 @@
 
 	<div id="wrapper" style="padding-bottom:10px;">
 
-<%
-	if ( !"Y".equals( isApp ) )
-	{
-%>
-		<div class="titleDiv">
-			<span class="title">자유게시판</span>
+		<div id="boardNavi">
+			<div id="naviTitle">&lt; 카페공지사항(알립니다).</div>
 		</div>
-	
-<%		
-	}
-%>	
 		
 		<div id="postHeaderDiv">
 			<div id="postTitle">3월이 왔네요...</div>
 			
 			<div id="postInfo">
 				<span>대용</span>|<span>15.06.23</span>|<span>36,319</span>
+			</div>
+			
+			<div id="btns">
+				<div id="listBtn">목록</div>
 			</div>
 		</div>
 		<div id="postBodyDiv">
@@ -61,15 +57,15 @@
 			</ul>
 			<ul id="replies">
 				<li>
-					<div><span>개폼15년째</span><span>13.03.01</span></div>
+					<div id="replyInfo"><span>개폼15년째</span>|<span>13.03.01</span></div>
 					<div>잘 하셨어요. 계속 성원과 관심 주시고 항상 체력관리 잘 하셔서 만나면 게임 한번 하시죠 ㅎㅎ</div>
 				</li>
 				<li>
-					<div><span>은빛</span><span>13.03.02</span></div>
+					<div id="replyInfo"><span>은빛</span>|<span>13.03.02</span></div>
 					<div>네. 자주 방문하겠습니다.</div>
 				</li>
 			</ul>
-			<div id="goReply">댓글 전체보기</div>
+			<div id="goReply">댓글 더보기</div>
 		</div>
 		
 	</div>
