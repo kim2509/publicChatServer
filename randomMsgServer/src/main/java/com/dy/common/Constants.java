@@ -6,6 +6,7 @@ public class Constants {
 	
 	public static boolean bReal = true;
 	
+	public static String ServerIP = "192.168.0.200";
 	public static String CSS_PATH = "http://www.hereby.co.kr/nearhere/css/";
 	public static String SECURE_CSS_PATH = "https://www.hereby.co.kr/nearhere/css/";
 	public static String IMAGE_PATH = "http://www.hereby.co.kr/nearhere/image/";
@@ -21,13 +22,13 @@ public class Constants {
 	public static String getServerURL()
 	{
 //		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
-		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://172.30.1.200:8080/nearhere";
+		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://" + ServerIP + ":8080/nearhere";
 	}
 	
 	public static String getServerSSLURL()
 	{
 //		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
-		return Constants.bReal ? "https://www.hereby.co.kr/nearhere" : "http://172.30.1.200:8080/nearhere";
+		return Constants.bReal ? "https://www.hereby.co.kr/nearhere" : "http://" + ServerIP + ":8080/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
