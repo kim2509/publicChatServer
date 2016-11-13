@@ -374,7 +374,7 @@ public class AdminController extends BaseController{
 			
 			logger.error( "[sendLocationUpdateToUser]" + user );
 			
-			sendPushMessage( user, "locationUpdate", "이벤트", "합승 등록 이벤트를 진행합니다!!!", "", true, true, true );
+			sendPushMessage( user, "locationUpdate", "이벤트", "카풀 등록 이벤트를 진행합니다!!!", "", true, true, true );
 			
 			logger.error( "[sendLocationUpdateToUser] finished");
 			
@@ -408,7 +408,7 @@ public class AdminController extends BaseController{
 				logger.info( "[sendEventPushToAllUsers] sent to user " + 
 						receiver.getUserID() + " " + receiver.getUserName() );
 				
-				sendPushMessage(receiver, "locationUpdate", "이벤트", "합승 등록 이벤트를 진행합니다!!!", "", true, true, true );
+				sendPushMessage(receiver, "locationUpdate", "이벤트", "카풀 등록 이벤트를 진행합니다!!!", "", true, true, true );
 			}
 			
 			response.setData( "success" );

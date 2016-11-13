@@ -76,7 +76,7 @@ public class BackgroundJobBiz extends CommonBiz{
 			
 			for ( int j = 0; j < userList.size(); j++ )
 			{
-				String msg = "고객님의 지역근처에 합승글이 등록되었습니다.";
+				String msg = "고객님의 지역근처에 카풀글이 등록되었습니다.";
 				HashMap pushData = new HashMap();
 				pushData.put("pushID", postList.get(i).get("pushID") );
 				pushData.put("postID", postList.get(i).get("param") );

@@ -147,6 +147,7 @@ public class ScheduledTasks {
 
 		try
 		{
+			/*
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectUsersForLocationUpdate");
 
 			for ( int i = 0; i < userList.size(); i++ )
@@ -157,7 +158,8 @@ public class ScheduledTasks {
 						receiver.getUserID() + " " + receiver.getUserName() );
 
 				sendPushMessage(receiver, "locationUpdate", "고객상태 업데이트", "", true );
-			}			
+			}
+			*/			
 		}
 		catch( Exception ex )
 		{
@@ -233,7 +235,7 @@ public class ScheduledTasks {
 					}
 					else if ( "newPostByDistance".equals( type ) )
 					{
-						message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+						message = new Message.Builder().addData("title", "신규 카풀정보 알림" )
 								.addData("message",  pushMessage.getMessage() )
 								.addData("type",  type )
 								.addData("postID",  param )

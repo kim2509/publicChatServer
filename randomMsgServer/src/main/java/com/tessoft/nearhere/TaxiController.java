@@ -1236,7 +1236,7 @@ public class TaxiController extends BaseController {
 			if ( post.getUser() == null )
 			{
 				response.setResCode( ErrorCode.UNKNOWN_ERROR );
-				response.setResMsg("삭제된 합승내역입니다.");
+				response.setResMsg("삭제된 카풀내역입니다.");
 				return response;
 			}
 			
@@ -1250,7 +1250,7 @@ public class TaxiController extends BaseController {
 			if ( post == null )
 			{
 				response.setResCode( ErrorCode.UNKNOWN_ERROR );
-				response.setResMsg("삭제된 합승내역입니다.");
+				response.setResMsg("삭제된 카풀내역입니다.");
 				return response;
 			}
 			
@@ -1870,7 +1870,7 @@ public class TaxiController extends BaseController {
 					}
 					else if ( "newPostByDistance".equals( type ) )
 					{
-						message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+						message = new Message.Builder().addData("title", "신규 카풀정보 알림" )
 								.addData("message",  pushMessage.getMessage() )
 								.addData("type",  type )
 								.addData("postID",  param )
