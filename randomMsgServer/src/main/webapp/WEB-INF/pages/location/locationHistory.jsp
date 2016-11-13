@@ -25,7 +25,7 @@
 <html>
 
 <head>
-<title>이근처 합승</title>
+<title>이근처</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />

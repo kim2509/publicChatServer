@@ -235,7 +235,7 @@ public class ScheduledTasks {
 					}
 					else if ( "newPostByDistance".equals( type ) )
 					{
-						message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+						message = new Message.Builder().addData("title", "신규 카풀정보 알림" )
 								.addData("message",  pushMessage.getMessage() )
 								.addData("type",  type )
 								.addData("postID",  param )

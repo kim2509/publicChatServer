@@ -248,7 +248,7 @@ html, body {
 		}
 </script>
 
-<title>이근처 합승 위치공유</title>
+<title>이근처 위치공유</title>
 </head>
 <body>
 	<div id="map"></div>

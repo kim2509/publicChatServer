@@ -31,7 +31,7 @@
 <html>
 
 <head>
-<title>이근처 합승</title>
+<title>이근처</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -274,7 +274,7 @@ if ("Y".equals( showSearchDiv ) )
 %>
 		<div class="section">
 			<div id="menu_category">
-				<div class="title"><span class="s_tit">최근 등록된 합승내역</span></div>
+				<div class="title"><span class="s_tit">최근 등록된 카풀/합승내역</span></div>
 			</div>
 			
 			<div id="postList">

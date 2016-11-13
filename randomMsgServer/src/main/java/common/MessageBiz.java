@@ -34,7 +34,7 @@ public class MessageBiz extends CommonBiz{
 	{
 		try
 		{
-			Message message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+			Message message = new Message.Builder().addData("title", "신규 카풀정보 알림" )
 					.addData("message",  msg )
 					.addData("type",  "newPostByDistance" )
 					.addData("postID",  postID )

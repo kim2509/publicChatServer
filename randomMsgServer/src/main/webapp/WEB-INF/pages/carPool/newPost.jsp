@@ -58,7 +58,7 @@
 <html>
 
 <head>
-<title>합승정보 등록</title>
+<title>카풀/합승정보 등록</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -289,7 +289,7 @@
 
 						if ( data == null )
 						{
-							showOKDialog('경고', '합승등록중 오류가 발생했습니다.');
+							showOKDialog('경고', '카풀/합승등록중 오류가 발생했습니다.');
 							return;
 						}
 						

@@ -22,7 +22,7 @@
 <body>
 
 <div id="wrapper">
-	<div id="title">합승 등록만 해도 상품권을 쏩니다!</div>
+	<div id="title">카풀 등록만 해도 상품권을 쏩니다!</div>
 	<div id="subTitle">(2015-05-16 ~ 2015-05-31)</div>
 	<div id="promotionImg">
 		<table style="width:100%">
