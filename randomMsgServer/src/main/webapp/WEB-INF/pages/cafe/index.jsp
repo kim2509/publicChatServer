@@ -176,21 +176,6 @@ li img{
 </head>
 <body>
 
-	<script id="cafeItemT" type="text/x-handlebars-template">
-	<ul class="slide_lst">
-		{{#each items}}
-		<li>
-			<div class="thumbnail">
-				<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-			</div>
-			<div class='desc'>
-				카페1
-			</div>
-		</li>
-		{{/each}}
-	</ul>
-</script>
-
 	<div id="wrapper" style="padding-bottom:10px;">
 
 		<div id="section">

@@ -84,7 +84,7 @@ li{
 }
 
 .titleDiv{
-	background:#45a8e2;;
+	background:#7bafe3;;
 	color:white;
 	height:50px;
 	text-align:center;
@@ -151,32 +151,17 @@ li{
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
 		else
-			document.location.href="/nearhere/board/3";
+			document.location.href="/nearhere/cafe/board/3";
 	}
 </script>
 
 </head>
 <body>
 
-	<script id="cafeItemT" type="text/x-handlebars-template">
-	<ul class="slide_lst">
-		{{#each items}}
-		<li>
-			<div class="thumbnail">
-				<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-			</div>
-			<div class='desc'>
-				카페1
-			</div>
-		</li>
-		{{/each}}
-	</ul>
-</script>
-
 	<div id="wrapper">
 		
 <%
-	if ( "Y".equals( isApp ) )
+	if ( !"Y".equals( isApp ) )
 	{
 %>
 		<div class="titleDiv">
@@ -212,7 +197,7 @@ li{
 		
 			<ul>
 				<li>
-					<a href="javascript:void(0)" onclick="goBoardHome('','공지사항','<%= Constants.getServerURL() + "/board/3?isApp=" + isApp %>');">공지사항</a> 
+					<a href="javascript:void(0)" onclick="goBoardHome('','공지사항','<%= Constants.getServerURL() + "/cafe/board/3?isApp=" + isApp %>');">공지사항</a> 
 				</li>
 				<li>
 					<a href="javascript:void(0)" onclick="goBoardHome();">휴대폰/악세사리</a> 

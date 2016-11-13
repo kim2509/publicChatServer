@@ -24,7 +24,18 @@
 
 
 <script language="javascript">
+	
+	var isApp = '<%= isApp %>';
+
+	function goPostDetail( title, postID )
+	{
+		var titleUrlEncoded = encodeURIComponent( title );
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
 		
+		document.location.href="/nearhere/cafe/boardPost/detail/" + postID;
+	}
+	
 </script>
 
 </head>
@@ -33,7 +44,7 @@
 	<div id="wrapper" style="padding-bottom:10px;">
 
 <%
-	if ( "Y".equals( isApp ) )
+	if ( !"Y".equals( isApp ) )
 	{
 %>
 		<div class="titleDiv">
@@ -52,7 +63,7 @@
 		
 		<div id="postContainerDiv">
 			<ul>
-				<li>
+				<li onclick="goPostDetail('잠온다.','3');">
 					<div id="commentCount">35</div>
 					<div id="postDiv">
 						<span id="noti">공지</span>그네는 너무 뻔뻔하다. 어찌 그 자리에 계속 있을 생각을 할까?
