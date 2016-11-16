@@ -36,19 +36,42 @@
 		
 		<div id="content">
 		
-			<p>카페이름</p>
+			<div class="section">
+				<p class="title">카페이름</p>
 			
-			<span class="box_use">
-				<input type="text" id="grpname" class="inp_use" placeholder="카페이름" value="">
-				<span class="txt_byte"><span id="grpnameCount">0</span>/30</span>
-			</span>
+				<span class="box_use">
+					<input type="text" id="grpname" class="inp_use" placeholder="카페이름" value="">
+					<span class="txt_byte"><span id="grpnameCount">0</span>/30</span>
+				</span>
+				<p class="notice">한글, 영문, 숫자, 기호만 입력해주세요.</p>
+				
+			</div>
 			
-			<p>카페주소</p>
+			<div class="hr"></div>
 			
-			<span class="box_use">
-				<input type="text" id="grpname" class="inp_use" placeholder="카페이름" value="">
-				<span class="txt_byte"><span id="grpnameCount">0</span>/30</span>
-			</span>
+			<div class="section">
+			
+				<p>카페위치</p>
+			
+				<span class="box_use">
+					<input type="text" id="grpname" class="inp_use" placeholder="위치검색" value="">
+				</span>
+				
+				<ul id="cafe_terms">
+					<li>
+						<a href="">보기</a>
+						<input type="checkbox" id="agree1"/>
+						<label for="agree1">이근처카페 약관에 동의</label><br/>
+					</li>
+					<li>
+						<a href="">보기</a>
+						<input type="checkbox" id="agree2"/>
+						<label for="agree2">개인정보 보호의무에 동의</label>
+					</li>
+				</ul>
+			
+			</div>
+			
 		</div>
 		
 			
