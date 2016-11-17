@@ -146,4 +146,29 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("cafe/cafeHome", model);
 	}
+	
+	@RequestMapping( value ="/cafe/terms.do")
+	public ModelAndView terms ( String userID, String name, String version, ModelMap model ) throws IOException
+	{
+		String pageName = "";
+		
+		try
+		{
+			if ( "normal".equals( name ) )
+				pageName = "cafe_terms";
+			else if ( "personal_info".equals(name))
+				pageName = "cafe_personal_info_terms";
+			
+			if ( "1.0".equals( version ) )
+				pageName += "_" + version;
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/" + pageName, userID , null , null, null );
+		
+		return new ModelAndView("legal_terms/" + pageName, model);
+	}
 }

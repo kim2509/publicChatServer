@@ -59,12 +59,12 @@
 				
 				<ul id="cafe_terms">
 					<li>
-						<a href="/nearhere/cafe/terms.do?name=normal&version=1.0">보기</a>
+						<a href="">보기</a>
 						<input type="checkbox" id="agree1"/>
 						<label for="agree1">이근처카페 약관에 동의</label><br/>
 					</li>
 					<li>
-						<a href="/nearhere/cafe/terms.do?name=personal_info&version=1.0">보기</a>
+						<a href="">보기</a>
 						<input type="checkbox" id="agree2"/>
 						<label for="agree2">개인정보 보호의무에 동의</label>
 					</li>
