@@ -101,13 +101,26 @@ li{
 #manage{
 	position:absolute;
 	top:0px;
-	right:10px;
+	left:10px;
 	line-height:20px;
 	color:white;
 	border: 1px solid white;
 	border-radius:20px;
 	margin:15px 0px;
 	padding:0px 8px;
+	font-size:13px;
+	font-weight:bold;
+}
+
+#setting
+{
+	position:absolute;
+	top:0px;
+	right:10px;
+	line-height:16px;
+	color:white;
+	border-radius:20px;
+	margin:13px 0px;
 	font-size:13px;
 	font-weight:bold;
 }
@@ -180,6 +193,7 @@ li{
 		<div class="titleDiv">
 			<div class="title">중고나라</div>
 			<div id="manage">i</div>
+			<div id="setting"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
 		</div>
 	
 <%		
@@ -187,6 +201,9 @@ li{
 %>		
 		
 		<div class="menu">
+		
+			<div style="float:right;line-height:25px;margin-right:10px;border:1px solid #e24c45;margin-top:10px;margin-bottom:10px;border-radius:10px;color:#e24c45;font-size:13px;font-weight:bold;padding:0px 5px;">글쓰기</div>
+			
 			<ul>
 				<li class="menuItem">
 					<a href="" class="link_tab">게시판</a>
@@ -200,8 +217,8 @@ li{
 			</ul>
 		</div>
 		
-		<div class="cafe_bnr" style="background-color:#ffffc3">
-			<button type="button" style="float:right;"><span class="ico_cafe ico_close">닫기</span></button>
+		<div class="cafe_bnr" style="background-color:#ffffc3;clear:both;">
+			<div style="display:inline-block;float:right;line-height:45px;height:45px;margin-top:12px;margin-right:10px;"><img src="<%= Constants.IMAGE_PATH %>/closeX.png" width="20" height="20" /></div>
 			<a href="" class="link_bnr"><span class="ico_cafe ico_bnr">알림</span>게시판 새글 소식을 빨리 받고 싶다면!</a>
 		</div>
 			
