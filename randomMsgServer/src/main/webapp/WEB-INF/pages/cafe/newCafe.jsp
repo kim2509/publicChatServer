@@ -51,6 +51,15 @@
 			
 			<div class="section">
 			
+				<p>카페아이디</p>
+			
+				<span class="box_use">
+					<span>
+						<input type="text" id="grpname" class="inp_use" placeholder="www.nearhere/cafe/카페아이디" value="">
+					</span>
+					<span class="txt_byte"><span id="grpnameCount">0</span>/30</span>
+				</span>
+			
 				<p>카페위치</p>
 			
 				<span class="box_use">
@@ -70,6 +79,10 @@
 					</li>
 				</ul>
 			
+				<div id="btnDiv">
+					<input type="button" class="btnMake" value="카페 만들기" />
+				</div>
+				
 			</div>
 			
 		</div>

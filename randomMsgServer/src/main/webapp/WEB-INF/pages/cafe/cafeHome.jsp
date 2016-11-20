@@ -88,7 +88,6 @@ li{
 	color:white;
 	height:50px;
 	text-align:center;
-	display: table; 
 	width: 100%;
 }
 
@@ -96,7 +95,21 @@ li{
 	font-weight:bold;
 	font-size:20px;
 	vertical-align:middle;
-	display: table-cell;
+	line-height:50px;
+}
+
+#manage{
+	position:absolute;
+	top:0px;
+	right:10px;
+	line-height:20px;
+	color:white;
+	border: 1px solid white;
+	border-radius:20px;
+	margin:15px 0px;
+	padding:0px 8px;
+	font-size:13px;
+	font-weight:bold;
 }
 
 .link_bnr
@@ -165,7 +178,8 @@ li{
 	{
 %>
 		<div class="titleDiv">
-			<span class="title">중고나라</span>
+			<div class="title">중고나라</div>
+			<div id="manage">i</div>
 		</div>
 	
 <%		

@@ -106,3 +106,12 @@ body{
 	font-size: 13px;
 	border-bottom: 1px solid #bfbfbf;
 }
+
+.section #btnDiv{
+	text-align:center;	
+	margin-top:20px;
+}
+
+.section .btnMake{
+	height:30px;
+}
