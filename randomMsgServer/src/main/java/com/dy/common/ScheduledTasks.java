@@ -147,7 +147,6 @@ public class ScheduledTasks {
 
 		try
 		{
-			/*
 			List<User> userList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.selectUsersForLocationUpdate");
 
 			for ( int i = 0; i < userList.size(); i++ )
@@ -159,7 +158,6 @@ public class ScheduledTasks {
 
 				sendPushMessage(receiver, "locationUpdate", "고객상태 업데이트", "", true );
 			}
-			*/			
 		}
 		catch( Exception ex )
 		{
