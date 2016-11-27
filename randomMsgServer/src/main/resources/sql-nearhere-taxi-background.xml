@@ -98,7 +98,6 @@
 					where u.isDeleted is null
 					and u.regID is not null
 					and u.userID <> #{userID}
-					and l.locationName <> '현재위치'
 					and l.latitude > 0 and l.longitude > 0
 				) ul
 			) A
