@@ -115,3 +115,31 @@ body{
 .section .btnMake{
 	height:30px;
 }
+
+#makeCafeResultDiv{
+	text-align:center;
+}
+
+#makeCafeResultDiv #cafeName{
+	font-size:15px;
+	font-weight:bold;
+	margin:20px 0px 10px 0px;
+}
+
+#makeCafeResultDiv #resultBody{
+	font-size:13px;
+	color: #666;
+	margin-bottom:10px;
+	line-height:24px;
+}
+
+#makeCafeResultDiv #resultFooter span{
+	border: 1px solid #45a8e2;
+    border-radius: 15px;
+    color: #45a8e2;
+    font-size: 14px;
+    font-weight:bold;
+    display:inline-block;
+    padding:3px 10px;
+    margin:30px 0px 30px 0px;
+}
