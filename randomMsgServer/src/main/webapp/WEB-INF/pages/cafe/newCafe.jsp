@@ -3,6 +3,9 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+	String isApp = request.getParameter("isApp");
+%>
 
 <html>
 <head>
@@ -20,7 +23,18 @@
 	href="<%=Constants.CSS_PATH%>/cafe.css" />
 
 <script language="javascript">
+
+	var isApp = '<%= isApp %>';
+
+	function makeCafe()
+	{
+		var url ='<%= Constants.getServerURL() %>/cafe/newCafeResult.do';
 		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+		else
+			document.location.href=url;
+	}
 </script>
 
 </head>
@@ -80,7 +94,7 @@
 				</ul>
 			
 				<div id="btnDiv">
-					<input type="button" class="btnMake" value="카페 만들기" />
+					<input type="button" class="btnMake" value="카페 만들기" onclick="makeCafe();"/>
 				</div>
 				
 			</div>

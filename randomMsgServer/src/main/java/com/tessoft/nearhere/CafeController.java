@@ -135,6 +135,25 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/newCafe", model);
 	}
 	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@RequestMapping( value ="/cafe/newCafeResult.do")
+	public ModelAndView newCafeResult ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/newCafeResult.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/newCafeResult", model);
+	}
+	
 	@RequestMapping( value ="/cafe/{cafeName}")
 	public ModelAndView cafeHome ( @PathVariable(value="cafeName") String cafeName , String userID, ModelMap model ) throws IOException
 	{
