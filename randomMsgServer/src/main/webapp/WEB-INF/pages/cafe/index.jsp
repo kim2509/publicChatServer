@@ -5,6 +5,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	List<HashMap> myCafeList = (List<HashMap>) request.getAttribute("myCafeList");
 %>
 <html>
 <head>
@@ -90,7 +91,9 @@ li img{
 .date{
 	border:1px solid gray;
 	border-radius: 5px;
-	padding:5px;
+	padding-top:5px;
+	padding-left:5px;
+	padding-right:5px;
 	font-size:12px;
 	font-weight:bold;
 	float:left;
@@ -139,34 +142,62 @@ li img{
 
 	function goSearchByName()
 	{
-		document.location.href="/nearhere/cafe/searchByName.do";
+		var titleUrlEncoded = encodeURIComponent('카페 검색');
+		var url = '<%= Constants.getServerURL() %>/cafe/searchByName.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/searchByName.do";
 	}
 	
 	function goSearchByRegion()
 	{
-		document.location.href="/nearhere/cafe/searchByRegion.do";
+		var titleUrlEncoded = encodeURIComponent('카페 검색');
+		var url = '<%= Constants.getServerURL() %>/cafe/searchByRegion.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/searchByRegion.do";
 	}
 	
 	function goMyCafeList()
 	{
-		document.location.href="/nearhere/cafe/myCafeList.do";
+		var titleUrlEncoded = encodeURIComponent('내 가입 카페');
+		var url = '<%= Constants.getServerURL() %>/cafe/myCafeList.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/myCafeList.do";
 	}
 	
 	function goMoreFavoriteMeeting()
 	{
-		document.location.href="/nearhere/cafe/moreFavoriteMeeting.do";
+		var titleUrlEncoded = encodeURIComponent('관심지역 정모');
+		var url = '<%= Constants.getServerURL() %>/cafe/moreFavoriteMeeting.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/moreFavoriteMeeting.do";;
 	}
 	
 	function goNewCafe()
 	{
-		document.location.href="/nearhere/cafe/newCafe.do";
+		var url = '<%= Constants.getServerURL() %>/cafe/newCafe.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/newCafe.do";
 	}
 	
 	function goCafeHome( title, url )
 	{
-		var titleUrlEncoded = encodeURIComponent( title );
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
 		else
 			document.location.href="/nearhere/cafe/junggo";
 	}

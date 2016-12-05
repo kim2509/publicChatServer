@@ -88,7 +88,7 @@ li img{
 .date{
 	border:1px solid gray;
 	border-radius: 5px;
-	padding:5px;
+	padding:5px 5px 0px 5px;
 	font-size:12px;
 	font-weight:bold;
 	float:left;

@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import common.CafeBiz;
+
 @Controller
 public class CafeController extends BaseController {
 
+	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
 	@RequestMapping( value ="/cafe/index.do")
 	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
@@ -23,7 +26,9 @@ public class CafeController extends BaseController {
 	{
 		try
 		{
-			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
+			model.addAttribute("myCafeList", myCafeList);
 		}
 		catch( Exception ex )
 		{
