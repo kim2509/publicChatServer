@@ -228,63 +228,34 @@ li img{
 
 		</div>
 		
+<% if ( myCafeList != null && myCafeList.size() > 0 ) { %>
 		<div id="section">
 
 			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMyCafeList();">더 보기</div>
 			<div class="sectionTitle">내 가입 카페</div>
 
+
 			<ul class="slide_lst">
+			
+				<% for ( int i = 0; i < myCafeList.size(); i++ ) {
+					String cafeName = myCafeList.get(i).get("cafeName").toString();
+					String imageURL = myCafeList.get(i).get("url1").toString() + myCafeList.get(i).get("url2").toString();
+				%>
+
 				<li class="cafeItem" onclick="goCafeHome('중고나라', '<%= Constants.getServerURL() + "/cafe/junggo?isApp=" + isApp %>');">
 					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
+						<img src='<%= imageURL %>' width="80" height="80"/>
 					</div>
 					<div class='desc'>
-						카페1이구나야fdsafdsa카페1이구나야fdsafdsa
+						<%= cafeName %>
 					</div>
 				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
+
+				<% } %>
+				
 			</ul>
 		</div>
-		
+<% } %>		
 		
 		<div id="section">
 
