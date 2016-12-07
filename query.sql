@@ -1,38 +1,35 @@
-CREATE TABLE `cafe_members` (
-	`no` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`cafeNo` INT(11) NOT NULL,
-	`userID` VARCHAR(30) NOT NULL,
-	`memberType` VARCHAR(10) NULL DEFAULT NULL,
+CREATE TABLE `cafe_location` (
+	`No` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`type` INT(11) NULL DEFAULT NULL,
+	`latitude` VARCHAR(30) NULL DEFAULT NULL,
+	`longitude` VARCHAR(30) NULL DEFAULT NULL,
+	`regionNo` INT(11) NULL DEFAULT NULL,
 	`createdDate` DATETIME NULL DEFAULT NULL,
-	`deledtedDate` DATETIME NULL DEFAULT NULL,
-	PRIMARY KEY (`no`)
+	PRIMARY KEY (`No`)
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
 
-CREATE TABLE `cafe_detail` (
-	`cafeNo` INT(11) NULL DEFAULT NULL,
-	`mainImageNo` BIGINT(20) NULL DEFAULT NULL
+
+CREATE TABLE `cafe_public_meeting` (
+	`meetingNo` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`cafeNo` INT(11) NOT NULL,
+	`title` VARCHAR(100) NOT NULL,
+	`meetingDate` DATETIME NOT NULL,
+	`locationNo` BIGINT(20) NOT NULL,
+	`createdDate` DATETIME NOT NULL,
+	PRIMARY KEY (`meetingNo`),
+	INDEX `cafeNo` (`cafeNo`)
 )
+COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
 
-select * from cafe_master
 
-insert into cafe_master(cafeName, owner, createdDate)
-values('중고나라', 'user27', NOW() );
+INSERT INTO `cafe_location` (`No`, `type`, `latitude`, `longitude`, `regionNo`, `createdDate`) VALUES
+	(1, 1, '37.499741', '127.035792', 295, '2016-12-07 20:05:08');
 
-select * from cafe_members
 
-insert into cafe_members( cafeNo, userID, memberType, createdDate )
-values(1, 'user27', '카페주인', NOW());
-
-select * from cafe_image
-
-insert into cafe_image(imageName, url1, url2, createdDate)
-values('카페메인', 'http://static.naver.net', '/m/cafe/mobile/img_thumb_20150618.png', NOW() );
-
-select * from cafe_detail
-
-insert into cafe_detail values(1, 1)
+INSERT INTO `cafe_public_meeting` (`meetingNo`, `cafeNo`, `title`, `meetingDate`, `locationNo`, `createdDate`) VALUES
+	(1, 1, '불금에 삼겹살에 소주 한잔', '2016-12-08 18:00:00', 1, '2016-12-07 20:02:28');

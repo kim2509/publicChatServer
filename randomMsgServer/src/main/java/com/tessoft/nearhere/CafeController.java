@@ -28,7 +28,10 @@ public class CafeController extends BaseController {
 		{
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
+			List<HashMap> favoriteCafeMeetingList = cafeBiz.getFavoriteCafeMeetingList(userID);
+			
 			model.addAttribute("myCafeList", myCafeList);
+			model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);
 		}
 		catch( Exception ex )
 		{

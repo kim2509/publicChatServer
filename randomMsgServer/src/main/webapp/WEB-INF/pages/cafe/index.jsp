@@ -6,6 +6,7 @@
 <%
 	String isApp = request.getParameter("isApp");
 	List<HashMap> myCafeList = (List<HashMap>) request.getAttribute("myCafeList");
+	List<HashMap> favoriteCafeMeetingList = (List<HashMap>) request.getAttribute("favoriteCafeMeetingList");
 %>
 <html>
 <head>
@@ -257,12 +258,18 @@ li img{
 		</div>
 <% } %>		
 		
+<% if ( favoriteCafeMeetingList != null && favoriteCafeMeetingList.size() > 0 ) { %>		
 		<div id="section">
 
 			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMoreFavoriteMeeting();">더 보기</div>
 			<div class="sectionTitle" style="margin-bottom:0px;">관심지역 정모</div>
 
 			<ul class="slide_lst2">
+				<% 
+					for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ ) {
+						
+						String cafeName = favoriteCafeMeetingList.get(i).get("cafeName").toString();
+				%>
 				<li>
 					<div class='date'>
 						화요일<br/>
@@ -273,47 +280,17 @@ li img{
 						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
 					</div>
 					<div class='cafeName'>
-						역삼모임
+						<%= cafeName %>
 					</div>
 					<div class='regionName'>
 						서울시 강남구
 					</div>
 				</li>
-				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						경북 포항시
-					</div>
-				</li>
-				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						대구광역시
-					</div>
-				</li>
+				<% } %>
 			</ul>
 			
 		</div>
+<% } %>
 			
 	</div>
 
