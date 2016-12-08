@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -135,6 +136,65 @@ public class Util {
 	{
 		Date d = new Date();
 		return getDateStringFromDate(d, format);
+	}
+	
+	public static String getMonth( Date d )
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		int month = cal.get(Calendar.MONTH);
+		return String.valueOf(month);
+	}
+	
+	public static String getDate( Date d )
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		int month = cal.get(Calendar.DATE);
+		return String.valueOf(month);
+	}
+	
+	/**
+	 * 특정 날짜에 대하여 요일을 구함(일 ~ 토)
+	 * @param date
+	 * @param dateType
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getDateDay( Date d ) throws Exception {
+	    String day = "" ;
+	     
+	    Calendar cal = Calendar.getInstance() ;
+	    cal.setTime(d);
+	     
+	    int dayNum = cal.get(Calendar.DAY_OF_WEEK) ;
+	     
+	    switch(dayNum){
+	        case 1:
+	            day = "일";
+	            break ;
+	        case 2:
+	            day = "월";
+	            break ;
+	        case 3:
+	            day = "화";
+	            break ;
+	        case 4:
+	            day = "수";
+	            break ;
+	        case 5:
+	            day = "목";
+	            break ;
+	        case 6:
+	            day = "금";
+	            break ;
+	        case 7:
+	            day = "토";
+	            break ;
+	             
+	    }
+	     
+	    return day ;
 	}
 	
 	public static void setPostDepartureDateTime( Logger logger, String logIdentifier, Post post) {

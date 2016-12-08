@@ -269,15 +269,18 @@ li img{
 					for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ ) {
 						
 						String cafeName = favoriteCafeMeetingList.get(i).get("cafeName").toString();
+						String title = favoriteCafeMeetingList.get(i).get("title").toString();
+						String dateString = favoriteCafeMeetingList.get(i).get("meetingDate").toString();
+						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
 				%>
 				<li>
 					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
+						<%= Util.getDateDay( meetingDate ) %>요일<br/>
+						<%= Util.getDate(meetingDate ) %><br/>
+						<%= Util.getDateStringFromDate(meetingDate, "HH:mm") %>
 					</div>
 					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
+						<%= title %>
 					</div>
 					<div class='cafeName'>
 						<%= cafeName %>
