@@ -83,4 +83,10 @@
 		where r.regionNo=#{value}
 	</select>
 	
+	<select id="getFavoriteRegionNoByUserID" parameterType="String" resultType="String">
+		select regionNo 
+		from user_favorite_region 
+		where userID=#{value}
+	</select>
+	
 </mapper>

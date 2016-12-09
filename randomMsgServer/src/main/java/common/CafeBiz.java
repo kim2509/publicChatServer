@@ -30,9 +30,9 @@ public class CafeBiz extends CommonBiz{
 		return myCafeList;
 	}
 	
-	public List<HashMap> getFavoriteCafeMeetingList( String userID )
+	public List<HashMap> getUpcomingCafeMeetingList( String userID )
 	{
-		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getFavoriteCafeMeetingList", userID);
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getUpcomingCafeMeetingList", userID);
 		return myCafeList;
 	}
 }

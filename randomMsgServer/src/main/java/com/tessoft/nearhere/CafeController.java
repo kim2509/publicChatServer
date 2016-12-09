@@ -1,6 +1,7 @@
 package com.tessoft.nearhere;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,10 +15,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import common.CafeBiz;
+import common.RegionBiz;
 
 @Controller
 public class CafeController extends BaseController {
 
+	// 관심지역 리스트
+	List<String> favRegionNos = null;
+	
+	private boolean IsFavRegion( String userID, String regionInfo )
+	{
+		RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+		
+		if ( regionInfo == null || "".equals( regionInfo ) ) return false;
+		
+		if ( favRegionNos == null )
+			favRegionNos = regionBiz.getFavoriteRegionNoByUserID(userID);
+		
+		for ( int i = 0; i < favRegionNos.size(); i++ )
+		{
+			String[] regionList = regionInfo.split("\\|");
+			for ( int j = 0; j < regionList.length; j++ )
+			{
+				if ( favRegionNos.get(i).equals(regionList[j]))
+					return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
 	@RequestMapping( value ="/cafe/index.do")
@@ -28,7 +54,19 @@ public class CafeController extends BaseController {
 		{
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
-			List<HashMap> favoriteCafeMeetingList = cafeBiz.getFavoriteCafeMeetingList(userID);
+			ArrayList<HashMap> favoriteCafeMeetingList = new ArrayList<HashMap>();
+			List<HashMap> temp = cafeBiz.getUpcomingCafeMeetingList(userID);
+			
+			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+			
+			for ( int i = 0; i < temp.size(); i++ )
+			{
+				String regionNo = temp.get(i).get("regionNo").toString();
+				String regionInfo = regionBiz.getRegionInfoByRegionNo(regionNo);
+				
+				if ( IsFavRegion(userID, regionInfo) )
+					favoriteCafeMeetingList.add( temp.get(i) );
+			}
 			
 			model.addAttribute("myCafeList", myCafeList);
 			model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);

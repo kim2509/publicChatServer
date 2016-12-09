@@ -12,12 +12,11 @@
 		where cm2.userID=#{userID};
 	</select>
 	
-	<select id="getFavoriteCafeMeetingList" resultType="HashMap" parameterType="String">
-		select cp.*, cm.cafeName from cafe_public_meeting cp
+	<select id="getUpcomingCafeMeetingList" resultType="HashMap" parameterType="String">
+		select cp.*, cm.cafeName, cl.regionNo from cafe_public_meeting cp
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
-		where cl.regionNo in 
-		(select regionNo from user_favorite_region where userID=#{userID})
+		where cp.meetingDate >= NOW() 
 	</select>
 	
 </mapper>
