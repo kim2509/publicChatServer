@@ -17,6 +17,15 @@
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
 		where cp.meetingDate >= NOW() 
+		order by cp.meetingDate
 	</select>
 	
+	<insert id="makeCafe" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="cafeNo" keyColumn="cafeNo">
+		insert into cafe_master( cafeID, cafeName, owner, createdDate )
+		values( #{cafeID}, #{cafeName}, #{userID}, NOW() );
+		<selectKey keyProperty="cafeNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
 </mapper>

@@ -24,3 +24,51 @@ Date.prototype.format = function(f) {
 String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
 String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
 Number.prototype.zf = function(len){return this.toString().zf(len);};
+
+function notice( message )
+{
+	if ( isApp == 'Y' )
+		Android.showOKDialog('알림', message, '');
+	else
+		alert( message );
+}
+
+function isAlphaNumberKorOnly( str )
+{
+	if ( str.match(/[^0-9a-zA-Z가-힝ㄱ-ㅎ]/) != null ) {
+	  return false;
+	}
+		
+	return true;
+}
+
+function isAlphaNumberOnly( str )
+{
+	if ( str.match(/[^a-zA-Z0-9]/) != null ) {
+	  return false;
+	}
+	
+	return true;
+}
+
+function ajaxRequest( method, url, param , onSuccess, onComplete, onError )
+{
+	jQuery.ajax({
+		type : method,
+		url : url,
+		data : JSON.stringify( param ),
+		dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+		contentType : "application/json; charset=UTF-8",
+		success : function(result) {
+			onSuccess( result );
+		},
+		complete : function(result) {
+			if ( onComplete != undefined && onComplete != null )
+				onComplete( result );
+		},
+		error : function(xhr, status, error) {
+			if ( onError != undefined && onError != null )
+				onError( xhr, status, error );
+		}
+	});
+}

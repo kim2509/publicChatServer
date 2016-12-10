@@ -83,6 +83,16 @@
 		where r.regionNo=#{value}
 	</select>
 	
+	<select id="getFullRegionNameByRegionNo" parameterType="String" resultType="String">
+		select concat(ifnull(r4.regionName,''), ' ' , ifnull(r3.regionName,''), ' ' , 
+			ifnull(r2.regionName,''), ' ' , ifnull(r.regionName,'')) as regionInfo 
+		from region r
+			left outer join region r2 on r.parentNo=r2.regionNo
+			left outer join region r3 on r2.parentNo=r3.regionNo
+			left outer join region r4 on r3.parentNo=r4.regionNo	
+		where r.regionNo=#{value}
+	</select>
+	
 	<select id="getFavoriteRegionNoByUserID" parameterType="String" resultType="String">
 		select regionNo 
 		from user_favorite_region 

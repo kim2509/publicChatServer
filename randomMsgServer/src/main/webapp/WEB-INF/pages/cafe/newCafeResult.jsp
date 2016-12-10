@@ -26,9 +26,9 @@
 
 	var isApp = '<%= isApp %>';
 
-	function goCafeHome( title )
+	function goCafeHome( cafeID )
 	{
-		var url ='<%= Constants.getServerURL() %>/cafe/junggo';
+		var url ='<%= Constants.getServerURL() %>/cafe/' + cafeID;
 		
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
@@ -49,10 +49,10 @@
 		<div id="content">
 		
 			<div id="makeCafeResultDiv">
-				<div id="cafeName">대용카페</div>
-				<div id="resultBody">카페 개설을 축하드립니다.<br/>새로운 멤버들을 초대해 보세요.</div>
+				<div id="cafeName"><%= request.getParameter("cafeName") %></div>
+				<div id="resultBody">카페 개설을 축하드립니다.<br/>카페 공개 후 회원들을 초대해 보세요.</div>
 				<div id="resultFooter">
-					<span onclick="goCafeHome();">개설카페 이동</span>
+					<span onclick="goCafeHome('<%= request.getParameter("cafeID") %>');">개설카페로 이동</span>
 				</div>
 			</div>
 			

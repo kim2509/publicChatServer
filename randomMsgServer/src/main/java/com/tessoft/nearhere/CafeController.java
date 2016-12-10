@@ -8,11 +8,18 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.dy.common.ErrorCode;
+import com.nearhere.domain.APIResponse;
+import com.nearhere.domain.User;
 
 import common.CafeBiz;
 import common.RegionBiz;
@@ -20,17 +27,14 @@ import common.RegionBiz;
 @Controller
 public class CafeController extends BaseController {
 
-	// 관심지역 리스트
-	List<String> favRegionNos = null;
-	
 	private boolean IsFavRegion( String userID, String regionInfo )
 	{
 		RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
 		
 		if ( regionInfo == null || "".equals( regionInfo ) ) return false;
-		
-		if ( favRegionNos == null )
-			favRegionNos = regionBiz.getFavoriteRegionNoByUserID(userID);
+	
+		// 관심지역 리스트
+		List<String> favRegionNos = regionBiz.getFavoriteRegionNoByUserID(userID);
 		
 		for ( int i = 0; i < favRegionNos.size(); i++ )
 		{
@@ -65,7 +69,10 @@ public class CafeController extends BaseController {
 				String regionInfo = regionBiz.getRegionInfoByRegionNo(regionNo);
 				
 				if ( IsFavRegion(userID, regionInfo) )
+				{
+					temp.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));
 					favoriteCafeMeetingList.add( temp.get(i) );
+				}
 			}
 			
 			model.addAttribute("myCafeList", myCafeList);
@@ -174,6 +181,56 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/newCafe.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/newCafe", model);
+	}
+	
+	@RequestMapping( value ="/cafe/makeCafe.do")
+	public @ResponseBody APIResponse makeCafe(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			String userID = info.get("userID").toString();
+			String cafeName = info.get("cafeName").toString();
+			String cafeID = info.get("cafeID").toString();
+			
+			if ("".equals(userID))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("사용자 아이디가 올바르지 않습니다.");
+			}
+			
+			if ("".equals(cafeName))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페 이름을 입력해 주십시오.");
+			}
+			
+			if ("".equals(cafeID))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페 아이디를 입력해 주십시오.");
+			}
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			int dbResult = cafeBiz.makeCafe(info);
+			info.put("dbResult", String.valueOf( dbResult ));
+			
+			response.setData(info);
+			
+			insertHistory("/cafe/makeCafe.do", userID , cafeName , cafeID, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 아이디가 중복됩니다.\r\n다시 한번 확인해 주시기 바랍니다.");
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
 	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })

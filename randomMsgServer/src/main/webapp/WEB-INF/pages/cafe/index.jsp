@@ -5,6 +5,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
 	List<HashMap> myCafeList = (List<HashMap>) request.getAttribute("myCafeList");
 	List<HashMap> favoriteCafeMeetingList = (List<HashMap>) request.getAttribute("favoriteCafeMeetingList");
 %>
@@ -187,7 +188,7 @@ li img{
 	
 	function goNewCafe()
 	{
-		var url = '<%= Constants.getServerURL() %>/cafe/newCafe.do';
+		var url = '<%= Constants.getServerURL() %>/cafe/newCafe.do?isApp=<%= isApp %>&userID=<%= userID %>';
 		
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
@@ -272,6 +273,7 @@ li img{
 						String title = favoriteCafeMeetingList.get(i).get("title").toString();
 						String dateString = favoriteCafeMeetingList.get(i).get("meetingDate").toString();
 						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
+						String regionName = favoriteCafeMeetingList.get(i).get("regionName").toString();
 				%>
 				<li>
 					<div class='date'>
@@ -286,7 +288,7 @@ li img{
 						<%= cafeName %>
 					</div>
 					<div class='regionName'>
-						서울시 강남구
+						<%= regionName %>
 					</div>
 				</li>
 				<% } %>

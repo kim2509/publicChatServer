@@ -5,6 +5,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
 %>
 
 <html>
@@ -17,24 +18,91 @@
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/cafe.css" />
 
 <script language="javascript">
 
-	var isApp = '<%= isApp %>';
-
+	isApp = '<%= isApp %>';
+	
 	function makeCafe()
 	{
-		var url ='<%= Constants.getServerURL() %>/cafe/newCafeResult.do';
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
-		else
-			document.location.href=url;
+		try
+		{
+			if ( $('#cafeName').val() == '' )
+			{
+				notice('카페이름을 입력해 주십시오.');
+				return;
+			}
+			
+			if ( isAlphaNumberKorOnly($('#cafeName').val()) == false )
+			{
+				notice("한글, 영문, 숫자만 입력할 수 있습니다.");
+			 	return;
+			}
+			
+			if ( $('#cafeID').val() == '' )
+			{
+				notice('카페 아이디를 입력해 주십시오.');
+				return;
+			}
+			
+			if ( isAlphaNumberOnly($('#cafeID').val()) == false )
+			{
+				notice("숫자와 영문만 입력할 수 있습니다.");
+			 	return;
+			}
+			
+			if ( $('#agree1').is(":checked") == false )
+			{
+				notice('이근처 카페 약관에 동의하여 주십시오.');
+				return;
+			}
+			
+			if ( $('#agree2').is(":checked") == false )
+			{
+				notice('개인정보 보호의무에 동의하여 주십시오.');
+				return;
+			}
+			
+			var param = {"userID":'<%= userID %>', "cafeName": $('#cafeName').val(), "cafeID" : $('#cafeID').val() };
+			ajaxRequest('POST', '/nearhere/cafe/makeCafe.do', param , onResult );	
+		}
+		catch( ex )
+		{
+			notice( ex.message );
+		}
 	}
+	
+	function onResult( result )
+	{
+		try
+		{
+			console.log( JSON.stringify( result ) );
+			
+			if ( result.resCode != '0000' )
+			{
+				notice( result.resMsg );
+				return;
+			}
+			
+			var url ='<%= Constants.getServerURL() %>/cafe/newCafeResult.do?cafeID=' + result.data.cafeID 
+					+ '&cafeName=' + encodeURIComponent(result.data.cafeName);
+			
+			if ( isApp == 'Y' )
+				document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+			else
+				document.location.href=url;
+		}
+		catch( ex )
+		{
+			notice( ex.message );
+		}
+	}
+	
 </script>
 
 </head>
@@ -54,10 +122,9 @@
 				<p class="title">카페이름</p>
 			
 				<span class="box_use">
-					<input type="text" id="grpname" class="inp_use" placeholder="카페이름" value="">
-					<span class="txt_byte"><span id="grpnameCount">0</span>/30</span>
+					<input type="text" id="cafeName" class="inp_use" placeholder="카페이름" value="">
 				</span>
-				<p class="notice">한글, 영문, 숫자, 기호만 입력해주세요.</p>
+				<p class="notice">한글, 영문, 숫자만 입력해주세요.</p>
 				
 			</div>
 			
@@ -69,15 +136,8 @@
 			
 				<span class="box_use">
 					<span>
-						<input type="text" id="grpname" class="inp_use" placeholder="www.nearhere/cafe/카페아이디" value="">
+						<input type="text" id="cafeID" class="inp_use" placeholder="카페아이디" value="">
 					</span>
-					<span class="txt_byte"><span id="grpnameCount">0</span>/30</span>
-				</span>
-			
-				<p>카페위치</p>
-			
-				<span class="box_use">
-					<input type="text" id="grpname" class="inp_use" placeholder="위치검색" value="">
 				</span>
 				
 				<ul id="cafe_terms">

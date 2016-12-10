@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.dy.common.ErrorCode;
 import com.nearhere.domain.User;
 
 public class CafeBiz extends CommonBiz{
@@ -34,5 +35,11 @@ public class CafeBiz extends CommonBiz{
 	{
 		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getUpcomingCafeMeetingList", userID);
 		return myCafeList;
+	}
+	
+	public int makeCafe( HashMap param )
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.makeCafe", param);
+		return result;
 	}
 }

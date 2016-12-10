@@ -27,6 +27,12 @@ public class RegionBiz extends CommonBiz{
 		return regionInfo;
 	}
 	
+	public String getFullRegionNameByRegionNo( String regionNo )
+	{
+		String regionInfo = sqlSession.selectOne("com.tessoft.nearhere.region.getFullRegionNameByRegionNo", regionNo);
+		return regionInfo.trim();
+	}
+	
 	public List<String> getFavoriteRegionNoByUserID( String userID )
 	{
 		List<String> regionInfo = sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionNoByUserID", userID);
