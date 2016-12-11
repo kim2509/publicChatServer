@@ -1,13 +1,13 @@
-CREATE TABLE `cafe_public_meeting` (
-	`meetingNo` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`cafeNo` INT(11) NOT NULL,
-	`title` VARCHAR(100) NOT NULL,
-	`meetingDate` DATETIME NOT NULL,
-	`locationNo` BIGINT(20) NOT NULL,
-	`createdDate` DATETIME NOT NULL,
-	PRIMARY KEY (`meetingNo`),
-	INDEX `cafeNo` (`cafeNo`)
+CREATE TABLE `cafe_master` (
+	`cafeNo` INT(11) NOT NULL AUTO_INCREMENT,
+	`cafeID` VARCHAR(50) NOT NULL,
+	`cafeName` VARCHAR(100) NULL DEFAULT NULL,
+	`owner` VARCHAR(30) NULL DEFAULT NULL,
+	`createdDate` DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY (`cafeNo`),
+	UNIQUE INDEX `cafeID` (`cafeID`)
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
+AUTO_INCREMENT=2
 ;
