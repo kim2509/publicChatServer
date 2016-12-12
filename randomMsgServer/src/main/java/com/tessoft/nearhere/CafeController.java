@@ -252,8 +252,8 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/newCafeResult", model);
 	}
 	
-	@RequestMapping( value ="/cafe/{cafeName}")
-	public ModelAndView cafeHome ( @PathVariable(value="cafeName") String cafeName , String userID, ModelMap model ) throws IOException
+	@RequestMapping( value ="/cafe/{cafeID}")
+	public ModelAndView cafeHome ( @PathVariable(value="cafeID") String cafeID , String userID, ModelMap model ) throws IOException
 	{
 		try
 		{
@@ -264,7 +264,7 @@ public class CafeController extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/" + cafeName, userID , null , null, null );
+		insertHistory("/cafe/" + cafeID, userID , null , null, null );
 		
 		return new ModelAndView("cafe/cafeHome", model);
 	}
