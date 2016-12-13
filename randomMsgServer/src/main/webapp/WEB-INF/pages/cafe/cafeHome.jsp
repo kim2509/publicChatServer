@@ -76,9 +76,6 @@
 		</div>
 		
 		<div id="cafeInfo">
-			<div id="cafeTitle">
-				중고나라
-			</div>
 			<div id="cafeImage">
 				<img src="http://nv2.tveta.naver.net/libs/1147/1147955/20161207160806-1P7780XT.jpg" height="140"/>
 			</div>
