@@ -5,6 +5,11 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	HashMap cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+	String mainImageURL = cafeMainInfo.get("url1").toString() + cafeMainInfo.get("url2");
+	List<HashMap> cafePublicMeetingList = (List<HashMap>) request.getAttribute("cafePublicMeetingList");
+	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
+	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
 %>
 
 <html>
@@ -76,83 +81,76 @@
 		</div>
 		
 		<div id="cafeInfo">
+			
+			<% if (!"".equals( mainImageURL ) ) { %>
 			<div id="cafeImage">
-				<img src="http://nv2.tveta.naver.net/libs/1147/1147955/20161207160806-1P7780XT.jpg" height="140"/>
+				<img src="<%= mainImageURL %>" height="140"/>
 			</div>
+			<% } %>
+			
 			<div id="cafeDesc">
-				이근 처 사람들과 중고 물품을 교환할 수 있는 카페입니다.
+				<%= cafeMainInfo.get("mainDesc") %>
 			</div>
+			
+			<% if ( cafePublicMeetingList != null && cafePublicMeetingList.size() > 0 ) { %>
 			<div id="cafeMeeting">
 				정모
 				<ul class="slide_lst2">
+				
+					<% for ( int i = 0; i < cafePublicMeetingList.size(); i++ ) {
+						
+						HashMap meeting = cafePublicMeetingList.get(i);
+						String dateString = meeting.get("meetingDate").toString();
+						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
+						String regionName = meeting.get("regionName").toString();
+					%>
 					<li>
 						<div class="date">
-							일요일<br>
-							8<br>
-							18:00
+							<%= Util.getDateDay( meetingDate ) %>요일<br>
+							<%= Util.getDate(meetingDate ) %><br>
+							<%= Util.getDateStringFromDate(meetingDate, "HH:mm") %>
 						</div>
 						<div class="postTitle">
-							불금에 삼겹살에 소주 한잔
+							<%= meeting.get("title") %>
 						</div>
 						<div class="cafeName">
-							중고나라
+							<%= meeting.get("cafeName") %>
 						</div>
 						<div class="regionName">
-							서울 강남구 역삼동
+							<%= regionName %>
 						</div>
 					</li>
-					<li>
-						<div class="date">
-							일요일<br>
-							8<br>
-							18:00
-						</div>
-						<div class="postTitle">
-							불금에 삼겹살에 소주 한잔
-						</div>
-						<div class="cafeName">
-							중고나라
-						</div>
-						<div class="regionName">
-							서울 강남구 역삼동
-						</div>
-					</li>
+					<% } %>
 					
 					<div id="btnMakeMeeting">정모만들기</div>
 				</ul>
 			</div>
+			
+			<% } %>
+			
+			<% if ( cafeMemberList != null && cafeMemberList.size() > 0 ) {
+			%>
 			<div id="cafeMemberInfo">
-				카페 멤버<span id="membCnt">(3명)</span>
+				카페 멤버<span id="membCnt">(<%= cafeMemberCount %>명)</span>
 				<ul>
+					<% for ( int i = 0; i < cafeMemberList.size(); i++ ) { 
+						HashMap member = cafeMemberList.get(i);
+					%>
 					<li>
 						<div id="imgProfile">
-							<img src="http://img1.daumcdn.net/thumb/C76x76/?fname=http://i1.daumcdn.net/cfile280/image/2163673B581E33C927A3EA" 
+							<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= member.get("profileImageURL") %>" 
 							width=60 height=60/>
 						</div>
 						<div id="memberInfo">
-							<div>김대용</div>
+							<div><%= member.get("userName") %></div>
 						</div>
 					</li>
-					<li>
-						<div id="imgProfile">
-							<img src="http://img1.daumcdn.net/thumb/C76x76/?fname=http://i1.daumcdn.net/cfile280/image/2163673B581E33C927A3EA" 
-							width=60 height=60/>
-						</div>
-						<div id="memberInfo">
-							<div>김광중</div>
-						</div>
-					</li>
-					<li>
-						<div id="imgProfile">
-							<img src="http://img1.daumcdn.net/thumb/C76x76/?fname=http://i1.daumcdn.net/cfile280/image/2163673B581E33C927A3EA" 
-							width=60 height=60/>
-						</div>
-						<div id="memberInfo">
-							<div>오동욱</div>
-						</div>
-					</li>
+					<% } %>
 				</ul>
 			</div>
+			
+			<% } %>
+			
 			<div id="cafeButtons">
 				<div id="btnRegister">가입하기</div>
 				<div id="btnRetire">탈퇴하기</div>

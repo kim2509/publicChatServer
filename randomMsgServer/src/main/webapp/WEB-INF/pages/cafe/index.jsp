@@ -196,12 +196,13 @@ li img{
 			document.location.href="/nearhere/cafe/newCafe.do";
 	}
 	
-	function goCafeHome( title, url )
+	function goCafeHome( title, cafeID )
 	{
+		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
 		else
-			document.location.href="/nearhere/cafe/junggo";
+			document.location.href="/nearhere/cafe/" + cafeID;
 	}
 	
 </script>
@@ -241,10 +242,11 @@ li img{
 			
 				<% for ( int i = 0; i < myCafeList.size(); i++ ) {
 					String cafeName = myCafeList.get(i).get("cafeName").toString();
+					String cafeID = myCafeList.get(i).get("cafeID").toString();
 					String imageURL = myCafeList.get(i).get("url1").toString() + myCafeList.get(i).get("url2").toString();
 				%>
 
-				<li class="cafeItem" onclick="goCafeHome('중고나라', '<%= Constants.getServerURL() + "/cafe/junggo?isApp=" + isApp %>');">
+				<li class="cafeItem" onclick="goCafeHome('중고나라', '<%= cafeID %>');">
 					<div class="thumbnail">
 						<img src='<%= imageURL %>' width="80" height="80"/>
 					</div>

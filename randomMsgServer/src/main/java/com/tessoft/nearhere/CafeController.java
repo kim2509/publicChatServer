@@ -257,7 +257,31 @@ public class CafeController extends BaseController {
 	{
 		try
 		{
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			
+			HashMap cafeMainInfoParam = new HashMap();
+			cafeMainInfoParam.put("cafeID", cafeID);
+			HashMap cafeMainInfo = cafeBiz.getCafeMainInfo(cafeMainInfoParam);
+			
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
+			
+			List<HashMap> cafePublicMeetingList = cafeBiz.getCafePublicMeetingList(cafeMainInfoParam);
+			
+			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+			
+			for ( int i = 0; i < cafePublicMeetingList.size(); i++ )
+			{
+				String regionNo = cafePublicMeetingList.get(i).get("regionNo").toString();
+				cafePublicMeetingList.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));
+			}
+			
+			model.addAttribute("cafePublicMeetingList", cafePublicMeetingList);
+			
+			List<HashMap> cafeMemberList = cafeBiz.getCafeMemberList(cafeMainInfoParam);
+			model.addAttribute("cafeMemberList", cafeMemberList);
+			
+			String cafeMemberCount = cafeBiz.getCafeMemberCount(cafeMainInfoParam);
+			model.addAttribute("cafeMemberCount", cafeMemberCount);
 		}
 		catch( Exception ex )
 		{

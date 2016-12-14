@@ -8,7 +8,7 @@
 		select cm.*, ci.url1, ci.url2 from cafe_members cm2
 			left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
-			left outer join cafe_image ci on ci.imageNo = cd.mainImageNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
 		where cm2.userID=#{userID};
 	</select>
 	
@@ -28,4 +28,36 @@
 			select LAST_INSERT_ID();
 		</selectKey>
 	</insert>
+	
+	<select id="getCafeMainInfo" resultType="HashMap" parameterType="HashMap">
+		select cm.*, cd.iconImageNo, cd.mainImageNo, cd.mainDesc, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on cd.mainImageNo = ci.imageNo
+		where cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafePublicMeetingList" resultType="HashMap" parameterType="HashMap">
+		select cp.*, cm.cafeName, cl.regionNo from cafe_public_meeting cp
+			left outer join cafe_location cl on cp.locationNo=cl.No
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate >= NOW()
+		and cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafeMemberList" resultType="HashMap" parameterType="HashMap">
+		select cfm.*, u.userName, u.profileImageURL from cafe_members cfm
+			left outer join user u on cfm.userID=u.userID
+			left outer join cafe_master cm on cm.cafeNo=cfm.cafeNo
+		where cm.cafeID=#{cafeID}
+		order by cfm.createdDate
+		limit 0,5
+	</select>
+	
+	<select id="getCafeMemberCount" resultType="String" parameterType="HashMap">
+		select count(cfm.`no`) as memberCount from cafe_members cfm
+			left outer join cafe_master cm on cfm.cafeNo=cm.cafeNo
+		where cm.cafeID=#{cafeID}
+	</select>
+	
 </mapper>
