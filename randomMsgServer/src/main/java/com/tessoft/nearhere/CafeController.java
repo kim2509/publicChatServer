@@ -293,6 +293,12 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/cafeHome", model);
 	}
 	
+	@RequestMapping( value ="/cafe/cafeBoardList.do")
+	public ModelAndView cafeBoardList ( ModelMap model ) throws IOException
+	{
+		return new ModelAndView("cafe/cafeBoardList");
+	}
+	
 	@RequestMapping( value ="/cafe/terms.do")
 	public ModelAndView terms ( String userID, String name, String version, ModelMap model ) throws IOException
 	{

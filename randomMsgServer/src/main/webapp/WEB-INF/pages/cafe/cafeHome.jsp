@@ -5,11 +5,6 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-	HashMap cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
-	String mainImageURL = cafeMainInfo.get("url1").toString() + cafeMainInfo.get("url2");
-	List<HashMap> cafePublicMeetingList = (List<HashMap>) request.getAttribute("cafePublicMeetingList");
-	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
-	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
 %>
 
 <html>
@@ -24,6 +19,34 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
+<!-- Swipe Library http://idangero.us/swiper/#.WFIRj9WLRhE -->
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/swiper.min.css" />
+
+<style>
+body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:#000;margin:0;padding:0;}
+.swiper-container{width:100%;margin:0}
+.swiper-slide{
+	font-size:18px;
+	background:#fff;
+	display:-webkit-box;
+	display:-ms-flexbox;
+	display:-webkit-flex;
+	display:flex;
+	-webkit-box-pack:center;
+	-ms-flex-pack:center;
+	-webkit-justify-content:center;
+	justify-content:center;
+	-webkit-box-align:center;
+	-ms-flex-align:center;
+	-webkit-align-items:center;
+	align-items:center;
+}
+</style>
+
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/swiper.min.js"></script>
+<!-- Swipe Library http://idangero.us/swiper/#.WFIRj9WLRhE -->
+
+
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
 <link rel="stylesheet" type="text/css"
@@ -32,7 +55,8 @@
 <script language="javascript">
 		
 	var isApp = '<%= isApp %>';
-
+	var swiper = null;
+	
 	function goBoardHome( boardNo, boardName, url )
 	{
 		var titleUrlEncoded = encodeURIComponent( boardName );
@@ -41,6 +65,26 @@
 		else
 			document.location.href="/nearhere/cafe/board/3";
 	}
+	
+	jQuery(document).ready(function(){
+		swiper = $('.swiper-container').swiper({
+			onSlideChangeStart:onSlideChange
+		});
+	});
+	
+	function goSlide( slideNo )
+	{
+		swiper.slideTo(slideNo);
+	}
+	
+	function onSlideChange( swiper )
+	{
+		//goSlide( swiper.activeIndex, $('.menu ul li a').eq(swiper.activeIndex) );
+		var element = $('.menu ul li a').eq(swiper.activeIndex);
+		$('.menu ul li a').removeClass();
+		$(element).addClass('link_tab');
+	}
+	
 </script>
 
 </head>
@@ -66,97 +110,39 @@
 		
 			<ul>
 				<li class="menuItem">
-					<a href="" class="link_tab">홈</a>
+					<a href="javascript:void(0)" onclick="goSlide(0)" class="link_tab">홈</a>
 				</li>
 				<li class="menuItem">
-					<a href="">게시판</a>
+					<a href="javascript:void(0)" onclick="goSlide(1)">게시판</a>
 				</li>
 				<li class="menuItem">
-					<a href="">이미지</a>
+					<a href="javascript:void(0)" onclick="goSlide(2)">이미지</a>
 				</li>
 				<li class="menuItem">
-					<a href="">상품</a>
+					<a href="javascript:void(0)" onclick="goSlide(3)">상품</a>
 				</li>
 			</ul>
 		</div>
 		
-		<div id="cafeInfo">
-			
-			<% if (!"".equals( mainImageURL ) ) { %>
-			<div id="cafeImage">
-				<img src="<%= mainImageURL %>" height="140"/>
-			</div>
-			<% } %>
-			
-			<div id="cafeDesc">
-				<%= cafeMainInfo.get("mainDesc") %>
-			</div>
-			
-			<% if ( cafePublicMeetingList != null && cafePublicMeetingList.size() > 0 ) { %>
-			<div id="cafeMeeting">
-				정모
-				<ul class="slide_lst2">
+		<div class="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">
 				
-					<% for ( int i = 0; i < cafePublicMeetingList.size(); i++ ) {
-						
-						HashMap meeting = cafePublicMeetingList.get(i);
-						String dateString = meeting.get("meetingDate").toString();
-						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
-						String regionName = meeting.get("regionName").toString();
-					%>
-					<li>
-						<div class="date">
-							<%= Util.getDateDay( meetingDate ) %>요일<br>
-							<%= Util.getDate(meetingDate ) %><br>
-							<%= Util.getDateStringFromDate(meetingDate, "HH:mm") %>
-						</div>
-						<div class="postTitle">
-							<%= meeting.get("title") %>
-						</div>
-						<div class="cafeName">
-							<%= meeting.get("cafeName") %>
-						</div>
-						<div class="regionName">
-							<%= regionName %>
-						</div>
-					</li>
-					<% } %>
+					<jsp:include page="cafeHomeTab.jsp" flush="true"></jsp:include>
+				
+				</div>
+				<div class="swiper-slide">
+				
+					<jsp:include page="cafeBoardListTab.jsp" flush="true"></jsp:include>
 					
-					<div id="btnMakeMeeting">정모만들기</div>
-				</ul>
-			</div>
-			
-			<% } %>
-			
-			<% if ( cafeMemberList != null && cafeMemberList.size() > 0 ) {
-			%>
-			<div id="cafeMemberInfo">
-				카페 멤버<span id="membCnt">(<%= cafeMemberCount %>명)</span>
-				<ul>
-					<% for ( int i = 0; i < cafeMemberList.size(); i++ ) { 
-						HashMap member = cafeMemberList.get(i);
-					%>
-					<li>
-						<div id="imgProfile">
-							<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= member.get("profileImageURL") %>" 
-							width=60 height=60/>
-						</div>
-						<div id="memberInfo">
-							<div><%= member.get("userName") %></div>
-						</div>
-					</li>
-					<% } %>
-				</ul>
-			</div>
-			
-			<% } %>
-			
-			<div id="cafeButtons">
-				<div id="btnRegister">가입하기</div>
-				<div id="btnRetire">탈퇴하기</div>
-				<div id="btnManage">관리하기</div>
+				</div>
+				
+				<div class="swiper-slide">Slide 3</div>
+				<div class="swiper-slide">Slide 4</div>
 			</div>
 		</div>
+
+
 		
 	</div>
 

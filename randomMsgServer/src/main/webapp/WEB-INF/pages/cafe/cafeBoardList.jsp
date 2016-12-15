@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
-	String isApp = request.getParameter("isApp");
+	String isApp = "N";
 %>
 
 <html>
@@ -169,7 +169,7 @@ li{
 
 <script language="javascript">
 		
-	var isApp = '<%= isApp %>';
+	var isApp = 'Y';
 
 	function goBoardHome( boardNo, boardName, url )
 	{
