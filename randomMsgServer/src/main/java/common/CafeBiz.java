@@ -66,4 +66,24 @@ public class CafeBiz extends CommonBiz{
 		String cafeMemberCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeMemberCount", param);
 		return cafeMemberCount;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getCafeBoardList(HashMap param)
+	{
+		List<HashMap> boardList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardList", param);
+		return boardList;
+	}
+	
+	public HashMap getCafeBoardInfo(HashMap param)
+	{
+		HashMap boardInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeBoardInfo", param);
+		return boardInfo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getBoardPostList(HashMap param)
+	{
+		List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.cafe.getBoardPostList", param);
+		return postList;
+	}
 }

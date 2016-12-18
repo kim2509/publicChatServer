@@ -60,4 +60,24 @@
 		where cm.cafeID=#{cafeID}
 	</select>
 	
+	<select id="getCafeBoardList" resultType="HashMap" parameterType="HashMap">
+		select bm.* from cafe_board_master bm
+			left outer join cafe_master cm on cm.cafeNo=bm.cafeNo
+		where cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafeBoardInfo" resultType="HashMap" parameterType="HashMap">
+		select bm.* from cafe_board_master bm
+		where bm.boardNo = #{boardNo}
+	</select>
+	
+	<select id="getBoardPostList" resultType="HashMap" parameterType="HashMap">
+		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
+			ifnull(bpm.replyCount,0) as replyCount, bm.boardName, u.userName, bpm.createdDate
+		from cafe_board_post_master bpm
+			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
+			left outer join user u on u.userID = bpm.userID
+		where bm.boardNo = #{boardNo}
+	</select>
+	
 </mapper>

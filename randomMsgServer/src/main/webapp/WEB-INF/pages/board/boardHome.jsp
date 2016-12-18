@@ -5,6 +5,18 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	List<HashMap> boardPostList = (List<HashMap>) request.getAttribute("boardPostList");
+	
+	String boardNo = "";
+	String boardName = "";
+	
+	HashMap boardInfo = (HashMap) request.getAttribute("boardInfo");
+	
+	if ( boardInfo != null )
+	{
+		boardNo = boardInfo.get("boardNo").toString();	
+		boardName = boardInfo.get("boardName").toString();
+	}
 %>
 
 <html>
@@ -20,7 +32,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/board.css" />
+	href="<%=Constants.CSS_PATH%>/board.css?v=2" />
 
 
 <script language="javascript">
@@ -43,36 +55,48 @@
 
 	<div id="wrapper" style="padding-bottom:10px;">
 
-<%
-	if ( !"Y".equals( isApp ) )
-	{
-%>
 		<div class="titleDiv">
-			<span class="title">자유게시판</span>
+			<span class="title"><%= boardName %></span>
 		</div>
 	
-<%		
-	}
-%>	
-		
 		<div id="menu">
-			<div id="navBack">&lt; 자유게시판</div>
+			<div id="navBack">&lt; <%= boardName %></div>
 			<div id="btnNew">글쓰기</div>
 			<div id="btnNoti">공지</div>
 		</div>
 		
 		<div id="postContainerDiv">
+		
+			<% if ( boardPostList != null && boardPostList.size() > 0 ) { %>
 			<ul>
+				<% for ( int i = 0; i < boardPostList.size(); i++ ) { 
+					String postTitle = boardPostList.get(i).get("title").toString();
+					String noticeYN = boardPostList.get(i).get("noticeYN").toString();
+					String userName = boardPostList.get(i).get("userName").toString();
+					String readCount = boardPostList.get(i).get("readCount").toString();
+					String replyCount = boardPostList.get(i).get("replyCount").toString();
+					String createdDate = boardPostList.get(i).get("createdDate").toString();
+					Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
+				%>
 				<li onclick="goPostDetail('잠온다.','3');">
-					<div id="commentCount">35</div>
+				
+					<% if ( Integer.parseInt(replyCount) > 0 ) { %>
+					<div id="commentCount"><%= replyCount %></div>
+					<% } %>
+					
 					<div id="postDiv">
-						<span id="noti">공지</span>그네는 너무 뻔뻔하다. 어찌 그 자리에 계속 있을 생각을 할까?
+						<% if ("Y".equals( noticeYN )) { %>
+						<span id="noti">공지</span>
+						<% } %>
+						
+						<%= postTitle %>
 					</div>
 					<div id="postInfo">
-						<span>의식곤란</span>|<span>15.06.23</span>|<span>36,319</span>
+						<span><%= userName %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate, "yy.MM.dd") %></span>|<span><%= Util.getNumberWithComma(readCount) %></span>
 					</div>
 				</li>
-				<li>
+				<% } %>
+				<!-- li>
 					<div id="commentCount"> 5</div>
 					<div id="postDiv">
 						후후 하루만에 완성해부렀고마. 점점 늘어만 가는 퍼블리싱
@@ -80,8 +104,13 @@
 					<div id="postInfo">
 						<span>대용</span>|<span>15.06.23</span>|<span>36,319</span>
 					</div>
-				</li>
+				</li-->
 			</ul>
+			<% } else { %>
+			
+			<div id="emptyDiv">게시글이 존재하지 않습니다.</div>
+			
+			<% } %>
 		</div>
 	</div>
 

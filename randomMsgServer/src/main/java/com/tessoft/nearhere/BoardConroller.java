@@ -13,21 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class BoardConroller extends BaseController {
 
-	@RequestMapping( value ="/cafe/board/{boardNo}")
-	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , String userID, ModelMap model ) throws IOException
-	{
-		try
-		{
-			
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		insertHistory("/board/" + boardNo, userID , null , null, null );
-		
-		return new ModelAndView("board/boardHome", model);
-	}
+	
 
 }

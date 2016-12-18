@@ -5,6 +5,8 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
+	String cafeID = request.getAttribute("cafeID").toString();
 %>
 
 <html>
@@ -46,6 +48,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/swiper.min.js"></script>
 <!-- Swipe Library http://idangero.us/swiper/#.WFIRj9WLRhE -->
 
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
@@ -55,16 +58,9 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <script language="javascript">
 		
 	var isApp = '<%= isApp %>';
+	var userID = '<%= userID %>';
+	var cafeID = '<%= cafeID %>';
 	var swiper = null;
-	
-	function goBoardHome( boardNo, boardName, url )
-	{
-		var titleUrlEncoded = encodeURIComponent( boardName );
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
-		else
-			document.location.href="/nearhere/cafe/board/3";
-	}
 	
 	jQuery(document).ready(function(){
 		swiper = $('.swiper-container').swiper({
@@ -92,20 +88,12 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 
 	<div id="wrapper">
 		
-<%
-	if ( !"Y".equals( isApp ) )
-	{
-%>
 		<div class="titleDiv">
 			<div class="title">중고나라</div>
 			<div id="manage">i</div>
 			<div id="setting"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
 		</div>
 	
-<%		
-	}
-%>		
-		
 		<div class="menu">
 		
 			<ul>

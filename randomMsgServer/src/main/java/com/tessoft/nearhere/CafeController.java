@@ -252,6 +252,7 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/newCafeResult", model);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/cafe/{cafeID}")
 	public ModelAndView cafeHome ( @PathVariable(value="cafeID") String cafeID , String userID, ModelMap model ) throws IOException
 	{
@@ -282,6 +283,8 @@ public class CafeController extends BaseController {
 			
 			String cafeMemberCount = cafeBiz.getCafeMemberCount(cafeMainInfoParam);
 			model.addAttribute("cafeMemberCount", cafeMemberCount);
+			
+			model.addAttribute("cafeID", cafeID );
 		}
 		catch( Exception ex )
 		{
@@ -291,6 +294,63 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/" + cafeID, userID , null , null, null );
 		
 		return new ModelAndView("cafe/cafeHome", model);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getCafeBoardListAjax.do")
+	public @ResponseBody APIResponse getCafeBoardListAjax(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			String userID = info.get("userID").toString();
+			String cafeID = info.get("cafeID").toString();
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeBoardList = cafeBiz.getCafeBoardList(info);
+			
+			response.setData(cafeBoardList);
+			
+			insertHistory("/cafe/getCafeBoardListAjax.do", userID , cafeID , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 아이디가 중복됩니다.\r\n다시 한번 확인해 주시기 바랍니다.");
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/cafe/board/{boardNo}")
+	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("boardNo", boardNo);
+			
+			HashMap boardInfo = cafeBiz.getCafeBoardInfo(param);
+			model.addAttribute("boardInfo", boardInfo);
+			
+			List<HashMap> boardPostList = cafeBiz.getBoardPostList(param);
+			model.addAttribute("boardPostList", boardPostList);
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/board/" + boardNo, userID , null , null, null );
+		
+		return new ModelAndView("board/boardHome", model);
 	}
 	
 	@RequestMapping( value ="/cafe/cafeBoardList.do")

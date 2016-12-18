@@ -109,35 +109,6 @@ li{
     text-align: center;
 }
 
-
-#boardList{
-	margin-top:10px;
-}
-
-#boardList p{
-	padding-top:5px;
-	padding-left:10px;
-}
-
-#boardList ul{
-	border-top:1px solid #d3d3d3;
-	margin:0;
-	margin-top:10px;
-}
-
-#boardList ul li{
-	line-height:30px;
-	border-bottom:1px solid #d3d3d3;
-	padding:5px 10px;
-}
-
-#boardList ul li a{
-	text-decoration:none;
-	color:black;
-	display:block;
-	line-height:30px;
-}
-
 #cafeInfo
 {
 	padding:10px;
@@ -304,3 +275,28 @@ li{
 	padding:10px 10px;
 	margin-bottom:10px;
 }
+
+/* 게시판 탭 */
+#boardList{
+	width:100%;
+}
+
+#boardList ul{
+	margin:0;
+	padding:0;
+}
+
+#boardList ul li{
+	line-height:30px;
+	border-bottom:1px solid #d3d3d3;
+	padding:5px 10px;
+}
+
+#boardList ul li a{
+	text-decoration:none;
+	color:black;
+	display:block;
+	line-height:30px;
+}
+
+/* 게시판 탭 */

@@ -141,6 +141,10 @@ li img{
 <script language="javascript">
 		
 	var isApp = '<%= isApp %>';
+	
+	jQuery(document).ready( function () {
+		
+	});
 
 	function goSearchByName()
 	{
@@ -167,12 +171,13 @@ li img{
 	function goMyCafeList()
 	{
 		var titleUrlEncoded = encodeURIComponent('내 가입 카페');
-		var url = '<%= Constants.getServerURL() %>/cafe/myCafeList.do';
+		var url = '<%= Constants.getServerURL() %>/cafe/myCafeList.do?isApp=' + isApp;
+		url = encodeURIComponent( url );
 		
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
 		else
-			document.location.href="/nearhere/cafe/myCafeList.do";
+			document.location.href="/nearhere/cafe/myCafeList.do?isApp=" + isApp;
 	}
 	
 	function goMoreFavoriteMeeting()
@@ -199,6 +204,8 @@ li img{
 	function goCafeHome( title, cafeID )
 	{
 		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
+		url = encodeURIComponent( url );
+
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
 		else

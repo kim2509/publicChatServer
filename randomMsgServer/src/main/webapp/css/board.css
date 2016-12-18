@@ -227,4 +227,8 @@ body{
 	margin-left:0px;	
 }
 
-
+#emptyDiv{
+	text-align:center;
+	height:300px;
+	padding-top:140px;
+}

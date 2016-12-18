@@ -8,14 +8,21 @@ COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
 
+insert into cafe_board_master(boardName, cafeNo, createdDate)
+values('공지사항', 1, NOW());
+
+insert into cafe_board_master(boardName, cafeNo, createdDate)
+values('휴대폰/악세사리', 1, NOW());
+
+insert into cafe_board_master(boardName, cafeNo, createdDate)
+values('가전/가구', 1, NOW());
+
+insert into cafe_board_master(boardName, cafeNo, createdDate)
+values('문의게시판', 1, NOW());
 
 
-insert into cafe_image(imageName, url1, createdDate)
-values('카페메인','http://nv2.tveta.naver.net/libs/1147/1147955/20161207160806-1P7780XT.jpg', NOW());
+insert into cafe_board_post_master( title, boardNo, userID, readCount, replyCount, noticeYN, createdDate)
+values('그네는 너무 뻔뻔하다. 어찌 그 자리에 계속 있을 생각을 할까?', 1, 'user27', 36319, 35, 'Y', NOW() );
 
-insert into cafe_members(cafeNo, userID, memberType, createdDate)
-values(1, 'user638', '회원', NOW());
-
-
-insert into cafe_members(cafeNo, userID, memberType, createdDate)
-values(1, 'user801', '회원', NOW());
+insert into cafe_board_post_master( title, boardNo, userID, readCount, replyCount, noticeYN, createdDate)
+values('후후 하루만에 완성해부렀고마. 점점 늘어만 가는 퍼블리싱', 1, 'user27', 36319, 5, 'N', NOW() );

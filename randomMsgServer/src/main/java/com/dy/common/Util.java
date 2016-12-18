@@ -2,6 +2,7 @@ package com.dy.common;
 
 import java.security.MessageDigest;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -106,6 +107,13 @@ public class Util {
 		{
 			return 0.0;
 		}
+	}
+	
+	public static String getNumberWithComma( String num )
+	{
+		double amount = Double.parseDouble(num);
+		DecimalFormat formatter = new DecimalFormat("#,###");
+		return formatter.format(amount);
 	}
 	
 	public static String getString( Object obj )
