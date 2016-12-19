@@ -5,6 +5,15 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String boardName = request.getParameter("boardName");
+	HashMap postInfo = (HashMap) request.getAttribute("postInfo");
+	List<HashMap> postReplyList = (List<HashMap>) request.getAttribute("postReplyList");
+	
+	String readCount = postInfo.get("readCount").toString();
+	String createdDate = postInfo.get("createdDate").toString();
+	Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
+	
+	String replyCount = postInfo.get("replyCount").toString();
 %>
 
 <html>
@@ -33,14 +42,14 @@
 	<div id="wrapper" style="padding-bottom:10px;">
 
 		<div id="boardNavi">
-			<div id="naviTitle">&lt; 카페공지사항(알립니다).</div>
+			<div id="naviTitle">&lt; <%= boardName %></div>
 		</div>
 		
 		<div id="postHeaderDiv">
-			<div id="postTitle">3월이 왔네요...</div>
+			<div id="postTitle"><%= postInfo.get("title") %></div>
 			
 			<div id="postInfo">
-				<span>대용</span>|<span>15.06.23</span>|<span>36,319</span>
+				<span>대용</span>|<span><%= Util.getDateStringFromDate(dtCreatedDate, "yy.MM.dd") %></span>|<span><%= Util.getNumberWithComma(readCount) %></span>
 			</div>
 			
 			<div id="btns">
@@ -48,24 +57,34 @@
 			</div>
 		</div>
 		<div id="postBodyDiv">
-			만남의 시간을 가지려고 하였지만 회원들의 개인사정으로 무기한 연기합니다. 개인적으로 코트에 나와서 운동하세요. 이목사님과 구성모씨 은빛님은 다음주중에 호출하면 늦은시간이라도 나오세요.
+			<%= postInfo.get("content") %>
 		</div>
 		<div id="postReplyDiv">
 			<ul id="replyBtns">
-				<li>댓글 <span>2</span></li>
+				<li>댓글 <span><%= replyCount %></span></li>
 				<li>댓글쓰기</li>
 			</ul>
+			
+			<% if ( Integer.parseInt(replyCount) > 0 ) { %>
 			<ul id="replies">
+			
+				<% for ( int i = 0; i < postReplyList.size(); i++ ) { 
+					HashMap postReply = postReplyList.get(i);
+					String createdDate2 = postReply.get("createdDate").toString();
+					Date dtCreatedDate2 = Util.getDateFromString(createdDate2, "yyyy-MM-dd HH:mm:ss");
+				%>
 				<li>
-					<div id="replyInfo"><span>개폼15년째</span>|<span>13.03.01</span></div>
-					<div>잘 하셨어요. 계속 성원과 관심 주시고 항상 체력관리 잘 하셔서 만나면 게임 한번 하시죠 ㅎㅎ</div>
+					<div id="replyInfo"><span><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy.MM.dd") %></span></div>
+					<div><%= postReply.get("content") %></div>
 				</li>
-				<li>
-					<div id="replyInfo"><span>은빛</span>|<span>13.03.02</span></div>
-					<div>네. 자주 방문하겠습니다.</div>
-				</li>
+				<% } %>
 			</ul>
+			
+			<% if ( Integer.parseInt(replyCount) > postReplyList.size() ) { %>
 			<div id="goReply">댓글 더보기</div>
+			<% } %>
+			
+			<% } %>
 		</div>
 		
 	</div>

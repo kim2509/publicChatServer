@@ -353,10 +353,30 @@ public class CafeController extends BaseController {
 		return new ModelAndView("board/boardHome", model);
 	}
 	
-	@RequestMapping( value ="/cafe/cafeBoardList.do")
-	public ModelAndView cafeBoardList ( ModelMap model ) throws IOException
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/cafe/boardPost/detail/{postNo}")
+	public ModelAndView detail ( @PathVariable(value="postNo") String postNo , String userID, ModelMap model ) throws IOException
 	{
-		return new ModelAndView("cafe/cafeBoardList");
+		try
+		{
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("postNo", postNo);
+			
+			HashMap postInfo = cafeBiz.getCafeBoardPostInfo(param);
+			model.addAttribute("postInfo", postInfo);
+			
+			List<HashMap> postReplyList = cafeBiz.getCafeBoardPostReplyList(param);
+			model.addAttribute("postReplyList", postReplyList);
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/boardPost/detail/" + postNo, userID , null , null, null );
+		
+		return new ModelAndView("boardPost/detail", model);
 	}
 	
 	@RequestMapping( value ="/cafe/terms.do")

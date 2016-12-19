@@ -38,14 +38,15 @@
 <script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	var boardName = '<%= boardName %>';
 
-	function goPostDetail( title, postID )
+	function goPostDetail( postNo )
 	{
-		var titleUrlEncoded = encodeURIComponent( title );
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		//var titleUrlEncoded = encodeURIComponent( title );
+		//if ( isApp == 'Y' )
+			//document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
 		
-		document.location.href="/nearhere/cafe/boardPost/detail/" + postID;
+		document.location.href="/nearhere/cafe/boardPost/detail/" + postNo + "?boardName=" + encodeURIComponent(boardName);
 	}
 	
 </script>
@@ -70,6 +71,7 @@
 			<% if ( boardPostList != null && boardPostList.size() > 0 ) { %>
 			<ul>
 				<% for ( int i = 0; i < boardPostList.size(); i++ ) { 
+					String postNo = boardPostList.get(i).get("postNo").toString();
 					String postTitle = boardPostList.get(i).get("title").toString();
 					String noticeYN = boardPostList.get(i).get("noticeYN").toString();
 					String userName = boardPostList.get(i).get("userName").toString();
@@ -78,7 +80,7 @@
 					String createdDate = boardPostList.get(i).get("createdDate").toString();
 					Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
 				%>
-				<li onclick="goPostDetail('잠온다.','3');">
+				<li onclick="goPostDetail('<%= postNo %>');">
 				
 					<% if ( Integer.parseInt(replyCount) > 0 ) { %>
 					<div id="commentCount"><%= replyCount %></div>
@@ -96,15 +98,6 @@
 					</div>
 				</li>
 				<% } %>
-				<!-- li>
-					<div id="commentCount"> 5</div>
-					<div id="postDiv">
-						후후 하루만에 완성해부렀고마. 점점 늘어만 가는 퍼블리싱
-					</div>
-					<div id="postInfo">
-						<span>대용</span>|<span>15.06.23</span>|<span>36,319</span>
-					</div>
-				</li-->
 			</ul>
 			<% } else { %>
 			
