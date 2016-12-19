@@ -14,6 +14,7 @@
 	Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
 	
 	String replyCount = postInfo.get("replyCount").toString();
+	String lastReplyIndex = "";
 %>
 
 <html>
@@ -28,15 +29,26 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
+
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/board.css" />
-
-
-<script language="javascript">
-		
-</script>
+	href="<%=Constants.CSS_PATH%>/board.css?v=1" />
 
 </head>
+
+<script language="javascript">
+	
+	jQuery(document).ready(function(){
+		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
+	});
+	
+	function displayDateFormat( jsonDate )
+	{
+		var date = new Date(jsonDate);
+		return date.format('yy-MM-dd HH:mm');
+	}
+	
+</script>
 <body>
 
 	<div id="wrapper" style="padding-bottom:10px;">
@@ -53,7 +65,7 @@
 			</div>
 			
 			<div id="btns">
-				<div id="listBtn">목록</div>
+				<div id="listBtn" onclick="history.back(-1);">목록</div>
 			</div>
 		</div>
 		<div id="postBodyDiv">
@@ -72,16 +84,17 @@
 					HashMap postReply = postReplyList.get(i);
 					String createdDate2 = postReply.get("createdDate").toString();
 					Date dtCreatedDate2 = Util.getDateFromString(createdDate2, "yyyy-MM-dd HH:mm:ss");
+					lastReplyIndex = String.valueOf(i+1);
 				%>
 				<li>
-					<div id="replyInfo"><span><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy.MM.dd") %></span></div>
+					<div id="replyInfo"><span><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy-MM-dd HH:mm") %></span></div>
 					<div><%= postReply.get("content") %></div>
 				</li>
 				<% } %>
 			</ul>
 			
 			<% if ( Integer.parseInt(replyCount) > postReplyList.size() ) { %>
-			<div id="goReply">댓글 더보기</div>
+			<div id="replyDiv" onclick="loadMoreReplies()">댓글 더보기</div>
 			<% } %>
 			
 			<% } %>
@@ -89,7 +102,47 @@
 		
 	</div>
 
+<script id="replyT" type="text/x-handlebars-template">
+		{{#each data}}
+		<li>
+			<div id="replyInfo"><span>{{userName}}</span>|<span>{{displayDateFormat createdDate}}</span></div>
+			<div>{{content}}</div>
+		</li>
+		{{/each}}
+</script>
+<script language="javascript">
+
+	var lastReplyIndex = <%= lastReplyIndex %>;
+	var replyCount = <%= replyCount %>;
 	
+	function loadMoreReplies()
+	{
+		var param = {"postNo":"<%= postInfo.get("postNo") %>", 
+				"startIndex": lastReplyIndex, "showCount": 5};
+		
+		ajaxRequest('POST', '/nearhere/cafe/boardPost/getMoreRepliesAjax.do', param , onResult );		
+	}
+	
+	function onResult( result )
+	{
+		console.log(JSON.stringify(result));
+		
+		var source = $('#replyT').html();
+		var template = Handlebars.compile(source);
+		var html = template(result);
+
+		lastReplyIndex += result.data.length;
+		
+		$('#replies').append(html);
+		
+		if ( replyCount > lastReplyIndex )
+			$('#replyDiv').show();
+		else
+			$('#replyDiv').hide();
+			
+	}
+	
+</script>
 	
 </body>
 </html>

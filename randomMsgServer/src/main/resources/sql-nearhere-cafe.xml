@@ -81,8 +81,8 @@
 	</select>
 	
 	<select id="getCafeBoardPostInfo" resultType="HashMap" parameterType="HashMap">
-		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
-			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate, bpd.content
+		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
+			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate, ifnull(bpd.content,'') as content
 		from cafe_board_post_master bpm
 			left outer join cafe_board_post_detail bpd on bpm.postNo=bpd.postNo
 		where bpm.postNo=#{postNo}
@@ -92,7 +92,7 @@
 		select cpr.*, u.userName from cafe_board_post_reply cpr
 			left outer join user u on cpr.userID = u.userID
 		where cpr.postNo=#{postNo} and cpr.deletedDate is null
-		limit 0,3;
+		limit #{startIndex},#{showCount};
 	</select>
 	
 </mapper>

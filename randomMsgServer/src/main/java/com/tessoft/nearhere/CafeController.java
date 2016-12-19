@@ -318,7 +318,7 @@ public class CafeController extends BaseController {
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("카페 아이디가 중복됩니다.\r\n다시 한번 확인해 주시기 바랍니다.");
+			response.setResMsg( ex.getMessage() );
 			
 			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
 			logger.error( ex );
@@ -366,6 +366,8 @@ public class CafeController extends BaseController {
 			HashMap postInfo = cafeBiz.getCafeBoardPostInfo(param);
 			model.addAttribute("postInfo", postInfo);
 			
+			param.put("startIndex", "0");
+			param.put("showCount", "5");
 			List<HashMap> postReplyList = cafeBiz.getCafeBoardPostReplyList(param);
 			model.addAttribute("postReplyList", postReplyList);
 		}
@@ -377,6 +379,38 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/boardPost/detail/" + postNo, userID , null , null, null );
 		
 		return new ModelAndView("boardPost/detail", model);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/boardPost/getMoreRepliesAjax.do")
+	public @ResponseBody APIResponse getMoreReplies(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			String postNo = info.get("postNo").toString();
+			String startIndex = info.get("startIndex").toString();
+			String showCount = info.get("showCount").toString();
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> replyList = cafeBiz.getCafeBoardPostReplyList(info);
+			
+			response.setData(replyList);
+			
+			insertHistory("/cafe/getMoreRepliesAjax.do", postNo , startIndex , showCount, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg( ex.getMessage() );
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
 	}
 	
 	@RequestMapping( value ="/cafe/terms.do")

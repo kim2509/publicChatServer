@@ -18,3 +18,7 @@ values(1, 'user801', '잘 하셨어요. 계속 성원과 관심 주시고 항상
 
 insert into cafe_board_post_reply(postNo, userID, content, createdDate)
 values(1, 'user638', '네. 자주 방문하겠습니다.', NOW());
+
+
+insert into cafe_board_post_reply(postNo, userID, content, createdDate)
+values(1, 'user27', 'abc',NOW())
