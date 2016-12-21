@@ -14,7 +14,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>이근처</title>
 
 
 <!-- Include the jQuery library -->
@@ -125,7 +125,11 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 					
 				</div>
 				
-				<div class="swiper-slide">Slide 3</div>
+				<div class="swiper-slide">
+				
+					<jsp:include page="cafeBoardImageTab.jsp" flush="true"></jsp:include>
+				
+				</div>
 				<div class="swiper-slide">Slide 4</div>
 			</div>
 		</div>

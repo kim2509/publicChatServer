@@ -300,3 +300,48 @@ li{
 }
 
 /* 게시판 탭 */
+
+/* 이미지 탭 start */
+
+#imageList{
+	width:100%;
+	padding:10px;	
+}
+
+#imageList #borderNo{
+	height:30px;
+	font-weight:bold;
+	font-size:15px;
+}
+
+#imageList #countInfo{
+	float:right;	
+	font-size:14px;
+	line-height:30px;
+}
+
+#imageList #borderNo option{
+	line-height:30px;
+	padding:5px;
+}
+
+#imageList #bodyDiv{
+	margin-top:10px;	
+}
+
+#imageList #bodyDiv ul{
+	margin:0;
+	padding:0;
+}
+
+#imageList #bodyDiv li{
+	float:left;
+	width:50%;
+	text-align:center;
+}
+
+#imageList #bodyDiv li img{
+	width:90%;
+}
+
+/* 이미지 탭 end */
