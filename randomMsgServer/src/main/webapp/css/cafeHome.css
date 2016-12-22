@@ -317,7 +317,13 @@ li{
 #imageList #countInfo{
 	float:right;	
 	font-size:14px;
+	font-weight:bold;
+	color:#796767;
 	line-height:30px;
+}
+
+#imageList #borderNo{
+	color:#796767;
 }
 
 #imageList #borderNo option{
@@ -338,10 +344,54 @@ li{
 	float:left;
 	width:50%;
 	text-align:center;
+	margin-bottom:10px;
 }
 
 #imageList #bodyDiv li img{
-	width:90%;
+	width:95%;
+}
+
+#imageList #bodyDiv li #postInfo{
+	text-align:left;
+	font-size:14px;
+}
+
+#imageList #bodyDiv li p{
+	padding:3px 10px;
+	margin:0;
+	-webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+}
+
+#imageList #bodyDiv li span{
+	padding:0px 10px;
+	margin:0;
+	-webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    color:#909090;
+}
+
+#footerDiv{
+	clear:both;
+}
+
+#footerDiv #pagingInfo a{
+	border: 1px solid #ccc;
+    margin: 2px;
+    background: white;
+    padding:0;
+    color: black;
+    line-height: 1.4em;
+}
+
+#footerDiv .pageSelected{
+	color: blue;
 }
 
 /* 이미지 탭 end */

@@ -56,22 +56,46 @@
 		
 		<ul>
 			<li>
-				<img src="http://img1.daumcdn.net/thumb/W100x100/?fname=http://i1.daumcdn.net/cfile244/image/2218E3495859F9D80B3E84" />
+				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/22/115647760_Untitled-7.jpg?type=f270_166" />
+				<div id="postInfo">
+					<p>초아초아초아 너무 좋아용~ 초~아 초아초아 어서오세용~</p>
+					<span>오소리용 | 1분전</span>
+				</div>
 			</li>
 			<li>
-				<img src="http://img1.daumcdn.net/thumb/W100x100/?fname=http://i1.daumcdn.net/cfile244/image/2218E3495859F9D80B3E84" />
+				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/22/114239430_Untitled-6.jpg?type=f270_166" />
+				<div id="postInfo">
+					<p>이시영 하사관!!</p>
+					<span>오소리용 | 1분전</span>
+				</div>
 			</li>
 			<li>
-				<img src="http://img1.daumcdn.net/thumb/W100x100/?fname=http://i1.daumcdn.net/cfile244/image/2218E3495859F9D80B3E84" />
+				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/22/103230622_249.jpg?type=f270_166" />
+				<div id="postInfo">
+					<p>초아초아초아 너무 좋아용~ 초~아 초아초아 어서오세용~</p>
+					<span>오소리용 | 1분전</span>
+				</div>
 			</li>
 			<li>
-				<img src="http://img1.daumcdn.net/thumb/W100x100/?fname=http://i1.daumcdn.net/cfile244/image/2218E3495859F9D80B3E84" />
+				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/21/113801236_%25C0%25CC%25B5%25BF%25BF%25ED3.jpg?type=nf288_220" />
+				<div id="postInfo">
+					<p>초아초아초아 너무 좋아용~ 초~아 초아초아 어서오세용~</p>
+					<span>오소리용 | 1분전</span>
+				</div>
 			</li>
 		</ul>
 		
 	</div>
 	<div id="footerDiv">
-		footer
+		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
+			<b><a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;" class="pageSelected">1</a></b>
+			<a href="javascript:void(0)" onclick="goPage(2);" style="padding:5px;">2</a>
+			<a href="javascript:void(0)" onclick="goPage(3);" style="padding:5px;">3</a>
+			<a href="javascript:void(0)" onclick="goPage(4);" style="padding:5px;">4</a>
+			<a href="javascript:void(0)" onclick="goPage(5);" style="padding:5px;">5</a>
+			<a href="javascript:void(0)" onclick="goPage(6);" style="padding:5px;">&gt;</a>
+			<a href="javascript:void(0)" onclick="goPage(171);" style="padding:5px;">&gt;&gt;</a>
+		</div>
 	</div>
 </div>
 
