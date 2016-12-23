@@ -382,15 +382,15 @@ li{
 }
 
 #footerDiv #pagingInfo a{
+	text-decoration:none;
 	border: 1px solid #ccc;
-    margin: 2px;
+    padding:0px 5px 3px 5px;
     background: white;
-    padding:0;
-    color: black;
     line-height: 1.4em;
+    color:black;
 }
 
-#footerDiv .pageSelected{
+#footerDiv #pagingInfo .pageSelected{
 	color: blue;
 }
 

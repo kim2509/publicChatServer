@@ -88,13 +88,13 @@
 	</div>
 	<div id="footerDiv">
 		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
-			<b><a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;" class="pageSelected">1</a></b>
-			<a href="javascript:void(0)" onclick="goPage(2);" style="padding:5px;">2</a>
-			<a href="javascript:void(0)" onclick="goPage(3);" style="padding:5px;">3</a>
-			<a href="javascript:void(0)" onclick="goPage(4);" style="padding:5px;">4</a>
-			<a href="javascript:void(0)" onclick="goPage(5);" style="padding:5px;">5</a>
-			<a href="javascript:void(0)" onclick="goPage(6);" style="padding:5px;">&gt;</a>
-			<a href="javascript:void(0)" onclick="goPage(171);" style="padding:5px;">&gt;&gt;</a>
+			<b><a href="javascript:void(0)" onclick="goPage(1);" class="pageSelected">1</a></b>
+			<a href="javascript:void(0)" onclick="goPage(2);">2</a>
+			<a href="javascript:void(0)" onclick="goPage(3);">3</a>
+			<a href="javascript:void(0)" onclick="goPage(4);">4</a>
+			<a href="javascript:void(0)" onclick="goPage(5);">5</a>
+			<a href="javascript:void(0)" onclick="goPage(6);">&gt;</a>
+			<a href="javascript:void(0)" onclick="goPage(171);">&gt;&gt;</a>
 		</div>
 	</div>
 </div>
