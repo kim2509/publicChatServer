@@ -104,6 +104,13 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public List<HashMap> getCafeBoardPostContent(HashMap param)
+	{
+		List<HashMap> content = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardPostContent", param);
+		return content;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<HashMap> getCafeBoardPostReplyList(HashMap param)
 	{
 		int startIndex = Integer.parseInt( param.get("startIndex").toString() );
@@ -115,5 +122,26 @@ public class CafeBiz extends CommonBiz{
 		
 		List<HashMap> replyList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardPostReplyList", param);
 		return replyList;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<HashMap> getCafeBoardPostImageList(HashMap param)
+	{
+		int startIndex = Integer.parseInt( param.get("startIndex").toString() );
+		int showCount = Integer.parseInt( param.get("showCount").toString() );
+		param.remove("startIndex");
+		param.remove("showCount");
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardPostImageList", param);
+		return postList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int getCafeBoardPostImageCount(HashMap param)
+	{
+		int totalCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeBoardPostImageCount", param);
+		return totalCount;
 	}
 }

@@ -308,7 +308,7 @@ li{
 	padding:10px;	
 }
 
-#imageList #borderNo{
+#imageList #boardElement{
 	height:30px;
 	font-weight:bold;
 	font-size:15px;
@@ -322,11 +322,11 @@ li{
 	line-height:30px;
 }
 
-#imageList #borderNo{
+#imageList #boardElement{
 	color:#796767;
 }
 
-#imageList #borderNo option{
+#imageList #boardElement option{
 	line-height:30px;
 	padding:5px;
 }

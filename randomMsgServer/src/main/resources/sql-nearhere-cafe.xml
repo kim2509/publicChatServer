@@ -82,10 +82,18 @@
 	
 	<select id="getCafeBoardPostInfo" resultType="HashMap" parameterType="HashMap">
 		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
-			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate, ifnull(bpd.content,'') as content
+			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate
 		from cafe_board_post_master bpm
-			left outer join cafe_board_post_detail bpd on bpm.postNo=bpd.postNo
 		where bpm.postNo=#{postNo}
+	</select>
+	
+	<select id="getCafeBoardPostContent" resultType="HashMap" parameterType="HashMap">
+		select ifnull(cd.content,'') as content, cd.type, 
+			concat( ifnull(ci.url1,''), ifnull(ci.url2,'') ) as imageURL 
+		from cafe_board_post_detail cd
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+		where postNo = #{postNo}
+		order by seq
 	</select>
 	
 	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
@@ -93,6 +101,43 @@
 			left outer join user u on cpr.userID = u.userID
 		where cpr.postNo=#{postNo} and cpr.deletedDate is null
 		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getCafeBoardPostImageList" resultType="HashMap" parameterType="HashMap">
+		select cm.*, u.userName, bm.boardName, concat( ifnull(ci.url1,'') , ifnull(ci.url2,'') ) as imageURL 
+		from cafe_board_post_master cm
+			left outer join ( 
+				select postNo, imageNo from cafe_board_post_detail where type = 2 
+				group by postNo
+			) cd on cm.postNo = cd.postNo
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+			left outer join user u on cm.userID = u.userID
+			left outer join cafe_board_master bm on bm.boardNo = cm.boardNo
+			left outer join cafe_master cfm on cfm.cafeNo = bm.cafeNo
+		where cd.imageNo is not null
+		and cfm.cafeID=#{cafeID}
+		<if test="boardNo != null and boardNo != ''">
+			and bm.boardNo=#{boardNo}
+		</if>
+		order by cm.createdDate desc
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getCafeBoardPostImageCount" resultType="Integer" parameterType="HashMap">
+		select count(cm.postNo) as totalCount from cafe_board_post_master cm
+			left outer join ( 
+				select postNo, imageNo from cafe_board_post_detail where type = 2 
+				group by postNo
+			) cd on cm.postNo = cd.postNo
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+			left outer join user u on cm.userID = u.userID
+			left outer join cafe_board_master bm on bm.boardNo = cm.boardNo
+			left outer join cafe_master cfm on cfm.cafeNo = bm.cafeNo
+		where cd.imageNo is not null
+		and cfm.cafeID=#{cafeID}
+		<if test="boardNo != null and boardNo != ''">
+			and bm.boardNo=#{boardNo}
+		</if>
 	</select>
 	
 </mapper>

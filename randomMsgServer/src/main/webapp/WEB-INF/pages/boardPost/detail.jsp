@@ -7,6 +7,7 @@
 	String isApp = request.getParameter("isApp");
 	String boardName = request.getParameter("boardName");
 	HashMap postInfo = (HashMap) request.getAttribute("postInfo");
+	List<HashMap> contentList = (List<HashMap>) request.getAttribute("contentList");
 	List<HashMap> postReplyList = (List<HashMap>) request.getAttribute("postReplyList");
 	
 	String readCount = postInfo.get("readCount").toString();
@@ -69,7 +70,21 @@
 			</div>
 		</div>
 		<div id="postBodyDiv">
-			<%= postInfo.get("content") %>
+			<% if ( contentList != null && contentList.size() > 0 ) {
+				
+				for ( int i = 0; i < contentList.size(); i++ )
+				{
+					String type = contentList.get(i).get("type").toString();
+					String content = contentList.get(i).get("content").toString();
+					String imageURL = contentList.get(i).get("imageURL").toString();
+					
+					if ("1".equals( type ) )
+						out.println( content );
+					else
+						out.println("<img src='" + imageURL + "' />");
+				}
+			}
+			%>
 		</div>
 		<div id="postReplyDiv">
 			<ul id="replyBtns">
