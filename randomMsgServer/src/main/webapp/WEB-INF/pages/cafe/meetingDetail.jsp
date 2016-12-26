@@ -38,6 +38,14 @@
 			<div id="naviTitle">&lt; 정모 상세</div>
 		</div>
 
+		<div id="postHeaderDiv">
+			<div id="postTitle">FDSAFDSFDSAFDSA</div>
+			
+			<div id="postInfo">
+				<span>대용</span>|<span>FDSAFDSA</span>|<span>23</span>
+			</div>
+			
+		</div>
 	</div>
 	
 </body>
