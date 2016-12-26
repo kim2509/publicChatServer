@@ -38,7 +38,7 @@
 	</select>
 	
 	<select id="getCafePublicMeetingList" resultType="HashMap" parameterType="HashMap">
-		select cp.*, cm.cafeName, cl.regionNo from cafe_public_meeting cp
+		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
 		where cp.meetingDate >= NOW()

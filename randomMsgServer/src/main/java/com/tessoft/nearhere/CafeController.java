@@ -505,4 +505,25 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("legal_terms/" + pageName, model);
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/cafe/meetingDetail.do")
+	public ModelAndView meetingDetail ( String cafeID , String meetingNo, String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("postNo", cafeID);
+			
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/meetingDetail.do", cafeID , meetingNo , userID, null );
+		
+		return new ModelAndView("cafe/meetingDetail", model);
+	}
 }

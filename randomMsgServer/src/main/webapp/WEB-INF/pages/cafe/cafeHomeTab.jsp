@@ -3,13 +3,25 @@
 <%@ page import="com.dy.common.*"%>
 
 <%
-	String isApp = request.getParameter("isApp");
 	HashMap cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
 	String mainImageURL = cafeMainInfo.get("url1").toString() + cafeMainInfo.get("url2");
 	List<HashMap> cafePublicMeetingList = (List<HashMap>) request.getAttribute("cafePublicMeetingList");
 	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
 	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
 %>
+
+<script language="javascript">
+	function goMeetingDetail( cafeID, meetingNo )
+	{
+		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
+				cafeID + '&meetingNo=' + meetingNo;
+	
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+</script>
 
 		<div id="cafeInfo">
 			
@@ -35,7 +47,7 @@
 						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
 						String regionName = meeting.get("regionName").toString();
 					%>
-					<li>
+					<li onclick="goMeetingDetail('<%= meeting.get("cafeID") %>', '<%= meeting.get("meetingNo") %>');">
 						<div class="date">
 							<%= Util.getDateDay( meetingDate ) %>요일<br>
 							<%= Util.getDate(meetingDate ) %><br>
