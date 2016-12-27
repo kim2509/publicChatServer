@@ -62,6 +62,20 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public HashMap getCafeMeetingInfo(HashMap param)
+	{
+		HashMap meetingInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeMeetingInfo", param);
+		return meetingInfo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getCafeMeetingMembers(HashMap param)
+	{
+		List<HashMap> meetingMembers = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMeetingMembers", param);
+		return meetingMembers;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public List<HashMap> getCafeMemberList(HashMap param)
 	{
 		List<HashMap> cafeMemberList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMemberList", param);

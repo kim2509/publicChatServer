@@ -514,8 +514,14 @@ public class CafeController extends BaseController {
 		{
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			HashMap param = new HashMap();
-			param.put("postNo", cafeID);
+			param.put("cafeID", cafeID);
+			param.put("meetingNo", meetingNo);
 			
+			HashMap meetingInfo = cafeBiz.getCafeMeetingInfo(param);
+			model.addAttribute("meetingInfo", meetingInfo);
+			
+			List<HashMap> meetingMembers = cafeBiz.getCafeMeetingMembers(param);
+			model.addAttribute("meetingMembers", meetingMembers);
 		}
 		catch( Exception ex )
 		{

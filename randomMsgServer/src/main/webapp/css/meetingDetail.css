@@ -122,123 +122,31 @@ body{
 	line-height:44px;
 }
 
-#postHeaderDiv{
+#HeaderDiv{
 	background:#fbfbfb;
 	padding:15px;
 	border-bottom:1px solid #d9d9d9;
 }
 
-#postHeaderDiv #postTitle{
+#HeaderDiv #title{
 	font-size:21px;
 	font-weight:bold;
 	line-height:26px;
 	color:#222;
 }
 
-#postHeaderDiv #postInfo{
+#HeaderDiv #info{
 	margin-top:10px;
 	color:#909090;
 }
 
-#postHeaderDiv #postInfo span{
+#HeaderDiv #info span{
 	margin:0px 10px;
 	font-size:13px;
 }
 
-#postHeaderDiv #postInfo span:nth-child(1){
+#HeaderDiv #info span:nth-child(1){
 	margin-left:0px;
 }
 
-#postHeaderDiv #btns{
-	margin-top:20px;
-}
 
-#postHeaderDiv #btns #listBtn{
-	padding:5px 10px;
-	border:1px solid #d9d9d9;
-	border-radius:15px;
-	display:inline;
-	background:white;
-	font-size:14px;
-}
-
-#postBodyDiv{
-	padding:15px;
-}
-
-#postBodyDiv img{
-	display:block;
-	margin:10px 0px;
-	width:100%;
-}
-
-#postReplyDiv{
-	margin-bottom:30px;
-}
-
-#postReplyDiv ul{
-	margin:0;
-	padding:0;
-	list-style:none;
-}
-
-#postReplyDiv #replyBtns{
-	margin-top:10px;
-	height:40px;
-	border-top:1px solid #d9d9d9;
-	border-bottom:1px solid #d9d9d9;
-}
-
-#postReplyDiv #replyBtns li{
-	margin:0;
-	display:block;
-	float:left;
-	width:50%;
-	line-height:40px;
-	text-align:center;
-}
-
-#postReplyDiv #replyBtns li:nth-child(even){
-	float:none;
-	overflow:hidden;
-	width:auto;
-	border-left:1px solid #d9d9d9;
-	background:#f2f2f2;
-}
-
-#postReplyDiv #replies{
-	font-size:15px;
-}
-
-#postReplyDiv #replies li{
-	padding:15px;
-	border-bottom:1px solid #d9d9d9;
-}
-
-#postReplyDiv #replyDiv{
-	text-align:center;
-	padding:10px;
-	border-bottom:1px solid #d9d9d9;
-}
-
-#postReplyDiv #replyInfo{
-	color:#909090;
-	font-size:13px;
-	margin-bottom:10px;
-}
-
-#postReplyDiv #replyInfo span{
-	color:#909090;
-	font-size:13px;
-	margin:0px 10px;
-}
-
-#postReplyDiv #replyInfo span:nth-child(1){
-	margin-left:0px;	
-}
-
-#emptyDiv{
-	text-align:center;
-	height:300px;
-	padding-top:140px;
-}
