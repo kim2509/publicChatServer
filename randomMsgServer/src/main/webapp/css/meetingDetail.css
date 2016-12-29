@@ -4,114 +4,35 @@ body{
 	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
-
-.titleDiv{
-	background:#45a8e2;;
-	color:white;
-	height:50px;
-	text-align:center;
-	display: table; 
-	width: 100%;
-}
-
-.title{
-	font-weight:bold;
-	font-size:20px;
-	vertical-align:middle;
-	display: table-cell;
-}
-
-#menu{
-	border-bottom:1px solid #d3d3d3;
-	height:44px;
-	font-size:14px;
-	color:gray;
-}
-
-#menu div{
-	line-height:30px;
-	margin-top:7px;
-}
-
-#navBack{
-	float:left;
-	margin-left:10px;
-	color:#5a5a98;
-	font-weight:bold;
-}
-
-#btnNoti{
-	float:right;
-	margin:0px 5px;
-	border:1px solid #d3d3d3;
-	padding-left:5px;
-	padding-right:5px;
-	border-radius:10px;
-}
-
-#btnNew{
-	float:right;
-	margin:0px 5px;
-	border:1px solid #d3d3d3;
-	padding-left:5px;
-	padding-right:5px;
-	border-radius:10px;
-	margin-right:10px;
-}
-
-#postContainerDiv ul{
-	list-style:none;
-	margin:0;
-	padding:0;
-}
-
-#postContainerDiv li{
-	padding:10px;
-	border-bottom:1px solid #d3d3d3;
-	height:80px;
-}
-
-#postContainerDiv li #commentCount{
-	float:right;
-	color:#6d6550;
-	border:1px solid #b3aa43;
-	border-radius:30px;
-	padding:10px;
-	margin-top:20px;
-	font-size:12px;
-	font-weight:bold;
-	background:beige;
-}
-
-#postContainerDiv li #postDiv{
-	margin-right:50px;
-	line-height:25px;
-}
-
-#postContainerDiv li #noti{
-	background:black;
-	color:white;
-	font-size:12px;
-	padding:2px 5px;
-	border-radius:20px;
-	margin:0px 5px;
-}
-
-#postContainerDiv li #postInfo{
-	margin-top:10px;
-	font-size:14px;
-	color:#909090;
-}
-
-#postContainerDiv li #postInfo span{
-	margin-left:5px;
-}
-
 /* detail */
 
 #Navi{
 	border-bottom:1px solid #d9d9d9;
 	height:44px;
+}
+
+#Navi #btnModify{
+	float:right;
+	border:1px solid blue;
+	color:blue;
+	line-height:28px;
+	margin:8px 0px 8px 0px;
+	padding:0px 5px;
+	border-radius:10px;
+	font-size:13px;
+	font-weight:bold;
+}
+
+#Navi #btnDelete{
+	float:right;
+	border:1px solid red;
+	color:red;
+	line-height:28px;
+	margin:8px;
+	padding:0px 5px;
+	border-radius:10px;
+	font-size:13px;
+	font-weight:bold;
 }
 
 #Navi #naviTitle{
@@ -136,17 +57,100 @@ body{
 }
 
 #HeaderDiv #info{
+	padding:10px 0px;
 	margin-top:10px;
 	color:#909090;
 }
 
 #HeaderDiv #info span{
-	margin:0px 10px;
+	font-size:13px;
+	font-weight:bold;
+	line-height:22px;
+}
+
+#locationInfo{
+	margin:10px;
+}
+
+#locationInfo th{
 	font-size:13px;
 }
 
-#HeaderDiv #info span:nth-child(1){
-	margin-left:0px;
+#locationInfo td{
+	font-size:13px;
 }
 
+#meetingDesc{
+	font-size:13px;
+	margin:10px;
+}
 
+#map{
+	margin:10px 10px;
+	height:200px;
+	border-radius:10px;
+	z-index:10;
+}
+
+#personInfo{
+	margin:20px 10px 0px 10px;
+	padding:0px 0px 5px 0px;
+	font-size:14px;
+	font-weight:bold;
+	border-bottom:1px solid #d9d9d9;
+}
+
+#membersDiv{
+	padding:10px;
+	margin-bottom:100px;
+	height:50px;
+}
+
+#membersDiv ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+#membersDiv ul li{
+	float:left;
+	position:relative;
+	height:65px;
+	width:50%;
+}
+
+#membersDiv ul li img{
+	float:left;
+	border-radius:10px;
+}
+
+#membersDiv ul li #userName{
+	margin-top:5px;
+	margin-left:70px;
+	margin-bottom:5px;
+}
+
+#membersDiv ul li #memberType{
+	margin-left:70px;
+	font-size:13px;
+}
+
+#bottom{
+	height:50px;
+	background:white;
+}
+
+#joinDiv {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height:40px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    border:1px solid black;
+    color:white;
+    line-height:38px;
+    background:red;
+    z-index:100;
+}
