@@ -1,0 +1,52 @@
+body{
+	background:white;
+	margin:0;
+	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+}
+
+.titleDiv{
+	background:#7bafe3;;
+	color:white;
+	height:50px;
+	text-align:center;
+	width: 100%;
+}
+
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	line-height:50px;
+}
+
+#favoriteRegionDiv{
+	background:yellow;	
+}
+
+ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+	margin:10px 10px;
+	border-top:1px solid #d9d9d9;
+}
+
+.favoriteRegion li{
+	float:left;
+	font-size:14px;
+	font-weight:bold;
+	height:40px;
+	line-height:40px;
+	text-align:center;
+	border-bottom:1px solid #d9d9d9;
+	width:50%;
+}
+
+.favoriteRegion li:nth-child(1n){
+	/*border-left:1px solid #d9d9d9;*/
+	
+}
+
+.favoriteRegion li:nth-child(2n){
+	/*border-left:1px solid #d9d9d9;*/
+}
