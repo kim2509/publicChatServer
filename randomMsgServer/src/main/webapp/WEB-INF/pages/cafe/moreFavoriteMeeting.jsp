@@ -16,242 +16,42 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
 
-
-<style type="text/css">
-
-span{ padding:5px; }
-
-.destination {
-    margin: 10px;
-    border-radius: 10px;
-    border: 1px solid #5f98f1;
-    background: white;
-    line-height: 40px;
-    color: #5f98f1;
-    text-align: center;
-}
-
-ul {
-	margin:0;
-	padding:0;
-	text-align:center;
-	display:block;
-	overflow:hidden;
-	list-style:none;
-}
-
-.cafeItem {
-	float: left;
-    height: 135px;
-    width: 32%;
-    text-align:center;
-}
-
-li img{
-	border-radius: 10px;
-}
-
-.slide_lst{
-	margin-top:10px;
-}
-
-.slide_lst2{
-	
-	
-}
-
-.slide_lst2 li {
-	position:relative;
-	clear:both;
-	height:60px;
-	padding-top:10px;
-	padding-bottom:5px;
-	border-bottom: 1px solid gray;
-}
-
-.desc{
-	margin-top:5px;
-	text-align:center;
-	overflow:hidden;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    padding-left:10px;
-    padding-right:10px;
-}
-
-.date{
-	border:1px solid gray;
-	border-radius: 5px;
-	padding:5px 5px 0px 5px;
-	font-size:12px;
-	font-weight:bold;
-	float:left;
-}
-
-.postTitle{
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-    text-overflow: ellipsis;
-	text-align:left;
-	margin-left:70px;
-	font-size:12px;
-}
-
-.cafeName{
-	position:absolute;
-	margin-left:70px;
-	font-size:12px;
-	font-weight:bold;
-	bottom:10px;
-}
-
-.regionName{
-	position:absolute;
-	font-size:12px;
-	font-weight:bold;
-	bottom:10px;
-	right:10px
-}
-
-.sectionTitle{
-	padding-left:10px;
-}
-
-.btn1{
-	margin-top:3px;
-}
-
-a {
-	text-decoration: none;
-    color: black;
-    line-height: 1.4em;
-}
-
-</style>
-
-<script language="javascript">
-		
-	function goSearchByName()
-	{
-		document.location.href="/nearhere/cafe/searchByName.do";
-	}
-	
-	function goSearchByRegion()
-	{
-		document.location.href="/nearhere/cafe/searchByRegion.do";
-	}
-	
-	function goMyCafeList()
-	{
-		document.location.href="/nearhere/cafe/myCafeList.do";
-	}
-	
-	function goMoreFavoriteMeeting()
-	{
-		document.location.href="/nearhere/cafe/moreFavoriteMeeting.do";
-	}
-	
-</script>
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css" />
 
 </head>
 <body>
 
-	<script id="cafeItemT" type="text/x-handlebars-template">
-	<ul class="slide_lst">
-		{{#each items}}
-		<li>
-			<div class="thumbnail">
-				<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-			</div>
-			<div class='desc'>
-				카페1
-			</div>
-		</li>
-		{{/each}}
-	</ul>
-</script>
-
-	<div id="wrapper" style="padding-bottom:10px;">
+	<div id="wrapper">
 		
+		<div class="titleDiv">
+			<div class="title">관심지역 정모</div>
+		</div>
 		
-		<div id="section">
-
-			<div class="sectionTitle" style="margin-bottom:0px;">관심지역 정모</div>
-
-			<ul class="slide_lst2">
+		<div id="favoriteRegionDiv">
+			<ul class="favoriteRegion">
 				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						서울시 강남구
-					</div>
+					서울시 강남구 역삼동
 				</li>
 				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						경북 포항시
-					</div>
+					서울시 송파구 방이동
 				</li>
 				<li>
-					<div class='date'>
-						화요일<br/>
-						19<br/>
-						PM 7:00
-					</div>
-					<div class="postTitle">
-						불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~불금에 삼겹살에 소주 한잔~
-					</div>
-					<div class='cafeName'>
-						역삼모임
-					</div>
-					<div class='regionName'>
-						대구광역시
-					</div>
+					포항시 남구 연일읍 택전리
+				</li>
+				<li>
+					서울시 강남구 역삼동
+				</li>
+				<li>
+					서울시 송파구 방이동
+				</li>
+				<li>
+					포항시 남구 연일읍 택전리
 				</li>
 			</ul>
-			
 		</div>
-		
-		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
-			<b><a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;" class="pageSelected">1</a></b>
-			<a href="javascript:void(0)" onclick="goPage(2);" style="padding:5px;">2</a>
-			<a href="javascript:void(0)" onclick="goPage(3);" style="padding:5px;">3</a>
-			<a href="javascript:void(0)" onclick="goPage(4);" style="padding:5px;">4</a>
-			<a href="javascript:void(0)" onclick="goPage(5);" style="padding:5px;">5</a>
-			<a href="javascript:void(0)" onclick="goPage(6);" style="padding:5px;">&gt;</a>
-			<a href="javascript:void(0)" onclick="goPage(176);" style="padding:5px;">&gt;&gt;</a>
-		</div>
-		
 	</div>
-
-	
 	
 </body>
 </html>
