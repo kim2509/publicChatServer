@@ -92,6 +92,14 @@ body{
 	z-index:10;
 }
 
+#joinInfo{
+	float:right;
+	font-size:14px;
+	font-weight:bold;
+	color:blue;
+	margin-right:10px;
+}
+
 #personInfo{
 	margin:20px 10px 0px 10px;
 	padding:0px 0px 5px 0px;
@@ -130,6 +138,14 @@ body{
 	margin-bottom:5px;
 }
 
+#membersDiv ul li #userName2{
+	margin-top:5px;
+	margin-left:70px;
+	margin-bottom:5px;
+	color:green;
+	font-weight:bold;
+}
+
 #membersDiv ul li #memberType{
 	margin-left:70px;
 	font-size:13px;
@@ -140,17 +156,32 @@ body{
 	background:white;
 }
 
-#joinDiv {
+.joinDiv {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height:40px;
+    height:50px;
     font-size:18px;
     font-weight:bold;
     text-align:center;
     border:1px solid black;
     color:white;
-    line-height:38px;
-    background:red;
+    line-height:48px;
+    background:#3772cb;
+    z-index:100;
+}
+
+.joinDiv2 {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height:50px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    border:1px solid black;
+    color:white;
+    line-height:48px;
+    background:#6e4025;
     z-index:100;
 }

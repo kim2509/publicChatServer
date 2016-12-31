@@ -53,22 +53,29 @@ function isAlphaNumberOnly( str )
 
 function ajaxRequest( method, url, param , onSuccess, onComplete, onError )
 {
-	jQuery.ajax({
-		type : method,
-		url : url,
-		data : JSON.stringify( param ),
-		dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
-		contentType : "application/json; charset=UTF-8",
-		success : function(result) {
-			onSuccess( result );
-		},
-		complete : function(result) {
-			if ( onComplete != undefined && onComplete != null )
-				onComplete( result );
-		},
-		error : function(xhr, status, error) {
-			if ( onError != undefined && onError != null )
-				onError( xhr, status, error );
-		}
-	});
+	try
+	{
+		jQuery.ajax({
+			type : method,
+			url : url,
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				onSuccess( result );
+			},
+			complete : function(result) {
+				if ( onComplete != undefined && onComplete != null )
+					onComplete( result );
+			},
+			error : function(xhr, status, error) {
+				if ( onError != undefined && onError != null )
+					onError( xhr, status, error );
+			}
+		});	
+	}
+	catch( ex )
+	{
+		alert( ex.message );
+	}
 }

@@ -13,7 +13,7 @@
 	</select>
 	
 	<select id="getUpcomingCafeMeetingList" resultType="HashMap" parameterType="String">
-		select cp.*, cm.cafeName, cl.regionNo from cafe_public_meeting cp
+		select cp.*, cm.cafeID, cm.cafeName, cl.regionNo from cafe_public_meeting cp
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
 		where cp.meetingDate >= NOW() 
@@ -46,10 +46,12 @@
 	</select>
 	
 	<select id="getCafeMeetingInfo" resultType="HashMap" parameterType="HashMap">
-		select meetingNo, cafeNo, title, meetingDate, locationNo, ifnull(maxNo, 0 ) as maxNo
-			, ifnull(curNo, 0) as curNo
-		from cafe_public_meeting
-		where meetingNo=#{meetingNo}
+		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDate, cm.locationNo, ifnull(cm.maxNo, 0 ) as maxNo
+			, cmm.curNo
+		from cafe_public_meeting cm
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cm.meetingNo = cmm.meetingNo
+		where cm.meetingNo=#{meetingNo}
 	</select>
 	
 	<select id="getCafeMeetingMembers" resultType="HashMap" parameterType="HashMap">
@@ -154,5 +156,15 @@
 			and bm.boardNo=#{boardNo}
 		</if>
 	</select>
+	
+	<insert id="insertCafeMeeting" parameterType="Hashmap">
+		insert into cafe_public_meeting_members(meetingNo, userID, createdDate)
+		values(#{meetingNo}, #{userID}, NOW());
+	</insert>
+	
+	<delete id="deleteCafeMeeting" parameterType="Hashmap">
+		delete from cafe_public_meeting_members
+		where meetingNo=#{meetingNo} and userID=#{userID};
+	</delete>
 	
 </mapper>

@@ -14,13 +14,14 @@
 	function goMeetingDetail( cafeID, meetingNo )
 	{
 		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
-				cafeID + '&meetingNo=' + meetingNo;
+				cafeID + '&meetingNo=' + meetingNo + "&userID=" + userID;
 	
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href= url;
 	}
+	
 </script>
 
 		<div id="cafeInfo">

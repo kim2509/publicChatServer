@@ -532,4 +532,42 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("cafe/meetingDetail", model);
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/joinCafeMeeting.do")
+	public @ResponseBody APIResponse joinCafeMeeting(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			String meetingNo = param.get("meetingNo").toString();
+			String userID = param.get("userID").toString();
+			String joinYN = param.get("joinYN").toString();
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			
+			int result = 0;
+			
+			if ("Y".equals( joinYN ) )
+				result = cafeBiz.insertCafeMeeting(param);
+			else if ("N".equals( joinYN ) )
+				result = cafeBiz.deleteCafeMeeting(param);
+			
+			response.setData(result);
+			
+			insertHistory("/cafe/joinCafeMeeting.do", meetingNo , userID , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg( ex.getMessage() );
+			
+			insertHistory("/cafe/joinCafeMeeting.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

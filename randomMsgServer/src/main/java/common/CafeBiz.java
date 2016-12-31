@@ -158,4 +158,18 @@ public class CafeBiz extends CommonBiz{
 		int totalCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeBoardPostImageCount", param);
 		return totalCount;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public int insertCafeMeeting( HashMap param )
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeMeeting", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int deleteCafeMeeting( HashMap param )
+	{
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeMeeting", param);
+		return result;
+	}
 }

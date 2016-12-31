@@ -5,8 +5,16 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
 	HashMap meetingInfo = (HashMap) request.getAttribute("meetingInfo");
 	List<HashMap> meetingMembers = (List<HashMap>) request.getAttribute("meetingMembers");
+	boolean joinYN = false;
+	
+	for ( int i = 0; i < meetingMembers.size(); i++ ) {
+		HashMap meetingMember = meetingMembers.get(i);
+		if ( userID.equals( meetingMember.get("userID").toString() ) )
+			joinYN = true;
+	}
 %>
 
 <html>
@@ -21,10 +29,10 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/meetingDetail.css" />
+	href="<%=Constants.CSS_PATH%>/meetingDetail.css?v=6" />
 
 </head>
 
@@ -32,9 +40,10 @@
 
 <script language="javascript">
 	
+	var userID = '<%= userID %>';
+	var meetingNo = '<%= meetingInfo.get("meetingNo") %>';
+	
 	jQuery(document).ready(function(){
-		console.log( 'ready' );	
-		
 		initiateMap();
 	});
 	
@@ -50,6 +59,28 @@
 		var map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
 	}
 	
+	function join()
+	{
+		if ( confirm('참석하시겠습니까?') )
+		{
+			var param = {"meetingNo":meetingNo, "userID": userID , "joinYN":"Y" }
+			ajaxRequest('POST', '/nearhere/cafe/joinCafeMeeting.do', param , joinResult );
+		}
+	}
+	
+	function cancelJoin()
+	{
+		if ( confirm('참석을 취소하시겠습니까?') )
+		{
+			var param = {"meetingNo":meetingNo, "userID": userID , "joinYN":"N" }
+			ajaxRequest('POST', '/nearhere/cafe/joinCafeMeeting.do', param , joinResult );
+		}
+	}
+	
+	function joinResult()
+	{
+		document.location.reload();
+	}
 </script>
 
 
@@ -83,8 +114,13 @@
 			회비는 2만원입니다.
 		</div>
 		
-		<p id="personInfo">참석인원 : <%= meetingInfo.get("curNo") %> / <%= meetingInfo.get("maxNo") %></p>
-		
+		<div>
+			<% if ( joinYN ) { %>
+			<div id="joinInfo">참석중입니다.</div>
+			<% } %>
+			
+			<p id="personInfo">참석인원 : <%= meetingInfo.get("curNo") %> / <%= meetingInfo.get("maxNo") %></p>
+		</div>
 		<div id="membersDiv">
 			<ul>
 				<% for ( int i = 0; i < meetingMembers.size(); i++ ) {
@@ -93,7 +129,12 @@
 					<li>
 					<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= meetingMember.get("profileImageURL") %>" 
 							width=60 height=60/>
+						
+						<% if ( joinYN && userID.equals( meetingMember.get("userID").toString() )) { %>
+						<div id="userName2"><%= meetingMember.get("userName") %></div>
+						<% } else { %>
 						<div id="userName"><%= meetingMember.get("userName") %></div>
+						<% } %>
 						<div id="memberType"><%= meetingMember.get("memberType") %></div>
 					</li>
 				<% } %>
@@ -101,9 +142,16 @@
 		</div>
 		
 		<div id="bottom">&nbsp;</div>
-		<div id="joinDiv">
-			참여하기
+		
+		<% if ( !joinYN ) { %>
+		<div class="joinDiv" onclick="join();">
+			참석하기
 		</div>
+		<% } else { %>
+		<div class="joinDiv2" onclick="cancelJoin();">
+			참석 취소하기
+		</div>
+		<% } %>
 	</div>
 	
 </body>

@@ -203,13 +203,24 @@ li img{
 	
 	function goCafeHome( title, cafeID )
 	{
-		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
+		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>&userID=<%= userID %>';
 		url = encodeURIComponent( url );
 
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
 		else
 			document.location.href="/nearhere/cafe/" + cafeID;
+	}
+	
+	function goMeetingDetail( cafeID, meetingNo )
+	{
+		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
+				cafeID + '&meetingNo=' + meetingNo;
+	
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
 	}
 	
 </script>
@@ -278,13 +289,15 @@ li img{
 				<% 
 					for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ ) {
 						
+						String cafeID = favoriteCafeMeetingList.get(i).get("cafeID").toString();
 						String cafeName = favoriteCafeMeetingList.get(i).get("cafeName").toString();
+						String meetingNo = favoriteCafeMeetingList.get(i).get("meetingNo").toString();
 						String title = favoriteCafeMeetingList.get(i).get("title").toString();
 						String dateString = favoriteCafeMeetingList.get(i).get("meetingDate").toString();
 						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
 						String regionName = favoriteCafeMeetingList.get(i).get("regionName").toString();
 				%>
-				<li>
+				<li onclick="goMeetingDetail('<%= cafeID %>', '<%= meetingNo %>');">
 					<div class='date'>
 						<%= Util.getDateDay( meetingDate ) %>요일<br/>
 						<%= Util.getDate(meetingDate ) %><br/>
