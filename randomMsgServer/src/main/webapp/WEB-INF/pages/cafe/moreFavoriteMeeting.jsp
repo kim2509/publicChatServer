@@ -17,8 +17,46 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
+<script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=16" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=18" />
+
+<script language="javascript">
+	jQuery(document).ready(function(){
+		initiateMap();	
+	});
+	
+	function initiateMap()
+	{
+		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+	
+		var options = { //지도를 생성할 때 필요한 기본 옵션
+				center: new daum.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+				level: 3 //지도의 레벨(확대, 축소 정도)
+			};
+
+		var map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		
+		var marker = new daum.maps.Marker({
+		    map: map,
+		    position: new daum.maps.LatLng(33.450701, 126.570667),
+		    title:'마커 엘리먼트의 타이틀 속성 값',
+		    clickable:true
+		});
+		
+		daum.maps.event.addListener(marker, 'click', function() {
+		    alert('marker click!');
+		});
+		
+		var infowindow = new daum.maps.InfoWindow({
+		    position: new daum.maps.LatLng(33.450701, 126.570667),
+		    content: '<div style="padding:5px;font-size:13px;">오늘 저녁 삼겹살에 소주~<br/>1월 1일 20:30<br/><a href="">상세보기</a></div>'
+		});
+		
+		infowindow.open(map, marker);
+	}
+	
+</script>
 
 </head>
 <body>
@@ -59,7 +97,7 @@
 			<div id="optionMap" class="option">지도로 보기</div>
 			<div id="optionList" class="option">리스트로 보기</div>
 			<div id="subTitle">정모 리스트</div>
-			<ul>
+			<ul id="meetingList" style="display:none;">
 				<li>
 					<div id="title">이밤의 끝을잡고</div>
 					<div id="meetingDate">12월 31일 20:30</div>
@@ -103,6 +141,8 @@
 					<div id="location">서울시 송파구 방이동 152-12</div>
 				</li>
 			</ul>
+			<div id="map">
+			</div>
 		</div>
 		
 		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">

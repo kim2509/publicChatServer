@@ -1,28 +1,33 @@
-CREATE TABLE `cafe_public_meeting` (
-	`meetingNo` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`cafeNo` INT(11) NOT NULL,
-	`title` VARCHAR(100) NOT NULL,
-	`meetingDate` DATETIME NOT NULL,
-	`locationNo` BIGINT(20) NULL DEFAULT NULL,
-	`maxNo` INT(11) NULL DEFAULT NULL,
-	`curNo` INT(11) NULL DEFAULT NULL,
-	`createdDate` DATETIME NULL DEFAULT NULL,
-	PRIMARY KEY (`meetingNo`),
-	INDEX `cafeNo` (`cafeNo`)
-)
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=2
-;
 
-
-
-insert into cafe_public_meeting_members
-values(1, 'user27', NOW() );
-
-insert into cafe_public_meeting_members
-values(1, 'user638', NOW() );
-
-
-insert into cafe_public_meeting_members
-values(1, 'user801', NOW() );
+CREATE VIEW region_view as
+select r1.regionNo, r1.regionName, r1.level,
+	case when r1.level = 1 then r1.regionNo 
+		when r1.level = 2 then r2.regionNo 
+		when r1.level = 3 then r3.regionNo 
+		when r1.level = 4 then r4.regionNo 
+	end as lRegionNo
+	, 	case when r1.level = 1 then r1.regionName 
+		when r1.level = 2 then r2.regionName 
+		when r1.level = 3 then r3.regionName 
+		when r1.level = 4 then r4.regionName 
+	end as lRegionName
+	,case when r1.level = 2 then r1.regionNo 
+		when r1.level = 3 then r2.regionNo 
+		when r1.level = 4 then r3.regionNo 
+	end as mRegionNo
+	,case when r1.level = 2 then r1.regionName 
+		when r1.level = 3 then r2.regionName 
+		when r1.level = 4 then r3.regionName 
+	end as mRegionName
+	,case when r1.level = 3 then r1.regionNo 
+		when r1.level = 4 then r2.regionNo 
+	end as sRegionNo
+	,case when r1.level = 3 then r1.regionName 
+		when r1.level = 4 then r2.regionName 
+	end as sRegionName
+	,case when r1.level = 4 then r1.regionNo end as tRegionNo
+	,case when r1.level = 4 then r1.regionName end as tRegionName
+from region r1
+	left outer join region r2 on r2.regionNo=r1.parentNo
+	left outer join region r3 on r3.regionNo=r2.parentNo	
+	left outer join region r4 on r4.regionNo=r3.parentNo
