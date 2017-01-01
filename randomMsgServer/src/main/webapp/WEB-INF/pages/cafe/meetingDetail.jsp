@@ -12,7 +12,7 @@
 	
 	for ( int i = 0; i < meetingMembers.size(); i++ ) {
 		HashMap meetingMember = meetingMembers.get(i);
-		if ( userID.equals( meetingMember.get("userID").toString() ) )
+		if ( userID != null && userID.equals( meetingMember.get("userID").toString() ) )
 			joinYN = true;
 	}
 %>

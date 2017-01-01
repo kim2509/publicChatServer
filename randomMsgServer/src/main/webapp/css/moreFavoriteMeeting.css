@@ -20,33 +20,131 @@ body{
 }
 
 #favoriteRegionDiv{
-	background:yellow;	
+	text-align:center;
+	overflow:auto;
 }
 
-ul{
+
+#favoriteRegionDiv #linkDiv{
+	float:right;
+	margin:10px 10px 0px 0px;
+	font-size:15px;
+	font-weight:bold;
+	color:blue;
+	border-bottom: 1px solid blue;
+	padding: 1px 5px 2px;
+	line-height:20px;
+}
+
+#favoriteRegionDiv #subTitle{
+	font-size:16px;
+	font-weight:bold;
+	color:#f44a4a;
+	text-align:left;
+	margin:10px 0px 10px 10px;
+	line-height:20px;
+}
+
+#favoriteRegionDiv ul{
 	list-style:none;
 	margin:0;
 	padding:0;
-	margin:10px 10px;
+	margin:10px 10px 10px 10px;
 	border-top:1px solid #d9d9d9;
 }
 
 .favoriteRegion li{
 	float:left;
-	font-size:14px;
+	font-size:13px;
 	font-weight:bold;
 	height:40px;
 	line-height:40px;
 	text-align:center;
 	border-bottom:1px solid #d9d9d9;
-	width:50%;
+	width:49%;
 }
 
 .favoriteRegion li:nth-child(1n){
-	/*border-left:1px solid #d9d9d9;*/
-	
+	border-left:1px solid #d9d9d9;
 }
 
 .favoriteRegion li:nth-child(2n){
-	/*border-left:1px solid #d9d9d9;*/
+	border-right:1px solid #d9d9d9;
+}
+
+.favoriteRegion .selected{
+	background:#cb3333;;
+	color:white;
+}
+
+#meetingListDiv{
+	clear:both;
+	overflow:auto;
+	margin:20px 10px 10px 10px;
+}
+
+#meetingListDiv .option{
+	float:right;
+	font-size:13px;
+	font-weight:bold;
+	color:#575652;
+	padding: 0px 5px;
+	line-height:20px;
+	background:#e9e3e3;
+	border:1px solid #726868;
+	line-height:25px;
+}
+
+#meetingListDiv #optionList{
+	display:none;	
+}
+
+#meetingListDiv #subTitle{
+	margin-bottom:10px;
+	font-size:15px;
+	font-weight:bold;
+	line-height:25px;
+}
+
+#meetingListDiv ul{
+	clear:both;
+	list-style:none;
+	margin:0px;
+	padding:0;
+	border-bottom:1px solid #d9d9d9;
+	margin-top:10px;
+}
+
+#meetingListDiv li{
+	border-top:1px solid #d9d9d9;
+	border-left:1px solid #d9d9d9;
+	border-right:1px solid #d9d9d9;
+	padding:10px;
+	line-height:25px;
+}
+
+#meetingListDiv li #title{
+	font-size:15px;
+	font-weight:bold;
+	color:#5b58d7;
+	margin-bottom:5px;
+}
+
+#meetingListDiv li #meetingDate{
+	float:right;
+	font-size:13px;
+	font-weight:bold;
+}
+
+#meetingListDiv li #memberCount{
+	font-size:13px;
+}
+
+#meetingListDiv li #cafeName{
+	float:right;
+	font-size:13px;
+}
+
+#meetingListDiv li #location{
+	font-size:13px;
 }
