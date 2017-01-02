@@ -28,28 +28,6 @@ import common.RegionBiz;
 @Controller
 public class CafeController extends BaseController {
 
-	private boolean IsFavRegion( String userID, String regionInfo )
-	{
-		RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
-		
-		if ( regionInfo == null || "".equals( regionInfo ) ) return false;
-	
-		// 관심지역 리스트
-		List<String> favRegionNos = regionBiz.getFavoriteRegionNoByUserID(userID);
-		
-		for ( int i = 0; i < favRegionNos.size(); i++ )
-		{
-			String[] regionList = regionInfo.split("\\|");
-			for ( int j = 0; j < regionList.length; j++ )
-			{
-				if ( favRegionNos.get(i).equals(regionList[j]))
-					return true;
-			}
-		}
-		
-		return false;
-	}
-	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
 	@RequestMapping( value ="/cafe/index.do")
 	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
@@ -63,22 +41,24 @@ public class CafeController extends BaseController {
 			List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
 			model.addAttribute("myCafeList", myCafeList);
 			
-			
-			ArrayList<HashMap> favoriteCafeMeetingList = new ArrayList<HashMap>();
-			List<HashMap> temp = cafeBiz.getUpcomingCafeMeetingList(userID);
+			List<HashMap> favoriteCafeMeetingList = cafeBiz.getCafeMeetingsInMyFavRegion(userID);
 			
 			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
 			
-			for ( int i = 0; i < temp.size(); i++ )
+			for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ )
 			{
-				String regionNo = temp.get(i).get("regionNo").toString();
-				String regionInfo = regionBiz.getRegionInfoByRegionNo(regionNo);
+				String regionName = "";
+
+				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("lRegionName") ))
+					regionName += favoriteCafeMeetingList.get(i).get("lRegionName").toString();
+				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("mRegionName") ))
+					regionName += " " + favoriteCafeMeetingList.get(i).get("mRegionName").toString();
+				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("sRegionName") ))
+					regionName += " " + favoriteCafeMeetingList.get(i).get("sRegionName").toString();
+				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("tRegionName") ))
+					regionName += " " + favoriteCafeMeetingList.get(i).get("tRegionName").toString();
 				
-				if ( IsFavRegion(userID, regionInfo) )
-				{
-					temp.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));
-					favoriteCafeMeetingList.add( temp.get(i) );
-				}
+				favoriteCafeMeetingList.get(i).put("regionName", regionName);
 			}
 			
 			model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);
@@ -157,7 +137,28 @@ public class CafeController extends BaseController {
 	{
 		try
 		{
+			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			
+			List<HashMap> myFavRegionList = regionBiz.getFavoriteRegionNoByUserID(userID);
+			
+			for ( int i = 0; i < myFavRegionList.size(); i++ )
+			{
+				String regionName = "";
+
+				if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
+					regionName += myFavRegionList.get(i).get("lRegionName").toString();
+				if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
+					regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
+				if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
+					regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
+				if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
+					regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
+				
+				myFavRegionList.get(i).put("regionName", regionName);
+			}
+			
+			model.addAttribute("myFavRegionList", myFavRegionList);
 		}
 		catch( Exception ex )
 		{
@@ -167,6 +168,38 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/moreFavoriteMeeting.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/moreFavoriteMeeting", model);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getCafeMeetingsByRegionAjax.do")
+	public @ResponseBody APIResponse getCafeMeetingsByRegionAjax(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String level = param.get("level").toString();
+			String regionNo = param.get("regionNo").toString();
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeMeetings = cafeBiz.getCafeMeetingsByRegion(param);
+			
+			response.setData(cafeMeetings);
+			
+			insertHistory("/cafe/getCafeMeetingsByRegionAjax.do", level , regionNo , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
 	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })

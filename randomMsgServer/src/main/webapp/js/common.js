@@ -51,6 +51,12 @@ function isAlphaNumberOnly( str )
 	return true;
 }
 
+function displayDateFormat( jsonDate, format )
+{
+	var date = new Date(jsonDate);
+	return date.format( format );
+}
+
 function ajaxRequest( method, url, param , onSuccess, onComplete, onError )
 {
 	try

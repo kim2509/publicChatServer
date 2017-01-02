@@ -34,6 +34,31 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public List<HashMap> getCafeMeetingsInMyFavRegion( String userID )
+	{
+		List<HashMap> meetingList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMeetingsInMyFavRegion", userID);
+		return meetingList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getCafeMeetingsByRegion( HashMap param )
+	{
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> meetingList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMeetingsByRegion", param);
+		return meetingList;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public List<HashMap> getUpcomingCafeMeetingList( String userID )
 	{
 		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getUpcomingCafeMeetingList", userID);

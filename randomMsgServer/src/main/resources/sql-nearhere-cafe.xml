@@ -12,12 +12,52 @@
 		where cm2.userID=#{userID};
 	</select>
 	
+	<select id="getCafeMeetingsInMyFavRegion" resultType="HashMap" parameterType="String">
+		select cpm.*, rv.*, cm.cafeID, cm.cafeName from cafe_public_meeting cpm
+			left outer join cafe_location cl on cpm.locationNo = cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join user_favorite_region ur on ur.regionNo = rv.regionNo
+			left outer join cafe_master cm on cpm.cafeNo=cm.cafeNo
+		where ur.userID = #{userID}
+		and cpm.meetingDate > NOW()
+		order by cpm.meetingDate desc
+	</select>
+	
+	<select id="getCafeMeetingsByRegion" resultType="HashMap" parameterType="HashMap">
+		select cpm.*, rv.*, cm.cafeID, cm.cafeName, cl.address from cafe_public_meeting cpm
+			left outer join cafe_location cl on cpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo=cl.regionNo
+			left outer join cafe_master cm on cm.cafeNo=cpm.cafeNo
+		where 
+		<if test="level==1">
+			lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			tRegionNo = #{regionNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
 	<select id="getUpcomingCafeMeetingList" resultType="HashMap" parameterType="String">
 		select cp.*, cm.cafeID, cm.cafeName, cl.lRegionNo,cl.mRegionNo, cl.sRegionNo, cl.tRegionNo from cafe_public_meeting cp
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
 		where cp.meetingDate >= NOW() 
 		order by cp.meetingDate
+	</select>
+	
+	<select id="getCafePublicMeetingList" resultType="HashMap" parameterType="HashMap">
+		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
+			left outer join cafe_location cl on cp.locationNo=cl.No
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate >= NOW()
+		and cm.cafeID=#{cafeID}
 	</select>
 	
 	<insert id="makeCafe" parameterType="HashMap"
@@ -35,14 +75,6 @@
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_image ci on cd.mainImageNo = ci.imageNo
 		where cafeID=#{cafeID}
-	</select>
-	
-	<select id="getCafePublicMeetingList" resultType="HashMap" parameterType="HashMap">
-		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
-			left outer join cafe_location cl on cp.locationNo=cl.No
-			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
-		where cp.meetingDate >= NOW()
-		and cm.cafeID=#{cafeID}
 	</select>
 	
 	<select id="getCafeMeetingInfo" resultType="HashMap" parameterType="HashMap">

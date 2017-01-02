@@ -3,6 +3,11 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
+	List<HashMap> myFavRegionList = (List<HashMap>) request.getAttribute("myFavRegionList");
+%>
 
 <html>
 <head>
@@ -16,14 +21,17 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=18" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=22" />
 
 <script language="javascript">
+
+	var isApp = '<%= isApp %>';
+	
 	jQuery(document).ready(function(){
-		initiateMap();	
+		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
 	});
 	
 	function initiateMap()
@@ -56,11 +64,92 @@
 		infowindow.open(map, marker);
 	}
 	
+	var startIndex = 0;
+	function changeRegion( element, regionNo, level )
+	{
+		$('.favoriteRegion li').removeClass('selected');		
+		$(element).addClass('selected');
+		
+		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : 10 };
+		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
+	}
+	
+	function goFavoriteRegionPage()
+	{
+		var titleUrlEncoded = encodeURIComponent('관심지역설정');
+		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href="/nearhere/cafe/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>";
+	}
+	
+	function onMeetingListResult( result )
+	{
+		try
+		{
+			var source = $('#meetingT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+			$('#meetingList').html(html);
+			
+			if ( result.data != null && result.data.length > 0 )
+			{
+				$('#meetingListDiv').show();
+				$('#pagingInfo').show();
+			}
+			else
+			{
+				$('#meetingListDiv').hide();
+				$('#pagingInfo').hide();
+			}
+					
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
+	var bMapInitialized = false;
+	function toggleResultView()
+	{
+		if ( $('#map').is(':visible') )
+		{
+			$('#meetingList').show();
+			$('#map').hide();
+		}
+		else
+		{
+			$('#meetingList').hide();
+			$('#map').show();
+			
+			if ( !bMapInitialized )
+			{
+				initiateMap();
+				bMapInitialized = true;
+			}
+		}
+	}
+	
 </script>
 
 </head>
 <body>
-
+	<script id="meetingT" type="text/x-handlebars-template">
+	<ul id="meetingList">
+		{{#each data}}
+		<li>
+			<div id="title">{{title}}</div>
+			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
+			<div id="memberCount">참석인원 : {{curNo}}/{{maxNo}}</div>
+			<div id="cafeName">{{cafeName}}</div>
+			<div id="location">{{address}}</div>
+		</li>
+		{{/each}}
+	</ul>
+	</script>
 	<div id="wrapper">
 		
 		<div class="titleDiv">
@@ -68,78 +157,37 @@
 		</div>
 		
 		<div id="favoriteRegionDiv">
-			<div id="linkDiv">편집</div>
+			<div id="linkDiv" onclick="goFavoriteRegionPage();">설정</div>
 			<div id="subTitle">관심지역</div>
+			<% if ( myFavRegionList != null && myFavRegionList.size() > 0 ) { %>
 			<ul class="favoriteRegion">
-				<li>
-					서울시 강남구 역삼동
-				</li>
-				<li>
-					서울시 송파구 방이동
-				</li>
-				<li >
-					포항시 남구 연일읍 택전리
-				</li>
-				<li>
-					서울시 강남구 역삼동
-				</li>
-				<li>
-					서울시 송파구 방이동
-				</li>
-				<li class="selected">
-					포항시 남구 연일읍 택전리
-				</li>
+			<%
+				for ( int i = 0; i < myFavRegionList.size(); i++ )
+				{
+					String level = myFavRegionList.get(i).get("level").toString();
+					String regionNo = myFavRegionList.get(i).get("regionNo").toString();
+					String regionName = myFavRegionList.get(i).get("regionName").toString();
+					
+					if ( i == 0 )
+						out.println("<li class='selected' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+							 regionName + "</li>");
+					else
+						out.println("<li onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+								regionName + "</li>");
+				}
+			%>	
 			</ul>
-			
+			<% } else { %>
+			<p>관심지역이 설정되어 있지 않습니다.</p>
+			<% } %>
 		</div>
 		
 		<div id="meetingListDiv">
-			<div id="optionMap" class="option">지도로 보기</div>
-			<div id="optionList" class="option">리스트로 보기</div>
+			<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
+			<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
 			<div id="subTitle">정모 리스트</div>
-			<ul id="meetingList" style="display:none;">
-				<li>
-					<div id="title">이밤의 끝을잡고</div>
-					<div id="meetingDate">12월 31일 20:30</div>
-					<div id="memberCount">참석인원 : 7/20</div>
-					<div id="cafeName">방이친목</div>
-					<div id="location">서울시 송파구 방이동 152-12</div>
-				</li>
-				<li>
-					<div id="title">이밤의 끝을잡고</div>
-					<div id="meetingDate">12월 31일 20:30</div>
-					<div id="memberCount">참석인원 : 7/20</div>
-					<div id="cafeName">방이친목</div>
-					<div id="location">서울시 송파구 방이동 152-12</div>
-				</li>
-				<li>
-					<div id="title">이밤의 끝을잡고</div>
-					<div id="meetingDate">12월 31일 20:30</div>
-					<div id="memberCount">참석인원 : 7/20</div>
-					<div id="cafeName">방이친목</div>
-					<div id="location">서울시 송파구 방이동 152-12</div>
-				</li>
-				<li>
-					<div id="title">이밤의 끝을잡고</div>
-					<div id="meetingDate">12월 31일 20:30</div>
-					<div id="memberCount">참석인원 : 7/20</div>
-					<div id="cafeName">방이친목</div>
-					<div id="location">서울시 송파구 방이동 152-12</div>
-				</li>
-				<li>
-					<div id="title">이밤의 끝을잡고</div>
-					<div id="meetingDate">12월 31일 20:30</div>
-					<div id="memberCount">참석인원 : 7/20</div>
-					<div id="cafeName">방이친목</div>
-					<div id="location">서울시 송파구 방이동 152-12</div>
-				</li>
-				<li>
-					<div id="title">이밤의 끝을잡고</div>
-					<div id="meetingDate">12월 31일 20:30</div>
-					<div id="memberCount">참석인원 : 7/20</div>
-					<div id="cafeName">방이친목</div>
-					<div id="location">서울시 송파구 방이동 152-12</div>
-				</li>
+			<ul id="meetingList">
+				
 			</ul>
 			<div id="map">
 			</div>

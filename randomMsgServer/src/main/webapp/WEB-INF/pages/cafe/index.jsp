@@ -183,10 +183,10 @@ li img{
 	function goMoreFavoriteMeeting()
 	{
 		var titleUrlEncoded = encodeURIComponent('관심지역 정모');
-		var url = '<%= Constants.getServerURL() %>/cafe/moreFavoriteMeeting.do';
+		var url = '<%= Constants.getServerURL() %>/cafe/moreFavoriteMeeting.do?userID=<%= userID %>';
 		
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + url + '';
+			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href="/nearhere/cafe/moreFavoriteMeeting.do";;
 	}

@@ -93,10 +93,10 @@
 		where r.regionNo=#{value}
 	</select>
 	
-	<select id="getFavoriteRegionNoByUserID" parameterType="String" resultType="String">
-		select regionNo 
-		from user_favorite_region 
-		where userID=#{value}
+	<select id="getFavoriteRegionNoByUserID" parameterType="String" resultType="HashMap">
+		select * from user_favorite_region ur
+			left outer join region_view rv on ur.regionNo = rv.regionNo
+		where ur.userID=#{value}
 	</select>
 	
 </mapper>

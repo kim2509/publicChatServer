@@ -1,5 +1,6 @@
 package common;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -33,9 +34,10 @@ public class RegionBiz extends CommonBiz{
 		return regionInfo.trim();
 	}
 	
-	public List<String> getFavoriteRegionNoByUserID( String userID )
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getFavoriteRegionNoByUserID( String userID )
 	{
-		List<String> regionInfo = sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionNoByUserID", userID);
+		List<HashMap> regionInfo = sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionNoByUserID", userID);
 		return regionInfo;
 	}
 }
