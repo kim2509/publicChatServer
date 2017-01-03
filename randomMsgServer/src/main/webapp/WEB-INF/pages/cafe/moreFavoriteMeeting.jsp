@@ -29,42 +29,22 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
+	var userID = '<%= userID %>';
+	var startIndex = 0;
 	
 	jQuery(document).ready(function(){
-		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
+		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
+		
+		// 초기 데이터 로딩
+		if ( $('#favoriteRegionDiv ul li').length > 0 )
+		{
+			var level = $('#favoriteRegionDiv ul li').eq(0).attr('level');
+			var regionNo = $('#favoriteRegionDiv ul li').eq(0).attr('regionNo');
+			var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : 10 };
+			ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
+		}
 	});
 	
-	function initiateMap()
-	{
-		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-	
-		var options = { //지도를 생성할 때 필요한 기본 옵션
-				center: new daum.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
-				level: 3 //지도의 레벨(확대, 축소 정도)
-			};
-
-		var map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
-		
-		var marker = new daum.maps.Marker({
-		    map: map,
-		    position: new daum.maps.LatLng(33.450701, 126.570667),
-		    title:'마커 엘리먼트의 타이틀 속성 값',
-		    clickable:true
-		});
-		
-		daum.maps.event.addListener(marker, 'click', function() {
-		    alert('marker click!');
-		});
-		
-		var infowindow = new daum.maps.InfoWindow({
-		    position: new daum.maps.LatLng(33.450701, 126.570667),
-		    content: '<div style="padding:5px;font-size:13px;">오늘 저녁 삼겹살에 소주~<br/>1월 1일 20:30<br/><a href="">상세보기</a></div>'
-		});
-		
-		infowindow.open(map, marker);
-	}
-	
-	var startIndex = 0;
 	function changeRegion( element, regionNo, level )
 	{
 		$('.favoriteRegion li').removeClass('selected');		
@@ -72,17 +52,6 @@
 		
 		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : 10 };
 		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
-	}
-	
-	function goFavoriteRegionPage()
-	{
-		var titleUrlEncoded = encodeURIComponent('관심지역설정');
-		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href="/nearhere/cafe/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>";
 	}
 	
 	function onMeetingListResult( result )
@@ -104,7 +73,8 @@
 				$('#meetingListDiv').hide();
 				$('#pagingInfo').hide();
 			}
-					
+			
+			setMapData(result);
 		}
 		catch( ex )
 		{
@@ -119,17 +89,182 @@
 		{
 			$('#meetingList').show();
 			$('#map').hide();
+			$('#optionMap').show();
+			$('#optionList').hide();
 		}
 		else
 		{
 			$('#meetingList').hide();
 			$('#map').show();
+			$('#optionMap').hide();
+			$('#optionList').show();
 			
 			if ( !bMapInitialized )
 			{
 				initiateMap();
+				displayMapData();
 				bMapInitialized = true;
 			}
+		}
+	}
+	
+	var map = null;
+	function initiateMap()
+	{
+		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+	
+		var options = { //지도를 생성할 때 필요한 기본 옵션
+				center: new daum.maps.LatLng(37.566672, 126.978380), //지도의 중심좌표.
+				level: 3 //지도의 레벨(확대, 축소 정도)
+			};
+
+		map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		
+		// 지도에 클릭 이벤트를 등록합니다
+		// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+		daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
+		    
+		    if ( infoWindows != null && infoWindows.length > 0 ){
+		    	for( var i = 0; i < infoWindows.length; i++ )
+		    		infoWindows[i].close();
+		    }
+		    
+		});
+		
+		/*
+		var marker = new daum.maps.Marker({
+		    map: map,
+		    position: new daum.maps.LatLng(33.450701, 126.570667),
+		    title:'마커 엘리먼트의 타이틀 속성 값',
+		    clickable:true
+		});
+		
+		daum.maps.event.addListener(marker, 'click', function() {
+		    alert('marker click!');
+		});
+		
+		var infowindow = new daum.maps.InfoWindow({
+		    position: new daum.maps.LatLng(33.450701, 126.570667),
+		    content: '<div style="padding:5px;font-size:13px;">오늘 저녁 삼겹살에 소주~<br/>1월 1일 20:30<br/><a href="">상세보기</a></div>'
+		});
+		
+		infowindow.open(map, marker);
+		*/
+	}
+	
+	// 실제로 정모의 데이터가 담길 배열
+	var positions = [];
+	
+	// 위 positions 배열의 데이터를 기반으로 markers 를 생성
+	var markers = [];
+	
+	// 위 positions 배열의 데이터를 기반으로 infoWindow 를 생성
+	var infoWindows = [];
+	
+	// 마커를 생성하고 지도위에 표시하는 함수입니다
+	function addMarker(position, index) {
+	    
+	    // 마커를 생성합니다
+	    var marker = new daum.maps.Marker({
+	        position: position,
+	        clickable:true
+	    });
+
+	    daum.maps.event.addListener(marker, 'click', showInfoWindow(marker, index));
+	    
+	    // 마커가 지도 위에 표시되도록 설정합니다
+	    marker.setMap(map);
+	    
+	    // 생성된 마커를 배열에 추가합니다
+	    markers.push(marker);
+	}
+	
+	function showInfoWindow( marker, index )
+	{
+		return function()
+		{
+			for( var i = 0; i < infoWindows.length; i++ )
+				infoWindows[i].close();
+			
+			infoWindows[index].open(map, marker);	
+		};
+	}
+	
+	// 배열에 추가된 마커들을 지도에 표시하거나 삭제하는 함수입니다
+	function setMarkers(map) {
+	    for (var i = 0; i < markers.length; i++) {
+	        markers[i].setMap(map);
+	    }            
+	}
+	
+	// "마커 보이기" 버튼을 클릭하면 호출되어 배열에 추가된 마커를 지도에 표시하는 함수입니다
+	function showMarkers() {
+	    setMarkers(map)    
+	}
+
+	// "마커 감추기" 버튼을 클릭하면 호출되어 배열에 추가된 마커를 지도에서 삭제하는 함수입니다
+	function hideMarkers() {
+	    setMarkers(null);    
+	}
+	
+	function setMapData( result )
+	{
+		if ( result == null || result.data == null || result.data.length < 1 ) return;
+		
+		for ( var i = 0; i < result.data.length; i++ )
+		{
+			var position = {
+					"latlng":new daum.maps.LatLng(result.data[i].latitude,result.data[i].longitude),
+					"content":result.data[i].title
+			}
+			
+			positions.push(position);
+			
+			var infowindow = new daum.maps.InfoWindow({
+			    position: position,
+			    content: '<div style="padding:5px;font-size:17px;width:100%">' + result.data[i].title + 
+			    '<br/>' + displayDateFormat( result.data[i].meetingDate, 'MM-dd HH:mm' ) + '<br/>' + 
+			    '<a href="javascript:void(0)" onclick="goMeetingDetail(\'' + result.data[i].cafeID + '\',\'' + result.data[i].meetingNo + '\');">상세보기</a></div>'
+			});
+			
+			infoWindows.push(infowindow);
+		}
+	}
+	
+	function displayMapData()
+	{
+		for ( var i = 0; i < positions.length; i++ )
+			addMarker(positions[i].latlng, i);
+
+		map.panTo(positions[0].latlng);
+	}
+	
+	function goFavoriteRegionPage()
+	{
+		var titleUrlEncoded = encodeURIComponent('관심지역설정');
+		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href="/nearhere/cafe/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>";
+	}
+	
+	function goMeetingDetail( cafeID, meetingNo )
+	{
+		try
+		{
+			var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
+			cafeID + '&meetingNo=' + meetingNo + "&userID=" + userID;
+
+			if ( isApp == 'Y' )
+				document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+			else
+				document.location.href= url;	
+		}
+		catch( ex )
+		{
+			alert( ex.message );
 		}
 	}
 	
@@ -140,7 +275,7 @@
 	<script id="meetingT" type="text/x-handlebars-template">
 	<ul id="meetingList">
 		{{#each data}}
-		<li>
+		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
 			<div id="title">{{title}}</div>
 			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
 			<div id="memberCount">참석인원 : {{curNo}}/{{maxNo}}</div>
@@ -169,10 +304,12 @@
 					String regionName = myFavRegionList.get(i).get("regionName").toString();
 					
 					if ( i == 0 )
-						out.println("<li class='selected' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+						out.println("<li class='selected' level='" + level + "' regionNo='" + regionNo + 
+						"' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
 							 regionName + "</li>");
 					else
-						out.println("<li onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+						out.println("<li  level='" + level + "' regionNo='" + regionNo +
+						"' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
 								regionName + "</li>");
 				}
 			%>	

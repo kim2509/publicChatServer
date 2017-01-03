@@ -31,3 +31,24 @@ from region r1
 	left outer join region r2 on r2.regionNo=r1.parentNo
 	left outer join region r3 on r3.regionNo=r2.parentNo	
 	left outer join region r4 on r4.regionNo=r3.parentNo
+
+
+
+	insert into cafe_location(latitude, longitude, regionNo, address, createdDate)
+values(37.498861, 127.036732, 295, '서울시 강남구 역삼1동 738-5', NOW());
+
+
+insert into cafe_public_meeting( cafeNo, title, meetingDate, locationNo, maxNo, createdDate )
+values(1, '영화나 한편 볼까요?', '2017-01-10 19:30', 2, 10, NOW());
+
+
+insert into cafe_public_meeting_members(meetingNo, userID, createdDate )
+values(2, 'user27', NOW());
+
+
+insert into cafe_public_meeting_members(meetingNo, userID, createdDate )
+values(2, 'user638', NOW());
+
+
+insert into cafe_public_meeting_members(meetingNo, userID, createdDate )
+values(2, 'user801', NOW());
