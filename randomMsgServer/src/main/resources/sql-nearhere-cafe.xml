@@ -13,18 +13,23 @@
 	</select>
 	
 	<select id="getCafeMeetingsInMyFavRegion" resultType="HashMap" parameterType="String">
-		select cpm.*, rv.*, cm.cafeID, cm.cafeName from cafe_public_meeting cpm
+		select cpm.meetingNo, cpm.title, cpm.meetingDate, cpm.maxNo, ifnull(cmm.curNo,0) as curNo, cpm.createdDate, 
+			rv.*, cm.cafeID, cm.cafeName, cl.address
+		from cafe_public_meeting cpm
 			left outer join cafe_location cl on cpm.locationNo = cl.No
 			left outer join region_view rv on rv.regionNo = cl.regionNo
 			left outer join user_favorite_region ur on ur.regionNo = rv.regionNo
 			left outer join cafe_master cm on cpm.cafeNo=cm.cafeNo
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cpm.meetingNo = cmm.meetingNo
 		where ur.userID = #{userID}
 		and cpm.meetingDate > NOW()
 		order by cpm.meetingDate desc
+		limit 0, 10;
 	</select>
 	
 	<select id="getCafeMeetingsByRegion" resultType="HashMap" parameterType="HashMap">
-		select cpm.meetingNo, cpm.title, cpm.meetingDate, cpm.maxNo, cmm.curNo, cpm.createdDate,  
+		select cpm.meetingNo, cpm.title, cpm.meetingDate, cpm.maxNo, ifnull(cmm.curNo,0) as curNo, cpm.createdDate,  
 			rv.*, cm.cafeID, cm.cafeName, cl.latitude, cl.longitude, cl.address 
 		from cafe_public_meeting cpm
 			left outer join cafe_location cl on cpm.locationNo=cl.No
@@ -46,6 +51,26 @@
 			tRegionNo = #{regionNo}
 		</if>
 		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getTotalCafeMeetingsCountByRegion" resultType="Integer" parameterType="HashMap">
+		select count(cpm.meetingNo) as totalItemCount
+		from cafe_public_meeting cpm
+			left outer join cafe_location cl on cpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo=cl.regionNo
+		where 
+		<if test="level==1">
+			lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			tRegionNo = #{regionNo}
+		</if>
 	</select>
 	
 	<select id="getUpcomingCafeMeetingList" resultType="HashMap" parameterType="String">
@@ -82,11 +107,12 @@
 	</select>
 	
 	<select id="getCafeMeetingInfo" resultType="HashMap" parameterType="HashMap">
-		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDate, cm.locationNo, ifnull(cm.maxNo, 0 ) as maxNo
-			, cmm.curNo
+		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDate, cl.latitude, cl.longitude, cl.address, ifnull(cm.maxNo, 0 ) as maxNo
+			, ifnull(cmm.curNo,0) as curNo
 		from cafe_public_meeting cm
 			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
 				on cm.meetingNo = cmm.meetingNo
+			left outer join cafe_location cl on cl.No=cm.locationNo
 		where cm.meetingNo=#{meetingNo}
 	</select>
 	

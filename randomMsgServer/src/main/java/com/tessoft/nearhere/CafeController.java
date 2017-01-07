@@ -62,6 +62,8 @@ public class CafeController extends BaseController {
 			}
 			
 			model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);
+			model.addAttribute("favoriteCafeMeetingsJSON", mapper.writeValueAsString(favoriteCafeMeetingList));
+			
 		}
 		catch( Exception ex )
 		{
@@ -74,7 +76,7 @@ public class CafeController extends BaseController {
 	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
-	@RequestMapping( value ="/cafe/searchByName.do")
+	@RequestMapping( value ="/cafe/searchCafe.do")
 	public ModelAndView searchByName ( HttpServletRequest request, HttpServletResponse response , 
 			String userID, ModelMap model ) throws IOException
 	{
@@ -87,28 +89,9 @@ public class CafeController extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/searchByName.do", userID , null , null, null );
+		insertHistory("/cafe/searchCafe.do", userID , null , null, null );
 		
-		return new ModelAndView("cafe/searchByName", model);
-	}
-	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
-	@RequestMapping( value ="/cafe/searchByRegion.do")
-	public ModelAndView searchByRegion ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
-	{
-		try
-		{
-			
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		insertHistory("/cafe/searchByRegion.do", userID , null , null, null );
-		
-		return new ModelAndView("cafe/searchByRegion", model);
+		return new ModelAndView("cafe/searchCafe", model);
 	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
@@ -185,8 +168,8 @@ public class CafeController extends BaseController {
 			
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			List<HashMap> cafeMeetings = cafeBiz.getCafeMeetingsByRegion(param);
-			
 			response.setData(cafeMeetings);
+			response.setData2( cafeBiz.getTotalCafeMeetingsCountByRegion(param) );
 			
 			insertHistory("/cafe/getCafeMeetingsByRegionAjax.do", level , regionNo , null, null );
 		}

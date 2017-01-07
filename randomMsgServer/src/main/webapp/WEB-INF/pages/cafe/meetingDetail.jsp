@@ -47,6 +47,12 @@
 		initiateMap();
 	});
 	
+	var map = null;
+	var latitude = '<%= meetingInfo.get("latitude") %>';
+	var longitude = '<%= meetingInfo.get("longitude") %>';
+	var address = '<%= meetingInfo.get("address") %>';
+	var infoWindow = null;
+	
 	function initiateMap()
 	{
 		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
@@ -56,7 +62,55 @@
 				level: 3 //지도의 레벨(확대, 축소 정도)
 			};
 
-		var map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		
+		// 지도에 클릭 이벤트를 등록합니다
+		daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
+		    
+		    if ( infoWindow != null ){
+		    	infoWindow.close();
+		    }
+		    
+		});
+		
+		if ( latitude.length > 0 && longitude.length > 0 )
+		{
+			var position = new daum.maps.LatLng( latitude, longitude );
+			
+			setCenter( position );
+			
+			// 마커를 생성합니다
+		    var marker = new daum.maps.Marker({
+		        position: position,
+		        clickable:true
+		    });
+			
+		    daum.maps.event.addListener(marker, 'click', showInfoWindow(marker));
+		    
+		    infoWindow = new daum.maps.InfoWindow({
+			    position: position,
+			    content: '<div style="padding:5px;font-size:17px;width:100%">' + address + '</div>'
+			});
+		    
+		 	// 마커가 지도 위에 표시되도록 설정합니다
+		    marker.setMap(map);
+		 	
+		    infoWindow.open(map, marker);
+		}
+	}
+	
+	function showInfoWindow( marker )
+	{
+		return function()
+		{
+			infoWindow.open(map, marker);	
+		};
+	}
+	
+	function setCenter( position ) {            
+	    // 이동할 위도 경도 위치를 생성합니다 
+	    // 지도 중심을 이동 시킵니다
+	    map.setCenter(position);
 	}
 	
 	function join()

@@ -52,3 +52,12 @@ values(2, 'user638', NOW());
 
 insert into cafe_public_meeting_members(meetingNo, userID, createdDate )
 values(2, 'user801', NOW());
+
+
+
+insert into cafe_location(latitude, longitude, regionNo, address, createdDate)
+values ('37.513821', '127.108814', 366, '서울시 송파구 방이2동 63-15', NOW() );
+
+
+insert into cafe_public_meeting(cafeNo, title, meetingDate, locationNo, maxNo, createdDate)
+values(1, '맛나는 삼겹살번개', '2017-01-20 19:30', 3, 10, NOW());

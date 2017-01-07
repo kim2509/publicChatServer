@@ -179,3 +179,8 @@ body{
 	background:#5642f4;
 	color:white;
 }
+
+#pagingInfo a{
+	padding:5px;
+	margin:0px 2px;
+}

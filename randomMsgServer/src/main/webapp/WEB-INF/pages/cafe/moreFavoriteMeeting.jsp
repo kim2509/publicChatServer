@@ -24,13 +24,20 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=22" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=23" />
 
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
 	var userID = '<%= userID %>';
+
 	var startIndex = 0;
+	var firstPage = 0;
+	var lastPage = 0;
+	var numOfPagesOnScreen = 5;
+	var pageNo = 1;
+	var pageSize = 10;
+	var totalItemCount = 0;
 	
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
@@ -38,19 +45,33 @@
 		// 초기 데이터 로딩
 		if ( $('#favoriteRegionDiv ul li').length > 0 )
 		{
-			var level = $('#favoriteRegionDiv ul li').eq(0).attr('level');
-			var regionNo = $('#favoriteRegionDiv ul li').eq(0).attr('regionNo');
-			var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : 10 };
-			ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
+			// 홀수 개의 관심지역일 때 공백을 하나 추가함.
+			if ( $('#favoriteRegionDiv ul li').length % 2 != 0 )
+			{
+				$('#favoriteRegionDiv ul').append('<li>&nbsp;</li>');
+			}
+			
+			getMeetingList();
 		}
 	});
 	
+	function getMeetingList()
+	{
+		var level = $('#favoriteRegionDiv ul .selected').attr('level');
+		var regionNo = $('#favoriteRegionDiv ul .selected').attr('regionNo');
+		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
+		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );	
+	}
+	
 	function changeRegion( element, regionNo, level )
 	{
+		pageNo = 1;
+		startIndex = 0;
+		
 		$('.favoriteRegion li').removeClass('selected');		
 		$(element).addClass('selected');
 		
-		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : 10 };
+		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
 		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
 	}
 	
@@ -75,6 +96,15 @@
 			}
 			
 			setMapData(result);
+			
+			if ( $('#map').is(':visible') )
+			{
+				displayMapData();
+			}
+			
+			totalItemCount = result.data2;
+			
+			displayPagingInfo();
 		}
 		catch( ex )
 		{
@@ -102,9 +132,10 @@
 			if ( !bMapInitialized )
 			{
 				initiateMap();
-				displayMapData();
 				bMapInitialized = true;
 			}
+			
+			displayMapData();
 		}
 	}
 	
@@ -131,25 +162,6 @@
 		    
 		});
 		
-		/*
-		var marker = new daum.maps.Marker({
-		    map: map,
-		    position: new daum.maps.LatLng(33.450701, 126.570667),
-		    title:'마커 엘리먼트의 타이틀 속성 값',
-		    clickable:true
-		});
-		
-		daum.maps.event.addListener(marker, 'click', function() {
-		    alert('marker click!');
-		});
-		
-		var infowindow = new daum.maps.InfoWindow({
-		    position: new daum.maps.LatLng(33.450701, 126.570667),
-		    content: '<div style="padding:5px;font-size:13px;">오늘 저녁 삼겹살에 소주~<br/>1월 1일 20:30<br/><a href="">상세보기</a></div>'
-		});
-		
-		infowindow.open(map, marker);
-		*/
 	}
 	
 	// 실제로 정모의 데이터가 담길 배열
@@ -211,6 +223,15 @@
 	{
 		if ( result == null || result.data == null || result.data.length < 1 ) return;
 		
+		if ( infoWindows != null && infoWindows.length > 0 ){
+	    	for( var i = 0; i < infoWindows.length; i++ )
+	    		infoWindows[i].close();
+	    }
+		hideMarkers();
+		positions = [];
+		markers = [];
+		infoWindows = [];
+		
 		for ( var i = 0; i < result.data.length; i++ )
 		{
 			var position = {
@@ -224,7 +245,8 @@
 			    position: position,
 			    content: '<div style="padding:5px;font-size:17px;width:100%">' + result.data[i].title + 
 			    '<br/>' + displayDateFormat( result.data[i].meetingDate, 'MM-dd HH:mm' ) + '<br/>' + 
-			    '<a href="javascript:void(0)" onclick="goMeetingDetail(\'' + result.data[i].cafeID + '\',\'' + result.data[i].meetingNo + '\');">상세보기</a></div>'
+			    '<a href="javascript:void(0)" onclick="goMeetingDetail(\'' + 
+			    		result.data[i].cafeID + '\',\'' + result.data[i].meetingNo + '\');">상세보기</a></div>'
 			});
 			
 			infoWindows.push(infowindow);
@@ -266,6 +288,61 @@
 		{
 			alert( ex.message );
 		}
+	}
+	
+	function displayPagingInfo()
+	{
+		$('#pagingInfo').empty();
+		
+		if ( pageNo <= numOfPagesOnScreen )
+			firstPage = 1;
+		else
+		{
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
+			if ( pageNo % numOfPagesOnScreen == 0 )
+				firstPage = firstPage - numOfPagesOnScreen + 1;
+			else
+				firstPage++;
+		}
+		
+		lastPage = parseInt( totalItemCount / pageSize );
+		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
+			lastPage++;
+		
+		if ( firstPage > numOfPagesOnScreen + 1)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);">&lt;&lt;</a>');
+		
+		if ( firstPage != 1 )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');">&lt;</a>');
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+		{
+			if ( firstPage + i == pageNo)
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" class="pageSelected">' + (firstPage + i) + '</a>');
+			}
+			else
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" >' + (firstPage + i) + '</a>');
+			}
+		
+			if ( (firstPage + i) == lastPage )
+				break;
+		}
+		
+		if ( lastPage > firstPage + numOfPagesOnScreen )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" >&gt;</a>');
+		
+		if ( firstPage + numOfPagesOnScreen < lastPage - numOfPagesOnScreen)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" >&gt;&gt;</a>');
+		
+	}
+	
+	function goPage(num)
+	{
+		pageNo = num;
+		startIndex = (pageNo - 1) * pageSize;
+		getMeetingList();
 	}
 	
 </script>
@@ -331,14 +408,8 @@
 		</div>
 		
 		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
-			<a href="javascript:void(0)" onclick="goPage(1);" style="padding:5px;" class="pageSelected">1</a>
-			<a href="javascript:void(0)" onclick="goPage(2);" style="padding:5px;">2</a>
-			<a href="javascript:void(0)" onclick="goPage(3);" style="padding:5px;">3</a>
-			<a href="javascript:void(0)" onclick="goPage(4);" style="padding:5px;">4</a>
-			<a href="javascript:void(0)" onclick="goPage(5);" style="padding:5px;">5</a>
-			<a href="javascript:void(0)" onclick="goPage(6);" style="padding:5px;">&gt;</a>
-			<a href="javascript:void(0)" onclick="goPage(165);" style="padding:5px;">&gt;&gt;</a>
 		</div>
+		
 	</div>
 	
 </body>

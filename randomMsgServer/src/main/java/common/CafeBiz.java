@@ -59,6 +59,13 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public int getTotalCafeMeetingsCountByRegion(HashMap param)
+	{
+		int totalCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.getTotalCafeMeetingsCountByRegion", param);
+		return totalCount;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public List<HashMap> getUpcomingCafeMeetingList( String userID )
 	{
 		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getUpcomingCafeMeetingList", userID);
