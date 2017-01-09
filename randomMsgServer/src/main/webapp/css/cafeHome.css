@@ -5,6 +5,12 @@ body{
 	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
+#wrapper{
+	max-width:900px;
+	margin:0 auto;
+	position:relative;
+}
+
 
 .menu{
 	height:45px;
@@ -17,8 +23,6 @@ body{
 	height:45px;
 }
 
-#wrapper{
-}
 
 li{ 
 	list-style:none;
@@ -112,6 +116,7 @@ li{
 #cafeInfo
 {
 	padding:10px;
+	width:100%;
 }
 
 #cafeInfo #cafeTitle

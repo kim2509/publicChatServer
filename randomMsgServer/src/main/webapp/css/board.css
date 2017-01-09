@@ -4,6 +4,12 @@ body{
 	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
+#wrapper{
+	max-width:900px;
+	margin:0 auto;
+	position:relative;
+}
+
 
 .titleDiv{
 	background:#45a8e2;;
