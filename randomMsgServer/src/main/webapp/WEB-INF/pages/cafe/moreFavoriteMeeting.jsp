@@ -269,7 +269,7 @@
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
 		else
-			document.location.href="/nearhere/cafe/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>";
+			document.location.href="/nearhere/region/favoriteRegion.do?userID=<%= userID %>&isApp=" + isApp;
 	}
 	
 	function goMeetingDetail( cafeID, meetingNo )

@@ -3,7 +3,6 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -16,201 +15,123 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
-
-
-<style type="text/css">
-
-span{ padding:5px; }
-
-.destination {
-    margin: 10px;
-    border-radius: 10px;
-    border: 1px solid #5f98f1;
-    background: white;
-    line-height: 40px;
-    color: #5f98f1;
-    text-align: center;
-}
-
-ul {
-	margin:0;
-	padding:0;
-	text-align:center;
-	display:block;
-	overflow:hidden;
-	list-style:none;
-}
-
-.cafeItem {
-	float: left;
-    height: 135px;
-    width: 32%;
-    text-align:center;
-}
-
-li img{
-	border-radius: 10px;
-}
-
-.slide_lst{
-	margin-top:10px;
-}
-
-.slide_lst2{
-	
-	
-}
-
-.slide_lst2 li {
-	position:relative;
-	clear:both;
-	height:60px;
-	padding-top:10px;
-	padding-bottom:5px;
-	border-bottom: 1px solid gray;
-}
-
-.desc{
-	margin-top:5px;
-	text-align:center;
-	overflow:hidden;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    padding-left:10px;
-    padding-right:10px;
-}
-
-.date{
-	border:1px solid gray;
-	border-radius: 5px;
-	padding:5px;
-	font-size:12px;
-	font-weight:bold;
-	float:left;
-}
-
-.postTitle{
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-    text-overflow: ellipsis;
-	text-align:left;
-	margin-left:70px;
-	font-size:12px;
-}
-
-.cafeName{
-	position:absolute;
-	margin-left:70px;
-	font-size:12px;
-	font-weight:bold;
-	bottom:10px;
-	right:10px
-}
-
-.sectionTitle{
-	padding-left:10px;
-}
-
-.btn1{
-	margin-top:3px;
-}
-
-</style>
-
-	<script language="javascript">
-		function goMyCafeList()
-		{
-			document.location.href="/nearhere/cafe/myCafeList.do";
-		}
-	</script>
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/searchCafe.css?v=6" />
 
 </head>
 <body>
 
-	<script id="cafeItemT" type="text/x-handlebars-template">
-	<ul class="slide_lst">
-		{{#each items}}
-		<li>
-			<div class="thumbnail">
-				<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-			</div>
-			<div class='desc'>
-				카페1
-			</div>
-		</li>
-		{{/each}}
-	</ul>
-</script>
 
-	<div id="wrapper" style="padding-bottom:10px;">
+	<div id="wrapper" style="">
 		
-		<div id="section">
-
-			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMyCafeList();">더 보기</div>
-			<div class="sectionTitle">내 가입 카페</div>
-
-			<ul class="slide_lst">
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1이구나야fdsafdsa카페1이구나야fdsafdsa
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-				<li class="cafeItem">
-					<div class="thumbnail">
-						<img src='http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png' width="80" height="80"/>
-					</div>
-					<div class='desc'>
-						카페1
-					</div>
-				</li>
-			</ul>
-		</div>
+		<div id="searchLayerDiv">
+			<div id="searchBoxDiv">
+				<div id="backDiv"><img src="<%=Constants.IMAGE_PATH%>/back.png" width="24" height="24"/></div>
+				<div id="searchDiv"><img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24"/></div>
+				<input type="text" class="searchInput" placeholder="카페 검색"/>
+			</div>
 			
+			<div id="searchRegionDiv">
+				<table style="width:100%;">
+				<colgroup>
+					<col width="120px;"></col>
+					<col width="*"></col>
+				</colgroup>
+				<tr>
+					<td class="th1">시/도</td>
+					<td class="th2">
+						<select name="selRegionLevel1" id="selRegionLevel1" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="sigugun">
+					<td class="th1">시/구/군</td>
+					<td class="th2">
+						<select name="selRegionLevel2" id="selRegionLevel2" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="dong">
+					<td class="th1">동/읍/면</td>
+					<td class="th2">
+						<select name="selRegionLevel3" id="selRegionLevel3" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="ri">
+					<td class="th1">리</td>
+					<td class="th2">
+						<select name="selRegionLevel4" id="selRegionLevel4" style="width:100%;">
+							<option value="">선택하세요.</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			</div>
+		</div>
+		
+		<div id="searchResultDiv">
+			<div id="searchResultTab">
+				<div class="tab">
+					<div class="selected">카페명</div>
+				</div>
+				<div class="tab">
+					<div>카페글</div>
+				</div>
+			</div>
+			<div id="searchResultInfo">
+				<span class="keyword">'테니스'</span>
+				<span>153</span> 
+			</div>
+			<div>
+				<ul>
+					<li>
+						<div>
+							<div class="cafeImage">
+								<img src='http://mcafethumb2.phinf.naver.net/MjAxNzAxMTBfMjI4/MDAxNDg0MDM1MzAzNDIz.3Q3XlLPI27dw18F_OePn9dGU1Uhby2sFjnA4xarWWpIg.SKOVVtg4GpXRVaUVKOAT4udb-6Xgfxd4hUUY0Jf2Vaog.PNG.ccyoo/%C5%D7%B4%CF%BD%BA-%C8%A6%B8%AF-%B7%CE%B0%ED-3.png?type=f100_100'
+								width="60" height="60"/>
+							</div>
+							<div class="cafeInfo">
+								<div class="cafeTitle">중고나라</div>
+								<div class="cafeDesc">포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~</div>
+								<div class="regionInfo">경북 포항시 남구 연일읍 택전리</div>
+								<div class="memberInfo">멤버수 : 100명</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div>
+							<div class="cafeImage">
+								<img src='http://mcafethumb2.phinf.naver.net/MjAxNzAxMTBfMjI4/MDAxNDg0MDM1MzAzNDIz.3Q3XlLPI27dw18F_OePn9dGU1Uhby2sFjnA4xarWWpIg.SKOVVtg4GpXRVaUVKOAT4udb-6Xgfxd4hUUY0Jf2Vaog.PNG.ccyoo/%C5%D7%B4%CF%BD%BA-%C8%A6%B8%AF-%B7%CE%B0%ED-3.png?type=f100_100'
+								width="60" height="60"/>
+							</div>
+							<div class="cafeInfo">
+								<div class="cafeTitle">중고나라</div>
+								<div class="cafeDesc">포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~</div>
+								<div class="regionInfo">경북 포항시 남구 연일읍 택전리</div>
+								<div class="memberInfo">멤버수 : 100명</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div>
+							<div class="postImage">
+								<img src='http://mcafethumb2.phinf.naver.net/MjAxNzAxMTBfMjI4/MDAxNDg0MDM1MzAzNDIz.3Q3XlLPI27dw18F_OePn9dGU1Uhby2sFjnA4xarWWpIg.SKOVVtg4GpXRVaUVKOAT4udb-6Xgfxd4hUUY0Jf2Vaog.PNG.ccyoo/%C5%D7%B4%CF%BD%BA-%C8%A6%B8%AF-%B7%CE%B0%ED-3.png?type=f100_100'
+								width="60" height="60"/>
+							</div>
+							<div class="postInfo">
+								<div class="postTitle">테니스 라켓 팝니다.</div>
+								<div class="createdDate">2017.01.14 13:59</div>
+								<div class="postDesc">포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
 	</div>
 
-	
-	
 </body>
 </html>

@@ -25,7 +25,7 @@
 		where ur.userID = #{userID}
 		and cpm.meetingDate > NOW()
 		order by cpm.meetingDate desc
-		limit 0, 10;
+		limit 0, 5;
 	</select>
 	
 	<select id="getCafeMeetingsByRegion" resultType="HashMap" parameterType="HashMap">

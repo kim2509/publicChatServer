@@ -62,7 +62,7 @@
 		var url = '<%= Constants.getServerURL() %>/cafe/searchCafe.do';
 		
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + url + '';
 		else
 			document.location.href= url;
 	}
