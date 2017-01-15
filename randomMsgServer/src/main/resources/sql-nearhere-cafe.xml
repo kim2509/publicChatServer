@@ -4,6 +4,122 @@
 
 <mapper namespace="com.tessoft.nearhere.cafe">
 
+	<select id="searchCafe" resultType="HashMap" parameterType="HashMap">
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL, cmm.cntMembers
+			, rv.*
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+		where cafeName like '%#{keyword}%'
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="searchCafeCount" resultType="Integer" parameterType="HashMap">
+		select count(cm.cafeNo) as cntCafes
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+		where cafeName like '%#{keyword}%'
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+	</select>
+	
+	<select id="searchCafePosts" resultType="HashMap" parameterType="HashMap">
+		select cbpm.*, cbpd.content, cbpd2.locationNo, rv.* 
+			, concat( ifnull( ci.url1, '' ), ifnull( ci.url2, '' ) ) as imageURL
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join (
+				select postNo, locationNo from cafe_board_post_detail
+				where type = 3
+				group by postNo
+			) cbpd2 on cbpm.postNo = cbpd2.postNo
+			left outer join cafe_location cl on cbpd2.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join (
+				select postNo, imageNo from cafe_board_post_detail
+				where type = 2
+				group by postNo
+			) cbpd3 on cbpm.postNo = cbpd3.postNo
+			left outer join cafe_image ci on ci.imageNo = cbpd3.imageNo
+		where 
+		(cbpm.title like '%#{keyword}%' or cbpd.content like '%#{keyword}%')
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="searchCafePostsCount" resultType="Integer" parameterType="HashMap">
+		select count(cbpm.postNo)
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join (
+				select postNo, locationNo from cafe_board_post_detail
+				where type = 3
+				group by postNo
+			) cbpd2 on cbpm.postNo = cbpd2.postNo
+			left outer join cafe_location cl on cbpd2.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+		where 
+		(cbpm.title like '%#{keyword}%' or cbpd.content like '%#{keyword}%')
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+	</select>
+	
 	<select id="getMyCafeList" resultType="HashMap" parameterType="String">
 		select cm.*, ci.url1, ci.url2 from cafe_members cm2
 			left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo

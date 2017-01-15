@@ -131,6 +131,10 @@
 				</ul>
 			</div>
 		</div>
+		
+		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
+		</div>
+		
 	</div>
 
 </body>
