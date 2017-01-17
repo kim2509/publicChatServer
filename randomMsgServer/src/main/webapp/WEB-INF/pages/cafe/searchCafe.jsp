@@ -28,9 +28,11 @@
 	var startIndex = 0;
 	var pageSize = 20;
 	
+	var keyword = '';
+	
 	function searchKeyword()
 	{
-		var keyword = $('#txtKeyword').val();
+		keyword = $('#txtKeyword').val();
 		
 		var level = '';
 		var regionNo = '';
@@ -41,9 +43,36 @@
 	
 	function onResult( result )
 	{
-	
+		console.log(JSON.stringify(result));
+		
+		$('#searchResultInfo .keyword').html( keyword );
+		$('#searchResultInfo #cntMembers').html( result.data2 );
+		var source = $('#cafeT').html();
+		var template = Handlebars.compile(source);
+		var html = template(result);
+		$('#searchResultDataDiv').html(html);
 	}
 
+</script>
+<script id="cafeT" type="text/x-handlebars-template">
+	<ul id="meetingList">
+		{{#each data}}
+		<li>
+			<div>
+				<div class="cafeImage">
+					<img src='{{iconImageURL}}'
+					width="60" height="60"/>
+				</div>
+				<div class="cafeInfo">
+					<div class="cafeTitle">{{cafeName}}</div>
+					<div class="cafeDesc">{{mainDesc}}</div>
+					<div class="regionInfo">{{lRegionName}} {{mRegionName}} {{sRegionName}} {{tRegionName}}</div>
+					<div class="memberInfo">멤버수 : {{cntMembers}}명</div>
+				</div>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
 </script>
 
 </head>
@@ -112,9 +141,9 @@
 			</div>
 			<div id="searchResultInfo">
 				<span class="keyword">'테니스'</span>
-				<span>153</span> 
+				<span id="cntMembers">153</span> 
 			</div>
-			<div>
+			<div id="searchResultDataDiv">
 				<ul>
 					<li>
 						<div>

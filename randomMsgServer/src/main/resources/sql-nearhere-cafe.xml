@@ -13,17 +13,17 @@
 			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
 			left outer join cafe_location cl on cd.locationNo = cl.No
 			left outer join region_view rv on cl.regionNo = rv.regionNo
-		where cafeName like '%#{keyword}%'
-		<if test="level==1">
+		where cafeName like concat('%',#{keyword},'%')
+		<if test="level != null and level==1">
 			and rv.lRegionNo = #{regionNo}
 		</if>
-		<if test="level==2">
+		<if test="level != null and level==2">
 			and rv.mRegionNo = #{regionNo}
 		</if>
-		<if test="level==3">
+		<if test="level != null and level==3">
 			and rv.sRegionNo = #{regionNo}
 		</if>
-		<if test="level==4">
+		<if test="level != null and level==4">
 			and rv.tRegionNo = #{regionNo}
 		</if>
 		limit #{startIndex}, #{showCount}
@@ -35,17 +35,17 @@
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_location cl on cd.locationNo = cl.No
 			left outer join region_view rv on cl.regionNo = rv.regionNo
-		where cafeName like '%#{keyword}%'
-		<if test="level==1">
+		where cafeName like concat('%',#{keyword},'%')
+		<if test="level != null and level==1">
 			and rv.lRegionNo = #{regionNo}
 		</if>
-		<if test="level==2">
+		<if test="level != null and level==2">
 			and rv.mRegionNo = #{regionNo}
 		</if>
-		<if test="level==3">
+		<if test="level != null and level==3">
 			and rv.sRegionNo = #{regionNo}
 		</if>
-		<if test="level==4">
+		<if test="level != null and level==4">
 			and rv.tRegionNo = #{regionNo}
 		</if>
 	</select>
