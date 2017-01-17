@@ -224,4 +224,70 @@ public class CafeAjaxController extends BaseController {
 		
 		return response;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/searchCafeAjax.do")
+	public @ResponseBody APIResponse searchCafeAjax(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String keyword = param.get("keyword").toString();
+			String level = param.get("level").toString();
+			String regionNo = param.get("regionNo").toString();
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeMeetings = cafeBiz.searchCafe(param);
+			response.setData(cafeMeetings);
+			response.setData2( cafeBiz.searchCafeCount(param) );
+			
+			insertHistory("/cafe/searchCafeAjax.do", keyword , level , regionNo, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/searchCafeAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/searchCafePostsAjax.do")
+	public @ResponseBody APIResponse searchCafePostsAjax(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String keyword = param.get("keyword").toString();
+			String level = param.get("level").toString();
+			String regionNo = param.get("regionNo").toString();
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeMeetings = cafeBiz.searchCafePosts(param);
+			response.setData(cafeMeetings);
+			response.setData2( cafeBiz.searchCafePostsCount(param) );
+			
+			insertHistory("/cafe/searchCafePostsAjax.do", keyword , level , regionNo, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/searchCafePostsAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>카페 검색</title>
 
 
 <!-- Include the jQuery library -->
@@ -16,6 +16,35 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/searchCafe.css?v=6" />
+
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
+
+<script language="javascript">
+
+	jQuery(document).ready(function(){
+		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
+	});
+	
+	var startIndex = 0;
+	var pageSize = 20;
+	
+	function searchKeyword()
+	{
+		var keyword = $('#txtKeyword').val();
+		
+		var level = '';
+		var regionNo = '';
+		var param = {"keyword": keyword, "level":level, "regionNo": regionNo, 
+				"startIndex":startIndex, "showCount" : pageSize };
+		ajaxRequest('POST', '/nearhere/cafe/searchCafeAjax.do', param , onResult );
+	}
+	
+	function onResult( result )
+	{
+	
+	}
+
+</script>
 
 </head>
 <body>
@@ -26,8 +55,8 @@
 		<div id="searchLayerDiv">
 			<div id="searchBoxDiv">
 				<div id="backDiv"><img src="<%=Constants.IMAGE_PATH%>/back.png" width="24" height="24"/></div>
-				<div id="searchDiv"><img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24"/></div>
-				<input type="text" class="searchInput" placeholder="카페 검색"/>
+				<div id="searchDiv" onclick="searchKeyword();"><img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24"/></div>
+				<input type="text" class="searchInput" id="txtKeyword" placeholder="카페 검색"/>
 			</div>
 			
 			<div id="searchRegionDiv">
