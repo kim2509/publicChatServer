@@ -3,6 +3,12 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+	String isApp = request.getParameter("isApp");
+	String userID = request.getParameter("userID");
+	List<HashMap> cities = (List<HashMap>) request.getAttribute("cities");
+%>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -21,43 +27,310 @@
 
 <script language="javascript">
 
+	var level = 0;
+	var regionNo = '';
+
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
+		
+		$('#selRegionLevel1').change(function(){
+			if ( $(this).val() != '' )
+			{
+				$('#selRegionLevel2').empty();
+				$('#selRegionLevel2').append( '<option value="">선택하세요</option>' );
+				$('#selRegionLevel3').empty();
+				$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
+				$('#selRegionLevel4').empty();
+				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+				
+				getRegionList('selRegionLevel2', $(this).val());
+				
+				$('#searchRegionDiv .sigugun').show();
+				
+				level = 1;
+				regionNo = $(this).val();
+			}
+			else
+			{
+				$('#searchRegionDiv .sigugun select').find('option:first').attr('selected', 'selected');
+				$('#searchRegionDiv .dong select').find('option:first').attr('selected', 'selected');
+				$('#searchRegionDiv .ri select').find('option:first').attr('selected', 'selected');
+				$('#searchRegionDiv .sigugun').hide();
+				$('#searchRegionDiv .dong').hide();
+				$('#searchRegionDiv .ri').hide();
+				
+				level = 0;
+			}
+			
+			searchKeyword();
+		});
+		
+		$('#selRegionLevel2').change(function(){
+			if ( $(this).val() != '' )
+			{
+				$('#selRegionLevel3').empty();
+				$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
+				$('#selRegionLevel4').empty();
+				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+				
+				getRegionList('selRegionLevel3', $(this).val());
+				
+				$('#searchRegionDiv .dong').show();
+				
+				level = 2;
+				regionNo = $(this).val();
+			}
+			else
+			{
+				$('#searchRegionDiv .dong select').find('option:first').attr('selected', 'selected');
+				$('#searchRegionDiv .ri select').find('option:first').attr('selected', 'selected');
+				$('#searchRegionDiv .dong').hide();
+				$('#searchRegionDiv .ri').hide();
+				
+				level = 1;
+			}
+			
+			searchKeyword();
+		});
+		
+		$('#selRegionLevel3').change(function(){
+			if ( $(this).val() != '' )
+			{
+				$('#selRegionLevel4').empty();
+				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+				
+				getRegionList('selRegionLevel4', $(this).val());
+				
+				$('#searchRegionDiv .ri').show();
+				
+				level = 3;
+				regionNo = $(this).val();
+			}
+			else
+			{
+				$('#searchRegionDiv .ri select').find('option:first').attr('selected', 'selected');
+				$('#searchRegionDiv .ri').hide();
+				
+				level = 2;
+			}
+			
+			searchKeyword();
+		});
+		
+		$('#selRegionLevel4').change(function(){
+			if ( $(this).val() != '' )
+			{
+				level = 4;
+				regionNo = $(this).val();
+			}
+			else
+			{
+				level = 3;
+			}
+			
+			searchKeyword();
+		});
+		
+		$('#txtKeyword').focus();
 	});
 	
+	function getRegionList( elementName, regionNo )
+	{
+		var param = {"regionNo":regionNo};
+		
+		jQuery.ajax({
+			type : "POST",
+			url : "/nearhere/region/getRegionListByParent.do",
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+				// TODO
+				try {
+
+					if ( result == null || result.data == null  )
+					{
+						return;
+					}
+					
+					for ( var i = 0; i < result.data.length ; i++ )
+					{
+						var optionElement = $('<option></option>');
+						
+						optionElement.val(result.data[i].regionNo);
+						optionElement.html(result.data[i].regionName);
+						
+						$('#' + elementName ).append( optionElement );					
+					}
+					
+				} catch (ex) {
+					alert(ex.message);
+				}
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+				// TODO
+				
+			},
+			error : function(xhr, status, error) {
+				alert("에러발생(getRegionList)" + error );
+			}
+		});
+	}
+	
+	var isApp = '<%= isApp %>';
 	var startIndex = 0;
+	var firstPage = 0;
+	var lastPage = 0;
+	var numOfPagesOnScreen = 5;
+	var pageNo = 1;
 	var pageSize = 20;
+	var totalItemCount = 0;
 	
 	var keyword = '';
+	
+	var searchMode = 1;
 	
 	function searchKeyword()
 	{
 		keyword = $('#txtKeyword').val();
 		
-		var level = '';
-		var regionNo = '';
 		var param = {"keyword": keyword, "level":level, "regionNo": regionNo, 
 				"startIndex":startIndex, "showCount" : pageSize };
-		ajaxRequest('POST', '/nearhere/cafe/searchCafeAjax.do', param , onResult );
+		
+		if ( searchMode == 1 )
+			ajaxRequest('POST', '/nearhere/cafe/searchCafeAjax.do', param , onResult );
+		else if ( searchMode == 2 )
+			ajaxRequest('POST', '/nearhere/cafe/searchCafePostsAjax.do', param , onResult );
+	}
+	
+	function searchByCafeName()
+	{
+		searchMode = 1;
+		searchKeyword();
+		$('#searchResultTab #cafePostTab').removeClass('selected');
+		$('#searchResultTab #cafeTab').addClass('selected');
+	}
+	
+	function searchByCafePost()
+	{
+		searchMode = 2;
+		searchKeyword();
+		$('#searchResultTab #cafeTab').removeClass('selected');
+		$('#searchResultTab #cafePostTab').addClass('selected');
 	}
 	
 	function onResult( result )
 	{
-		console.log(JSON.stringify(result));
+		$('#searchResultInfo #cntResult').html( result.data2 );
 		
-		$('#searchResultInfo .keyword').html( keyword );
-		$('#searchResultInfo #cntMembers').html( result.data2 );
-		var source = $('#cafeT').html();
+		var source = null;
+		
+		if ( searchMode == 1 )
+		{
+			source = $('#cafeT').html();
+		}
+		else if ( searchMode == 2 )
+		{
+			source = $('#cafePostT').html();
+		}
+		
 		var template = Handlebars.compile(source);
 		var html = template(result);
 		$('#searchResultDataDiv').html(html);
+		
+		totalItemCount = result.data2;
+		
+		if ( result.data != null && result.data.length > 0 )
+		{
+			$('#pagingInfo').show();
+			$('#emptyDiv').hide();
+		}
+		else
+		{
+			$('#pagingInfo').hide();
+			$('#emptyDiv').show();
+		}
+		
+		displayPagingInfo();
 	}
 
+	function goCafeHome( cafeID )
+	{
+		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>&userID=<%= userID %>';
+		url = encodeURIComponent( url );
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/" + cafeID;
+	}
+	
+	function goPostDetail( boardName, postNo )
+	{
+		var url = '<%= Constants.getServerURL() %>/cafe/boardPost/detail/' + postNo + '?boardName=' + encodeURIComponent(boardName);
+		url = encodeURIComponent( url );
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+		else
+			document.location.href="/nearhere/cafe/boardPost/detail/" + postNo + "?boardName=" + encodeURIComponent(boardName);
+	}
+	
+	function displayPagingInfo()
+	{
+		$('#pagingInfo').empty();
+		
+		if ( pageNo <= numOfPagesOnScreen )
+			firstPage = 1;
+		else
+		{
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
+			if ( pageNo % numOfPagesOnScreen == 0 )
+				firstPage = firstPage - numOfPagesOnScreen + 1;
+			else
+				firstPage++;
+		}
+		
+		lastPage = parseInt( totalItemCount / pageSize );
+		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
+			lastPage++;
+		
+		if ( firstPage > numOfPagesOnScreen + 1)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);">&lt;&lt;</a>');
+		
+		if ( firstPage != 1 )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');">&lt;</a>');
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+		{
+			if ( firstPage + i == pageNo)
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" class="pageSelected">' + (firstPage + i) + '</a>');
+			}
+			else
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" >' + (firstPage + i) + '</a>');
+			}
+		
+			if ( (firstPage + i) == lastPage )
+				break;
+		}
+		
+		if ( lastPage > firstPage + numOfPagesOnScreen )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" >&gt;</a>');
+		
+		if ( firstPage + numOfPagesOnScreen < lastPage - numOfPagesOnScreen)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" >&gt;&gt;</a>');
+		
+	}
+	
 </script>
 <script id="cafeT" type="text/x-handlebars-template">
-	<ul id="meetingList">
+	<ul>
 		{{#each data}}
-		<li>
+		<li onclick="goCafeHome('{{cafeID}}');">
 			<div>
 				<div class="cafeImage">
 					<img src='{{iconImageURL}}'
@@ -74,7 +347,25 @@
 		{{/each}}
 	</ul>
 </script>
-
+<script id="cafePostT" type="text/x-handlebars-template">
+	<ul>
+		{{#each data}}
+		<li onclick="goPostDetail('{{boardName}}','{{postNo}}');">
+			<div>
+				<div class="postImage">
+					<img src='{{imageURL}}'
+					width="60" height="60"/>
+				</div>
+				<div class="postInfo">
+					<div class="postTitle">{{title}}</div>
+					<div class="createdDate">{{displayDateFormat createdDate 'MM-dd HH:mm'}}</div>
+					<div class="postDesc">{{content}}</div>
+				</div>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+</script>
 </head>
 <body>
 
@@ -97,9 +388,16 @@
 				<tr>
 					<td class="th1">시/도</td>
 					<td class="th2">
-						<select name="selRegionLevel1" id="selRegionLevel1" style="width:100%;">
-							<option value="">선택하세요.</option>
-						</select>
+						<% for ( int i = 0; i < cities.size(); i++ ) { %>
+							<% if ( i == 0 ) { %>
+								<select name="selRegionLevel1" id="selRegionLevel1" style="width:100%;">
+									<option value="">선택하세요.</option>
+							<% } %>
+							<option value="<%= cities.get(i).get("regionNo") %>"><%= cities.get(i).get("regionName") %></option>
+							<% if ( i == cities.size() -1 ) { %>
+								</select>
+							<% } %>
+						<% } %>
 					</td>
 				</tr>
 				<tr class="sigugun">
@@ -132,62 +430,22 @@
 		
 		<div id="searchResultDiv">
 			<div id="searchResultTab">
-				<div class="tab">
-					<div class="selected">카페명</div>
+				<div class="tab" onclick="searchByCafeName();">
+					<div id='cafeTab' class="selected">카페명</div>
 				</div>
-				<div class="tab">
-					<div>카페글</div>
+				<div class="tab" onclick="searchByCafePost();">
+					<div id='cafePostTab'>카페글</div>
 				</div>
 			</div>
 			<div id="searchResultInfo">
-				<span class="keyword">'테니스'</span>
-				<span id="cntMembers">153</span> 
+				<span class="keyword">검색결과</span>
+				<span id="cntResult"></span> 
 			</div>
 			<div id="searchResultDataDiv">
-				<ul>
-					<li>
-						<div>
-							<div class="cafeImage">
-								<img src='http://mcafethumb2.phinf.naver.net/MjAxNzAxMTBfMjI4/MDAxNDg0MDM1MzAzNDIz.3Q3XlLPI27dw18F_OePn9dGU1Uhby2sFjnA4xarWWpIg.SKOVVtg4GpXRVaUVKOAT4udb-6Xgfxd4hUUY0Jf2Vaog.PNG.ccyoo/%C5%D7%B4%CF%BD%BA-%C8%A6%B8%AF-%B7%CE%B0%ED-3.png?type=f100_100'
-								width="60" height="60"/>
-							</div>
-							<div class="cafeInfo">
-								<div class="cafeTitle">중고나라</div>
-								<div class="cafeDesc">포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~</div>
-								<div class="regionInfo">경북 포항시 남구 연일읍 택전리</div>
-								<div class="memberInfo">멤버수 : 100명</div>
-							</div>
-						</div>
-					</li>
-					<li>
-						<div>
-							<div class="cafeImage">
-								<img src='http://mcafethumb2.phinf.naver.net/MjAxNzAxMTBfMjI4/MDAxNDg0MDM1MzAzNDIz.3Q3XlLPI27dw18F_OePn9dGU1Uhby2sFjnA4xarWWpIg.SKOVVtg4GpXRVaUVKOAT4udb-6Xgfxd4hUUY0Jf2Vaog.PNG.ccyoo/%C5%D7%B4%CF%BD%BA-%C8%A6%B8%AF-%B7%CE%B0%ED-3.png?type=f100_100'
-								width="60" height="60"/>
-							</div>
-							<div class="cafeInfo">
-								<div class="cafeTitle">중고나라</div>
-								<div class="cafeDesc">포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~</div>
-								<div class="regionInfo">경북 포항시 남구 연일읍 택전리</div>
-								<div class="memberInfo">멤버수 : 100명</div>
-							</div>
-						</div>
-					</li>
-					<li>
-						<div>
-							<div class="postImage">
-								<img src='http://mcafethumb2.phinf.naver.net/MjAxNzAxMTBfMjI4/MDAxNDg0MDM1MzAzNDIz.3Q3XlLPI27dw18F_OePn9dGU1Uhby2sFjnA4xarWWpIg.SKOVVtg4GpXRVaUVKOAT4udb-6Xgfxd4hUUY0Jf2Vaog.PNG.ccyoo/%C5%D7%B4%CF%BD%BA-%C8%A6%B8%AF-%B7%CE%B0%ED-3.png?type=f100_100'
-								width="60" height="60"/>
-							</div>
-							<div class="postInfo">
-								<div class="postTitle">테니스 라켓 팝니다.</div>
-								<div class="createdDate">2017.01.14 13:59</div>
-								<div class="postDesc">포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~포항에서 중고물품을 개인간에 교환/매매하기 위한 카페 모두모두모두 초아초아용~</div>
-							</div>
-						</div>
-					</li>
-				</ul>
+				
 			</div>
+			
+			<div id="emptyDiv">검색결과가 존재하지 않습니다.</div>
 		</div>
 		
 		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">

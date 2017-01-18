@@ -152,8 +152,32 @@ body{
 	color:gray;
 }
 
+#emptyDiv{
+	height:300px;
+	line-height:300px;
+	text-align:center;
+	font-size:15px;
+}
+
+#pagingInfo{
+	clear:both;
+	margin-bottom:50px;
+	display:none;
+}
+
+#pagingInfo a{
+	border:1px solid #d9d9d9;
+	padding:5px;
+	margin:0px 2px;
+}
 
 
+#pagingInfo .pageSelected{
+	text-decoration:none;
+	border:1px solid #d9d9d9;
+	background:#5642f4;
+	color:white;
+}
 
 
 	

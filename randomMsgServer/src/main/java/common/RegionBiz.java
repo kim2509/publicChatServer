@@ -40,4 +40,11 @@ public class RegionBiz extends CommonBiz{
 		List<HashMap> regionInfo = sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionNoByUserID", userID);
 		return regionInfo;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getBigCities()
+	{
+		List<HashMap> cities = sqlSession.selectList("com.tessoft.nearhere.region.getBigCities");
+		return cities;
+	}
 }

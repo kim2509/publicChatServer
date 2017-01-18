@@ -20,6 +20,8 @@ import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 
+import common.RegionBiz;
+
 @Controller
 public class RegionController extends BaseController{
 
@@ -29,10 +31,11 @@ public class RegionController extends BaseController{
 			String userID, ModelMap model ) throws IOException
 	{
 		ArrayList items = new ArrayList();
-		ArrayList bigCities = new ArrayList();
+		List bigCities = null;
+		
 		try
 		{
-			bigCities = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getBigCities");
+			bigCities = RegionBiz.getInstance(sqlSession).getBigCities();
 		}
 		catch( Exception ex )
 		{

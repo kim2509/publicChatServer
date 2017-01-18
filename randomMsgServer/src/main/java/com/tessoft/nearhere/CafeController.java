@@ -82,7 +82,8 @@ public class CafeController extends BaseController {
 	{
 		try
 		{
-			
+			List<HashMap> bigCities = RegionBiz.getInstance(sqlSession).getBigCities();
+			model.addAttribute("cities", bigCities);
 		}
 		catch( Exception ex )
 		{

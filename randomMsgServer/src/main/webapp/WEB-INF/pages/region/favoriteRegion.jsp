@@ -6,7 +6,7 @@
 <%
 	String isApp = request.getParameter("isApp");
 
-	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
+	List<HashMap> cities = (List<HashMap>) request.getAttribute("cities");
 	String userID = request.getParameter("userID");
 %>
 
@@ -15,7 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>관심지역 설정</title>
 
 <!-- Include the jQuery library -->
 <script type="text/javascript"

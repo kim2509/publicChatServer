@@ -58,3 +58,6 @@ from region r1
 	left outer join region r4 on r4.regionNo=r3.parentNo
 
 
+
+insert into cafe_board_post_detail(postNo, type, locationNo, seq)
+values(1, 3, 1, 4)

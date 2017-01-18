@@ -51,7 +51,7 @@
 	</select>
 	
 	<select id="searchCafePosts" resultType="HashMap" parameterType="HashMap">
-		select cbpm.*, cbpd.content, cbpd2.locationNo, rv.* 
+		select cbm.boardName, cbpm.*, cbpd.content, cbpd2.locationNo, rv.* 
 			, concat( ifnull( ci.url1, '' ), ifnull( ci.url2, '' ) ) as imageURL
 		from cafe_board_post_master cbpm
 			left outer join (
@@ -72,8 +72,10 @@
 				group by postNo
 			) cbpd3 on cbpm.postNo = cbpd3.postNo
 			left outer join cafe_image ci on ci.imageNo = cbpd3.imageNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
 		where 
-		(cbpm.title like '%#{keyword}%' or cbpd.content like '%#{keyword}%')
+		(cbpm.title like concat('%',#{keyword},'%') or cbpd.content like concat('%',#{keyword},'%'))
+		and cbpm.noticeYN &lt;&gt; 'Y'
 		<if test="level==1">
 			and rv.lRegionNo = #{regionNo}
 		</if>
@@ -105,7 +107,8 @@
 			left outer join cafe_location cl on cbpd2.locationNo=cl.No
 			left outer join region_view rv on rv.regionNo = cl.regionNo
 		where 
-		(cbpm.title like '%#{keyword}%' or cbpd.content like '%#{keyword}%')
+		(cbpm.title like concat('%',#{keyword},'%') or cbpd.content like concat('%',#{keyword},'%'))
+		and cbpm.noticeYN &lt;&gt; 'Y'
 		<if test="level==1">
 			and rv.lRegionNo = #{regionNo}
 		</if>
