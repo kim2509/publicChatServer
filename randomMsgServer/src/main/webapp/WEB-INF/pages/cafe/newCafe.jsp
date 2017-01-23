@@ -69,7 +69,7 @@
 			}
 			
 			var param = {"userID":'<%= userID %>', "cafeName": $('#cafeName').val(), "cafeID" : $('#cafeID').val() };
-			ajaxRequest('POST', '/nearhere/cafe/makeCafe.do', param , onResult );	
+			ajaxRequest('POST', '/nearhere/cafe/makeCafeAjax.do', param , onResult );	
 		}
 		catch( ex )
 		{

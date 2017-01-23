@@ -28,6 +28,57 @@ import common.RegionBiz;
 @Controller
 public class CafeAjaxController extends BaseController {
 	
+
+	@RequestMapping( value ="/cafe/makeCafeAjax.do")
+	public @ResponseBody APIResponse makeCafeAjax(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			String userID = info.get("userID").toString();
+			String cafeName = info.get("cafeName").toString();
+			String cafeID = info.get("cafeID").toString();
+			
+			if ("".equals(userID))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("사용자 아이디가 올바르지 않습니다.");
+			}
+			
+			if ("".equals(cafeName))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페 이름을 입력해 주십시오.");
+			}
+			
+			if ("".equals(cafeID))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페 아이디를 입력해 주십시오.");
+			}
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			int dbResult = cafeBiz.makeCafe(info);
+			info.put("dbResult", String.valueOf( dbResult ));
+			
+			response.setData(info);
+			
+			insertHistory("/cafe/makeCafe.do", userID , cafeName , cafeID, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 아이디가 중복됩니다.\r\n다시 한번 확인해 주시기 바랍니다.");
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping( value ="/cafe/getCafeMeetingsByRegionAjax.do")
 	public @ResponseBody APIResponse getCafeMeetingsByRegionAjax(HttpServletRequest request, @RequestBody String bodyString )
@@ -53,7 +104,7 @@ public class CafeAjaxController extends BaseController {
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg("처리도중 오류가 발생했습니다.");
 			
-			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			insertHistory("/cafe/getCafeMeetingsByRegionAjax.do", null , null , null, "exception" );
 			logger.error( ex );
 		}
 		
@@ -84,7 +135,7 @@ public class CafeAjaxController extends BaseController {
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg( ex.getMessage() );
 			
-			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			insertHistory("/cafe/getCafeBoardListAjax.do", null , null , null, "exception" );
 			logger.error( ex );
 		}
 		
@@ -180,7 +231,7 @@ public class CafeAjaxController extends BaseController {
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg( ex.getMessage() );
 			
-			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			insertHistory("/cafe/getMoreRepliesAjax.do", null , null , null, "exception" );
 			logger.error( ex );
 		}
 		
