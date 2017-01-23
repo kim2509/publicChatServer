@@ -149,5 +149,12 @@
 	<input type="button" value="전체유저 위치 업데이트"
 		onclick="sendLocationUpdateToAllUsers();" />
 		
+	<br/><br/><br/>
+	
+	<form name="fm" action="" method="post">
+		<label>token</label>
+		<input type="text" name="token" value="" />
+		<input type="submit" value="token 전송"/>
+	</form>
 </body>
 </html>

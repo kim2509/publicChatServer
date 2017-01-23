@@ -282,6 +282,7 @@ public class TaxiController extends BaseController {
 		
 		addInfo.put("hash", hashString );
 		
+		user.setUserToken(hashString);
 		user.setType( userType );
 		sqlSession.update("com.tessoft.nearhere.taxi.updateUserType", user );
 		
@@ -577,6 +578,7 @@ public class TaxiController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("세션키가 올바르지 않습니다.");
 				logger.error( response.getResCode() + " " + response.getResMsg() );
+				insertHistory("login_bg2.do", "hash is null" , null , null, null );
 				return response;
 			}
 			
@@ -585,6 +587,7 @@ public class TaxiController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("사용자정보가 올바르지 않습니다.");
 				logger.error( response.getResCode() + " " + response.getResMsg() );
+				insertHistory("login_bg2.do", "userID is empty" , null , null, null );
 				return response;
 			}
 			
@@ -617,6 +620,7 @@ public class TaxiController extends BaseController {
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("로그인정보가 올바르지 않습니다.");
 					logger.error( response.getResCode() + " " + response.getResMsg() );
+					insertHistory("login_bg2.do", "userToken null" , null , null, null );
 					return response;
 				}
 				
@@ -628,8 +632,11 @@ public class TaxiController extends BaseController {
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("유효한 사용자정보가 아닙니다.");
 					logger.error( response.getResCode() + " " + response.getResMsg() );
+					insertHistory("login_bg2.do", "wrong seed" , null , null, null );
 					return response;
 				}
+				
+				user.setUserToken(hash);
 			}
 			
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
@@ -2359,6 +2366,7 @@ public class TaxiController extends BaseController {
 	@RequestMapping( value ="/taxi/index.do")
 	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
 			@CookieValue(value = "userID", defaultValue = "") String userID,
+			@CookieValue(value = "token", defaultValue = "") String token,
 			ModelMap model )
 	{
 		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");

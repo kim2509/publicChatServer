@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -28,6 +30,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,7 +52,8 @@ import com.nearhere.domain.UserPushMessage;
 public class AdminController extends BaseController{
 
 	@RequestMapping( value ="/admin/index.do")
-	public ModelAndView index ( HttpServletRequest request )
+	public ModelAndView index ( HttpServletRequest request , HttpServletResponse response , 
+			String token)
 	{
 		try
 		{
@@ -57,6 +61,15 @@ public class AdminController extends BaseController{
 	        mav.setViewName("redirect:login.do");
 			if ( request.getSession().getAttribute("id") == null )
 				return mav;
+			
+			if ( !Util.isEmptyString( token ) )
+			{
+				Cookie cookie = new Cookie("token",token);
+				cookie.setDomain("localhost");
+				cookie.setPath("/");
+				cookie.setMaxAge(1*24*60*60);
+				response.addCookie(cookie);
+			}
 		}
 		catch(Exception ex )
 		{
