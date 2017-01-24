@@ -64,7 +64,7 @@ public class AdminController extends BaseController{
 			
 			if ( !Util.isEmptyString( token ) )
 			{
-				Cookie cookie = new Cookie("token",token);
+				Cookie cookie = new Cookie("userToken",token);
 				cookie.setDomain("localhost");
 				cookie.setPath("/");
 				cookie.setMaxAge(1*24*60*60);

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,46 +25,54 @@ import com.nearhere.domain.User;
 
 import common.CafeBiz;
 import common.RegionBiz;
+import common.UserBiz;
 
 @Controller
 public class CafeController extends BaseController {
 
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
 	@RequestMapping( value ="/cafe/index.do")
-	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
+	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken ) 
 	{
+		String userID = "";
+		
 		try
 		{
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			
-			// 내 카페 리스트
-			List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
-			model.addAttribute("myCafeList", myCafeList);
-			
-			List<HashMap> favoriteCafeMeetingList = cafeBiz.getCafeMeetingsInMyFavRegion(userID);
-			
-			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
-			
-			for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ )
-			{
-				String regionName = "";
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 
-				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("lRegionName") ))
-					regionName += favoriteCafeMeetingList.get(i).get("lRegionName").toString();
-				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("mRegionName") ))
-					regionName += " " + favoriteCafeMeetingList.get(i).get("mRegionName").toString();
-				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("sRegionName") ))
-					regionName += " " + favoriteCafeMeetingList.get(i).get("sRegionName").toString();
-				if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("tRegionName") ))
-					regionName += " " + favoriteCafeMeetingList.get(i).get("tRegionName").toString();
+			if ( userInfo != null )
+			{
+				userID = userInfo.get("userID").toString();
+				// 내 카페 리스트
+				List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
+				model.addAttribute("myCafeList", myCafeList);
 				
-				favoriteCafeMeetingList.get(i).put("regionName", regionName);
+				List<HashMap> favoriteCafeMeetingList = cafeBiz.getCafeMeetingsInMyFavRegion(userID);
+				
+				for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ )
+				{
+					String regionName = "";
+
+					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("lRegionName") ))
+						regionName += favoriteCafeMeetingList.get(i).get("lRegionName").toString();
+					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("mRegionName") ))
+						regionName += " " + favoriteCafeMeetingList.get(i).get("mRegionName").toString();
+					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("sRegionName") ))
+						regionName += " " + favoriteCafeMeetingList.get(i).get("sRegionName").toString();
+					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("tRegionName") ))
+						regionName += " " + favoriteCafeMeetingList.get(i).get("tRegionName").toString();
+					
+					favoriteCafeMeetingList.get(i).put("regionName", regionName);
+				}
+				
+				model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);
+				model.addAttribute("favoriteCafeMeetingsJSON", mapper.writeValueAsString(favoriteCafeMeetingList));
 			}
 			
-			model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);
-			model.addAttribute("favoriteCafeMeetingsJSON", mapper.writeValueAsString(favoriteCafeMeetingList));
-			
+			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
 		}
 		catch( Exception ex )
 		{
@@ -75,7 +84,7 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/index", model);
 	}
 	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
 	@RequestMapping( value ="/cafe/searchCafe.do")
 	public ModelAndView searchByName ( HttpServletRequest request, HttpServletResponse response , 
 			String userID, ModelMap model ) throws IOException
@@ -97,86 +106,92 @@ public class CafeController extends BaseController {
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
 	@RequestMapping( value ="/cafe/myCafeList.do")
-	public ModelAndView myCafeList ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
+	public ModelAndView myCafeList ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
 	{
 		try
 		{
-			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 		}
 		catch( Exception ex )
 		{
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/mycafeList.do", userID , null , null, null );
+		insertHistory("/cafe/mycafeList.do", userToken , null , null, null );
 		
 		return new ModelAndView("cafe/myCafeList", model);
 	}
 	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
 	@RequestMapping( value ="/cafe/moreFavoriteMeeting.do")
-	public ModelAndView moreFavoriteMeeting ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
+	public ModelAndView moreFavoriteMeeting ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try
 		{
 			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
 			
-			List<HashMap> myFavRegionList = regionBiz.getFavoriteRegionNoByUserID(userID);
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 			
-			for ( int i = 0; i < myFavRegionList.size(); i++ )
+			if ( userInfo != null )
 			{
-				String regionName = "";
-
-				if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
-					regionName += myFavRegionList.get(i).get("lRegionName").toString();
-				if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
-					regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
-				if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
-					regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
-				if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
-					regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
+				String userID = userInfo.get("userID").toString();
+				List<HashMap> myFavRegionList = regionBiz.getFavoriteRegionNoByUserID(userID);
 				
-				myFavRegionList.get(i).put("regionName", regionName);
+				for ( int i = 0; i < myFavRegionList.size(); i++ )
+				{
+					String regionName = "";
+
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
+						regionName += myFavRegionList.get(i).get("lRegionName").toString();
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
+						regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
+						regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
+						regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
+					
+					myFavRegionList.get(i).put("regionName", regionName);
+				}
+				
+				model.addAttribute("myFavRegionList", myFavRegionList);
 			}
-			
-			model.addAttribute("myFavRegionList", myFavRegionList);
 		}
 		catch( Exception ex )
 		{
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/moreFavoriteMeeting.do", userID , null , null, null );
+		insertHistory("/cafe/moreFavoriteMeeting.do", null , null , null, null );
 		
 		return new ModelAndView("cafe/moreFavoriteMeeting", model);
 	}
 	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
 	@RequestMapping( value ="/cafe/newCafe.do")
-	public ModelAndView newCafe ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
+	public ModelAndView newCafe ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try
 		{
-			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 		}
 		catch( Exception ex )
 		{
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/newCafe.do", userID , null , null, null );
+		insertHistory("/cafe/newCafe.do", null , null , null, null );
 		
 		return new ModelAndView("cafe/newCafe", model);
 	}
 	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
 	@RequestMapping( value ="/cafe/newCafeResult.do")
-	public ModelAndView newCafeResult ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
+	public ModelAndView newCafeResult ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try
 		{
@@ -187,14 +202,15 @@ public class CafeController extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/newCafeResult.do", userID , null , null, null );
+		insertHistory("/cafe/newCafeResult.do", null , null , null, null );
 		
 		return new ModelAndView("cafe/newCafeResult", model);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/cafe/{cafeID}")
-	public ModelAndView cafeHome ( @PathVariable(value="cafeID") String cafeID , String userID, ModelMap model ) throws IOException
+	public ModelAndView cafeHome ( @PathVariable(value="cafeID") String cafeID , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try
 		{
@@ -231,14 +247,15 @@ public class CafeController extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/" + cafeID, userID , null , null, null );
+		insertHistory("/cafe/" + cafeID, null , null , null, null );
 		
 		return new ModelAndView("cafe/cafeHome", model);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping( value ="/cafe/board/{boardNo}")
-	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , String userID, ModelMap model ) throws IOException
+	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try
 		{
@@ -257,14 +274,15 @@ public class CafeController extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/board/" + boardNo, userID , null , null, null );
+		insertHistory("/board/" + boardNo, null , null , null, null );
 		
 		return new ModelAndView("board/boardHome", model);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/cafe/boardPost/detail/{postNo}")
-	public ModelAndView detail ( @PathVariable(value="postNo") String postNo , String userID, ModelMap model ) throws IOException
+	public ModelAndView detail ( @PathVariable(value="postNo") String postNo , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
 	{
 		try
 		{
@@ -288,13 +306,14 @@ public class CafeController extends BaseController {
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/boardPost/detail/" + postNo, userID , null , null, null );
+		insertHistory("/cafe/boardPost/detail/" + postNo, null , null , null, null );
 		
 		return new ModelAndView("boardPost/detail", model);
 	}
 	
 	@RequestMapping( value ="/cafe/terms.do")
-	public ModelAndView terms ( String userID, String name, String version, ModelMap model ) throws IOException
+	public ModelAndView terms ( String userID, String name, String version, ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		String pageName = "";
 		
@@ -320,7 +339,8 @@ public class CafeController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/cafe/meetingDetail.do")
-	public ModelAndView meetingDetail ( String cafeID , String meetingNo, String userID, ModelMap model ) throws IOException
+	public ModelAndView meetingDetail ( String cafeID , String meetingNo, String userID, ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
 	{
 		try
 		{

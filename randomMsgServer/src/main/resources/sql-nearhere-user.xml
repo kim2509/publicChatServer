@@ -110,4 +110,12 @@
 		set appVersion=#{AppVersion}
 		where userID=#{userID}
 	</update>
+	
+	<select id="selectUserByUserToken" resultType="java.util.HashMap" parameterType="String">
+		select ut.seed, ut.hash, ut.expireDate, ut.activeYN, u.*
+		from user_token ut
+			left outer join user u on ut.userID = u.userID
+		where ut.hash = #{value}
+		and u.isDeleted is null
+	</select>
 </mapper>

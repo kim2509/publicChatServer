@@ -1,5 +1,6 @@
 package common;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,5 +71,12 @@ public class UserBiz extends CommonBiz{
 	{
 		List<HashMap> userPushMessageList = sqlSession.selectList("com.tessoft.nearhere.user.getUserPushMessage", userID);
 		return userPushMessageList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public HashMap selectUserByUserToken( String userToken ) throws Exception
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.selectUserByUserToken", userToken );
+		return userInfo;
 	}
 }

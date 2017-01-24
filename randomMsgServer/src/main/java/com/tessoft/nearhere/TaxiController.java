@@ -2366,7 +2366,7 @@ public class TaxiController extends BaseController {
 	@RequestMapping( value ="/taxi/index.do")
 	public ModelAndView index ( HttpServletRequest request, HttpServletResponse response , 
 			@CookieValue(value = "userID", defaultValue = "") String userID,
-			@CookieValue(value = "token", defaultValue = "") String token,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken,
 			ModelMap model )
 	{
 		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
