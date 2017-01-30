@@ -6,9 +6,17 @@
 <%
 	String isApp = request.getParameter("isApp");
 	String userID = request.getParameter("userID");
-	List<HashMap> myCafeList = (List<HashMap>) request.getAttribute("myCafeList");
-	List<HashMap> favoriteCafeMeetingList = (List<HashMap>) request.getAttribute("favoriteCafeMeetingList");
-	String favoriteCafeMeetingListJSON = request.getAttribute("favoriteCafeMeetingsJSON").toString();
+	List<HashMap> myCafeList = null;
+	if ( request.getAttribute("myCafeList") != null )
+		myCafeList = (List<HashMap>) request.getAttribute("myCafeList");
+	
+	List<HashMap> favoriteCafeMeetingList = null;
+	if ( request.getAttribute("favoriteCafeMeetingList") != null )
+		favoriteCafeMeetingList = (List<HashMap>) request.getAttribute("favoriteCafeMeetingList");
+	
+	String favoriteCafeMeetingListJSON = "";
+	if ( request.getAttribute("favoriteCafeMeetingsJSON") != null )
+		favoriteCafeMeetingListJSON = request.getAttribute("favoriteCafeMeetingsJSON").toString();
 %>
 <html>
 <head>
@@ -50,10 +58,14 @@
 		
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
 		
-		var source = $('#meetingT').html();
-		var template = Handlebars.compile(source);
-		var html = template(favoriteCafeMeetingList);
-		$('#meetingList').html(html);
+		if ( favoriteCafeMeetingList != null && favoriteCafeMeetingList != '')
+		{
+			var source = $('#meetingT').html();
+			var template = Handlebars.compile(source);
+			var html = template(favoriteCafeMeetingList);
+			$('#meetingList').html(html);
+			$('.favoriteMeetingClass').show();	
+		}
 	});
 
 	function goSearchCafe()
@@ -170,7 +182,7 @@
 		</div>
 <% } %>		
 		
-		<div id="section">
+		<div id="section" class="favoriteMeetingClass" style="display:none">
 
 			<div style="float:right;margin-right:5px;font-weight:bold;" onclick="goMoreFavoriteMeeting();">더 보기</div>
 			<div class="sectionTitle" style="margin-bottom:0px;">관심지역 정모</div>
