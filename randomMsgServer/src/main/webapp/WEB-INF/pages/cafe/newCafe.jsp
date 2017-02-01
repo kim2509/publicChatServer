@@ -5,7 +5,6 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-	String userID = request.getParameter("userID");
 %>
 
 <html>
@@ -68,7 +67,7 @@
 				return;
 			}
 			
-			var param = {"userID":'<%= userID %>', "cafeName": $('#cafeName').val(), "cafeID" : $('#cafeID').val() };
+			var param = {"cafeName": $('#cafeName').val(), "cafeID" : $('#cafeID').val() };
 			ajaxRequest('POST', '/nearhere/cafe/makeCafeAjax.do', param , onResult );	
 		}
 		catch( ex )

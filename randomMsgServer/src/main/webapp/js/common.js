@@ -64,6 +64,9 @@ function ajaxRequest( method, url, param , onSuccess, onComplete, onError )
 		jQuery.ajax({
 			type : method,
 			url : url,
+			xhrFields: {
+			      withCredentials: true
+			   },
 			data : JSON.stringify( param ),
 			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 			contentType : "application/json; charset=UTF-8",

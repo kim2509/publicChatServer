@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,28 +25,39 @@ import com.nearhere.domain.User;
 
 import common.CafeBiz;
 import common.RegionBiz;
+import common.UserBiz;
 
 @Controller
 public class CafeAjaxController extends BaseController {
 	
 
 	@RequestMapping( value ="/cafe/makeCafeAjax.do")
-	public @ResponseBody APIResponse makeCafeAjax(HttpServletRequest request, @RequestBody String bodyString )
+	public @ResponseBody APIResponse makeCafeAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 		
+		String userID = "";
+		
 		try
 		{
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			if ( userInfo != null )
+			{
+				userID = userInfo.get("userID").toString();
+			}
+			
 			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
-			String userID = info.get("userID").toString();
 			String cafeName = info.get("cafeName").toString();
 			String cafeID = info.get("cafeID").toString();
 			
-			if ("".equals(userID))
+			if ( Util.isEmptyString(userID))
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("사용자 아이디가 올바르지 않습니다.");
 			}
+			
+			info.put("userID", userID);
 			
 			if ("".equals(cafeName))
 			{

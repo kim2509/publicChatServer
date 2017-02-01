@@ -167,7 +167,7 @@
 					String imageURL = myCafeList.get(i).get("url1").toString() + myCafeList.get(i).get("url2").toString();
 				%>
 
-				<li class="cafeItem" onclick="goCafeHome('중고나라', '<%= cafeID %>');">
+				<li class="cafeItem" onclick="goCafeHome('<%= cafeName %>', '<%= cafeID %>');">
 					<div class="thumbnail">
 						<img src='<%= imageURL %>' width="80" height="80"/>
 					</div>
