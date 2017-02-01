@@ -53,7 +53,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/cafeHome.css" />	
+	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=4" />	
 
 <script language="javascript">
 		
