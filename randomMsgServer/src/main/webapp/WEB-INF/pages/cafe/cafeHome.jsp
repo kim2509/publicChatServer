@@ -106,9 +106,6 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 				<li class="menuItem">
 					<a href="javascript:void(0)" onclick="goSlide(2)">이미지</a>
 				</li>
-				<li class="menuItem">
-					<a href="javascript:void(0)" onclick="goSlide(3)">상품</a>
-				</li>
 			</ul>
 		</div>
 		
@@ -130,7 +127,6 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 					<jsp:include page="cafeBoardImageTab.jsp" flush="true"></jsp:include>
 				
 				</div>
-				<div class="swiper-slide">Slide 4</div>
 			</div>
 		</div>
 
