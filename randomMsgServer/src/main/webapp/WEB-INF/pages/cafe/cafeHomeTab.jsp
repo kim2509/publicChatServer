@@ -8,6 +8,16 @@
 	List<HashMap> cafePublicMeetingList = (List<HashMap>) request.getAttribute("cafePublicMeetingList");
 	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
 	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
+	
+	HashMap cafeUserInfo = (HashMap) request.getAttribute("cafeUserInfo");
+	String ownerYN = "N";
+	String memberYN = "N";
+	String memberType = "";
+	if ( cafeUserInfo != null )
+	{
+		ownerYN = cafeUserInfo.get("ownerYN").toString();
+		memberYN = cafeUserInfo.get("memberYN").toString();
+	}
 %>
 
 <script language="javascript">
@@ -33,7 +43,13 @@
 			<% } %>
 			
 			<div id="cafeDesc">
-				<%= cafeMainInfo.get("mainDesc") %>
+				<% if ( !Util.isEmptyString(cafeMainInfo.get("mainDesc"))) {
+					out.println( cafeMainInfo.get("mainDesc") );
+				}
+				else
+					out.println("카페 정보가 설정되지 않았습니다.<br/>관리하기 메뉴에서 설정할 수 있습니다.");
+				%>
+				
 			</div>
 			
 			<% if ( cafePublicMeetingList != null && cafePublicMeetingList.size() > 0 ) { %>
@@ -96,8 +112,16 @@
 			<% } %>
 			
 			<div id="cafeButtons">
+			
+			<% if ( "N".equals(ownerYN) && "N".equals(memberYN) ) { %>
 				<div id="btnRegister">가입하기</div>
+			<% } else if ( "N".equals(ownerYN) && "Y".equals(memberYN) ) { %>
 				<div id="btnRetire">탈퇴하기</div>
+			<% } %>
+			
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
 				<div id="btnManage">관리하기</div>
+			<% } %>
+			
 			</div>
 		</div>		

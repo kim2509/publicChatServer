@@ -254,4 +254,10 @@ public class CafeBiz extends CommonBiz{
 		int totalCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.searchCafePostsCount", param);
 		return totalCount;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public HashMap getCafeUserInfo(HashMap param)
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeUserInfo", param);
+	}
 }

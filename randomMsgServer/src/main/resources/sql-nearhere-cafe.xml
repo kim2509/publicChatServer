@@ -225,7 +225,9 @@
 	</insert>
 	
 	<select id="getCafeMainInfo" resultType="HashMap" parameterType="HashMap">
-		select cm.*, cd.iconImageNo, cd.mainImageNo, cd.mainDesc, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2
+		select cm.*, cd.iconImageNo, cd.mainImageNo
+			, ifnull(cd.mainDesc,'') as mainDesc
+			, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2
 		from cafe_master cm
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_image ci on cd.mainImageNo = ci.imageNo
@@ -354,5 +356,17 @@
 		delete from cafe_public_meeting_members
 		where meetingNo=#{meetingNo} and userID=#{userID};
 	</delete>
+	
+	<select id="getCafeUserInfo" resultType="HashMap" parameterType="HashMap">
+		select u.*
+			, case when cm.owner is null then 'N' else 'Y' end ownerYN
+			, case when cm2.userID is null then 'N' else 'Y' end memberYN
+			, cm2.memberType
+		from user u
+			left outer join cafe_master cm on u.userID=cm.owner
+			left outer join cafe_members cm2 on cm2.cafeNo = cm.cafeNo and cm2.userID = #{userID}
+		where u.userID=#{userID}
+		and cm.cafeID = #{cafeID}
+	</select>
 	
 </mapper>

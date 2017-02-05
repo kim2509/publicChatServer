@@ -241,6 +241,14 @@ public class CafeController extends BaseController {
 			model.addAttribute("cafeMemberCount", cafeMemberCount);
 			
 			model.addAttribute("cafeID", cafeID );
+			
+			HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+			if ( tmp != null )
+			{
+				tmp.put("cafeID", cafeID);
+				model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(tmp) );
+			}
 		}
 		catch( Exception ex )
 		{
