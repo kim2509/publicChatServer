@@ -372,4 +372,71 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("cafe/meetingDetail", model);
 	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
+	@RequestMapping( value ="/cafe/manage.do")
+	public ModelAndView manage ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID ) 
+	{
+		String userID = "";
+		
+		try
+		{
+			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+			
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		insertHistory("/cafe/index.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/manage", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
+	@RequestMapping( value ="/cafe/manageBoard.do")
+	public ModelAndView manageBoard ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID ) 
+	{
+		String userID = "";
+		
+		try
+		{
+			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		insertHistory("/cafe/index.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/manageBoard", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
+	@RequestMapping( value ="/cafe/manageMember.do")
+	public ModelAndView manageMember ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID ) 
+	{
+		String userID = "";
+		
+		try
+		{
+			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		insertHistory("/cafe/index.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/manageMember", model);
+	}
 }

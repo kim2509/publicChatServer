@@ -1,0 +1,89 @@
+
+div, body, ul{
+	margin:0;
+	padding:0;
+}
+
+body{
+	background:white;
+}
+
+#wrapper{
+	max-width:900px;
+	margin:0 auto;
+}
+
+#container{
+	padding:10px;
+}
+
+.inputContainer{
+	border: 1px solid #bfbfbf;
+    padding: 3px;
+    margin-bottom: 10px;
+}
+
+.inputTxt{
+	line-height: 25px;
+    border: 0 none;
+    width:100%;
+}
+
+li{ 
+	list-style:none;
+}
+
+.titleDiv{
+	background:#7bafe3;;
+	color:white;
+	height:50px;
+	text-align:center;
+	width: 100%;
+}
+
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	vertical-align:middle;
+	line-height:50px;
+}
+
+
+.wideBtn{
+    width: 100%;
+    height: 40px;
+    font-size: 15px;
+    font-weight:bold;
+    text-align: center;
+    color: white;
+    line-height: 37px;
+    margin-bottom:10px;
+}
+
+.whiteBG{
+	color:black;
+	border:1px solid #a6b6e4;
+}
+
+.btnBG{
+	color:black;
+	border:1px solid #a6b6e4;
+	background:#e1e9f8;
+}
+
+.darkBG{
+	background: #5b6579;
+}
+
+.blueBG{
+	background: #5b8ff0;
+}
+
+.redBG{
+	background: #f0705b;
+}
+
+#manageBtns li{
+	float:left;
+}

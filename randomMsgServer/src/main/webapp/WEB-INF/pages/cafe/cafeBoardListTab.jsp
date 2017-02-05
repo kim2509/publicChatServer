@@ -21,11 +21,6 @@
 	{
 		try
 		{
-			if ( result == null || result.data == null || result.data.length < 1 )
-			{
-				return;
-			}
-			
 			var source = $('#boardT').html();
 			var template = Handlebars.compile(source);
 			var html = template(result);
@@ -51,6 +46,7 @@
 	
 </script>
 <script id="boardT" type="text/x-handlebars-template">
+	{{#if data}}
 	<ul>
 		{{#each data}}
 		<li>
@@ -58,6 +54,9 @@
 		</li>
 		{{/each}}
 	</ul>
+	{{else}}
+		<div class="emptyDiv">생성된 게시판이 존재하지 않습니다.</div>
+	{{/if}}
 </script>
 <div id="boardList">
 </div>

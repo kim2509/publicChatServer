@@ -17,6 +17,7 @@
 	{
 		ownerYN = cafeUserInfo.get("ownerYN").toString();
 		memberYN = cafeUserInfo.get("memberYN").toString();
+		memberType = cafeUserInfo.get("memberType").toString();
 	}
 %>
 
@@ -26,6 +27,16 @@
 		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
 				cafeID + '&meetingNo=' + meetingNo + "&userID=" + userID;
 	
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
+	function goCafeManage( cafeID )
+	{
+		var url = '<%= Constants.getServerURL() + "/cafe/manage.do" %>?cafeID=' + cafeID
+
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
 		else
@@ -42,15 +53,14 @@
 			</div>
 			<% } %>
 			
+			<% if ( !Util.isEmptyString(cafeMainInfo.get("mainDesc"))) {
+			%>
 			<div id="cafeDesc">
-				<% if ( !Util.isEmptyString(cafeMainInfo.get("mainDesc"))) {
-					out.println( cafeMainInfo.get("mainDesc") );
-				}
-				else
-					out.println("카페 정보가 설정되지 않았습니다.<br/>관리하기 메뉴에서 설정할 수 있습니다.");
-				%>
-				
+				<%= cafeMainInfo.get("mainDesc") %>
 			</div>
+			<% } else { %>
+				<div class="emptyDiv">카페 정보가 설정되지 않았습니다.<br/>관리하기 메뉴에서 설정할 수 있습니다.</div>
+			<% } %>
 			
 			<% if ( cafePublicMeetingList != null && cafePublicMeetingList.size() > 0 ) { %>
 			<div id="cafeMeeting">
@@ -120,7 +130,7 @@
 			<% } %>
 			
 			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
-				<div id="btnManage">관리하기</div>
+				<div id="btnManage" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');">관리하기</div>
 			<% } %>
 			
 			</div>

@@ -260,4 +260,32 @@ public class CafeBiz extends CommonBiz{
 	{
 		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeUserInfo", param);
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public boolean isCafeManager( String cafeID, String userToken ) throws Exception
+	{
+		HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+		
+		if ( userInfo != null )
+		{
+			userInfo.put("cafeID", cafeID);
+			HashMap cafeUserInfo = getCafeUserInfo(userInfo);
+			
+			String ownerYN = "N";
+			String memberYN = "N";
+			String memberType = "";
+			if ( cafeUserInfo != null )
+			{
+				ownerYN = cafeUserInfo.get("ownerYN").toString();
+				memberYN = cafeUserInfo.get("memberYN").toString();
+				memberType = cafeUserInfo.get("memberType").toString();
+			}
+			
+			if ( "Y".equals( ownerYN ) ) return true;
+			
+			if ( "Y".equals( memberYN ) && "운영진".equals( memberType ) ) return true;
+		}
+		
+		return false;
+	}
 }

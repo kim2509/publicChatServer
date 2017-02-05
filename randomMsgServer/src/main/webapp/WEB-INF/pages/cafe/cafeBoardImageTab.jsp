@@ -47,6 +47,8 @@
 		{
 			if ( result == null || result.data == null || result.data.length < 1 )
 			{
+				$('#emptyDiv3').show();
+				$('#headerDiv').hide();
 				return;
 			}
 			
@@ -67,6 +69,17 @@
 					    text: boardList[i].boardName
 					}));
 				}
+			}
+			
+			if ( result.data.postList != null && result.data.postList.length < 1 )
+			{
+				$('#emptyDiv3').show();
+				$('#headerDiv').hide();
+			}
+			else
+			{
+				$('#emptyDiv3').hide();
+				$('#headerDiv').show();
 			}
 			
 			$('#imagePostCount').html( result.data.totalCount );
@@ -176,39 +189,11 @@
 		</select>
 	</div>
 	<div id="bodyDiv">
-		
-		<ul>
-			<li>
-				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/22/115647760_Untitled-7.jpg?type=f270_166" />
-				<div id="postInfo">
-					<p>초아초아초아 너무 좋아용~ 초~아 초아초아 어서오세용~</p>
-					<span>오소리용 | 1분전</span>
-				</div>
-			</li>
-			<li>
-				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/22/114239430_Untitled-6.jpg?type=f270_166" />
-				<div id="postInfo">
-					<p>이시영 하사관!!</p>
-					<span>오소리용 | 1분전</span>
-				</div>
-			</li>
-			<li>
-				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/22/103230622_249.jpg?type=f270_166" />
-				<div id="postInfo">
-					<p>초아초아초아 너무 좋아용~ 초~아 초아초아 어서오세용~</p>
-					<span>오소리용 | 1분전</span>
-				</div>
-			</li>
-			<li>
-				<img src="https://s.pstatic.net/mimgnews/image/upload/item/2016/12/21/113801236_%25C0%25CC%25B5%25BF%25BF%25ED3.jpg?type=nf288_220" />
-				<div id="postInfo">
-					<p>초아초아초아 너무 좋아용~ 초~아 초아초아 어서오세용~</p>
-					<span>오소리용 | 1분전</span>
-				</div>
-			</li>
-		</ul>
-		
 	</div>
+	<div id="emptyDiv3" class="emptyDiv">
+		이미지 글이 존재하지 않습니다.
+	</div>
+	
 	<div id="footerDiv">
 		<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
 			<b><a href="javascript:void(0)" onclick="goPage(1);" class="pageSelected">1</a></b>

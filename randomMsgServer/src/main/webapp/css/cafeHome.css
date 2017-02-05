@@ -287,6 +287,16 @@ li{
 	margin-bottom:10px;
 }
 
+.emptyDiv{
+	text-align:center;
+	height:200px;
+	padding-top:140px;
+	font-size:15px;
+	color:#524c4c;
+	font-weight: bold;
+	line-height: 25px;
+}
+
 /* 게시판 탭 */
 #boardList{
 	width:100%;
@@ -390,6 +400,10 @@ li{
 
 #footerDiv{
 	clear:both;
+}
+
+#footerDiv #pagingInfo{
+	display:none;	
 }
 
 #footerDiv #pagingInfo a{
