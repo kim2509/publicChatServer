@@ -52,7 +52,13 @@
 <script language="javascript">
 		
 	var isApp = '<%= isApp %>';
-	var favoriteCafeMeetingList = JSON.parse('<%= favoriteCafeMeetingListJSON %>');
+	var tmp = '<%= favoriteCafeMeetingListJSON %>';
+	var favoriteCafeMeetingList = null ;
+	
+	if ( tmp != null && tmp != '' )
+	{
+		favoriteCafeMeetingList = JSON.parse( tmp );	
+	}
 	
 	jQuery(document).ready( function () {
 		
