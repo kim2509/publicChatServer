@@ -41,6 +41,18 @@ var isApp = '<%= isApp %>';
 		
 		<div id="container">
 		
+			<ul>
+				<li>
+					<div id="imgProfile">
+						<img src="/" 
+						width=60 height=60/>
+					</div>
+					<div id="memberInfo">
+						<div>eodyd</div>
+					</div>
+				</li>
+			</ul>
+			
 			<div class="wideBtn btnBG">추가하기</div>
 		
 		</div>
