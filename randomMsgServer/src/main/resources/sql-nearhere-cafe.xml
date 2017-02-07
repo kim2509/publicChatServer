@@ -361,7 +361,7 @@
 		select u.*
 			, case when cm.owner is null then 'N' else 'Y' end ownerYN
 			, case when cm2.userID is null then 'N' else 'Y' end memberYN
-			, cm2.memberType
+			, ifnull( cm2.memberType, '' ) as memberType
 		from user u
 			left outer join cafe_master cm on u.userID=cm.owner
 			left outer join cafe_members cm2 on cm2.cafeNo = cm.cafeNo and cm2.userID = #{userID}

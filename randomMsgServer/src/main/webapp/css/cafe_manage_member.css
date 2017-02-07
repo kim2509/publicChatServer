@@ -1,0 +1,96 @@
+
+div, body, ul{
+	margin:0;
+	padding:0;
+}
+
+li{
+	list-style:none;	
+}
+
+body{
+	background:white;
+}
+
+#wrapper{
+	max-width:900px;
+	margin:0 auto;
+}
+
+.titleDiv{
+	background:#7bafe3;;
+	color:white;
+	height:50px;
+	text-align:center;
+	width: 100%;
+}
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	vertical-align:middle;
+	line-height:50px;
+}
+
+#headerInfo{
+	float:right;
+	margin-top:10px;
+	margin-bottom:20px;
+	margin-right:10px;
+	font-size:16px;
+	font-weight:bold;
+}
+
+#container{
+	clear:both;
+	margin:10px;
+}
+
+#memberList li{
+	position:relative;
+	overflow:auto;
+	margin:10px 0px;
+}
+
+#memberList li #memberType{
+	float:right;
+	margin-right:10px;
+	font-weight:bold;
+	font-size:15px;	
+}
+
+#memberList #imgProfile{
+	float:left;
+	clear:both;
+}
+
+#memberList #imgProfile img{
+	border-radius:10px;
+}
+
+#memberList #memberInfo{
+	margin-left:90px;
+}
+
+#memberList #manageBtns{
+	margin-left:90px;
+	position:absolute;
+	bottom:10px;
+}
+
+#pagingInfo{
+	margin-top:30px;
+}
+
+#pagingInfo a{
+	text-decoration:none;
+	border: 1px solid #ccc;
+    padding:0px 5px 3px 5px;
+    background: white;
+    line-height: 1.4em;
+    color:black;
+}
+
+#pagingInfo .pageSelected{
+	color: blue;
+}
