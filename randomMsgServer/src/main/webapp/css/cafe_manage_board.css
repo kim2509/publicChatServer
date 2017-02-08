@@ -99,3 +99,12 @@ li{
     margin-bottom: 10px;
     border-bottom: 2px solid gray;
 }
+
+.emptyDiv{
+	text-align:center;
+	height:70px;
+	font-size:15px;
+	color:#524c4c;
+	font-weight: bold;
+	line-height: 70px;
+}

@@ -129,6 +129,20 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public int insertCafeBoard( HashMap param )
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeBoard", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int deleteCafeBoard( HashMap param )
+	{
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoard", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public HashMap getCafeBoardInfo(HashMap param)
 	{
 		HashMap boardInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeBoardInfo", param);

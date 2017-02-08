@@ -353,4 +353,50 @@ public class CafeAjaxController extends BaseController {
 		
 		return response;
 	}
+	
+	@RequestMapping( value ="/cafe/createBoardAjax.do")
+	public @ResponseBody APIResponse createBoardAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+				
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			int dbResult = cafeBiz.insertCafeBoard(param);
+			
+			HashMap info = new HashMap();
+			info.put("boardList", cafeBiz.getCafeBoardList(param) );
+			info.put("dbResult", String.valueOf( dbResult ));
+			
+			response.setData(info);
+			
+			insertHistory("/cafe/createBoardAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 게시판 생성도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

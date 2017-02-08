@@ -3,8 +3,12 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <% 
-	String cafeID = "";
+	String cafeID = request.getParameter("cafeID");
 	String isApp = request.getParameter("isApp");
+	
+	String cafeBoardListJSON = "";
+	if ( request.getAttribute("cafeBoardListJSON") != null )
+		cafeBoardListJSON = request.getAttribute("cafeBoardListJSON").toString();
 %>
 
 <html>
@@ -25,10 +29,71 @@
 
 <script language="javascript">
 
-var isApp = '<%= isApp %>';
+	var isApp = '<%= isApp %>';
+	var tmp = '<%= cafeBoardListJSON %>';
+	var cafeBoardList = null ;
+	
+	if ( tmp != null && tmp != '' )
+	{
+		cafeBoardList = JSON.parse( tmp );	
+	}
+	
+	jQuery(document).ready(function(){
+
+		try
+		{
+			var source = $('#boardT').html();
+			var template = Handlebars.compile(source);
+			var html = template(cafeBoardList);
+			$('#boardList').html(html);
+		}
+		catch( ex )
+		{
+			alert(ex.message);
+		}
+		
+	});
+	
+	function createBoard()
+	{
+		
+		var param = {"cafeID":'<%= cafeID %>', "boardName": $('#boardName').val() };
+		ajaxRequest('POST', '/nearhere/cafe/createBoardAjax.do', param , onResult );
+	}
+	
+	function onResult( result)
+	{
+		try
+		{
+			var source = $('#boardT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result.data.boardList);
+			$('#boardList').html(html);
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
 
 </script>
-
+<script id="boardT" type="text/x-handlebars-template">
+	{{#if this}}	
+	<ul>
+		{{#each this}}
+		<li>
+			<div style="clear:both;float:right">
+				<input type="button" value="수정" />
+				<input type="button" value="삭제" />
+			</div>
+			<div>{{boardName}}</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+		<div class="emptyDiv">생성된 게시판이 존재하지 않습니다.</div>
+	{{/if}}
+</script>
 </head>
 <body>
 
@@ -54,7 +119,7 @@ var isApp = '<%= isApp %>';
 						<td class="th1">게시판 이름</td>
 						<td class="th2">
 							<div class="inputContainer">
-								<input type="text" class="inputTxt" placeholder="게시판 이름"/>
+								<input type="text" class="inputTxt" id="boardName" placeholder="게시판 이름"/>
 							</div>
 						</td>
 					</tr>
@@ -80,7 +145,7 @@ var isApp = '<%= isApp %>';
 					</tbody>
 				</table>
 				
-				<div class="wideBtn btnBG">추가하기</div>
+				<div class="wideBtn btnBG" onclick="createBoard();">추가하기</div>
 				
 			</div>
 			

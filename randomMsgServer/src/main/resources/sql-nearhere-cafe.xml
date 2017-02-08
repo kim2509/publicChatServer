@@ -267,6 +267,18 @@
 		where cm.cafeID=#{cafeID}
 	</select>
 	
+	<insert id="insertCafeBoard" parameterType="Hashmap">
+		insert into cafe_board_master( boardName, cafeNo, createdDate )
+		select #{boardName}, cafeNo, NOW() from cafe_master
+		where cafeID=#{cafeID}
+	</insert>
+	
+	<insert id="deleteCafeBoard" parameterType="Hashmap">
+		delete from cafe_board_master
+		where boardNo = #{boardNo}
+		and cafeNo in ( select cafeNo from cafe_master where cafeID= #{cafeID})
+	</insert>
+	
 	<select id="getCafeBoardList" resultType="HashMap" parameterType="HashMap">
 		select bm.* from cafe_board_master bm
 			left outer join cafe_master cm on cm.cafeNo=bm.cafeNo

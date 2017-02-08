@@ -407,6 +407,14 @@ public class CafeController extends BaseController {
 		{
 			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
 				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+			
+			if ( !Util.isEmptyString(cafeID) )
+			{
+				HashMap param = new HashMap();
+				param.put("cafeID", cafeID);
+				List<HashMap> boardList = CafeBiz.getInstance(sqlSession).getCafeBoardList(param);
+				model.addAttribute("cafeBoardListJSON", mapper.writeValueAsString(boardList) );	
+			}
 		}
 		catch( Exception ex )
 		{
