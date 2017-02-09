@@ -33,6 +33,8 @@
 	var tmp = '<%= cafeBoardListJSON %>';
 	var cafeBoardList = null ;
 	
+	var modifyBoardNo = '';
+	
 	if ( tmp != null && tmp != '' )
 	{
 		cafeBoardList = JSON.parse( tmp );	
@@ -56,12 +58,23 @@
 	
 	function createBoard()
 	{
+		if ( $('#boardName').val() == '' || $('#boardName').val().length < 1 )
+		{
+			alert('추가할 게시판의 이름을 입력해 주십시오.');
+			return;
+		}
 		
-		var param = {"cafeID":'<%= cafeID %>', "boardName": $('#boardName').val() };
-		ajaxRequest('POST', '/nearhere/cafe/createBoardAjax.do', param , onResult );
+		if ( confirm( $('#boardName').val() + '게시판을 신규로 생성하시겠습니까?') )
+		{
+			var param = {"cafeID":'<%= cafeID %>', "boardName": $('#boardName').val(), 
+					"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val() };
+			ajaxRequest('POST', '/nearhere/cafe/createBoardAjax.do', param , onCreateBoardResult );
+			
+			reset();
+		}
 	}
 	
-	function onResult( result)
+	function onCreateBoardResult( result)
 	{
 		try
 		{
@@ -76,6 +89,76 @@
 		}
 	}
 
+	function deleteBoard( boardNo )
+	{
+		if ( confirm('게시판 내의 모든 글들이 삭제됩니다.\r\n정말 삭제하시겠습니까?') )
+		{
+			var param = {"cafeID":"<%= cafeID %>", "boardNo": boardNo };
+			ajaxRequest('POST', '/nearhere/cafe/deleteBoardAjax.do', param , onDeleteBoardResult );	
+		}
+	}
+	
+	function onDeleteBoardResult(result)
+	{
+		try
+		{
+			var source = $('#boardT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result.data.boardList);
+			$('#boardList').html(html);
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
+	function modifyBoard( boardNo, boardName, boardType, writePermission )
+	{
+		modifyBoardNo = boardNo;
+		$('#boardName').val( boardName );
+		$('#boardType').prop('selectedIndex', boardType );
+		$('#writePermission').prop('selectedIndex', writePermission );
+		
+		$('#btnCreate').hide();
+		$('#btnModify').show();
+		$('#btnReset').show();
+	}
+	
+	function modifyBoardSubmit()
+	{
+		var param = {"cafeID":"<%= cafeID %>", "boardNo": modifyBoardNo , "boardName": $('#boardName').val(),
+				"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val() };
+		ajaxRequest('POST', '/nearhere/cafe/modifyBoardAjax.do', param , onModifyBoardResult );	
+	}
+	
+	function onModifyBoardResult(result)
+	{
+		try
+		{
+			var source = $('#boardT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result.data.boardList);
+			$('#boardList').html(html);
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
+	function reset()
+	{
+		modifyBoardNo = 0;
+		$('#boardName').val('');
+		$('#boardType').prop('selectedIndex', 0 );
+		$('#writePermission').prop('selectedIndex', 0 );
+		
+		$('#btnCreate').show();
+		$('#btnModify').hide();
+		$('#btnReset').hide();
+	}
+	
 </script>
 <script id="boardT" type="text/x-handlebars-template">
 	{{#if this}}	
@@ -83,8 +166,8 @@
 		{{#each this}}
 		<li>
 			<div style="clear:both;float:right">
-				<input type="button" value="수정" />
-				<input type="button" value="삭제" />
+				<input type="button" value="수정" onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{writePermission}}');"/>
+				<input type="button" value="삭제" onclick="deleteBoard('{{boardNo}}');" />
 			</div>
 			<div>{{boardName}}</div>
 		</li>
@@ -109,7 +192,7 @@
 				
 				<div class="header">게시판 등록/수정</div>
 			
-				<table style="width:100%;">
+				<table style="width:100%;" class="boardFields">
 					<colgroup>
 						<col width="120px;">
 						<col width="*">
@@ -126,26 +209,28 @@
 					<tr>
 						<td class="th1">게시판 타입</td>
 						<td class="th2">
-							<select>
-								<option>리스트</option>
-								<option>이미지</option>
+							<select id="boardType">
+								<option value="0">리스트</option>
+								<option value="1">이미지</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td class="th1">글쓰기 권한</td>
 						<td class="th2">
-							<select>
-								<option>모두</option>
-								<option>운영진 이상</option>
-								<option>카페주인만</option>
+							<select id="writePermission">
+								<option value="0">모두</option>
+								<option value="1">운영진 이상</option>
+								<option value="2">카페주인만</option>
 							</select>
 						</td>
 					</tr>
 					</tbody>
 				</table>
 				
-				<div class="wideBtn btnBG" onclick="createBoard();">추가하기</div>
+				<div class="wideBtn btnBG" id="btnCreate" onclick="createBoard();">추가하기</div>
+				<div class="wideBtn btnBG" id="btnModify" onclick="modifyBoardSubmit();" style="display:none;">수정하기</div>
+				<div class="wideBtn redBG" id="btnReset" onclick="reset();" style="display:none;">초기화</div>
 				
 			</div>
 			

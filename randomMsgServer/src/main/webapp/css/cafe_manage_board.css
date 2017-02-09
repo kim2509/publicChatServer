@@ -100,6 +100,10 @@ li{
     border-bottom: 2px solid gray;
 }
 
+.boardFields{
+	margin-bottom:30px;	
+}
+
 .emptyDiv{
 	text-align:center;
 	height:70px;

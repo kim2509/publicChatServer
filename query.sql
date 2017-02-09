@@ -9,6 +9,22 @@ COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
 
+CREATE TABLE `cafe_board_master` (
+	`boardNo` INT(11) NOT NULL AUTO_INCREMENT,
+	`boardName` VARCHAR(50) NOT NULL,
+	`cafeNo` INT(11) NULL DEFAULT NULL,
+	`boardType` INT(11) NULL DEFAULT NULL,
+	`writePermission` INT(11) NULL DEFAULT NULL,
+	`createdDate` DATETIME NULL DEFAULT NULL,
+	`deletedDate` DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY (`boardNo`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=9
+;
+
+
 CREATE TABLE `cafe_board_post_detail` (
 	`postNo` BIGINT(20) NULL DEFAULT NULL,
 	`type` INT(11) NULL DEFAULT NULL,

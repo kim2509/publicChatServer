@@ -267,13 +267,22 @@
 		where cm.cafeID=#{cafeID}
 	</select>
 	
-	<insert id="insertCafeBoard" parameterType="Hashmap">
-		insert into cafe_board_master( boardName, cafeNo, createdDate )
-		select #{boardName}, cafeNo, NOW() from cafe_master
+	<insert id="insertCafeBoard" parameterType="HashMap">
+		insert into cafe_board_master( boardName, cafeNo, boardType, writePermission, createdDate )
+		select #{boardName}, cafeNo, #{boardType}, #{writePermission}, NOW() from cafe_master
 		where cafeID=#{cafeID}
 	</insert>
 	
-	<insert id="deleteCafeBoard" parameterType="Hashmap">
+	<update id="updateCafeBoard" parameterType="HashMap">
+		update cafe_board_master 
+		set boardName=#{boardName}
+		, boardType = #{boardType}
+		, writePermission = #{writePermission} 
+		where boardNo=#{boardNo}
+		and cafeNo in ( select cafeNo from cafe_master where cafeID=#{cafeID} )
+	</update>
+	
+	<insert id="deleteCafeBoard" parameterType="HashMap">
 		delete from cafe_board_master
 		where boardNo = #{boardNo}
 		and cafeNo in ( select cafeNo from cafe_master where cafeID= #{cafeID})
