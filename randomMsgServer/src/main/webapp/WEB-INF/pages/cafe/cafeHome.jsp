@@ -7,6 +7,14 @@
 	String isApp = request.getParameter("isApp");
 	String userID = request.getParameter("userID");
 	String cafeID = request.getAttribute("cafeID").toString();
+	
+	String cafeName = "";
+	HashMap cafeMainInfo = null;
+	if ( request.getAttribute("cafeMainInfo") != null )
+	{
+		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+		cafeName = cafeMainInfo.get("cafeName").toString();
+	}
 %>
 
 <html>
@@ -89,7 +97,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 	<div id="wrapper">
 		
 		<div class="titleDiv">
-			<div class="title">중고나라</div>
+			<div class="title"><%= cafeName %></div>
 			<div id="manage">i</div>
 			<div id="setting"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
 		</div>

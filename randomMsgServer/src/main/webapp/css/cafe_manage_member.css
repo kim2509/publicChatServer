@@ -94,3 +94,16 @@ body{
 #pagingInfo .pageSelected{
 	color: blue;
 }
+
+.emptyDiv{
+	text-align:center;
+	height:70px;
+	font-size:15px;
+	color:#524c4c;
+	font-weight: bold;
+	line-height: 70px;
+}
+
+.manageButtons{
+	margin-right:5px;
+}

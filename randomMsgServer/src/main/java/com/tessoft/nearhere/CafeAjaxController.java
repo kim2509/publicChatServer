@@ -491,4 +491,169 @@ public class CafeAjaxController extends BaseController {
 		
 		return response;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getCafeMembersForManageAjax.do")
+	public @ResponseBody APIResponse getCafeMembersForManageAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			
+			HashMap info = new HashMap();
+			
+			HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			tmp.put("cafeID", param.get("cafeID"));
+			tmp.put("startIndex", param.get("startIndex"));
+			tmp.put("showCount", param.get("showCount"));
+			
+			info.put("memberList", cafeBiz.getCafeMemberListForManage(tmp) );
+			info.put("TotalMembersCount", cafeBiz.getCafeMemberCount(tmp) );
+			
+			response.setData(info);
+			
+			insertHistory("/cafe/getCafeMembersForManageAjax.do", param.get("cafeID").toString() , null , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/getCafeMembersForManageAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/cafe/updateCafeMemberTypeAjax.do")
+	public @ResponseBody APIResponse updateCafeMemberTypeAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( Util.isEmptyForKey(param, "userID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( Util.isEmptyForKey(param, "memberType") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+			else
+			{
+				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+				int dbResult = cafeBiz.updateCafeMemberType(param);
+				
+				HashMap info = new HashMap();
+				
+				HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+				tmp.put("cafeID", param.get("cafeID"));
+				info.put("dbResult", String.valueOf( dbResult ));
+				response.setData(info);
+			}
+			
+			insertHistory("/cafe/updateCafeMemberTypeAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 멤버 권한 업데이트 도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/updateCafeMemberTypeAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/cafe/deleteCafeMemberAjax.do")
+	public @ResponseBody APIResponse deleteCafeMemberAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( Util.isEmptyForKey(param, "userID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+			else
+			{
+				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+				int dbResult = cafeBiz.updateCafeAsDeleted(param);
+				
+				HashMap info = new HashMap();
+				
+				HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+				tmp.put("cafeID", param.get("cafeID"));
+				info.put("dbResult", String.valueOf( dbResult ));
+				response.setData(info);
+			}
+			
+			insertHistory("/cafe/deleteCafeMemberAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 멤버 탈퇴 도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/deleteCafeMemberAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

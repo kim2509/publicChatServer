@@ -413,7 +413,6 @@ public class CafeController extends BaseController {
 				HashMap param = new HashMap();
 				param.put("cafeID", cafeID);
 				List<HashMap> boardList = CafeBiz.getInstance(sqlSession).getCafeBoardList(param);
-				model.addAttribute("cafeBoardListJSON", mapper.writeValueAsString(boardList) );	
 			}
 		}
 		catch( Exception ex )
@@ -437,6 +436,15 @@ public class CafeController extends BaseController {
 		{
 			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
 				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			
+			HashMap param = new HashMap();
+			param.put("cafeID", cafeID);
+			param.put("userID", userInfo.get("userID") );
+
+			List<HashMap> cafeMemberList = CafeBiz.getInstance(sqlSession).getCafeMemberListForManage(param);
+			model.addAttribute("cafeMemberListJSON", mapper.writeValueAsString(cafeMemberList) );
 		}
 		catch( Exception ex )
 		{
