@@ -84,9 +84,9 @@
 		if ( profileImageURL != null && profileImageURL.length > 0 )
 			return new Handlebars.SafeString('<img src="<%= Constants.getThumbnailImageSSLURL() %>/' + 
 					profileImageURL + '" width=80 height=80/>');
-		else return new Handlebars.SafeString('<img src="" width=80 height=80/>');
+		else return new Handlebars.SafeString('<img src="<%= Constants.IMAGE_PATH %>/no_image.png" width=80 height=80/>');
 	}
-	
+
 	function displayManageButtons( memberType, userID, userName )
 	{
 		var buttonString = '';

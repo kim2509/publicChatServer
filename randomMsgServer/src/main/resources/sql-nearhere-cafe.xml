@@ -262,11 +262,16 @@
 	</select>
 	
 	<select id="getCafeMemberListForManage" resultType="HashMap" parameterType="HashMap">
-		select cfm.*, u.userName, u.profileImageURL from cafe_members cfm
+		select cfm.*, u.userName, u.profileImageURL
+		, case when cfm.memberType = '카페주인' then 1 
+			when cfm.memberType = '운영자' then 2 
+			when cfm.memberType = '회원' then 3 
+			end as memberTypeOrder
+		from cafe_members cfm
 			left outer join user u on cfm.userID=u.userID
 			left outer join cafe_master cm on cm.cafeNo=cfm.cafeNo
 		where cm.cafeID=#{cafeID} and cfm.deletedDate is null
-		order by cfm.createdDate
+		order by memberTypeOrder, cfm.createdDate
 		limit #{startIndex},#{showCount};
 	</select>
 	

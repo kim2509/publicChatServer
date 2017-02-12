@@ -13,6 +13,10 @@ body{
 	margin:0 auto;
 }
 
+.th1{
+	line-height:25px;	
+}
+
 #container{
 	padding:10px;
 }
@@ -27,6 +31,16 @@ body{
 	line-height: 25px;
     border: 0 none;
     width:100%;
+}
+
+#boardType{
+	height:30px;
+	width:100%;
+}
+
+#writePermission{
+	height:30px;
+	width:100%;
 }
 
 .titleDiv{

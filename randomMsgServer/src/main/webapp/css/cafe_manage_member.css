@@ -89,6 +89,7 @@ body{
     background: white;
     line-height: 1.4em;
     color:black;
+    margin:2px;
 }
 
 #pagingInfo .pageSelected{
