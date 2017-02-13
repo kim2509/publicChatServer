@@ -6,6 +6,17 @@
 <% 
 	String cafeID = request.getParameter("cafeID");
 	String isApp = request.getParameter("isApp");
+	HashMap cafeMainInfo = null;
+	String cafeName = "";
+	String cafeMainDesc = "";
+	String publishYN = "N";
+	if ( request.getAttribute("cafeMainInfo") != null )
+	{
+		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+		cafeName = cafeMainInfo.get("cafeName").toString();
+		cafeMainDesc = cafeMainInfo.get("mainDesc").toString();
+		publishYN = cafeMainInfo.get("publishYN").toString();
+	}
 %>
 
 <html>
@@ -48,6 +59,35 @@
 			document.location.href= url;
 	}
 
+	jQuery(document).ready(function(){
+		getCafeMainInfo();
+	});
+	
+	function getCafeMainInfo()
+	{
+		var param = {"cafeID":"<%= cafeID %>" };
+		ajaxRequest('POST', '/nearhere/cafe/cafeMainInfoAjax.do', param , onMainInfoResult );	
+	}
+	
+	function onMainInfoResult( result )
+	{
+		console.log( JSON.stringify( result ) );
+		
+		if ( result == null || result.data == null || result.data.cafeMainInfo == null ) return;
+		
+		if ('Y' == result.data.cafeMainInfo.publishYN )
+		{
+			$('#btnUnPublish').show();
+			$('#btnPublish').hide();
+		}
+		else
+		{
+			$('#btnUnPublish').hide();
+			$('#btnPublish').show();		
+		}
+			
+	}
+	
 </script>
 
 </head>
@@ -62,11 +102,11 @@
 		<div id="container">
 		
 			<div class="inputContainer">
-					<input type="text" class="inputTxt" placeholder="카페이름" value="" />
+					<input type="text" class="inputTxt" placeholder="카페이름" value="<%= cafeName %>" />
 			</div>
 			
 			<div class="inputContainer">
-				<input type="text" class="inputTxt" placeholder="설명" value="" />
+				<input type="text" class="inputTxt" placeholder="설명" value="<%= cafeMainDesc %>" />
 			</div>
 			
 			<div class="wideBtn darkBG">카페 아이콘 업로드</div>
@@ -77,9 +117,8 @@
 			
 			<div class="wideBtn btnBG">저장</div>
 			
-			<div class="wideBtn blueBG">카페 공개</div>
-			
-			<div class="wideBtn darkBG">카페 비공개</div>
+			<div id="btnUnPublish" class="wideBtn darkBG" style="display:none">카페 비공개</div>
+			<div id="btnPublish" class="wideBtn blueBG" style="display:none">카페 공개</div>
 			
 			<div class="wideBtn redBG">카페 폐쇄</div>
 		

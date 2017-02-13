@@ -13,7 +13,7 @@
 			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
 			left outer join cafe_location cl on cd.locationNo = cl.No
 			left outer join region_view rv on cl.regionNo = rv.regionNo
-		where cafeName like concat('%',#{keyword},'%')
+		where cafeName like concat('%',#{keyword},'%') and cm.publishYN = 'Y'
 		<if test="level != null and level==1">
 			and rv.lRegionNo = #{regionNo}
 		</if>
@@ -35,7 +35,7 @@
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_location cl on cd.locationNo = cl.No
 			left outer join region_view rv on cl.regionNo = rv.regionNo
-		where cafeName like concat('%',#{keyword},'%')
+		where cafeName like concat('%',#{keyword},'%') and cm.publishYN = 'Y'
 		<if test="level != null and level==1">
 			and rv.lRegionNo = #{regionNo}
 		</if>

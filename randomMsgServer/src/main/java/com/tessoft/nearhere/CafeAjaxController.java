@@ -354,6 +354,43 @@ public class CafeAjaxController extends BaseController {
 		return response;
 	}
 	
+
+	@RequestMapping( value ="/cafe/cafeMainInfoAjax.do")
+	public @ResponseBody APIResponse cafeMainInfoAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+
+			HashMap info = new HashMap();
+			info.put("cafeMainInfo", CafeBiz.getInstance(sqlSession).getCafeMainInfo(param) );
+			response.setData(info);
+			
+			insertHistory("/cafe/cafeMainInfoAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 게시판 생성도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/cafeMainInfoAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/cafe/createBoardAjax.do")
 	public @ResponseBody APIResponse createBoardAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
@@ -393,7 +430,7 @@ public class CafeAjaxController extends BaseController {
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
 			response.setResMsg("카페 게시판 생성도중 오류가 발생했습니다.");
 			
-			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			insertHistory("/cafe/createBoardAjax.do", null , null , null, "exception" );
 			logger.error( ex );
 		}
 		

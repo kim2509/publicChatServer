@@ -384,7 +384,6 @@ public class CafeController extends BaseController {
 		{
 			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
 				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
-			
 		}
 		catch( Exception ex )
 		{
