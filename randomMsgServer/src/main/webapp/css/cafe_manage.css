@@ -87,3 +87,48 @@ li{
 #manageBtns li{
 	float:left;
 }
+
+#iconDiv{
+	height:120px;
+	text-align:center;
+}
+
+#imgCafeIcon{
+	width:100px;
+	height:100px;
+	border:1px solid #d9d9d9;	
+}
+
+#mainImageDiv{
+	clear:both;
+	margin-bottom:10px;
+	border:1px solid #d9d9d9;	
+}
+
+.splitBtn{
+	width:50%;
+	float:left;
+}
+
+#btnUploadMainImg{
+	margin-right:5px;	
+}
+
+
+#emptyDiv{
+	height:100px;
+	text-align:center;
+	font-size:15px;
+	line-height:100px;
+}
+
+
+#imgMainImage{
+	width:100%;
+	height:100px;
+	display:none;
+}
+
+#btnManageBoard{
+	clear:both;
+}

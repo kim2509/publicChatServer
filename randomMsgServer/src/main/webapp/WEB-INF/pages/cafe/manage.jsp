@@ -109,10 +109,36 @@
 				<input type="text" class="inputTxt" placeholder="설명" value="<%= cafeMainDesc %>" />
 			</div>
 			
-			<div class="wideBtn darkBG">카페 아이콘 업로드</div>
+			<div id="iconDiv">
+				<img src = "" id="imgCafeIcon"/>
+				<div id="emptyDiv" style="display:none;">아이콘이 없습니다.</div>
+			</div>
 			
-			<div class="wideBtn darkBG">메인 이미지 업로드</div>
-			<div class="wideBtn whiteBG" onclick="goManageBoard('<%= cafeID %>');">게시판 관리</div>
+			<div id="iconBtnDiv">
+				<div class="splitBtn">
+					<div class="wideBtn darkBG" id="btnUploadMainImg">카페 아이콘 업로드</div>
+				</div>
+				<div class="splitBtn">
+					<div class="wideBtn redBG">지우기</div>
+				</div>
+			</div>
+			
+			
+			<div id="mainImageDiv">
+				<img src = "" id="imgMainImage"/>
+				<div id="emptyDiv">메인이미지가 없습니다.</div>
+			</div>
+			
+			<div id="mainImageBtnDiv">
+				<div class="splitBtn">
+					<div class="wideBtn darkBG" id="btnUploadMainImg">메인 이미지 업로드</div>
+				</div>
+				<div class="splitBtn">
+					<div class="wideBtn redBG">지우기</div>
+				</div>
+			</div>
+			
+			<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goManageBoard('<%= cafeID %>');">게시판 관리</div>
 			<div class="wideBtn whiteBG" onclick="goManageMember('<%= cafeID %>');">회원 관리</div>
 			
 			<div class="wideBtn btnBG">저장</div>
