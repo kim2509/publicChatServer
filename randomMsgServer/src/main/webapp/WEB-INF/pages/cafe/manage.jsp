@@ -6,17 +6,6 @@
 <% 
 	String cafeID = request.getParameter("cafeID");
 	String isApp = request.getParameter("isApp");
-	HashMap cafeMainInfo = null;
-	String cafeName = "";
-	String cafeMainDesc = "";
-	String publishYN = "N";
-	if ( request.getAttribute("cafeMainInfo") != null )
-	{
-		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
-		cafeName = cafeMainInfo.get("cafeName").toString();
-		cafeMainDesc = cafeMainInfo.get("mainDesc").toString();
-		publishYN = cafeMainInfo.get("publishYN").toString();
-	}
 %>
 
 <html>
@@ -38,8 +27,9 @@
 <script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	var cafeID = '<%= cafeID %>';
 	
-	function goManageBoard( cafeID )
+	function goManageBoard()
 	{
 		var url = '<%= Constants.getServerURL() + "/cafe/manageBoard.do" %>?cafeID=' + cafeID
 	
@@ -49,7 +39,7 @@
 			document.location.href= url;
 	}
 	
-	function goManageMember( cafeID )
+	function goManageMember()
 	{
 		var url = '<%= Constants.getServerURL() + "/cafe/manageMember.do" %>?cafeID=' + cafeID
 	
@@ -71,8 +61,6 @@
 	
 	function onMainInfoResult( result )
 	{
-		console.log( JSON.stringify( result ) );
-		
 		if ( result == null || result.data == null || result.data.cafeMainInfo == null ) return;
 		
 		if ('Y' == result.data.cafeMainInfo.publishYN )
@@ -85,7 +73,64 @@
 			$('#btnUnPublish').hide();
 			$('#btnPublish').show();		
 		}
+		
+		$('#cafeNameIput').val( result.data.cafeMainInfo.cafeName );
+		$('#cafeDescInput').val( result.data.cafeMainInfo.mainDesc );
+		$('#contactEmail').val( result.data.cafeMainInfo.contactEmail );
 			
+	}
+	
+	function validateEmail(email) {
+	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(email);
+	}
+	
+	function saveClick()
+	{
+		var cafeName = $('#cafeNameIput').val();
+		var mainDesc = $('#cafeDescInput').val();
+		var contactEmail = $('#contactEmail').val();
+		
+		// 저장할 때에는 이메일을 입력했을 때에만 validation 검사
+		if ( contactEmail != null && contactEmail.length > 0 && validateEmail(contactEmail) == false )
+		{
+			alert('이메일 형식이 올바르지 않습니다.');
+			return;
+		}
+		
+		if ( confirm('설정을 저장하시겠습니까?') )
+		{
+			var param = {"cafeID":cafeID, "cafeName":cafeName, "mainDesc": mainDesc, "contactEmail": contactEmail };
+			
+			ajaxRequest('POST', '/nearhere/cafe/saveCafeInfoAjax.do', param , onSaveResult );
+		}
+	}
+	
+	function onSaveResult()
+	{
+		alert('저장되었습니다.');
+	}
+	
+	function deleteCafe()
+	{
+		if ( confirm('카페의 모든 데이터가 삭제됩니다. 계속하시겠습니까?') )
+		{
+			var param = {"cafeID":cafeID };
+			
+			ajaxRequest('POST', '/nearhere/cafe/deleteCafeAjax.do', param , deleteCafeResult );
+		}
+	}
+	
+	function deleteCafeResult()
+	{
+		if ( isApp =='Y' )
+		{
+		
+		}
+		else
+		{
+			window.history.back();
+		}
 	}
 	
 </script>
@@ -101,20 +146,38 @@
 		
 		<div id="container">
 		
-			<div class="inputContainer">
-					<input type="text" class="inputTxt" placeholder="카페이름" value="<%= cafeName %>" />
+			<p class="subTitle paddingLR10 paddingTop10">카페 이름</p>
+			
+			<div class="inputContainer marginLR10 marginB20">
+				<input type="text" id="cafeNameIput" class="inputTxt" placeholder="카페이름" value="" />
 			</div>
 			
-			<div class="inputContainer">
-				<input type="text" class="inputTxt" placeholder="설명" value="<%= cafeMainDesc %>" />
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 설명</p>
+			
+			<textarea id="cafeDescInput" class="marginLR10 marginB20" value="" rows="3">
+			</textarea>
+			
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 위치</p>
+			
+			<div id="locationDiv" class="marginLR10">
+				<div id="cafeLocationDiv" style="display:none">
+					<span>지역: </span>
+					<span id="cafeLocation">서울시 송파구 방이동</span>
+				</div>
+				<div id="locationDesc">현재 설정된 위치가 없습니다. 위치를 설정하시면 해당지역의 사용자들에게 검색이 됩니다.</div>
 			</div>
+			
+			<div class="marginLR10 paddingTop10">
+				<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goSelectLocation();">위치 지정</div>
+			</div>
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 아이콘</p>
 			
 			<div id="iconDiv">
 				<img src = "" id="imgCafeIcon"/>
 				<div id="emptyDiv" style="display:none;">아이콘이 없습니다.</div>
 			</div>
 			
-			<div id="iconBtnDiv">
+			<div id="iconBtnDiv" class="marginLR10 marginB20">
 				<div class="splitBtn">
 					<div class="wideBtn darkBG" id="btnUploadMainImg">카페 아이콘 업로드</div>
 				</div>
@@ -123,13 +186,14 @@
 				</div>
 			</div>
 			
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 메인 이미지</p>
 			
-			<div id="mainImageDiv">
+			<div id="mainImageDiv" class="marginLR10">
 				<img src = "" id="imgMainImage"/>
 				<div id="emptyDiv">메인이미지가 없습니다.</div>
 			</div>
 			
-			<div id="mainImageBtnDiv">
+			<div id="mainImageBtnDiv" class="marginLR10 marginB20">
 				<div class="splitBtn">
 					<div class="wideBtn darkBG" id="btnUploadMainImg">메인 이미지 업로드</div>
 				</div>
@@ -138,15 +202,29 @@
 				</div>
 			</div>
 			
-			<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goManageBoard('<%= cafeID %>');">게시판 관리</div>
-			<div class="wideBtn whiteBG" onclick="goManageMember('<%= cafeID %>');">회원 관리</div>
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">운영자 이메일</p>
 			
-			<div class="wideBtn btnBG">저장</div>
+			<div class="inputContainer marginLR10 marginB20">
+				<input type="text" id="contactEmail" class="inputTxt" placeholder="이메일" value="" />
+			</div>
 			
-			<div id="btnUnPublish" class="wideBtn darkBG" style="display:none">카페 비공개</div>
-			<div id="btnPublish" class="wideBtn blueBG" style="display:none">카페 공개</div>
+			<div class="upperLine">
+			</div>
 			
-			<div class="wideBtn redBG">카페 폐쇄</div>
+			<div class="marginLR10 paddingTop10" style="margin-bottom:50px;">
+			
+				<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goManageBoard();">게시판 관리</div>
+				<div class="wideBtn whiteBG" onclick="goManageMember();">회원 관리</div>
+				
+				<div class="wideBtn btnBG" onclick="saveClick();">저장</div>
+				
+				<div id="btnUnPublish" class="wideBtn darkBG" style="display:none">카페 비공개</div>
+				<div id="btnPublish" class="wideBtn blueBG" style="display:none">카페 공개</div>
+				
+				<div class="wideBtn redBG" onclick="deleteCafe();">카페 폐쇄</div>
+			
+			</div>
+		
 		
 		</div>
 					

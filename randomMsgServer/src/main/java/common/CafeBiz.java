@@ -327,6 +327,32 @@ public class CafeBiz extends CommonBiz{
 		
 		return false;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public boolean isCafeOwner( String cafeID, String userToken ) throws Exception
+	{
+		HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+		
+		if ( userInfo != null )
+		{
+			userInfo.put("cafeID", cafeID);
+			HashMap cafeUserInfo = getCafeUserInfo(userInfo);
+			
+			String ownerYN = "N";
+			String memberYN = "N";
+			String memberType = "";
+			if ( cafeUserInfo != null )
+			{
+				ownerYN = cafeUserInfo.get("ownerYN").toString();
+				memberYN = cafeUserInfo.get("memberYN").toString();
+				memberType = cafeUserInfo.get("memberType").toString();
+			}
+			
+			if ( "Y".equals( ownerYN ) ) return true;			
+		}
+		
+		return false;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public int updateCafeMemberType(HashMap param)
@@ -350,5 +376,31 @@ public class CafeBiz extends CommonBiz{
 			Util.isEmptyForKey(param, "userID") ) return -1;
 		
 		return sqlSession.update("com.tessoft.nearhere.cafe.updateMemberAsDeleted", param);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeInfo(HashMap param)
+	{
+		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
+		
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeMasterInfo", param);
+		result += sqlSession.update("com.tessoft.nearhere.cafe.updateCafeDetailInfo", param);
+		
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int deleteCafe(HashMap param)
+	{
+		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
+		
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoardAllPostReplies", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoardPostDetail", param);		
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoardAllPosts", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeAllBoard", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeDetail", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeMaster", param);
+		
+		return result;
 	}
 }

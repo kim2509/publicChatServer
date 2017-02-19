@@ -19,11 +19,13 @@ CREATE TABLE `cafe_detail` (
 	`iconImageNo` BIGINT(20) NULL DEFAULT NULL,
 	`mainImageNo` BIGINT(20) NULL DEFAULT NULL,
 	`mainDesc` TEXT NULL,
-	`locationNo` BIGINT(20) NULL DEFAULT NULL
+	`locationNo` BIGINT(20) NULL DEFAULT NULL,
+	`contactEmail` VARCHAR(256) NULL DEFAULT NULL
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
+
 
 CREATE TABLE `cafe_board_master` (
 	`boardNo` INT(11) NOT NULL AUTO_INCREMENT,

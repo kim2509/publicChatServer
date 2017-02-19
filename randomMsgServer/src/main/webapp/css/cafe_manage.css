@@ -1,5 +1,5 @@
 
-div, body, ul{
+div, body, ul, p{
 	margin:0;
 	padding:0;
 }
@@ -14,19 +14,54 @@ body{
 }
 
 #container{
-	padding:10px;
+	
+}
+
+.subTitle{
+	margin-bottom:10px;
+	font-size:14px;
+	font-weight:bold;
+}
+
+.paddingLR10{
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.paddingTop10{
+	padding-top:10px;
+}
+
+.marginLR10{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+.marginB10{
+	margin-bottom:10px;
+}
+
+.marginB20{
+	margin-bottom:20px;
+}
+
+.upperLine{
+	border-top:1px solid #d9d9d9;
 }
 
 .inputContainer{
 	border: 1px solid #bfbfbf;
-    padding: 3px;
-    margin-bottom: 10px;
 }
 
 .inputTxt{
 	line-height: 25px;
     border: 0 none;
-    width:100%;
+    width:90%;
+    padding:3px;
+}
+
+#cafeDescInput{
+	width:90%;
 }
 
 li{ 
@@ -49,6 +84,11 @@ li{
 	line-height:50px;
 }
 
+#locationDiv{
+	font-size:14px;
+	font-weight:bold;
+	color:#af1010;
+}
 
 .wideBtn{
     width: 100%;
@@ -93,6 +133,10 @@ li{
 	text-align:center;
 }
 
+#iconBtnDiv{
+	overflow:auto;
+}
+
 #imgCafeIcon{
 	width:100px;
 	height:100px;
@@ -103,6 +147,10 @@ li{
 	clear:both;
 	margin-bottom:10px;
 	border:1px solid #d9d9d9;	
+}
+
+#mainImageBtnDiv{
+	overflow:auto;
 }
 
 .splitBtn{

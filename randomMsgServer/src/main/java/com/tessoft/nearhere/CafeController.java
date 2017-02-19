@@ -219,35 +219,37 @@ public class CafeController extends BaseController {
 			HashMap cafeMainInfoParam = new HashMap();
 			cafeMainInfoParam.put("cafeID", cafeID);
 			HashMap cafeMainInfo = cafeBiz.getCafeMainInfo(cafeMainInfoParam);
-			
-			model.addAttribute("cafeMainInfo", cafeMainInfo);
-			
-			List<HashMap> cafePublicMeetingList = cafeBiz.getCafePublicMeetingList(cafeMainInfoParam);
-			
-			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
-			
-			for ( int i = 0; i < cafePublicMeetingList.size(); i++ )
-			{
-				String regionNo = cafePublicMeetingList.get(i).get("regionNo").toString();
-				cafePublicMeetingList.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));
-			}
-			
-			model.addAttribute("cafePublicMeetingList", cafePublicMeetingList);
-			
-			List<HashMap> cafeMemberList = cafeBiz.getCafeMemberList(cafeMainInfoParam);
-			model.addAttribute("cafeMemberList", cafeMemberList);
-			
-			String cafeMemberCount = cafeBiz.getCafeMemberCount(cafeMainInfoParam);
-			model.addAttribute("cafeMemberCount", cafeMemberCount);
-			
 			model.addAttribute("cafeID", cafeID );
 			
-			HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
-
-			if ( tmp != null )
+			if ( cafeMainInfo != null )
 			{
-				tmp.put("cafeID", cafeID);
-				model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(tmp) );
+				model.addAttribute("cafeMainInfo", cafeMainInfo);
+				
+				List<HashMap> cafePublicMeetingList = cafeBiz.getCafePublicMeetingList(cafeMainInfoParam);
+				
+				RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+				
+				for ( int i = 0; i < cafePublicMeetingList.size(); i++ )
+				{
+					String regionNo = cafePublicMeetingList.get(i).get("regionNo").toString();
+					cafePublicMeetingList.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));
+				}
+				
+				model.addAttribute("cafePublicMeetingList", cafePublicMeetingList);
+				
+				List<HashMap> cafeMemberList = cafeBiz.getCafeMemberList(cafeMainInfoParam);
+				model.addAttribute("cafeMemberList", cafeMemberList);
+				
+				String cafeMemberCount = cafeBiz.getCafeMemberCount(cafeMainInfoParam);
+				model.addAttribute("cafeMemberCount", cafeMemberCount);
+				
+				HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+				if ( tmp != null )
+				{
+					tmp.put("cafeID", cafeID);
+					model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(tmp) );
+				}	
 			}
 		}
 		catch( Exception ex )

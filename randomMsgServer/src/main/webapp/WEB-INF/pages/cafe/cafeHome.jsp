@@ -22,7 +22,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>이근처</title>
+<title>이근처 카페</title>
 
 
 <!-- Include the jQuery library -->
@@ -68,12 +68,25 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 	var isApp = '<%= isApp %>';
 	var userID = '<%= userID %>';
 	var cafeID = '<%= cafeID %>';
+	var cafeName = '<%= cafeName %>';
 	var swiper = null;
 	
 	jQuery(document).ready(function(){
 		swiper = $('.swiper-container').swiper({
 			onSlideChangeStart:onSlideChange
 		});
+		
+		if ( cafeName == null || cafeName.length < 1 )
+		{
+			if ( isApp =='Y' )
+			{
+				
+			}
+			else
+			{
+				window.history.back();
+			}
+		}
 	});
 	
 	function goSlide( slideNo )
@@ -95,6 +108,8 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <body>
 
 	<div id="wrapper">
+		
+		<% if ( !Util.isEmptyString( cafeName ) ) { %>
 		
 		<div class="titleDiv">
 			<div class="title"><%= cafeName %></div>
@@ -138,7 +153,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 			</div>
 		</div>
 
-
+		<% } %>
 		
 	</div>
 
