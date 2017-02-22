@@ -182,32 +182,46 @@ li{
 }
 
 /* 모달 */
-.white_content {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.8);
-    opacity:0;
-    -webkit-transition: opacity 100ms ease-in;
-    -moz-transition: opacity 100ms ease-in;
-    transition: opacity 100ms ease-in;
-    pointer-events: none;
-}
-.white_content:target {
-    opacity:1;
-    pointer-events: auto;
-}
-.white_content > div {
-	position: absolute;
-	top: 10%;
-	left: 25%;
-	width: 50%;
-	height: 50%;
-	padding: 16px;
-	border: 16px solid orange;
-	background-color: white;
-	overflow: auto;	
+#modal {
+	display:none;
+	background-color:#FFFFFF;
+	position:absolute;
+	height:450px;
+	width:80%;
+	padding:10px;
+	border:2px solid #E2E2E2;
+	z-Index:9999
 }
 /* 모달 */
+
+#tabView{
+	margin:10px;
+	border:1px solid #d9d9d9;
+	overflow:auto;
+}
+
+#tabView li{
+	float:left;
+	width:50%;
+	text-align:center;
+	line-height:30px;
+	font-size:15px;
+	font-weight:bold;
+}
+
+#tabView li.selected{
+	background:yellow;
+}
+
+#tabMap{
+	border-right:1px solid #d9d9d9;
+}
+
+#modal #map{
+	height:300px;
+	width:100%;
+}
+
+#mapTabContent{
+	
+}

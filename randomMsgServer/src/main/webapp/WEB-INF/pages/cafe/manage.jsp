@@ -22,6 +22,9 @@
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
+<script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
+
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage.css?v=" />
 
 <script language="javascript">
@@ -49,8 +52,15 @@
 			document.location.href= url;
 	}
 
+	var selectLocationModal = null;
+	
 	jQuery(document).ready(function(){
 		getCafeMainInfo();
+		
+		// 모달창 인스턴트 생성
+		selectLocationModal = new Example.Modal({
+		    id: "modal" // 모달창 아이디 지정
+		});
 	});
 	
 	function getCafeMainInfo()
@@ -133,14 +143,106 @@
 		}
 	}
 	
+	var bInitMap = false;
 	function goSelectLocation()
 	{
-		var url = '<%= Constants.getServerURL() + "/cafe/setLocation.do" %>?cafeID=' + cafeID
+		selectLocationModal.show();
 		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
+		if ( bInitMap == false )
+		{
+			initiateMap();
+		}
+	}
+		
+	function locationTabSelect( element, tabIndex )
+	{
+		$('#tabView li').removeClass('selected');
+		$(element).addClass('selected');
+		
+		if ( tabIndex == 0 )
+		{
+			$('#mapTabContent').show();
+			$('#regionTabContent').hide();
+		}
+		else if ( tabIndex == 1 )
+		{
+			$('#mapTabContent').hide();
+			$('#regionTabContent').show();
+		}
+	}
+	
+	
+	var map = null;
+	
+	// 장소 검색 객체를 생성합니다
+	var ps = new daum.maps.services.Places();
+	
+	function initiateMap()
+	{
+		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+		
+		var options = { //지도를 생성할 때 필요한 기본 옵션
+				center: new daum.maps.LatLng(37.566672, 126.978380), //지도의 중심좌표.
+				level: 3 //지도의 레벨(확대, 축소 정도)
+			};
+
+		map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		
+		// 지도에 클릭 이벤트를 등록합니다
+		// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+		daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
+		    
+		    console.log(JSON.stringify( mouseEvent ));
+		    
+		});
+		
+		bInitMap = true;
+	}
+	
+	// 키워드 검색 완료 시 호출되는 콜백함수 입니다
+	function placesSearchCB (status, data, pagination) {
+	    if (status === daum.maps.services.Status.OK) {
+
+	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+	        // LatLngBounds 객체에 좌표를 추가합니다
+	        var bounds = new daum.maps.LatLngBounds();
+
+	        for (var i=0; i<data.places.length; i++) {
+	            displayMarker(data.places[i]);    
+	            bounds.extend(new daum.maps.LatLng(data.places[i].latitude, data.places[i].longitude));
+	            
+	            if ( i == 0 ) break;
+	        }       
+
+	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+	        map.setBounds(bounds);
+	    } 
+	}
+	
+	// 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
+	var infowindow = new daum.maps.InfoWindow({zIndex:1});
+	
+	// 지도에 마커를 표시하는 함수입니다
+	function displayMarker(place) {
+	    
+	    // 마커를 생성하고 지도에 표시합니다
+	    var marker = new daum.maps.Marker({
+	        map: map,
+	        position: new daum.maps.LatLng(place.latitude, place.longitude) 
+	    });
+
+	    // 마커에 클릭이벤트를 등록합니다
+	    daum.maps.event.addListener(marker, 'click', function() {
+	        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
+	        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.title + '</div>');
+	        infowindow.open(map, marker);
+	    });
+	}
+	
+	function searchOnMap()
+	{
+		// 키워드로 장소를 검색합니다
+		ps.keywordSearch($('#searchLocationKeyword').val() , placesSearchCB); 
 	}
 	
 </script>
@@ -178,7 +280,7 @@
 			</div>
 			
 			<div class="marginLR10 paddingTop10">
-				<div id="btnManageBoard" class="wideBtn whiteBG"><a href="#open">위치 지정</a></div>
+				<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goSelectLocation();">위치 지정</div>
 			</div>
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 아이콘</p>
 			
@@ -236,11 +338,72 @@
 			</div>
 		
 		
-			<div class="white_content" id="open">
-		        <div>
-		            <p>Lightbox 콘텐츠입니다. <a href="#close">닫기</a></p>
-		        </div>
-		    </div>
+			<!-- 모달창 -->
+			<div id="modal">
+			    <ul id="tabView">
+					<li class="selected" onclick="locationTabSelect(this, 0);">
+						<div id="tabMap">지도에서 정하기</div>
+					</li>
+					<li onclick="locationTabSelect(this, 1);">
+						<div>지역 선택하기</div>
+					</li>
+				</ul>
+				<div id="mapTabContent">
+				
+					<div style="text-align:center;margin-bottom:10px;">
+						<input type="text" id="searchLocationKeyword" 
+						placeholder="지역을 검색하세요." style="width:70%;line-height:25px;padding-left:5px;">
+						<input type="button" value="검색" style="line-height:25px;" onclick="searchOnMap();"/>
+					</div>
+					<div id="map"></div>
+					
+				</div>
+				<div id="regionTabContent" style="display:none;">
+				
+					<table style="width:100%;">
+						<colgroup>
+							<col width="120px;"></col>
+							<col width="*"></col>
+						</colgroup>
+						<tr>
+							<td class="th1">시/도</td>
+							<td class="th2">
+								<select name="selRegionLevel1" id="selRegionLevel1" style="width:100%;">
+									<option value="">선택하세요.</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="th1">시/구/군</td>
+							<td class="th2">
+								<select name="selRegionLevel2" id="selRegionLevel2" style="width:100%;">
+									<option value="">선택하세요.</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="th1">동/읍/면</td>
+							<td class="th2">
+								<select name="selRegionLevel3" id="selRegionLevel3" style="width:100%;">
+									<option value="">선택하세요.</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="th1">리</td>
+							<td class="th2">
+								<select name="selRegionLevel4" id="selRegionLevel4" style="width:100%;">
+									<option value="">선택하세요.</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				
+				</div>
+				
+			    <button id="confirm_button">확인</button>
+			    <button class="js_close">닫기</button>
+			</div>
 		    
 		</div>
 					
