@@ -133,6 +133,16 @@
 		}
 	}
 	
+	function goSelectLocation()
+	{
+		var url = '<%= Constants.getServerURL() + "/cafe/setLocation.do" %>?cafeID=' + cafeID
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
 </script>
 
 </head>
@@ -168,7 +178,7 @@
 			</div>
 			
 			<div class="marginLR10 paddingTop10">
-				<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goSelectLocation();">위치 지정</div>
+				<div id="btnManageBoard" class="wideBtn whiteBG"><a href="#open">위치 지정</a></div>
 			</div>
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 아이콘</p>
 			
@@ -226,6 +236,12 @@
 			</div>
 		
 		
+			<div class="white_content" id="open">
+		        <div>
+		            <p>Lightbox 콘텐츠입니다. <a href="#close">닫기</a></p>
+		        </div>
+		    </div>
+		    
 		</div>
 					
 	</div>

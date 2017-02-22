@@ -392,7 +392,7 @@ public class CafeController extends BaseController {
 			
 		}
 		
-		insertHistory("/cafe/index.do", userID , null , null, null );
+		insertHistory("/cafe/manage.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/manage", model);
 	}
@@ -422,7 +422,7 @@ public class CafeController extends BaseController {
 			
 		}
 		
-		insertHistory("/cafe/index.do", userID , null , null, null );
+		insertHistory("/cafe/manageBoard.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/manageBoard", model);
 	}
@@ -453,8 +453,30 @@ public class CafeController extends BaseController {
 			
 		}
 		
-		insertHistory("/cafe/index.do", userID , null , null, null );
+		insertHistory("/cafe/manageMember.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/manageMember", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
+	@RequestMapping( value ="/cafe/setLocation.do")
+	public ModelAndView setLocation ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID ) 
+	{
+		String userID = "";
+		
+		try
+		{
+			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		insertHistory("/cafe/setLocation.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/setLocation", model);
 	}
 }
