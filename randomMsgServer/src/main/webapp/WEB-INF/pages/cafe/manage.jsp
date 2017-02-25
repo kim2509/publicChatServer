@@ -173,9 +173,25 @@
 	
 	
 	var map = null;
+	var marker = null;
+	// 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
+	var infowindow = new daum.maps.InfoWindow({zIndex:1});
 	
 	// 장소 검색 객체를 생성합니다
 	var ps = new daum.maps.services.Places();
+	
+	// 주소-좌표 변환 객체를 생성합니다
+	var geocoder = new daum.maps.services.Geocoder();
+	
+	function searchAddrFromCoords(coords, callback) {
+	    // 좌표로 행정동 주소 정보를 요청합니다
+	    geocoder.coord2addr(coords, callback);         
+	}
+	
+	function searchDetailAddrFromCoords(coords, callback) {
+	    // 좌표로 법정동 상세 주소 정보를 요청합니다
+	    geocoder.coord2detailaddr(coords, callback);
+	}
 	
 	function initiateMap()
 	{
@@ -192,7 +208,8 @@
 		// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
 		daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
 		    
-		    console.log(JSON.stringify( mouseEvent ));
+			showMarker( mouseEvent.latLng );
+		    showInfoWindow( mouseEvent.latLng );
 		    
 		});
 		
@@ -217,32 +234,76 @@
 	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
 	        map.setBounds(bounds);
 	    } 
-	}
-	
-	// 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
-	var infowindow = new daum.maps.InfoWindow({zIndex:1});
+	}	
 	
 	// 지도에 마커를 표시하는 함수입니다
 	function displayMarker(place) {
 	    
-	    // 마커를 생성하고 지도에 표시합니다
-	    var marker = new daum.maps.Marker({
-	        map: map,
-	        position: new daum.maps.LatLng(place.latitude, place.longitude) 
-	    });
+		showMarker( new daum.maps.LatLng(place.latitude, place.longitude) );
+		
+		showInfoWindow( new daum.maps.LatLng(place.latitude, place.longitude), place.title );
+	}
+	
+	function showMarker( latLng )
+	{
+		if ( marker == null )
+	    {
+			// 마커를 생성하고 지도에 표시합니다
+		    marker = new daum.maps.Marker({
+		        map: map,
+		        position: latLng 
+		    });
+	    }
+	    else
+	    {
+	    	marker.setPosition( latLng );
+	    }
+	}
+	
+	function showInfoWindow( latLng, title )
+	{
+		searchDetailAddrFromCoords( latLng , function(status, result) {
+	        if (status === daum.maps.services.Status.OK) {
+	        	
+	        	var detailAddr = !!result[0].roadAddress.name ? '<div>도로명주소 : ' + result[0].roadAddress.name + '</div>' : '';
+	            detailAddr += '<div>지번 주소 : ' + result[0].jibunAddress.name + '</div>';
+	            
+	            var areaName = '';
+	            
+	            if ( title != null && title.length > 0 )
+	            {
+	            	areaName = '<div>' + title + '</div>';
+	            }
+	            
+	            var content = '<div class="addressInfo">' +
+	            				areaName +
+	                            detailAddr + 
+	                        '</div>';
 
-	    // 마커에 클릭이벤트를 등록합니다
-	    daum.maps.event.addListener(marker, 'click', function() {
-	        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-	        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.title + '</div>');
-	        infowindow.open(map, marker);
-	    });
+	            // 마커를 클릭한 위치에 표시합니다 
+	            marker.setPosition(latLng);
+	            marker.setMap(map);
+
+	            // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
+	            infowindow.setContent(content);
+	            infowindow.open(map, marker);
+	        }   
+	    });		
 	}
 	
 	function searchOnMap()
 	{
 		// 키워드로 장소를 검색합니다
 		ps.keywordSearch($('#searchLocationKeyword').val() , placesSearchCB); 
+	}
+	
+	function selectLocation()
+	{
+		if ( confirm('현재 위치로 지정하시겠습니까?') )
+		{
+			if ( selectLocationModal != null )
+				selectLocationModal.hide();
+		}
 	}
 	
 </script>
@@ -401,8 +462,18 @@
 				
 				</div>
 				
-			    <button id="confirm_button">확인</button>
-			    <button class="js_close">닫기</button>
+			    <!-- button id="confirm_button">확인</button>
+			    <button class="js_close">닫기</button-->
+			    
+			    <div id="mainImageBtnDiv" class="marginB20 marginT10">
+					<div class="splitBtn">
+						<div class="wideBtn darkBG" onclick="selectLocation();">위치 선택하기</div>
+					</div>
+					<div class="splitBtn">
+						<div class="wideBtn redBG js_close">닫기</div>
+					</div>
+				</div>
+			
 			</div>
 		    
 		</div>

@@ -37,6 +37,10 @@ body{
 	margin-right:10px;
 }
 
+.marginT10{
+	margin-top:10px;
+}
+
 .marginB10{
 	margin-bottom:10px;
 }
@@ -224,4 +228,11 @@ li{
 
 #mapTabContent{
 	
+}
+
+.addressInfo{
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	padding:10px;
 }
