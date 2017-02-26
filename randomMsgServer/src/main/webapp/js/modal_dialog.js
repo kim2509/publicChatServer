@@ -120,6 +120,8 @@ Example.Modal.prototype = {
         }
         var top = res_height+$(document).scrollTop(); // 화면상의 높이에 스크롤높이를 더한 절대좌표를 top에 저장
 
+        top = 100;
+        
         // css의 top,left 조정
         $("#"+this.hash.id).css("top",top);
         $("#"+this.hash.id).css("left",left);

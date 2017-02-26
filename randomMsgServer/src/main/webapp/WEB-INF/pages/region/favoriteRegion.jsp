@@ -138,7 +138,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/getRegionListByParent.do",
+				url : "/nearhere/region/getRegionListByParentAjax.do",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",

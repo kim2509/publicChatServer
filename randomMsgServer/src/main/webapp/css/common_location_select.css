@@ -1,0 +1,52 @@
+
+#tabView{
+	margin:10px;
+	border:1px solid #d9d9d9;
+	overflow:auto;
+}
+
+#tabView li{
+	float:left;
+	width:50%;
+	text-align:center;
+	line-height:30px;
+	font-size:15px;
+	font-weight:bold;
+}
+
+#tabView li.selected{
+	background:yellow;
+}
+
+#tabMap{
+	border-right:1px solid #d9d9d9;
+}
+
+#modal #map{
+	height:300px;
+	width:100%;
+}
+
+#mapTabContent{
+	
+}
+
+.addressInfo{
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	padding:10px;
+}
+
+.th1 {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.th2 {
+    text-align: center;
+}
+
+.th2 select {
+    padding: 5px;
+}

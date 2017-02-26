@@ -143,166 +143,29 @@
 		}
 	}
 	
-	var bInitMap = false;
+	
 	function goSelectLocation()
 	{
 		selectLocationModal.show();
+		showLocationSelectDiv();
+	}
 		
-		if ( bInitMap == false )
+
+	var locationResult = null;
+	function locationSelected( result )
+	{
+		if ( selectLocationModal != null )
+			selectLocationModal.hide();
+		
+		locationResult = result;
+		console.log(JSON.stringify( locationResult ) );
+		
+		if ( locationResult != null )
 		{
-			initiateMap();
-		}
-	}
-		
-	function locationTabSelect( element, tabIndex )
-	{
-		$('#tabView li').removeClass('selected');
-		$(element).addClass('selected');
-		
-		if ( tabIndex == 0 )
-		{
-			$('#mapTabContent').show();
-			$('#regionTabContent').hide();
-		}
-		else if ( tabIndex == 1 )
-		{
-			$('#mapTabContent').hide();
-			$('#regionTabContent').show();
-		}
-	}
-	
-	
-	var map = null;
-	var marker = null;
-	// 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
-	var infowindow = new daum.maps.InfoWindow({zIndex:1});
-	
-	// 장소 검색 객체를 생성합니다
-	var ps = new daum.maps.services.Places();
-	
-	// 주소-좌표 변환 객체를 생성합니다
-	var geocoder = new daum.maps.services.Geocoder();
-	
-	function searchAddrFromCoords(coords, callback) {
-	    // 좌표로 행정동 주소 정보를 요청합니다
-	    geocoder.coord2addr(coords, callback);         
-	}
-	
-	function searchDetailAddrFromCoords(coords, callback) {
-	    // 좌표로 법정동 상세 주소 정보를 요청합니다
-	    geocoder.coord2detailaddr(coords, callback);
-	}
-	
-	function initiateMap()
-	{
-		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-		
-		var options = { //지도를 생성할 때 필요한 기본 옵션
-				center: new daum.maps.LatLng(37.566672, 126.978380), //지도의 중심좌표.
-				level: 3 //지도의 레벨(확대, 축소 정도)
-			};
-
-		map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
-		
-		// 지도에 클릭 이벤트를 등록합니다
-		// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
-		daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
-		    
-			showMarker( mouseEvent.latLng );
-		    showInfoWindow( mouseEvent.latLng );
-		    
-		});
-		
-		bInitMap = true;
-	}
-	
-	// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-	function placesSearchCB (status, data, pagination) {
-	    if (status === daum.maps.services.Status.OK) {
-
-	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-	        // LatLngBounds 객체에 좌표를 추가합니다
-	        var bounds = new daum.maps.LatLngBounds();
-
-	        for (var i=0; i<data.places.length; i++) {
-	            displayMarker(data.places[i]);    
-	            bounds.extend(new daum.maps.LatLng(data.places[i].latitude, data.places[i].longitude));
-	            
-	            if ( i == 0 ) break;
-	        }       
-
-	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-	        map.setBounds(bounds);
-	    } 
-	}	
-	
-	// 지도에 마커를 표시하는 함수입니다
-	function displayMarker(place) {
-	    
-		showMarker( new daum.maps.LatLng(place.latitude, place.longitude) );
-		
-		showInfoWindow( new daum.maps.LatLng(place.latitude, place.longitude), place.title );
-	}
-	
-	function showMarker( latLng )
-	{
-		if ( marker == null )
-	    {
-			// 마커를 생성하고 지도에 표시합니다
-		    marker = new daum.maps.Marker({
-		        map: map,
-		        position: latLng 
-		    });
-	    }
-	    else
-	    {
-	    	marker.setPosition( latLng );
-	    }
-	}
-	
-	function showInfoWindow( latLng, title )
-	{
-		searchDetailAddrFromCoords( latLng , function(status, result) {
-	        if (status === daum.maps.services.Status.OK) {
-	        	
-	        	var detailAddr = !!result[0].roadAddress.name ? '<div>도로명주소 : ' + result[0].roadAddress.name + '</div>' : '';
-	            detailAddr += '<div>지번 주소 : ' + result[0].jibunAddress.name + '</div>';
-	            
-	            var areaName = '';
-	            
-	            if ( title != null && title.length > 0 )
-	            {
-	            	areaName = '<div>' + title + '</div>';
-	            }
-	            
-	            var content = '<div class="addressInfo">' +
-	            				areaName +
-	                            detailAddr + 
-	                        '</div>';
-
-	            // 마커를 클릭한 위치에 표시합니다 
-	            marker.setPosition(latLng);
-	            marker.setMap(map);
-
-	            // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
-	            infowindow.setContent(content);
-	            infowindow.open(map, marker);
-	        }   
-	    });		
-	}
-	
-	function searchOnMap()
-	{
-		// 키워드로 장소를 검색합니다
-		ps.keywordSearch($('#searchLocationKeyword').val() , placesSearchCB); 
-	}
-	
-	function selectLocation()
-	{
-		if ( confirm('현재 위치로 지정하시겠습니까?') )
-		{
-			if ( selectLocationModal != null )
-				selectLocationModal.hide();
+			$('#cafeLocationDiv').show();
+			$('#locationDesc').hide();
+			
+			$('#cafeLocation').html( locationResult.address1 );
 		}
 	}
 	
@@ -335,7 +198,7 @@
 			<div id="locationDiv" class="marginLR10">
 				<div id="cafeLocationDiv" style="display:none">
 					<span>지역: </span>
-					<span id="cafeLocation">서울시 송파구 방이동</span>
+					<span id="cafeLocation"></span>
 				</div>
 				<div id="locationDesc">현재 설정된 위치가 없습니다. 위치를 설정하시면 해당지역의 사용자들에게 검색이 됩니다.</div>
 			</div>
@@ -401,79 +264,7 @@
 		
 			<!-- 모달창 -->
 			<div id="modal">
-			    <ul id="tabView">
-					<li class="selected" onclick="locationTabSelect(this, 0);">
-						<div id="tabMap">지도에서 정하기</div>
-					</li>
-					<li onclick="locationTabSelect(this, 1);">
-						<div>지역 선택하기</div>
-					</li>
-				</ul>
-				<div id="mapTabContent">
-				
-					<div style="text-align:center;margin-bottom:10px;">
-						<input type="text" id="searchLocationKeyword" 
-						placeholder="지역을 검색하세요." style="width:70%;line-height:25px;padding-left:5px;">
-						<input type="button" value="검색" style="line-height:25px;" onclick="searchOnMap();"/>
-					</div>
-					<div id="map"></div>
-					
-				</div>
-				<div id="regionTabContent" style="display:none;">
-				
-					<table style="width:100%;">
-						<colgroup>
-							<col width="120px;"></col>
-							<col width="*"></col>
-						</colgroup>
-						<tr>
-							<td class="th1">시/도</td>
-							<td class="th2">
-								<select name="selRegionLevel1" id="selRegionLevel1" style="width:100%;">
-									<option value="">선택하세요.</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="th1">시/구/군</td>
-							<td class="th2">
-								<select name="selRegionLevel2" id="selRegionLevel2" style="width:100%;">
-									<option value="">선택하세요.</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="th1">동/읍/면</td>
-							<td class="th2">
-								<select name="selRegionLevel3" id="selRegionLevel3" style="width:100%;">
-									<option value="">선택하세요.</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="th1">리</td>
-							<td class="th2">
-								<select name="selRegionLevel4" id="selRegionLevel4" style="width:100%;">
-									<option value="">선택하세요.</option>
-								</select>
-							</td>
-						</tr>
-					</table>
-				
-				</div>
-				
-			    <!-- button id="confirm_button">확인</button>
-			    <button class="js_close">닫기</button-->
-			    
-			    <div id="mainImageBtnDiv" class="marginB20 marginT10">
-					<div class="splitBtn">
-						<div class="wideBtn darkBG" onclick="selectLocation();">위치 선택하기</div>
-					</div>
-					<div class="splitBtn">
-						<div class="wideBtn redBG js_close">닫기</div>
-					</div>
-				</div>
-			
+				<jsp:include page="../common/locationSelectDiv.jsp" flush="true"></jsp:include>
 			</div>
 		    
 		</div>

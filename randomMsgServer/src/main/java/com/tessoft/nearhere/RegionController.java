@@ -48,7 +48,7 @@ public class RegionController extends BaseController{
 		return new ModelAndView("region/favoriteRegion", model);
 	}
 	
-	@RequestMapping( value ="/region/getRegionListByParent.do")
+	@RequestMapping( value ="/region/getRegionListByParentAjax.do")
 	public @ResponseBody APIResponse getRegionListByParent( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
@@ -57,7 +57,12 @@ public class RegionController extends BaseController{
 		{
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			ArrayList regionList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getRegionByParent", hash.get("regionNo"));
+			List regionList = null;
+			
+			if ( Util.isEmptyForKey(hash, "regionNo") )
+				regionList = RegionBiz.getInstance(sqlSession).getBigCities();
+			else
+				regionList = (ArrayList) sqlSession.selectList("com.tessoft.nearhere.region.getRegionByParent", hash.get("regionNo"));
 
 			response.setData(regionList);
 
