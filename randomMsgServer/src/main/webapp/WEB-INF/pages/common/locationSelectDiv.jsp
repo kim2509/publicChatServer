@@ -30,10 +30,10 @@
 	    geocoder.coord2detailaddr(coords, callback);
 	}
 	
-	function locationTabSelect( element, tabIndex )
+	function locationTabSelect( tabIndex )
 	{
 		$('#tabView li').removeClass('selected');
-		$(element).addClass('selected');
+		$('#tabView li').eq(tabIndex).addClass('selected');
 		
 		if ( tabIndex == 0 )
 		{
@@ -47,7 +47,7 @@
 		}
 	}
 	
-	function showLocationSelectDiv()
+	function showLocationSelectDiv( locationObject )
 	{
 		if ( bInitMap == false )
 		{
@@ -55,6 +55,28 @@
 		}
 		
 		initializeRegionTab();
+		
+		if ( locationObject != null )
+		{
+			if ( locationObject.locationType == 1 )
+			{
+				locationTabSelect(0);
+				
+				var latLng = new daum.maps.LatLng( locationObject.latitude, locationObject.longitude);
+				
+				// 지도 초기 위치 설정
+				var bounds = new daum.maps.LatLngBounds();
+				bounds.extend(latLng);
+				map.setBounds(bounds);
+				
+				showMarker(latLng);
+				showInfoWindow( latLng );
+			}
+			else if ( locationObject.locationType == 2 )
+			{
+				locationTabSelect(1);
+			}
+		}
 	}
 	
 	function initiateMap()
@@ -305,6 +327,8 @@
 				result.address1 = result.address1.trim(); 
 			}
 			
+			result.address = result.address1;
+			
 			// parent 의 함수를 호출
 			locationSelected( result );
 		}
@@ -313,10 +337,10 @@
 </script>
 
 <ul id="tabView">
-	<li class="selected" id='mapTabElement' onclick="locationTabSelect(this, 0);">
+	<li class="selected" id='mapTabElement' onclick="locationTabSelect(0);">
 		<div id="tabMap">지도에서 정하기</div>
 	</li>
-	<li onclick="locationTabSelect(this, 1);" id='regionTabElement'>
+	<li onclick="locationTabSelect(1);" id='regionTabElement'>
 		<div>지역 선택하기</div>
 	</li>
 </ul>

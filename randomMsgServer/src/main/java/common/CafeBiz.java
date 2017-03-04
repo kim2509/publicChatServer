@@ -384,6 +384,25 @@ public class CafeBiz extends CommonBiz{
 		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
 		
 		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeMasterInfo", param);
+		
+		if ( !Util.isEmptyForKey( param, "cafeLocation") && param.get("cafeLocation") != null )
+		{
+			HashMap locationInfo = (HashMap) param.get("cafeLocation");
+			long locationNo = 0;
+			
+			if ( Util.isEmptyForKey( locationInfo, "locationNo") )
+			{
+				insertCafeLocation(locationInfo);
+				locationNo = Long.parseLong( locationInfo.get("locationNo").toString() );
+				param.put("locationNo", locationNo );
+			}
+			else
+			{
+				param.put("locationNo", locationInfo.get("locationNo") );
+				updateCafeLocation(locationInfo);
+			}
+		}
+		
 		result += sqlSession.update("com.tessoft.nearhere.cafe.updateCafeDetailInfo", param);
 		
 		return result;
@@ -401,6 +420,20 @@ public class CafeBiz extends CommonBiz{
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeDetail", param);
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeMaster", param);
 		
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int insertCafeLocation( HashMap param )
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeLocation", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeLocation( HashMap param )
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.updateCafeLocation", param);
 		return result;
 	}
 }

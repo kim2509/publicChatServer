@@ -224,14 +224,40 @@
 		</selectKey>
 	</insert>
 	
+	<insert id="insertCafeLocation" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="locationNo" keyColumn="locationNo">
+		insert into cafe_location( type, latitude, longitude, regionNo, address, createdDate )
+		values( #{locationType}, #{latitude}, #{longitude}, #{regionNo}, #{address}, NOW() );
+		<selectKey keyProperty="locationNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<insert id="updateCafeLocation" parameterType="HashMap">
+		update cafe_location
+		set type=#{locationType}
+		, latitude=#{latitude}
+		, longitude=#{longitude}
+		, regionNo=#{regionNo}
+		, address=#{address}
+		where No = #{locationNo}
+	</insert>
+	
 	<select id="getCafeMainInfo" resultType="HashMap" parameterType="HashMap">
 		select cm.*, cd.iconImageNo, cd.mainImageNo
 			, ifnull(cd.mainDesc,'') as mainDesc
 			, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2
 			, cd.contactEmail
+			, cd.locationNo as cafeLocationNo
+			, cl.type as cafeLocationType
+			, cl.latitude as cafeLatitude
+			, cl.longitude as cafeLongitude
+			, cl.regionNo as cafeRegionNo
+			, cl.address as cafeAddress
 		from cafe_master cm
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_image ci on cd.mainImageNo = ci.imageNo
+			left outer join cafe_location cl on cl.No = cd.locationNo 
 		where cafeID=#{cafeID}
 	</select>
 	
@@ -429,6 +455,7 @@
 		update cafe_detail
 		set mainDesc = #{mainDesc}
 		, contactEmail = #{contactEmail}
+		, locationNo = #{locationNo}
 		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID}) 
 	</update>
 	

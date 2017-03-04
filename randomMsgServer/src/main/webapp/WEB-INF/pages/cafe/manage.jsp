@@ -87,7 +87,19 @@
 		$('#cafeNameIput').val( result.data.cafeMainInfo.cafeName );
 		$('#cafeDescInput').val( result.data.cafeMainInfo.mainDesc );
 		$('#contactEmail').val( result.data.cafeMainInfo.contactEmail );
+		
+		if ( result.data.cafeMainInfo.cafeLocationNo > 0 )
+		{
+			locationResult = {};
+			locationResult.locationType = result.data.cafeMainInfo.cafeLocationType;
+			locationResult.locationNo = result.data.cafeMainInfo.cafeLocationNo;
+			locationResult.latitude = result.data.cafeMainInfo.cafeLatitude;
+			locationResult.longitude = result.data.cafeMainInfo.cafeLongitude;
+			locationResult.address = result.data.cafeMainInfo.cafeAddress;
+			locationResult.address1 = locationResult.address;
 			
+			setAddress();
+		}
 	}
 	
 	function validateEmail(email) {
@@ -111,6 +123,9 @@
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
 			var param = {"cafeID":cafeID, "cafeName":cafeName, "mainDesc": mainDesc, "contactEmail": contactEmail };
+			
+			if ( locationResult != null )
+				param.cafeLocation = locationResult;
 			
 			ajaxRequest('POST', '/nearhere/cafe/saveCafeInfoAjax.do', param , onSaveResult );
 		}
@@ -147,7 +162,7 @@
 	function goSelectLocation()
 	{
 		selectLocationModal.show();
-		showLocationSelectDiv();
+		showLocationSelectDiv( locationResult );
 	}
 		
 
@@ -157,15 +172,26 @@
 		if ( selectLocationModal != null )
 			selectLocationModal.hide();
 		
-		locationResult = result;
+		if ( locationResult == null )
+			locationResult = result;
+		else
+		{
+			result.locationNo = locationResult.locationNo;
+			locationResult = result;
+		}
 		console.log(JSON.stringify( locationResult ) );
 		
+		setAddress();
+	}
+	
+	function setAddress()
+	{
 		if ( locationResult != null )
 		{
 			$('#cafeLocationDiv').show();
 			$('#locationDesc').hide();
 			
-			$('#cafeLocation').html( locationResult.address1 );
+			$('#cafeLocation').html( locationResult.address );
 		}
 	}
 	
