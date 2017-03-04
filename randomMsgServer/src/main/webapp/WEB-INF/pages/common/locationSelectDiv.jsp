@@ -2,7 +2,7 @@
 <%@ page import="java.util.*"%>
 <%@ page import="com.dy.common.*"%>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common_location_select.css?v=1" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common_location_select.css?v=2" />
 
 <script language="javascript">
 
