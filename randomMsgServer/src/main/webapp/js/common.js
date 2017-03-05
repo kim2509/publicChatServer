@@ -88,3 +88,35 @@ function ajaxRequest( method, url, param , onSuccess, onComplete, onError )
 		alert( ex.message );
 	}
 }
+
+function ajaxRequest2( method, url, param , param2, onSuccess, onComplete, onError )
+{
+	try
+	{
+		jQuery.ajax({
+			type : method,
+			url : url,
+			xhrFields: {
+			      withCredentials: true
+			   },
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				onSuccess( result, param2 );
+			},
+			complete : function(result) {
+				if ( onComplete != undefined && onComplete != null )
+					onComplete( result, param2 );
+			},
+			error : function(xhr, status, error) {
+				if ( onError != undefined && onError != null )
+					onError( param2, xhr, status, error );
+			}
+		});	
+	}
+	catch( ex )
+	{
+		alert( ex.message );
+	}
+}

@@ -54,7 +54,7 @@
 			initiateMap();
 		}
 		
-		initializeRegionTab();
+		initializeRegionTab( locationObject );
 		
 		if ( locationObject != null )
 		{
@@ -183,52 +183,25 @@
 		ps.keywordSearch($('#searchLocationKeyword').val() , placesSearchCB); 
 	}
 	
-	function initializeRegionTab()
+	function initializeRegionTab( locationObject )
 	{
 		$('#selRegionLevel1').change(function(){
-			if ( $(this).val() != '' )
-			{
-				$('#selRegionLevel2').empty();
-				$('#selRegionLevel2').append( '<option value="">선택하세요</option>' );
-				$('#selRegionLevel3').empty();
-				$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
-				$('#selRegionLevel4').empty();
-				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
-				
-				var param = {'regionNo':$(this).val()};
-				ajaxRequest('POST', '/nearhere/region/getRegionListByParentAjax.do', param , onRegionFetchResult );
-			}
+			loadRegionList( $(this).attr('id'), locationObject );
 		});
 		
 		$('#selRegionLevel2').change(function(){
-			if ( $(this).val() != '' )
-			{
-				$('#selRegionLevel3').empty();
-				$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
-				$('#selRegionLevel4').empty();
-				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
-				
-				var param = {'regionNo':$(this).val()};
-				ajaxRequest('POST', '/nearhere/region/getRegionListByParentAjax.do', param , onRegionFetchResult );
-			}
+			loadRegionList( $(this).attr('id'), locationObject );
 		});
 		
 		$('#selRegionLevel3').change(function(){
-			if ( $(this).val() != '' )
-			{
-				$('#selRegionLevel4').empty();
-				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
-				
-				var param = {'regionNo':$(this).val()};
-				ajaxRequest('POST', '/nearhere/region/getRegionListByParentAjax.do', param , onRegionFetchResult );
-			}
+			loadRegionList( $(this).attr('id'), locationObject );
 		});
 		
 		var param = {};
-		ajaxRequest('POST', '/nearhere/region/getRegionListByParentAjax.do', param , onRegionFetchResult );
+		ajaxRequest2('POST', '/nearhere/region/getRegionListByParentAjax.do', param , locationObject, onRegionFetchResult );
 	}
 	
-	function onRegionFetchResult( result )
+	function onRegionFetchResult( result, locationObject )
 	{
 		try
 		{
@@ -241,24 +214,82 @@
 				optionElement.val(result.data[i].regionNo);
 				optionElement.html(result.data[i].regionName);
 				
-				var elementName = '';
+				var elementID = '';
 				
 				if ( result.data[i].level == 1 )
-					elementName = 'selRegionLevel1';
+					elementID = 'selRegionLevel1';
 				else if ( result.data[i].level == 2 )
-					elementName = 'selRegionLevel2';
+					elementID = 'selRegionLevel2';
 				else if ( result.data[i].level == 3 )
-					elementName = 'selRegionLevel3';
+					elementID = 'selRegionLevel3';
 				else if ( result.data[i].level == 4 )
-					elementName = 'selRegionLevel4';
+					elementID = 'selRegionLevel4';
 				
-				$('#' + elementName ).append( optionElement );	
-			}	
+				$('#' + elementID ).append( optionElement );
+			}
+			
+			if ( elementID == 'selRegionLevel1' && locationObject.lRegionNo != null && 
+					locationObject.lRegionNo > 0 && $('#' + elementID).val() != locationObject.lRegionNo )
+			{
+				$('#' + elementID).val( locationObject.lRegionNo );
+				loadRegionList( elementID, locationObject );
+			}
+			else if ( elementID == 'selRegionLevel2' && locationObject.mRegionNo != null && 
+					locationObject.mRegionNo > 0 && $('#' + elementID).val() != locationObject.mRegionNo )
+			{
+				$('#' + elementID).val( locationObject.mRegionNo );
+				loadRegionList( elementID, locationObject );
+			}
+			else if ( elementID == 'selRegionLevel3' && locationObject.sRegionNo != null && 
+					locationObject.sRegionNo > 0 && $('#' + elementID).val() != locationObject.sRegionNo )
+			{
+				$('#' + elementID).val( locationObject.sRegionNo );
+				loadRegionList( elementID, locationObject );
+			}
 		}
 		catch( ex )
 		{
 			alert( ex.message );
 		}
+	}
+	
+	function loadRegionList( elementID, locationObject)
+	{
+		if ( elementID == null || elementID.length < 1 ) return;
+		
+		if ( elementID == 'selRegionLevel1' )
+		{
+			if ( $('#' + elementID ).val() != '' )
+			{
+				$('#selRegionLevel2').empty();
+				$('#selRegionLevel2').append( '<option value="">선택하세요</option>' );
+				$('#selRegionLevel3').empty();
+				$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
+				$('#selRegionLevel4').empty();
+				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+			}
+		}
+		else if ( elementID == 'selRegionLevel2' )
+		{
+			if ( $('#' + elementID ).val() != '' )
+			{
+				$('#selRegionLevel3').empty();
+				$('#selRegionLevel3').append( '<option value="">선택하세요</option>' );
+				$('#selRegionLevel4').empty();
+				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );
+			}
+		}
+		else if ( elementID == 'selRegionLevel3' )
+		{
+			if ( $('#' + elementID ).val() != '' )
+			{
+				$('#selRegionLevel4').empty();
+				$('#selRegionLevel4').append( '<option value="">선택하세요</option>' );				
+			}
+		}
+		
+		var param = {'regionNo':$('#' + elementID ).val()};
+		ajaxRequest2('POST', '/nearhere/region/getRegionListByParentAjax.do', param , locationObject, onRegionFetchResult );
 	}
 	
 	function selectLocation()
@@ -296,32 +327,36 @@
 				{
 					result.lRegionName = $('#selRegionLevel1 option:selected').text();
 					result.address1 = result.lRegionName + ' ';
+					result.regionNo = result.lRegionNo;
 				}
 				else
 				{
 					alert('지역을 선택해 주십시오.');
 					return;
 				}
-				
+
 				result.mRegionNo = $('#selRegionLevel2').val();
 				if ( result.mRegionNo != '' )
 				{
 					result.mRegionName = $('#selRegionLevel2 option:selected').text();
-					result.address1 += result.mRegionName + ' ';	
+					result.address1 += result.mRegionName + ' ';
+					result.regionNo = result.mRegionNo;
 				}
 				
 				result.sRegionNo = $('#selRegionLevel3').val();
 				if ( result.sRegionNo != '' )
 				{
 					result.sRegionName = $('#selRegionLevel3 option:selected').text();
-					result.address1 += result.sRegionName + ' ';	
+					result.address1 += result.sRegionName + ' ';
+					result.regionNo = result.sRegionNo;
 				}
-				
+								
 				result.tRegionNo = $('#selRegionLevel4').val();
 				if ( result.tRegionNo != '' )
 				{
 					result.tRegionName = $('#selRegionLevel4 option:selected').text();
-					result.address1 += result.tRegionName + ' ';	
+					result.address1 += result.tRegionName + ' ';
+					result.regionNo = result.tRegionNo;
 				}
 				
 				result.address1 = result.address1.trim(); 

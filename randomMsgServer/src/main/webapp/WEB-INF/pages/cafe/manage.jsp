@@ -97,8 +97,47 @@
 			locationResult.longitude = result.data.cafeMainInfo.cafeLongitude;
 			locationResult.address = result.data.cafeMainInfo.cafeAddress;
 			locationResult.address1 = locationResult.address;
+			locationResult.lRegionNo = result.data.cafeMainInfo.lRegionNo;
+			locationResult.mRegionNo = result.data.cafeMainInfo.mRegionNo;
+			locationResult.sRegionNo = result.data.cafeMainInfo.sRegionNo;
+			locationResult.tRegionNo = result.data.cafeMainInfo.tRegionNo;
 			
 			setAddress();
+		}
+	}
+	
+	function goSelectLocation()
+	{
+		selectLocationModal.show();
+		showLocationSelectDiv( locationResult );
+	}
+
+	var locationResult = null;
+	function locationSelected( result )
+	{
+		if ( selectLocationModal != null )
+			selectLocationModal.hide();
+		
+		if ( locationResult == null )
+			locationResult = result;
+		else
+		{
+			result.locationNo = locationResult.locationNo;
+			locationResult = result;
+		}
+		console.log(JSON.stringify( locationResult ) );
+		
+		setAddress();
+	}
+	
+	function setAddress()
+	{
+		if ( locationResult != null )
+		{
+			$('#cafeLocationDiv').show();
+			$('#locationDesc').hide();
+			
+			$('#cafeLocation').html( locationResult.address );
 		}
 	}
 	
@@ -158,40 +197,65 @@
 		}
 	}
 	
-	
-	function goSelectLocation()
+	function publishCafe()
 	{
-		selectLocationModal.show();
-		showLocationSelectDiv( locationResult );
+		if ( confirm('카페를 공개하시겠습니까?') )
+		{
+			var param = {"cafeID":cafeID };
+			ajaxRequest('POST', '/nearhere/cafe/publishCafeAjax.do', param , publishCafeResult );	
+		}
 	}
-		
-
-	var locationResult = null;
-	function locationSelected( result )
+	
+	function publishCafeResult( result )
 	{
-		if ( selectLocationModal != null )
-			selectLocationModal.hide();
+		if ( result == null )
+		{
+			alert('처리도중 오류가 발생했습니다.');
+			return;
+		}
 		
-		if ( locationResult == null )
-			locationResult = result;
+		if ( result.resCode != '0000' )
+		{
+			alert( result.resMsg );
+			return;
+		}
 		else
 		{
-			result.locationNo = locationResult.locationNo;
-			locationResult = result;
+			$('#btnUnPublish').show();
+			$('#btnPublish').hide();
+			
+			alert('공개되었습니다.');	
 		}
-		console.log(JSON.stringify( locationResult ) );
-		
-		setAddress();
 	}
 	
-	function setAddress()
+	function unpublishCafe()
 	{
-		if ( locationResult != null )
+		if ( confirm('운영자외에는 카페접근이 금지됩니다.\r\n정말카페를 비공개하시겠습니까?') )
 		{
-			$('#cafeLocationDiv').show();
-			$('#locationDesc').hide();
+			var param = {"cafeID":cafeID };
+			ajaxRequest('POST', '/nearhere/cafe/unpublishCafeAjax.do', param , unpublishCafeResult );	
+		}
+	}
+	
+	function unpublishCafeResult( result )
+	{
+		if ( result == null )
+		{
+			alert('처리도중 오류가 발생했습니다.');
+			return;
+		}
+		
+		if ( result.resCode != '0000' )
+		{
+			alert( result.resMsg );
+			return;
+		}
+		else
+		{
+			$('#btnUnPublish').hide();
+			$('#btnPublish').show();
 			
-			$('#cafeLocation').html( locationResult.address );
+			alert('비공개되었습니다.');	
 		}
 	}
 	
@@ -280,8 +344,8 @@
 				
 				<div class="wideBtn btnBG" onclick="saveClick();">저장</div>
 				
-				<div id="btnUnPublish" class="wideBtn darkBG" style="display:none">카페 비공개</div>
-				<div id="btnPublish" class="wideBtn blueBG" style="display:none">카페 공개</div>
+				<div id="btnUnPublish" class="wideBtn darkBG" style="display:none" onclick="unpublishCafe();">카페 비공개</div>
+				<div id="btnPublish" class="wideBtn blueBG" style="display:none" onclick="publishCafe();">카페 공개</div>
 				
 				<div class="wideBtn redBG" onclick="deleteCafe();">카페 폐쇄</div>
 			

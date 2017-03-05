@@ -409,6 +409,17 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public int updateCafePublishYN(HashMap param)
+	{
+		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
+		if ( Util.isEmptyForKey(param, "publishYN") ) return -1;
+		
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafePublishYN", param);
+		
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public int deleteCafe(HashMap param)
 	{
 		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;

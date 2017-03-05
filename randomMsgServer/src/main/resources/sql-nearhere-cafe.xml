@@ -254,10 +254,15 @@
 			, cl.longitude as cafeLongitude
 			, cl.regionNo as cafeRegionNo
 			, cl.address as cafeAddress
+			, rv.lRegionNo
+			, rv.mRegionNo
+			, rv.sRegionNo
+			, rv.tRegionNo
 		from cafe_master cm
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_image ci on cd.mainImageNo = ci.imageNo
-			left outer join cafe_location cl on cl.No = cd.locationNo 
+			left outer join cafe_location cl on cl.No = cd.locationNo
+			left outer join region_view rv on rv.regionNo = cl.regionNo 
 		where cafeID=#{cafeID}
 	</select>
 	
@@ -448,6 +453,12 @@
 	<update id="updateCafeMasterInfo" parameterType="HashMap">
 		update cafe_master
 		set cafeName=#{cafeName}
+		where cafeID=#{cafeID} 
+	</update>
+	
+	<update id="updateCafePublishYN" parameterType="HashMap">
+		update cafe_master
+		set publishYN=#{publishYN}
 		where cafeID=#{cafeID} 
 	</update>
 	

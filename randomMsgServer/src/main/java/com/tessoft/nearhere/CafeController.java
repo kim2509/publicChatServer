@@ -231,8 +231,15 @@ public class CafeController extends BaseController {
 				
 				for ( int i = 0; i < cafePublicMeetingList.size(); i++ )
 				{
-					String regionNo = cafePublicMeetingList.get(i).get("regionNo").toString();
-					cafePublicMeetingList.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));
+					if ( !Util.isEmptyString(cafePublicMeetingList.get(i).get("regionNo")) )
+					{
+						String regionNo = cafePublicMeetingList.get(i).get("regionNo").toString();
+						cafePublicMeetingList.get(i).put("regionName", regionBiz.getFullRegionNameByRegionNo(regionNo));	
+					}
+					else
+					{
+						cafePublicMeetingList.get(i).put("regionName", "");
+					}
 				}
 				
 				model.addAttribute("cafePublicMeetingList", cafePublicMeetingList);

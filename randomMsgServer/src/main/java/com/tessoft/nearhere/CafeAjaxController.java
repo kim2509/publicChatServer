@@ -744,6 +744,111 @@ public class CafeAjaxController extends BaseController {
 		return response;
 	}
 	
+	@RequestMapping( value ="/cafe/publishCafeAjax.do")
+	public @ResponseBody APIResponse publishCafeAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeOwner( param.get("cafeID").toString(), userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 권한이 없습니다.");
+			}
+
+			HashMap mainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			
+			if ( Util.isEmptyForKey(mainInfo, "cafeName") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페 이름이 설정되어 있지 않습니다.");
+			}
+			else if ( Util.isEmptyForKey(mainInfo, "mainDesc") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페 설명이 설정되어 있지 않습니다.");
+			}
+			else if ( Util.isEmptyForKey(mainInfo, "contactEmail") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("운영자 이메일이 설정되어 있지 않습니다.");
+			}
+			else if ( CafeBiz.getInstance(sqlSession).getCafeBoardList(param).size() < 1 )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("게시판이 최소한 1개 이상이어야 합니다.");
+			}
+			else
+			{
+				param.put("publishYN", "Y");
+				CafeBiz.getInstance(sqlSession).updateCafePublishYN(param);
+			}
+			
+			insertHistory("/cafe/publishCafeAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 공개도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/deleteCafeAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/cafe/unpublishCafeAjax.do")
+	public @ResponseBody APIResponse unpublishCafeAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeOwner( param.get("cafeID").toString(), userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 권한이 없습니다.");
+			}
+
+			param.put("publishYN", "Y");
+			CafeBiz.getInstance(sqlSession).updateCafePublishYN(param);
+			
+			insertHistory("/cafe/unpublishCafeAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 비공개도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/deleteCafeAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/cafe/deleteCafeAjax.do")
 	public @ResponseBody APIResponse deleteCafeAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
