@@ -228,19 +228,20 @@
 				$('#' + elementID ).append( optionElement );
 			}
 			
-			if ( elementID == 'selRegionLevel1' && locationObject.lRegionNo != null && 
+			// default 값 셋팅
+			if ( elementID == 'selRegionLevel1' && locationObject != null && locationObject.lRegionNo != null && 
 					locationObject.lRegionNo > 0 && $('#' + elementID).val() != locationObject.lRegionNo )
 			{
 				$('#' + elementID).val( locationObject.lRegionNo );
 				loadRegionList( elementID, locationObject );
 			}
-			else if ( elementID == 'selRegionLevel2' && locationObject.mRegionNo != null && 
+			else if ( elementID == 'selRegionLevel2' && locationObject != null && locationObject.mRegionNo != null && 
 					locationObject.mRegionNo > 0 && $('#' + elementID).val() != locationObject.mRegionNo )
 			{
 				$('#' + elementID).val( locationObject.mRegionNo );
 				loadRegionList( elementID, locationObject );
 			}
-			else if ( elementID == 'selRegionLevel3' && locationObject.sRegionNo != null && 
+			else if ( elementID == 'selRegionLevel3' && locationObject != null && locationObject.sRegionNo != null && 
 					locationObject.sRegionNo > 0 && $('#' + elementID).val() != locationObject.sRegionNo )
 			{
 				$('#' + elementID).val( locationObject.sRegionNo );

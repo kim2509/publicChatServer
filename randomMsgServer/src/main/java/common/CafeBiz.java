@@ -76,6 +76,9 @@ public class CafeBiz extends CommonBiz{
 	public int makeCafe( HashMap param )
 	{
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.makeCafe", param);
+		
+		sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeDetail", param);
+		
 		return result;
 	}
 	

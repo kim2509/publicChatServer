@@ -50,7 +50,7 @@
 		
 			<div id="makeCafeResultDiv">
 				<div id="cafeName"><%= request.getParameter("cafeName") %></div>
-				<div id="resultBody">카페 개설을 축하드립니다.<br/>카페 공개 후 회원들을 초대해 보세요.</div>
+				<div id="resultBody">카페 개설을 축하드립니다.<br/>관리하기메뉴에서 정보수정이 가능합니다.</div>
 				<div id="resultFooter">
 					<span onclick="goCafeHome('<%= request.getParameter("cafeID") %>');">개설카페로 이동</span>
 				</div>

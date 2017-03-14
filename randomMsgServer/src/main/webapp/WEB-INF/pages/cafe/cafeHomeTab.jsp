@@ -9,6 +9,8 @@
 	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
 	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
 	
+	String publishYN = Util.getStringFromHash(cafeMainInfo, "publishYN");
+	
 	HashMap cafeUserInfo = (HashMap) request.getAttribute("cafeUserInfo");
 	String ownerYN = "N";
 	String memberYN = "N";
@@ -46,6 +48,12 @@
 </script>
 
 		<div id="cafeInfo">
+		
+			<% if (!"Y".equals( publishYN )) {%>
+			<div id="cafeStatus">
+			카페가 비공개 상태입니다.<br/>관리하기 메뉴에서 공개로 전환가능합니다.
+			</div>
+			<% } %>
 			
 			<% if (!"".equals( mainImageURL ) ) { %>
 			<div id="cafeImage">

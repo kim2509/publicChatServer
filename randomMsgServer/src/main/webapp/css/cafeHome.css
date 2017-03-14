@@ -119,6 +119,16 @@ li{
 	width:100%;
 }
 
+#cafeInfo #cafeStatus{
+	text-align:center;
+	line-height:30px;
+	font-size:15px;
+	font-weight:bold;
+	background: #dcc1d9;
+	color: #612424;
+	border: 1px solid;
+}
+
 #cafeInfo #cafeTitle
 {
 	margin-top:10px;

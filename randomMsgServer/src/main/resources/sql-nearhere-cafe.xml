@@ -224,6 +224,11 @@
 		</selectKey>
 	</insert>
 	
+	<insert id="insertCafeDetail" parameterType="HashMap">
+		insert into cafe_detail( cafeNo, iconImageNo, mainImageNo, mainDesc, locationNo, contactEmail)
+		values( #{cafeNo}, #{iconImageNo}, #{mainImageNo}, #{mainDesc}, #{locationNo}, #{contactEmail} );
+	</insert>
+	
 	<insert id="insertCafeLocation" parameterType="HashMap"
 		useGeneratedKeys="true" keyProperty="locationNo" keyColumn="locationNo">
 		insert into cafe_location( type, latitude, longitude, regionNo, address, createdDate )
