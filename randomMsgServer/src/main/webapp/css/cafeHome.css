@@ -127,6 +127,8 @@ li{
 	background: #dcc1d9;
 	color: #612424;
 	border: 1px solid;
+	border-radius:10px;
+	margin-bottom:10px;
 }
 
 #cafeInfo #cafeTitle

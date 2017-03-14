@@ -156,5 +156,8 @@
 		<input type="text" name="token" value="" />
 		<input type="submit" value="token 전송"/>
 	</form>
+	
+	<br/> 집 : YzHLvDaLJkHDMis4Ipu+yhvJUlWLA011Wp9IAWGdOHY=
+	
 </body>
 </html>
