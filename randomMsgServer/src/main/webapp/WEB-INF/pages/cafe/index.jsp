@@ -69,7 +69,7 @@
 			var source = $('#meetingT').html();
 			var template = Handlebars.compile(source);
 			var html = template(favoriteCafeMeetingList);
-			$('#meetingList').html(html);
+			//$('#meetingList').html(html);
 			$('.favoriteMeetingClass').show();	
 		}
 	});
@@ -157,6 +157,14 @@
 			<div style="padding: 5px;font-weight:bold;margin-right:20px;width:70%">주위의 사람들과 취미를 공유해 보세요~</div>
 
 		</div>
+		
+		<!-- 카페 리스트 -->
+		<jsp:include page="cafeList.jsp" flush="true"></jsp:include>
+		<!-- 카페 리스트 -->
+		
+		<!-- 정모 리스트 -->
+		<jsp:include page="publicMeetingList.jsp" flush="true"></jsp:include>
+		<!-- 정모 리스트 -->
 		
 <% if ( myCafeList != null && myCafeList.size() > 0 ) { %>
 		<div id="section">
