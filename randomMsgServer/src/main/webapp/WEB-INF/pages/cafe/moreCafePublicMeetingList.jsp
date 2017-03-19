@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>관심지역 정모</title>
+<title>정모 리스트</title>
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
@@ -25,7 +25,7 @@
 	<div id="wrapper">
 	
 	<div class="titleDiv">
-		<div class="title">관심지역 정모</div>
+		<div class="title">정모 리스트</div>
 	</div>
 	
 	<!-- 관심지역 정모 리스트 -->

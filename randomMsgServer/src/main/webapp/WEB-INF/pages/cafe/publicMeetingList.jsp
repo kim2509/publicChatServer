@@ -24,6 +24,18 @@
 		}
 			
 	}
+	
+	function goMoreCafePublicMeetingList()
+	{
+		var titleUrlEncoded = encodeURIComponent('정모 리스트');
+		var url = '<%= Constants.getServerURL() %>/cafe/moreCafePublicMeetingList.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
 </script>
 
 <div id="section">
@@ -93,7 +105,7 @@
 			</ul>
 		</div>
 		
-		<div>더 보기</div>
+		<div onclick="goMoreCafePublicMeetingList();">더 보기</div>
 	</div>
 	
 </div>
