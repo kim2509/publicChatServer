@@ -22,7 +22,6 @@
 		{
 			$('#popularCafeMeetingList').show();
 		}
-			
 	}
 	
 	function goMoreCafePublicMeetingList()

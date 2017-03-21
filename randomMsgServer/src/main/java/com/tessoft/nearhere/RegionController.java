@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,6 +22,7 @@ import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 
 import common.RegionBiz;
+import common.UserBiz;
 
 @Controller
 public class RegionController extends BaseController{
@@ -79,15 +81,16 @@ public class RegionController extends BaseController{
 	}
 	
 	@RequestMapping( value ="/region/getUserFavoriteRegionList.do")
-	public @ResponseBody APIResponse getUserFavoriteRegionList( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	public @ResponseBody APIResponse getUserFavoriteRegionList( HttpServletRequest request, ModelMap model, @RequestBody String bodyString ,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 
 		try
 		{
-			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 			
-			getUserFavoriteRegionList(response, hash);
+			getUserFavoriteRegionList(response, userInfo);
 
 			logger.info( "[getUserFavoriteRegionList.do]" );
 		}
@@ -102,17 +105,22 @@ public class RegionController extends BaseController{
 	}
 	
 	@RequestMapping( value ="/region/insertUserFavoriteRegion.do")
-	public @ResponseBody APIResponse insertUserFavoriteRegion( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	public @ResponseBody APIResponse insertUserFavoriteRegion( HttpServletRequest request, ModelMap model, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 
 		try
 		{
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 			
-			sqlSession.insert("com.tessoft.nearhere.region.insertUserFavoriteRegion", hash );
-			
-			getUserFavoriteRegionList(response, hash);
+			if ( userInfo != null )
+			{
+				hash.put("userID", userInfo.get("userID") );
+				sqlSession.insert("com.tessoft.nearhere.region.insertUserFavoriteRegion", hash );
+				getUserFavoriteRegionList(response, hash);	
+			}
 
 			logger.info( "[insertUserFavoriteRegion.do]" );
 		}
@@ -127,17 +135,22 @@ public class RegionController extends BaseController{
 	}
 	
 	@RequestMapping( value ="/region/deleteUserFavoriteRegion.do")
-	public @ResponseBody APIResponse deleteUserFavoriteRegion( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	public @ResponseBody APIResponse deleteUserFavoriteRegion( HttpServletRequest request, ModelMap model, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 
 		try
 		{
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 			
-			sqlSession.delete("com.tessoft.nearhere.region.deleteUserFavoriteRegion", hash );
-			
-			getUserFavoriteRegionList(response, hash);
+			if ( userInfo != null )
+			{
+				hash.put("userID", userInfo.get("userID") );
+				sqlSession.delete("com.tessoft.nearhere.region.deleteUserFavoriteRegion", hash );
+				getUserFavoriteRegionList(response, hash);	
+			}
 
 			logger.info( "[deleteUserFavoriteRegion.do]" );
 		}

@@ -114,30 +114,7 @@ li img{
 }
 
 /* 공통 */
-.tab3{
-	list-style:none;
-	margin:0;
-	padding:0;
-	overflow:auto;
-}
 
-.tab3 li{
-	float:left;
-	text-align:center;
-	font-size:14px;
-}
-
-.tab3 li:nth-child(1){
-	width:33%;
-}
-
-.tab3 li:nth-child(2){
-	width:34%;
-}
-
-.tab3 li:nth-child(3){
-	width:33%;
-}
 
 /* 공통 */
 

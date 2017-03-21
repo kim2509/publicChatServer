@@ -179,12 +179,10 @@ select{
 		
 		function getUserFavoriteRegionList()
 		{
-			var param = {"userID":"<%= userID %>"};
-			
 			jQuery.ajax({
 				type : "POST",
 				url : "/nearhere/region/getUserFavoriteRegionList.do",
-				data : JSON.stringify( param ),
+				data : null,
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
 				success : function(result) {

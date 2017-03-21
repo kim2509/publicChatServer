@@ -1,0 +1,35 @@
+@CHARSET "utf-8";
+
+div, ul{
+	margin:0;
+	padding:0;
+}
+
+/* 탭 스타일 */
+.tab3{
+	list-style:none;
+	overflow:auto;
+}
+
+.tab3 li{
+	float:left;
+	text-align:center;
+	font-size:14px;
+}
+
+.tab3 li:nth-child(1){
+	width:33%;
+}
+
+.tab3 li:nth-child(2){
+	width:34%;
+}
+
+.tab3 li:nth-child(3){
+	width:33%;
+}
+/* 탭 스타일 */
+
+.margin10{
+	margin:10px;
+}
