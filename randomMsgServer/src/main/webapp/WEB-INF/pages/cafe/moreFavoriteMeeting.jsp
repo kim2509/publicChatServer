@@ -17,6 +17,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
 		
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
 
 
 </head>

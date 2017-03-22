@@ -147,7 +147,7 @@
 </head>
 <body>
 
-	<div id="wrapper" style="padding-bottom:10px;">
+	<div id="wrapper" style="padding:10px;margin:10px auto;">
 		
 		<div id="section">
 

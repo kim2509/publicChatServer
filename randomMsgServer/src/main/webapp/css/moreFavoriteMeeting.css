@@ -4,21 +4,6 @@ body{
 	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
-.titleDiv{
-	background:#7bafe3;;
-	color:white;
-	height:50px;
-	text-align:center;
-	width: 100%;
-}
-
-
-.title{
-	font-weight:bold;
-	font-size:20px;
-	line-height:50px;
-}
-
 #favoriteRegionDiv{
 	clear:both;
 	text-align:center;
@@ -113,75 +98,8 @@ body{
 	line-height:25px;
 }
 
-#meetingListDiv ul{
-	clear:both;
-	list-style:none;
-	margin:0px;
-	padding:0;
-	border-bottom:1px solid #d9d9d9;
-	margin-top:10px;
-}
-
-#meetingListDiv li{
-	border-top:1px solid #d9d9d9;
-	border-left:1px solid #d9d9d9;
-	border-right:1px solid #d9d9d9;
-	padding:10px;
-	line-height:25px;
-}
-
-#meetingListDiv li #title{
-	font-size:15px;
-	font-weight:bold;
-	color:#5b58d7;
-	margin-bottom:5px;
-}
-
-#meetingListDiv li #meetingDate{
-	float:right;
-	font-size:14px;
-	font-weight:bold;
-	color:red;
-}
-
-#meetingListDiv li #memberCount{
-	font-size:13px;
-}
-
-#meetingListDiv li #cafeName{
-	float:right;
-	font-size:13px;
-}
-
-#meetingListDiv li #location{
-	font-size:13px;
-}
-
-#pagingInfo{
-	clear:both;
-	margin-bottom:50px;
-	display:none;
-}
-
-#pagingInfo a{
-	text-decoration:none;
-	border:1px solid #d9d9d9;
-}
-
 #map{
 	height:200px;
 	margin:0px 0px 10px 0px;
 	display:none;
-}
-
-#pagingInfo .pageSelected{
-	text-decoration:none;
-	border:1px solid #d9d9d9;
-	background:#5642f4;
-	color:white;
-}
-
-#pagingInfo a{
-	padding:5px;
-	margin:0px 2px;
 }

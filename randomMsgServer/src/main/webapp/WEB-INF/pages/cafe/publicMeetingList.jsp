@@ -48,7 +48,7 @@
 	<div id="publicMeetingList">
 	
 		<div id="myCafeMeetingList" style="display:none;">
-			<ul class="meetingList">
+			<ul class="meetingListUL">
 				<li onclick="goMeetingDetail('junggonara','2')">
 					<div id="title">영화나 한편 볼까요?</div>
 					<div id="meetingDate">05-18 00:00</div>
@@ -74,7 +74,7 @@
 		</div>
 		
 		<div id="favRegionCafeMeetingList" style="display:none;">
-			<ul class="meetingList">
+			<ul class="meetingListUL">
 				<li onclick="goMeetingDetail('junggonara','2')">
 					<div id="title">영화나 한편 볼까요?</div>
 					<div id="meetingDate">05-18 00:00</div>
@@ -93,7 +93,7 @@
 		</div>
 		
 		<div id="popularCafeMeetingList" style="display:none;">
-			<ul class="meetingList">
+			<ul class="meetingListUL">
 				<li onclick="goMeetingDetail('junggonara','2')">
 					<div id="title">영화나 한편 볼까요?</div>
 					<div id="meetingDate">05-18 00:00</div>

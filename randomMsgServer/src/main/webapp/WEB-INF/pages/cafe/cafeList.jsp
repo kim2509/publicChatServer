@@ -24,6 +24,18 @@
 		}
 			
 	}
+	
+	function goMoreCafeList()
+	{
+		var titleUrlEncoded = encodeURIComponent('카페 리스트');
+		var url = '<%= Constants.getServerURL() %>/cafe/moreCafeList.do';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
 </script>
 
 <div id="section">
@@ -37,7 +49,7 @@
 	<div id="cafeList">
 	
 		<div id="myCafeList" style="display:none;">
-			<ul>
+			<ul class="cafeListUL">
 				<li onclick="goCafeHome('junggonara');">
 					<div>
 						<div class="cafeImage">
@@ -84,7 +96,7 @@
 		</div>
 		
 		<div id="favRegionCafeList" style="display:none;">
-			<ul>
+			<ul class="cafeListUL">
 				<li onclick="goCafeHome('junggonara');">
 					<div>
 						<div class="cafeImage">
@@ -117,7 +129,7 @@
 		</div>
 		
 		<div id="popularCafeList" style="display:none;">
-			<ul>
+			<ul class="cafeListUL">
 				<li onclick="goCafeHome('junggonara');">
 					<div>
 						<div class="cafeImage">
@@ -135,7 +147,7 @@
 			</ul>
 		</div>
 		
-		<div>더 보기</div>
+		<div onclick="goMoreCafeList();">더 보기</div>
 		
 	</div>
 

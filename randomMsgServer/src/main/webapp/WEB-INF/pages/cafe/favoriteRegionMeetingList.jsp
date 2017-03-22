@@ -378,7 +378,7 @@
 		<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
 		<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
 		<div id="subTitle">정모 리스트</div>
-		<ul id="meetingList">
+		<ul id="meetingList" class="meetingListUL">
 			
 		</ul>
 		<div id="map">
