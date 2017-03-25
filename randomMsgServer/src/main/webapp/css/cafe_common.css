@@ -26,12 +26,23 @@ body, div, ul{
 .tab3{
 	list-style:none;
 	overflow:auto;
+	line-height:30px;
 }
 
 .tab3 li{
 	float:left;
 	text-align:center;
 	font-size:14px;
+}
+
+.tab3 li.selected{
+	font-weight:bold;
+	color:#1c8c01;
+	background:red;
+	border-radius:5px;
+	background: #b5e49d;
+    border-radius: 5px;
+    cursor:pointer;
 }
 
 .tab3 li:nth-child(1){
@@ -51,21 +62,32 @@ body, div, ul{
 	margin:10px;
 }
 
-/* 카페 리스트 */
-#cafeList{
-	margin-top:10px;
+.more{
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #7d7777;
+    border-radius: 10px;
+    margin:10px 0px 10px 0px;
 }
 
+/* 카페 리스트 */
 .cafeListUL{
     list-style: none;
     padding: 0;
     margin: 0;
+    border-top: 1px solid #d9d9d9;
+    margin:20px 0px;
+    border-radius:10px;
 }
 
 .cafeListUL li {
     clear: both;
     padding: 10px;
     border-bottom: 1px solid #d9d9d9;
+    border-left:1px solid #d9d9d9;
+	border-right:1px solid #d9d9d9;
+	border-radius:10px;
     overflow: auto;
 }
 
@@ -113,12 +135,14 @@ body, div, ul{
 	padding:0;
 	border-bottom:1px solid #d9d9d9;
 	margin-top:10px;
+	border-radius:10px;
 }
 
 .meetingListUL li{
 	border-top:1px solid #d9d9d9;
 	border-left:1px solid #d9d9d9;
 	border-right:1px solid #d9d9d9;
+	border-radius:10px;
 	padding:10px;
 	line-height:25px;
 }

@@ -23,6 +23,8 @@
 			$('#popularCafeList').show();
 		}
 			
+		$('#cafeTab li').removeClass('selected');
+		$('#cafeTab li').eq(tabIndex).addClass('selected');
 	}
 	
 	function goMoreCafeList()
@@ -41,7 +43,7 @@
 <div id="section">
 
 	<ul id="cafeTab" class="tab3">
-		<li onclick="cafeTabSelected(0);">내 카페</li>
+		<li onclick="cafeTabSelected(0);" class="selected">내 카페</li>
 		<li onclick="cafeTabSelected(1);">관심지역 카페</li>
 		<li onclick="cafeTabSelected(2);">인기 카페</li>
 	</ul>
@@ -147,7 +149,7 @@
 			</ul>
 		</div>
 		
-		<div onclick="goMoreCafeList();">더 보기</div>
+		<div class="more" onclick="goMoreCafeList();" >더 보기 &gt;</div>
 		
 	</div>
 

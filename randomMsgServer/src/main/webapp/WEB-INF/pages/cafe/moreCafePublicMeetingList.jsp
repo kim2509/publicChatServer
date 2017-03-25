@@ -39,6 +39,9 @@
 		{
 			$('#popularCafeMeetingList').show();
 		}
+		
+		$('#publicMeetingTab li').removeClass('selected');
+		$('#publicMeetingTab li').eq(tabIndex).addClass('selected');
 	}
 
 </script>
@@ -52,8 +55,8 @@
 			<div class="title">정모 리스트</div>
 		</div>
 		
-		<ul class="tab3 margin10">
-			<li onclick="publicMeetingTabSelected(0);">내 카페 정모</li>
+		<ul id="publicMeetingTab" class="tab3 margin10">
+			<li onclick="publicMeetingTabSelected(0);" class="selected">내 카페 정모</li>
 			<li onclick="publicMeetingTabSelected(1);">관심지역 정모</li>
 			<li onclick="publicMeetingTabSelected(2);">인기 정모</li>
 		</ul>

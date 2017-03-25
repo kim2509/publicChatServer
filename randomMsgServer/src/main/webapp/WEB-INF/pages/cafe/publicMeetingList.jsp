@@ -22,6 +22,9 @@
 		{
 			$('#popularCafeMeetingList').show();
 		}
+		
+		$('#publicMeetingTab li').removeClass('selected');
+		$('#publicMeetingTab li').eq(tabIndex).addClass('selected');
 	}
 	
 	function goMoreCafePublicMeetingList()
@@ -40,7 +43,7 @@
 <div id="section">
 
 	<ul id="publicMeetingTab" class="tab3">
-		<li onclick="publicMeetingTabSelected(0);">내 카페 정모</li>
+		<li onclick="publicMeetingTabSelected(0);" class="selected">내 카페 정모</li>
 		<li onclick="publicMeetingTabSelected(1);">관심지역 정모</li>
 		<li onclick="publicMeetingTabSelected(2);">인기 정모</li>
 	</ul>
@@ -104,7 +107,7 @@
 			</ul>
 		</div>
 		
-		<div onclick="goMoreCafePublicMeetingList();">더 보기</div>
+		<div class="more" onclick="goMoreCafePublicMeetingList();">더 보기 &gt;</div>
 	</div>
 	
 </div>
