@@ -58,6 +58,7 @@ body, div, ul{
 }
 /* 탭 스타일 */
 
+/* 공통 */
 .margin10{
 	margin:10px;
 }
@@ -70,6 +71,26 @@ body, div, ul{
     border-radius: 10px;
     margin:10px 0px 10px 0px;
 }
+
+.empty{
+	text-align:center;
+	height:120px;
+	line-height:120px;
+	font-weight: bold;
+    font-size: 15px;
+    color: #9d8484;
+}
+
+.loading{
+	text-align:center;
+	height:120px;
+	line-height:120px;
+	font-weight: bold;
+    font-size: 15px;
+    color: #9d8484;
+}
+
+/* 공통 */
 
 /* 카페 리스트 */
 .cafeListUL{

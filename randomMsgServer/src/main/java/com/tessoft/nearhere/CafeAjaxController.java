@@ -30,7 +30,37 @@ import common.UserBiz;
 @Controller
 public class CafeAjaxController extends BaseController {
 	
-
+	// 인기카페 리스트 불러오는 함수
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getPopularCafeListAjax.do")
+	public @ResponseBody APIResponse getPopularCafeListAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeList = cafeBiz.getPopularCafeList();
+			response.setData(cafeList);
+			response.setData2(cafeBiz.getPopularCafeListCount());
+			
+			insertHistory("/cafe/getPopularCafeListAjax.do", userID , null, null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/getPopularCafeListAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/cafe/makeCafeAjax.do")
 	public @ResponseBody APIResponse makeCafeAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken )

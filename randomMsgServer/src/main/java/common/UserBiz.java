@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.dy.common.Util;
 import com.nearhere.domain.User;
 
 public class UserBiz extends CommonBiz{
@@ -78,5 +79,13 @@ public class UserBiz extends CommonBiz{
 	{
 		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.selectUserByUserToken", userToken );
 		return userInfo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public String getUserIDByUserToken( String userToken ) throws Exception
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.selectUserByUserToken", userToken );
+		if ( Util.isEmptyForKey(userInfo, "userID") ) return null;
+		return userInfo.get("userID").toString();
 	}
 }

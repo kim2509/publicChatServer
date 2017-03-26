@@ -4,6 +4,45 @@
 
 <mapper namespace="com.tessoft.nearhere.cafe">
 
+	<!-- 카페 메인  -->
+	<select id="getPopularCafeList" resultType="HashMap">
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL, cmm.cntMembers, cmm2.cntLatestMembers
+			, rv.*
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+			left outer join ( 
+				select cafeNo, count(cafeNo) as cntLatestMembers
+				from cafe_members 
+				where createdDate >= (CURRENT_DATE - interval 6 month)
+				group by cafeNo 
+			) cmm2 on cm.cafeNo = cmm2.cafeNo
+		where cm.publishYN = 'Y' and cmm2.cafeNo is not null
+		order by cmm2.cntLatestMembers
+		limit 0,3
+	</select>
+	
+	<select id="getPopularCafeListCount" resultType="Integer">
+		select count(cm.cafeNo)
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+			left outer join ( 
+				select cafeNo, count(cafeNo) as cntLatestMembers
+				from cafe_members 
+				where createdDate >= (CURRENT_DATE - interval 6 month)
+				group by cafeNo 
+			) cmm2 on cm.cafeNo = cmm2.cafeNo
+		where cm.publishYN = 'Y' and cmm2.cafeNo is not null
+	</select>
+	<!-- 카페 메인  -->
+
 	<select id="searchCafe" resultType="HashMap" parameterType="HashMap">
 		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL, cmm.cntMembers
 			, rv.*

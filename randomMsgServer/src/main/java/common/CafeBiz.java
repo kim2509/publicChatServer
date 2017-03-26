@@ -27,6 +27,18 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public List<HashMap> getPopularCafeList()
+	{
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getPopularCafeList");
+		return myCafeList;
+	}
+	
+	public int getPopularCafeListCount()
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getPopularCafeListCount");
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public List<HashMap> getMyCafeList( String userID )
 	{
 		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getMyCafeList", userID);
