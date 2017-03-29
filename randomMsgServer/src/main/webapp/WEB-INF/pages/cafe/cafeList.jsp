@@ -23,6 +23,8 @@
 			$('#popularCafeList').show();
 			
 			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', null , onPopularCafeListReceived );
+			
+			$('#popularCafeList .loading').show();
 		}
 			
 		$('#cafeTab li').removeClass('selected');
@@ -43,6 +45,8 @@
 	function onPopularCafeListReceived( result )
 	{
 		console.log(JSON.stringify(result));
+		
+		$('#popularCafeList .loading').hide();
 		
 		if ( result != null && result.data != null && result.data.length > 0 )
 		{
@@ -65,11 +69,10 @@
 				<img src="http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png" width="60" height="60">
 				</div>
 				<div class="cafeInfo">
-					<div class="cafeTitle">중고나라2</div>
-					<div class="cafeDesc">이근처의 사람들과 물품을 거래할 수 있는 카페입니다.
-옷, 가방, 휴대폰 등을 모두 거래할 수 있는 곳입니다.</div>
-					<div class="regionInfo">인천광역시 남동구 남촌동 </div>
-					<div class="memberInfo">멤버수 : 3명</div>
+					<div class="cafeTitle">{{cafeName}}</div>
+					<div class="cafeDesc">{{mainDesc}}</div>
+					<div class="regionInfo">{{lRegionName}} {{mRegionName}} {{sRegionName}} {{tRegionName}}</div>
+					<div class="memberInfo">멤버수 : {{cntMembers}}명</div>
 				</div>
 			</div>
 		</li>
@@ -194,7 +197,7 @@
 				</li>
 			</ul>
 			
-			<div class="loading">목록을 읽어오는 중입니다.</div>
+			<div class="loading" style="display:none;">목록을 읽어오는 중입니다.</div>
 			
 		</div>
 
