@@ -45,6 +45,11 @@ public class CafeBiz extends CommonBiz{
 		return myCafeList;
 	}
 	
+	public int getMyCafeListCount( String userID )
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getMyCafeListCount", userID);
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public List<HashMap> getCafeMeetingsInMyFavRegion( String userID )
 	{

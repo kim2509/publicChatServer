@@ -5,8 +5,45 @@
 <mapper namespace="com.tessoft.nearhere.cafe">
 
 	<!-- 카페 메인  -->
+	<select id="getMyCafeList" resultType="HashMap" parameterType="String">
+		select * from (
+			select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 , ifnull(cmm.cntMembers,0) as cntMembers, rv.*
+			from cafe_members cm2
+				left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo
+				left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+				left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+				left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+				left outer join cafe_location cl on cd.locationNo = cl.No
+				left outer join region_view rv on cl.regionNo = rv.regionNo
+			where cm2.userID=#{userID} and cm.publishYN='Y'
+			union
+			select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 , ifnull(cmm.cntMembers,0) as cntMembers, rv.*
+			from cafe_master cm
+				left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+				left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+				left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+				left outer join cafe_location cl on cd.locationNo = cl.No
+				left outer join region_view rv on cl.regionNo = rv.regionNo
+			where cm.owner=#{userID}
+		) A
+		limit 0, 3;
+	</select>
+	
+	<select id="getMyCafeListCount" resultType="Integer" parameterType="String">
+		select count(cafeNo) from (
+			select cm.*
+			from cafe_members cm2
+				left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo
+			where cm2.userID=#{userID} and cm.publishYN='Y'
+			union
+			select cm.*
+			from cafe_master cm
+			where cm.owner=#{userID}
+		) A
+	</select>
+	
 	<select id="getPopularCafeList" resultType="HashMap">
-		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL, cmm.cntMembers, cmm2.cntLatestMembers
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL, ifnull(cmm.cntMembers,0) as cntMembers, cmm2.cntLatestMembers
 			, rv.*
 		from cafe_master cm
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
@@ -160,21 +197,6 @@
 		<if test="level==4">
 			and rv.tRegionNo = #{regionNo}
 		</if>
-	</select>
-	
-	<select id="getMyCafeList" resultType="HashMap" parameterType="String">
-		select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 
-		from cafe_members cm2
-			left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo
-			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
-			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
-		where cm2.userID=#{userID} and cm.publishYN='Y'
-		union
-		select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 
-		from cafe_master cm
-			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
-			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
-		where cm.owner=#{userID}
 	</select>
 	
 	<select id="getCafeMeetingsInMyFavRegion" resultType="HashMap" parameterType="String">

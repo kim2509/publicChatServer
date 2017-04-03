@@ -13,6 +13,8 @@
 		if ( tabIndex == 0 )
 		{
 			$('#myCafeList').show();
+			
+			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', null , onMyCafeListReceived );
 		}
 		else if ( tabIndex == 1 )
 		{
@@ -40,6 +42,22 @@
 			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href= url;
+	}
+	
+	function onMyCafeListReceived( result )
+	{
+		console.log(JSON.stringify(result));
+		
+		$('#myCafeList .loading').hide();
+		
+		if ( result != null && result.data != null && result.data.length > 0 )
+		{
+			var source = $('#cafeT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+
+			$('#myCafeList').html(html);
+		}
 	}
 	
 	function onPopularCafeListReceived( result )
