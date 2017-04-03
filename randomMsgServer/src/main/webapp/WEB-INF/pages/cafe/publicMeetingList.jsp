@@ -21,6 +21,8 @@
 		else if ( tabIndex == 2 )
 		{
 			$('#popularCafeMeetingList').show();
+			
+			ajaxRequest('POST', '/nearhere/cafe/getPopularPublicMeetingListAjax.do', null , onPopularPublicMeetingListReceived );
 		}
 		
 		$('#publicMeetingTab li').removeClass('selected');
@@ -38,6 +40,39 @@
 			document.location.href= url;
 	}
 	
+	function onPopularPublicMeetingListReceived( result )
+	{
+		console.log(JSON.stringify(result));
+		
+		$('#popularCafeMeetingList .loading').hide();
+		
+		if ( result != null && result.data != null && result.data.length > 0 )
+		{
+			var source = $('#publicMeetingT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+
+			$('#popularCafeMeetingList').html(html);
+		}
+	}
+	
+</script>
+<script id="publicMeetingT" type="text/x-handlebars-template">
+	{{#if data}}
+	<ul class="meetingListUL">
+		{{#each data}}
+		<li onclick="goMeetingDetail('junggonara','2')">
+			<div id="title">{{title}}</div>
+			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
+			<div id="memberCount">참석인원 : {{cntMembers}}/{{maxNo}}</div>
+			<div id="cafeName">{{cafeName}}</div>
+			<div id="location">서울시 강남구 역삼1동 738-5</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+		<div class="empty">카페가 존재하지 않습니다.</div>
+	{{/if}}			
 </script>
 
 <div id="section">

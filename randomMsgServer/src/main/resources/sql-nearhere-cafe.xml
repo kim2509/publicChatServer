@@ -78,6 +78,34 @@
 			) cmm2 on cm.cafeNo = cmm2.cafeNo
 		where cm.publishYN = 'Y' and cmm2.cafeNo is not null
 	</select>
+	
+	<select id="getPopularPublicMeetingList" resultType="HashMap">
+		select cp.*, cpm.cntMembers, cm.cafeName
+		from cafe_public_meeting cp
+			left outer join (
+				select meetingNo, count(meetingNo) as cntMembers
+				from cafe_public_meeting_members
+				group by meetingNo
+			) cpm on cpm.meetingNo = cp.meetingNo
+			left outer join cafe_master cm on cm.cafeNo = cp.cafeNo
+		where meetingDate > NOW()
+		and ifnull(cntMembers,0)>0
+		order by ifnull(cntMembers,0) desc
+		limit 0, 3;
+	</select>
+	
+	<select id="getPopularPublicMeetingListCount" resultType="Integer">
+		select count(cp.meetingNo)
+		from cafe_public_meeting cp
+			left outer join (
+				select meetingNo, count(meetingNo) as cntMembers
+				from cafe_public_meeting_members
+				group by meetingNo
+			) cpm on cpm.meetingNo = cp.meetingNo
+			left outer join cafe_master cm on cm.cafeNo = cp.cafeNo
+		where meetingDate > NOW()
+		and ifnull(cntMembers,0)>0
+	</select>
 	<!-- 카페 메인  -->
 
 	<select id="searchCafe" resultType="HashMap" parameterType="HashMap">
