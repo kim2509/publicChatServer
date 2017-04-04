@@ -1,5 +1,8 @@
 package com.dy.common;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -13,8 +16,23 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.nearhere.domain.Post;
 
@@ -543,5 +561,61 @@ public class Util {
 		String[] result = (String[]) list.toArray(new String[list.size()]);
 		
 		return result;
+	}
+	
+	public static String getFullAddress( String latitude, String longitude ) throws Exception
+	{
+		String url = "http://apis.daum.net/maps/coord2detailaddr?apikey=" + Constants.DAUM_API_KEY + "&x=" + longitude + "&y=" + latitude + "&inputCoordSystem=WGS84&output=xml";
+		
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet req = new HttpGet(url.trim());
+		
+		StringBuffer resultText = new StringBuffer();
+		
+		// add request header
+		HttpResponse res = null;
+
+		if ( Constants.bReal )
+			res = client.execute(req);
+		else
+		{
+			HttpHost proxy = new HttpHost("localhost", 8888);
+			CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+			res = wf_client.execute(req);
+		}
+
+		BufferedReader rd = new BufferedReader(
+				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
+
+		String line = "";
+		while ((line = rd.readLine()) != null) {
+			resultText.append(line);
+		}
+		
+		DocumentBuilderFactory factory =
+				DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		ByteArrayInputStream input =  new ByteArrayInputStream(
+				resultText.toString().getBytes("UTF-8"));
+		Document doc = builder.parse(input);
+
+		XPath xPath =  XPathFactory.newInstance().newXPath();
+		
+		NodeList list = doc.getElementsByTagName("old").item(0).getChildNodes();
+
+		String address = "";
+		
+		for ( int i = 0; i < list.getLength(); i++ )
+		{
+			Node node = list.item(i);
+			if ("name".equals(node.getNodeName()) )
+			{
+				address = node.getAttributes().item(0).getNodeValue();
+				break;
+			}
+			
+		}
+		
+		return address;
 	}
 }

@@ -411,7 +411,7 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public int updateCafeInfo(HashMap param)
+	public int updateCafeInfo(HashMap param) throws Exception
 	{
 		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
 		
@@ -420,6 +420,15 @@ public class CafeBiz extends CommonBiz{
 		if ( !Util.isEmptyForKey( param, "cafeLocation") && param.get("cafeLocation") != null )
 		{
 			HashMap locationInfo = (HashMap) param.get("cafeLocation");
+			
+			if ( !Util.isEmptyForKey(locationInfo, "latitude") && !Util.isEmptyForKey(locationInfo, "longitude") )
+			{
+				String fullAddress = Util.getFullAddress(Util.getStringFromHash(locationInfo, "latitude"), Util.getStringFromHash(locationInfo, "longitude"));
+				HashMap regionInfo = getRegionInfo(fullAddress);
+				HashMap theRegion = (HashMap) regionInfo.get("region");
+				locationInfo.put("regionNo", theRegion.get("regionNo") );
+			}
+			
 			long locationNo = 0;
 			
 			if ( Util.isEmptyForKey( locationInfo, "locationNo") )

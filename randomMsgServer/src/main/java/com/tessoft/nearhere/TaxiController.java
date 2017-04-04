@@ -36,6 +36,9 @@ import com.nearhere.domain.UserMessage;
 import com.nearhere.domain.UserPushMessage;
 import com.nearhere.domain.UserSetting;
 
+import common.CommonBiz;
+import common.TaxiBiz;
+
 @Controller
 public class TaxiController extends BaseController {
 
@@ -859,9 +862,9 @@ public class TaxiController extends BaseController {
 		}
 		else
 		{
-			fromAddress = getFullAddress(latitude, longitude);
+			fromAddress = Util.getFullAddress(latitude, longitude);
 			
-			HashMap regionInfo = getRegionInfo(fromAddress);
+			HashMap regionInfo = TaxiBiz.getInstance(sqlSession).getRegionInfo(fromAddress);
 			
 			if ( regionInfo == null ) return;
 			
