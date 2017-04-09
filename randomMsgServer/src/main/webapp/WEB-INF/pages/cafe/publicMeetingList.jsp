@@ -4,6 +4,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <script language="javascript">
+
+	var startIndex = 0;
+	var pageSize = 3;
+
 	function publicMeetingTabSelected( tabIndex )
 	{
 		$('#myCafeMeetingList').hide();
@@ -22,6 +26,7 @@
 		else if ( tabIndex == 1 )
 		{
 			$('#favRegionCafeMeetingList').show();
+			$('#publicMeetingList .loading').hide();
 		}
 		else if ( tabIndex == 2 )
 		{
@@ -114,6 +119,10 @@
 		</div>
 		
 		<div id="favRegionCafeMeetingList" style="display:none;">
+			
+			<!-- 관심지역 정모 리스트 -->
+			<jsp:include page="favoriteRegionMeetingList.jsp" flush="true"></jsp:include>
+			<!-- 관심지역 정모 리스트 -->
 			
 		</div>
 		

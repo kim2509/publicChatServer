@@ -46,9 +46,26 @@ public class CafeController extends BaseController {
 			if ( userInfo != null )
 			{
 				userID = userInfo.get("userID").toString();
+				List<HashMap> myFavRegionList = RegionBiz.getInstance(sqlSession).getFavoriteRegionNoByUserID(userID);
 				
+				for ( int i = 0; i < myFavRegionList.size(); i++ )
+				{
+					String regionName = "";
+
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
+						regionName += myFavRegionList.get(i).get("lRegionName").toString();
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
+						regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
+						regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
+						regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
+					
+					myFavRegionList.get(i).put("regionName", regionName);
+				}
+				
+				model.addAttribute("myFavRegionList", myFavRegionList);
 			}
-			
 		}
 		catch( Exception ex )
 		{
@@ -78,52 +95,6 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/searchCafe.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/searchCafe", model);
-	}
-	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
-	@RequestMapping( value ="/cafe/moreFavoriteMeeting.do")
-	public ModelAndView moreFavoriteMeeting ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken )
-	{
-		try
-		{
-			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			
-			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
-			
-			if ( userInfo != null )
-			{
-				String userID = userInfo.get("userID").toString();
-				List<HashMap> myFavRegionList = regionBiz.getFavoriteRegionNoByUserID(userID);
-				
-				for ( int i = 0; i < myFavRegionList.size(); i++ )
-				{
-					String regionName = "";
-
-					if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
-						regionName += myFavRegionList.get(i).get("lRegionName").toString();
-					if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
-						regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
-					if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
-						regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
-					if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
-						regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
-					
-					myFavRegionList.get(i).put("regionName", regionName);
-				}
-				
-				model.addAttribute("myFavRegionList", myFavRegionList);
-			}
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		insertHistory("/cafe/moreFavoriteMeeting.do", null , null , null, null );
-		
-		return new ModelAndView("cafe/moreFavoriteMeeting", model);
 	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })

@@ -19,6 +19,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
+<script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
 
@@ -37,17 +38,6 @@
 		
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + url + '';
-		else
-			document.location.href= url;
-	}
-	
-	function goMoreFavoriteMeeting()
-	{
-		var titleUrlEncoded = encodeURIComponent('관심지역 정모');
-		var url = '<%= Constants.getServerURL() %>/cafe/moreFavoriteMeeting.do';
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href= url;
 	}
