@@ -10,9 +10,14 @@
 		$('#favRegionCafeMeetingList').hide();
 		$('#popularCafeMeetingList').hide();
 		
+		$('#publicMeetingList .loading').show();
+		
 		if ( tabIndex == 0 )
 		{
 			$('#myCafeMeetingList').show();
+			
+			var param = {"startIndex":0, "showCount" : 3};
+			ajaxRequest('POST', '/nearhere/cafe/getMyPublicMeetingListAjax.do', param , onMyPublicMeetingListReceived );
 		}
 		else if ( tabIndex == 1 )
 		{
@@ -22,7 +27,8 @@
 		{
 			$('#popularCafeMeetingList').show();
 			
-			ajaxRequest('POST', '/nearhere/cafe/getPopularPublicMeetingListAjax.do', null , onPopularPublicMeetingListReceived );
+			var param = {"startIndex":0, "showCount" : 3};
+			ajaxRequest('POST', '/nearhere/cafe/getPopularPublicMeetingListAjax.do', param , onPopularPublicMeetingListReceived );
 		}
 		
 		$('#publicMeetingTab li').removeClass('selected');
@@ -40,13 +46,29 @@
 			document.location.href= url;
 	}
 	
+	function onMyPublicMeetingListReceived( result )
+	{
+		console.log(JSON.stringify(result));
+		
+		$('#publicMeetingList .loading').hide();
+		
+		if ( result != null && result.data != null )
+		{
+			var source = $('#publicMeetingT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+
+			$('#myCafeMeetingList').html(html);
+		}
+	}
+	
 	function onPopularPublicMeetingListReceived( result )
 	{
 		console.log(JSON.stringify(result));
 		
-		$('#popularCafeMeetingList .loading').hide();
+		$('#publicMeetingList .loading').hide();
 		
-		if ( result != null && result.data != null && result.data.length > 0 )
+		if ( result != null && result.data != null )
 		{
 			var source = $('#publicMeetingT').html();
 			var template = Handlebars.compile(source);
@@ -61,17 +83,17 @@
 	{{#if data}}
 	<ul class="meetingListUL">
 		{{#each data}}
-		<li onclick="goMeetingDetail('junggonara','2')">
+		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
 			<div id="title">{{title}}</div>
 			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
 			<div id="memberCount">참석인원 : {{cntMembers}}/{{maxNo}}</div>
 			<div id="cafeName">{{cafeName}}</div>
-			<div id="location">서울시 강남구 역삼1동 738-5</div>
+			<div id="location">{{address}}</div>
 		</li>
 		{{/each}}
 	</ul>
 	{{else}}
-		<div class="empty">카페가 존재하지 않습니다.</div>
+		<div class="empty">정모가 존재하지 않습니다.</div>
 	{{/if}}			
 </script>
 
@@ -85,61 +107,18 @@
 
 	<div id="publicMeetingList">
 	
+		<div class="loading" style="display:none;">목록을 읽어오는 중입니다.</div>
+		
 		<div id="myCafeMeetingList" style="display:none;">
-			<ul class="meetingListUL">
-				<li onclick="goMeetingDetail('junggonara','2')">
-					<div id="title">영화나 한편 볼까요?</div>
-					<div id="meetingDate">05-18 00:00</div>
-					<div id="memberCount">참석인원 : 3/10</div>
-					<div id="cafeName">중고나라2</div>
-					<div id="location">서울시 강남구 역삼1동 738-5</div>
-				</li>
-				<li onclick="goMeetingDetail('junggonara','2')">
-					<div id="title">영화나 한편 볼까요?</div>
-					<div id="meetingDate">05-18 00:00</div>
-					<div id="memberCount">참석인원 : 3/10</div>
-					<div id="cafeName">중고나라2</div>
-					<div id="location">서울시 강남구 역삼1동 738-5</div>
-				</li>
-				<li onclick="goMeetingDetail('junggonara','2')">
-					<div id="title">영화나 한편 볼까요?</div>
-					<div id="meetingDate">05-18 00:00</div>
-					<div id="memberCount">참석인원 : 3/10</div>
-					<div id="cafeName">중고나라2</div>
-					<div id="location">서울시 강남구 역삼1동 738-5</div>
-				</li>
-			</ul>
+			
 		</div>
 		
 		<div id="favRegionCafeMeetingList" style="display:none;">
-			<ul class="meetingListUL">
-				<li onclick="goMeetingDetail('junggonara','2')">
-					<div id="title">영화나 한편 볼까요?</div>
-					<div id="meetingDate">05-18 00:00</div>
-					<div id="memberCount">참석인원 : 3/10</div>
-					<div id="cafeName">중고나라2</div>
-					<div id="location">서울시 강남구 역삼1동 738-5</div>
-				</li>
-				<li onclick="goMeetingDetail('junggonara','2')">
-					<div id="title">영화나 한편 볼까요?</div>
-					<div id="meetingDate">05-18 00:00</div>
-					<div id="memberCount">참석인원 : 3/10</div>
-					<div id="cafeName">중고나라2</div>
-					<div id="location">서울시 강남구 역삼1동 738-5</div>
-				</li>
-			</ul>
+			
 		</div>
 		
 		<div id="popularCafeMeetingList" style="display:none;">
-			<ul class="meetingListUL">
-				<li onclick="goMeetingDetail('junggonara','2')">
-					<div id="title">영화나 한편 볼까요?</div>
-					<div id="meetingDate">05-18 00:00</div>
-					<div id="memberCount">참석인원 : 3/10</div>
-					<div id="cafeName">중고나라2</div>
-					<div id="location">서울시 강남구 역삼1동 738-5</div>
-				</li>
-			</ul>
+			
 		</div>
 		
 		<div class="more" onclick="goMoreCafePublicMeetingList();">더 보기 &gt;</div>

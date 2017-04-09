@@ -16,14 +16,6 @@
 	var isApp = '<%= isApp %>';
 	var userID = '<%= userID %>';
 
-	var startIndex = 0;
-	var firstPage = 0;
-	var lastPage = 0;
-	var numOfPagesOnScreen = 5;
-	var pageNo = 1;
-	var pageSize = 10;
-	var totalItemCount = 0;
-	
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
 		
@@ -72,12 +64,16 @@
 			if ( result.data != null && result.data.length > 0 )
 			{
 				$('#meetingListDiv').show();
-				$('#pagingInfo').show();
+				
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').show();
 			}
 			else
 			{
 				$('#meetingListDiv').hide();
-				$('#pagingInfo').hide();
+				
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').hide();
 			}
 			
 			setMapData(result);
@@ -89,7 +85,8 @@
 			
 			totalItemCount = result.data2;
 			
-			displayPagingInfo();
+			if ($('#pagingInfo').length > 0 )
+				displayPagingInfo();
 		}
 		catch( ex )
 		{
@@ -275,61 +272,6 @@
 		}
 	}
 	
-	function displayPagingInfo()
-	{
-		$('#pagingInfo').empty();
-		
-		if ( pageNo <= numOfPagesOnScreen )
-			firstPage = 1;
-		else
-		{
-			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
-			if ( pageNo % numOfPagesOnScreen == 0 )
-				firstPage = firstPage - numOfPagesOnScreen + 1;
-			else
-				firstPage++;
-		}
-		
-		lastPage = parseInt( totalItemCount / pageSize );
-		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
-			lastPage++;
-		
-		if ( firstPage > numOfPagesOnScreen + 1)
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);">&lt;&lt;</a>');
-		
-		if ( firstPage != 1 )
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');">&lt;</a>');
-		
-		for ( var i = 0; i < numOfPagesOnScreen; i++ )
-		{
-			if ( firstPage + i == pageNo)
-			{
-				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" class="pageSelected">' + (firstPage + i) + '</a>');
-			}
-			else
-			{
-				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" >' + (firstPage + i) + '</a>');
-			}
-		
-			if ( (firstPage + i) == lastPage )
-				break;
-		}
-		
-		if ( lastPage > firstPage + numOfPagesOnScreen )
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" >&gt;</a>');
-		
-		if ( firstPage + numOfPagesOnScreen <= lastPage )
-			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" >&gt;&gt;</a>');
-		
-	}
-	
-	function goPage(num)
-	{
-		pageNo = num;
-		startIndex = (pageNo - 1) * pageSize;
-		getMeetingList();
-	}
-	
 </script>
 
 	<script id="meetingT" type="text/x-handlebars-template">
@@ -383,9 +325,6 @@
 		</ul>
 		<div id="map">
 		</div>
-	</div>
-	
-	<div id="pagingInfo" style="text-align:center;margin-top:10px;font-weight:bold;">
 	</div>
 		
 	

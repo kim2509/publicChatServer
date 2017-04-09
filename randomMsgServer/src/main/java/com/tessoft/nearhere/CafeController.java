@@ -46,33 +46,9 @@ public class CafeController extends BaseController {
 			if ( userInfo != null )
 			{
 				userID = userInfo.get("userID").toString();
-				// 내 카페 리스트
-				List<HashMap> myCafeList = cafeBiz.getMyCafeList(userID);
-				model.addAttribute("myCafeList", myCafeList);
 				
-				List<HashMap> favoriteCafeMeetingList = cafeBiz.getCafeMeetingsInMyFavRegion(userID);
-				
-				for ( int i = 0; i < favoriteCafeMeetingList.size(); i++ )
-				{
-					String regionName = "";
-
-					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("lRegionName") ))
-						regionName += favoriteCafeMeetingList.get(i).get("lRegionName").toString();
-					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("mRegionName") ))
-						regionName += " " + favoriteCafeMeetingList.get(i).get("mRegionName").toString();
-					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("sRegionName") ))
-						regionName += " " + favoriteCafeMeetingList.get(i).get("sRegionName").toString();
-					if ( !Util.isEmptyString(favoriteCafeMeetingList.get(i).get("tRegionName") ))
-						regionName += " " + favoriteCafeMeetingList.get(i).get("tRegionName").toString();
-					
-					favoriteCafeMeetingList.get(i).put("regionName", regionName);
-				}
-				
-				model.addAttribute("favoriteCafeMeetingList", favoriteCafeMeetingList);
-				model.addAttribute("favoriteCafeMeetingsJSON", mapper.writeValueAsString(favoriteCafeMeetingList));
 			}
 			
-			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
 		}
 		catch( Exception ex )
 		{
@@ -102,25 +78,6 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/searchCafe.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/searchCafe", model);
-	}
-	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
-	@RequestMapping( value ="/cafe/myCafeList.do")
-	public ModelAndView myCafeList ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken)
-	{
-		try
-		{
-			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		insertHistory("/cafe/mycafeList.do", userToken , null , null, null );
-		
-		return new ModelAndView("cafe/myCafeList", model);
 	}
 	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })

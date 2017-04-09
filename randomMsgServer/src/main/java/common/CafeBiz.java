@@ -27,9 +27,20 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public List<HashMap> getPopularCafeList()
+	public List<HashMap> getPopularCafeList( HashMap param )
 	{
-		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getPopularCafeList");
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getPopularCafeList", param);
 		return myCafeList;
 	}
 	
@@ -39,9 +50,20 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public List<HashMap> getMyCafeList( String userID )
+	public List<HashMap> getMyCafeList( HashMap param )
 	{
-		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getMyCafeList", userID);
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getMyCafeList", param);
 		return myCafeList;
 	}
 	
@@ -50,10 +72,44 @@ public class CafeBiz extends CommonBiz{
 		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getMyCafeListCount", userID);
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public List<HashMap> getPopularPublicMeetingList()
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<HashMap> getMyPublicMeetingList( HashMap param )
 	{
-		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getPopularPublicMeetingList");
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getMyPublicMeetingList", param);
+		return myCafeList;
+	}
+	
+	public int getMyPublicMeetingListCount( String userID )
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getMyPublicMeetingListCount", userID );
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getPopularPublicMeetingList( HashMap param )
+	{
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getPopularPublicMeetingList", param );
 		return myCafeList;
 	}
 	

@@ -40,10 +40,13 @@ public class CafeAjaxController extends BaseController {
 		
 		try
 		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
 			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
 			
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			List<HashMap> cafeList = cafeBiz.getMyCafeList(userID);
+			List<HashMap> cafeList = cafeBiz.getMyCafeList(param);
 			response.setData(cafeList);
 			response.setData2(cafeBiz.getMyCafeListCount( userID ));
 			
@@ -71,10 +74,12 @@ public class CafeAjaxController extends BaseController {
 		
 		try
 		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
 			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
 			
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			List<HashMap> cafeList = cafeBiz.getPopularCafeList();
+			List<HashMap> cafeList = cafeBiz.getPopularCafeList( param );
 			response.setData(cafeList);
 			response.setData2(cafeBiz.getPopularCafeListCount());
 			
@@ -92,6 +97,40 @@ public class CafeAjaxController extends BaseController {
 		return response;
 	}
 	
+	// 내 카페 정모 리스트 불러오는 함수
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getMyPublicMeetingListAjax.do")
+	public @ResponseBody APIResponse getMyPublicMeetingListAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeList = cafeBiz.getMyPublicMeetingList( param );
+			response.setData(cafeList);
+			response.setData2(cafeBiz.getMyPublicMeetingListCount( userID ));
+			
+			insertHistory("/cafe/getMyPublicMeetingListAjax.do", userID , null, null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/getMyPublicMeetingListAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	// 인기정모 리스트 불러오는 함수
 	@SuppressWarnings("rawtypes")
 	@RequestMapping( value ="/cafe/getPopularPublicMeetingListAjax.do")
@@ -102,10 +141,12 @@ public class CafeAjaxController extends BaseController {
 		
 		try
 		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
 			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
 			
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			List<HashMap> cafeList = cafeBiz.getPopularPublicMeetingList();
+			List<HashMap> cafeList = cafeBiz.getPopularPublicMeetingList( param );
 			response.setData(cafeList);
 			response.setData2(cafeBiz.getPopularPublicMeetingListCount());
 			

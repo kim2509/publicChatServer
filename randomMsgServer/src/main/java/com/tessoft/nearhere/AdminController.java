@@ -48,6 +48,8 @@ import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserPushMessage;
 
+import common.TaxiBiz;
+
 @Controller
 public class AdminController extends BaseController{
 
@@ -754,7 +756,7 @@ public class AdminController extends BaseController{
 			{
 				String latitude = postList.get(i).get("fromLatitude").toString();
 				String longitude = postList.get(i).get("fromLongitude").toString();
-				String fromAddress = getFullAddress(latitude, longitude);
+				String fromAddress = Util.getFullAddress(latitude, longitude);
 				
 //				String fromAddress = postList.get(i).get("fromAddress").toString();
 				
@@ -763,7 +765,7 @@ public class AdminController extends BaseController{
 					fromAddress = postList.get(i).get("fromAddress").toString();
 				}
 				
-				HashMap regionInfo = getRegionInfo(fromAddress);
+				HashMap regionInfo = TaxiBiz.getInstance(sqlSession).getRegionInfo(fromAddress);
 				
 				if ( regionInfo != null )
 				{
@@ -815,7 +817,7 @@ public class AdminController extends BaseController{
 			{
 				String latitude = postList.get(i).get("latitude").toString();
 				String longitude = postList.get(i).get("longitude").toString();
-				String fromAddress = getFullAddress(latitude, longitude);
+				String fromAddress = Util.getFullAddress(latitude, longitude);
 				
 //				String fromAddress = postList.get(i).get("fromAddress").toString();
 				
@@ -824,7 +826,7 @@ public class AdminController extends BaseController{
 					fromAddress = postList.get(i).get("toAddress").toString();
 				}
 				
-				HashMap regionInfo = getRegionInfo(fromAddress);
+				HashMap regionInfo = TaxiBiz.getInstance(sqlSession).getRegionInfo(fromAddress);
 				
 				if ( regionInfo != null )
 				{
