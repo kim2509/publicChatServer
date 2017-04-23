@@ -170,9 +170,21 @@
 		}
 	}
 	
-	function onSaveResult()
+	function onSaveResult( result )
 	{
-		alert('저장되었습니다.');
+		if ( result == null )
+		{
+			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			return;
+		}
+		else if ( result != null && result.resCode != '0000')
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			alert('저장되었습니다.');
+		}
 	}
 	
 	function deleteCafe()

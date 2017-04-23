@@ -64,6 +64,40 @@ public class CafeAjaxController extends BaseController {
 		return response;
 	}
 	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getCafeListByRegionAjax.do")
+	public @ResponseBody APIResponse getCafeListByRegionAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			String regionNo = param.get("regionNo").toString();
+			param.put("userID", userID);
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			List<HashMap> cafeMeetings = cafeBiz.getFavCafeListByRegion(param);
+			response.setData(cafeMeetings);
+			response.setData2( cafeBiz.getFavCafeCountByRegion(param) );
+			
+			insertHistory("/cafe/getCafeListByRegionAjax.do", userID , regionNo , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/getCafeListByRegionAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	// 인기카페 리스트 불러오는 함수
 	@SuppressWarnings("rawtypes")
 	@RequestMapping( value ="/cafe/getPopularCafeListAjax.do")

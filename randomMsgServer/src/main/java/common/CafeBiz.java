@@ -27,6 +27,29 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public List<HashMap> getFavCafeListByRegion( HashMap param )
+	{
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getFavCafeListByRegion", param);
+		return myCafeList;
+	}
+	
+	public int getFavCafeCountByRegion( HashMap param )
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getFavCafeCountByRegion", param);
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public List<HashMap> getPopularCafeList( HashMap param )
 	{
 		int startIndex = 0;

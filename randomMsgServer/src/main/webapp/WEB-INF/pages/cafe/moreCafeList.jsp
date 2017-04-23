@@ -69,6 +69,7 @@
 		$('#popularCafeList').hide();
 		
 		$('#cafeList .loading').show();
+		$('#pagingInfo').hide();
 		
 		if ( tabIndex == 0 )
 		{
@@ -79,6 +80,7 @@
 		else if ( tabIndex == 1 )
 		{
 			$('#favRegionCafeList').show();
+			$('#cafeList .loading').hide();
 		}
 		else if ( tabIndex == 2 )
 		{
@@ -112,7 +114,7 @@
 			
 			totalItemCount = result.data2;
 			
-			if ($('#pagingInfo').length > 0 )
+			if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
 			{
 				$('#pagingInfo').show();
 				displayPagingInfo();
@@ -136,7 +138,7 @@
 			
 			totalItemCount = result.data2;
 			
-			if ($('#pagingInfo').length > 0 )
+			if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
 			{
 				$('#pagingInfo').show();
 				displayPagingInfo();
@@ -271,6 +273,10 @@
 			</div>
 			
 			<div id="favRegionCafeList" style="display:none;" class="margin10">
+			
+				<!-- 관심지역 카페 리스트 -->
+				<jsp:include page="favoriteRegionCafeList.jsp" flush="true"></jsp:include>
+				<!-- 관심지역 카페 리스트 -->
 				
 			</div>
 			
@@ -280,7 +286,7 @@
 			
 		</div>
 		
-		<div id="pagingInfo" style="text-align: center; margin-top: 10px; font-weight: bold; display: block;">
+		<div id="pagingInfo" style="text-align: center; margin-top: 10px; font-weight: bold; display: none;">
 		</div>
 		
 	</div>

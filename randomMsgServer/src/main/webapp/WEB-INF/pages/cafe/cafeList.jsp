@@ -26,6 +26,7 @@
 		else if ( tabIndex == 1 )
 		{
 			$('#favRegionCafeList').show();
+			$('#cafeList .loading').hide();
 		}
 		else if ( tabIndex == 2 )
 		{
