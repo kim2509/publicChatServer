@@ -9,7 +9,7 @@
 	List<HashMap> myFavRegionList = (List<HashMap>) request.getAttribute("myFavRegionList");
 %>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=23" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteCafe.css?v=1" />
 
 <script language="javascript">
 
@@ -158,7 +158,7 @@
 	// 마커를 생성하고 지도위에 표시하는 함수입니다
 	function addMarker(position, index) {
 	    
-	    // 마커를 생성합니다
+		// 마커를 생성합니다
 	    var marker = new daum.maps.Marker({
 	        position: position,
 	        clickable:true
@@ -216,6 +216,8 @@
 		
 		for ( var i = 0; i < result.data.length; i++ )
 		{
+			if ( result.data[i].latitude == null || typeof result.data[i].latitude == 'undefined') continue;
+			
 			var position = {
 					"latlng":new daum.maps.LatLng(result.data[i].latitude,result.data[i].longitude),
 					"content":result.data[i].title
@@ -240,7 +242,8 @@
 		for ( var i = 0; i < positions.length; i++ )
 			addMarker(positions[i].latlng, i);
 
-		favCafeMap.panTo(positions[0].latlng);
+		if (positions.length > 0 )
+			favCafeMap.panTo(positions[0].latlng);
 	}
 	
 	function goFavoriteRegionPage()
@@ -305,7 +308,7 @@
 	<div id="favoriteRegionCafeListDiv">
 		<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
 		<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
-		<div id="subTitle">정모 리스트</div>
+		<div id="subTitle">카페 리스트</div>
 		<div id="favoriteRegionCafeList" >
 			
 		</div>

@@ -216,6 +216,8 @@
 		
 		for ( var i = 0; i < result.data.length; i++ )
 		{
+			if ( result.data[i].latitude == null || typeof result.data[i].latitude == 'undefined') continue;
+			
 			var position = {
 					"latlng":new daum.maps.LatLng(result.data[i].latitude,result.data[i].longitude),
 					"content":result.data[i].title
@@ -240,7 +242,8 @@
 		for ( var i = 0; i < positions.length; i++ )
 			addMarker(positions[i].latlng, i);
 
-		map.panTo(positions[0].latlng);
+		if (positions.length > 0 )
+			map.panTo(positions[0].latlng);
 	}
 	
 	function goFavoriteRegionPage()

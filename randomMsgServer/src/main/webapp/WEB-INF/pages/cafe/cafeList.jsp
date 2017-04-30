@@ -138,6 +138,11 @@
 		</div>
 		
 		<div id="favRegionCafeList" style="display:none;">
+		
+			<!-- 관심지역 카페 리스트 -->
+			<%--jsp:include page="favoriteRegionCafeList.jsp" flush="true"></jsp:include--%>
+			<!-- 관심지역 카페 리스트 -->
+			
 		</div>
 		
 		<div id="popularCafeList" style="display:none;">

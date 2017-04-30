@@ -47,7 +47,7 @@
 	<select id="getFavCafeListByRegion" resultType="HashMap" parameterType="HashMap">
 		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL
 		, ifnull(cmm.cntMembers,0) as cntMembers
-		, rv.*, cl.address
+		, rv.*, cl.address, cl.latitude, cl.longitude
 		, cmm2.createdDate as joinDate
 		from cafe_master cm
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
