@@ -20,12 +20,12 @@
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
 		
 		// 초기 데이터 로딩
-		if ( $('#favoriteRegionDiv ul li').length > 0 )
+		if ( $('#favoriteCafeRegionDiv ul li').length > 0 )
 		{
 			// 홀수 개의 관심지역일 때 공백을 하나 추가함.
-			if ( $('#favoriteRegionDiv ul li').length % 2 != 0 )
+			if ( $('#favoriteCafeRegionDiv ul li').length % 2 != 0 )
 			{
-				$('#favoriteRegionDiv ul').append('<li>&nbsp;</li>');
+				$('#favoriteCafeRegionDiv ul').append('<li>&nbsp;</li>');
 			}
 			
 			getCafeList();
@@ -34,18 +34,18 @@
 	
 	function getCafeList()
 	{
-		var level = $('#favoriteRegionDiv ul .selected').attr('level');
-		var regionNo = $('#favoriteRegionDiv ul .selected').attr('regionNo');
+		var level = $('#favoriteCafeRegionDiv ul .selected').attr('level');
+		var regionNo = $('#favoriteCafeRegionDiv ul .selected').attr('regionNo');
 		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
 		ajaxRequest('POST', '/nearhere/cafe/getCafeListByRegionAjax.do', param , onFavoriteRegionCafeListResult );	
 	}
 	
-	function changeRegion( element, regionNo, level )
+	function changeCafeRegion( element, regionNo, level )
 	{
 		pageNo = 1;
 		startIndex = 0;
 		
-		$('.favoriteRegion li').removeClass('selected');		
+		$('#favoriteCafeRegionDiv .favoriteRegion li').removeClass('selected');		
 		$(element).addClass('selected');
 		
 		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
@@ -76,11 +76,11 @@
 					$('#pagingInfo').hide();
 			}
 			
-			setMapData(result);
+			setCafeMapData(result);
 			
 			if ( $('#favCafeMapDiv').is(':visible') )
 			{
-				displayMapData();
+				displayCafeMapData();
 			}
 			
 			totalItemCount = result.data2;
@@ -94,35 +94,35 @@
 		}
 	}
 	
-	var bMapInitialized = false;
-	function toggleResultView()
+	var bCafeMapInitialized = false;
+	function toggleCafeResultView()
 	{
 		if ( $('#favCafeMapDiv').is(':visible') )
 		{
 			$('#favoriteRegionCafeList').show();
 			$('#favCafeMapDiv').hide();
-			$('#optionMap').show();
-			$('#optionList').hide();
+			$('#favoriteRegionCafeListDiv #optionMap').show();
+			$('#favoriteRegionCafeListDiv #optionList').hide();
 		}
 		else
 		{
 			$('#favoriteRegionCafeList').hide();
 			$('#favCafeMapDiv').show();
-			$('#optionMap').hide();
-			$('#optionList').show();
+			$('#favoriteRegionCafeListDiv #optionMap').hide();
+			$('#favoriteRegionCafeListDiv #optionList').show();
 			
-			if ( !bMapInitialized )
+			if ( !bCafeMapInitialized )
 			{
-				initiateMap();
+				initiateCafeMap();
 				bMapInitialized = true;
 			}
 			
-			displayMapData();
+			displayCafeMapData();
 		}
 	}
 	
 	var favCafeMap = null;
-	function initiateMap()
+	function initiateCafeMap()
 	{
 		var container = document.getElementById('favCafeMapDiv'); //지도를 담을 영역의 DOM 레퍼런스
 	
@@ -137,9 +137,9 @@
 		// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
 		daum.maps.event.addListener(favCafeMap, 'click', function(mouseEvent) {        
 		    
-		    if ( infoWindows != null && infoWindows.length > 0 ){
-		    	for( var i = 0; i < infoWindows.length; i++ )
-		    		infoWindows[i].close();
+		    if ( cafeInfoWindows != null && cafeInfoWindows.length > 0 ){
+		    	for( var i = 0; i < cafeInfoWindows.length; i++ )
+		    		cafeInfoWindows[i].close();
 		    }
 		    
 		});
@@ -147,16 +147,16 @@
 	}
 	
 	// 실제로 정모의 데이터가 담길 배열
-	var positions = [];
+	var cafePositions = [];
 	
-	// 위 positions 배열의 데이터를 기반으로 markers 를 생성
-	var markers = [];
+	// 위 cafePositions 배열의 데이터를 기반으로 markers 를 생성
+	var cafeMarkers = [];
 	
-	// 위 positions 배열의 데이터를 기반으로 infoWindow 를 생성
-	var infoWindows = [];
+	// 위 cafePositions 배열의 데이터를 기반으로 infoWindow 를 생성
+	var cafeInfoWindows = [];
 	
 	// 마커를 생성하고 지도위에 표시하는 함수입니다
-	function addMarker(position, index) {
+	function addCafeMarker(position, index) {
 	    
 		// 마커를 생성합니다
 	    var marker = new daum.maps.Marker({
@@ -170,24 +170,24 @@
 	    marker.setMap(favCafeMap);
 	    
 	    // 생성된 마커를 배열에 추가합니다
-	    markers.push(marker);
+	    cafeMarkers.push(marker);
 	}
 	
 	function showInfoWindow( marker, index )
 	{
 		return function()
 		{
-			for( var i = 0; i < infoWindows.length; i++ )
-				infoWindows[i].close();
+			for( var i = 0; i < cafeInfoWindows.length; i++ )
+				cafeInfoWindows[i].close();
 			
-			infoWindows[index].open(favCafeMap, marker);	
+			cafeInfoWindows[index].open(favCafeMap, marker);	
 		};
 	}
 	
 	// 배열에 추가된 마커들을 지도에 표시하거나 삭제하는 함수입니다
-	function setMarkers(favCafeMap) {
-	    for (var i = 0; i < markers.length; i++) {
-	        markers[i].setMap(favCafeMap);
+	function setCafeMarkers(favCafeMap) {
+	    for (var i = 0; i < cafeMarkers.length; i++) {
+	    	cafeMarkers[i].setMap(favCafeMap);
 	    }            
 	}
 	
@@ -197,22 +197,22 @@
 	}
 
 	// "마커 감추기" 버튼을 클릭하면 호출되어 배열에 추가된 마커를 지도에서 삭제하는 함수입니다
-	function hideMarkers() {
-	    setMarkers(null);    
+	function hideCafeMarkers() {
+		setCafeMarkers(null);    
 	}
 	
-	function setMapData( result )
+	function setCafeMapData( result )
 	{
 		if ( result == null || result.data == null || result.data.length < 1 ) return;
 		
-		if ( infoWindows != null && infoWindows.length > 0 ){
-	    	for( var i = 0; i < infoWindows.length; i++ )
-	    		infoWindows[i].close();
+		if ( cafeInfoWindows != null && cafeInfoWindows.length > 0 ){
+	    	for( var i = 0; i < cafeInfoWindows.length; i++ )
+	    		cafeInfoWindows[i].close();
 	    }
-		hideMarkers();
-		positions = [];
-		markers = [];
-		infoWindows = [];
+		hideCafeMarkers();
+		cafePositions = [];
+		cafeMarkers = [];
+		cafeInfoWindows = [];
 		
 		for ( var i = 0; i < result.data.length; i++ )
 		{
@@ -223,7 +223,7 @@
 					"content":result.data[i].title
 			}
 			
-			positions.push(position);
+			cafePositions.push(position);
 			
 			var infowindow = new daum.maps.InfoWindow({
 			    position: position,
@@ -233,17 +233,17 @@
 			    		result.data[i].cafeID + '\',\'' + result.data[i].meetingNo + '\');">상세보기</a></div>'
 			});
 			
-			infoWindows.push(infowindow);
+			cafeInfoWindows.push(infowindow);
 		}
 	}
 	
-	function displayMapData()
+	function displayCafeMapData()
 	{
-		for ( var i = 0; i < positions.length; i++ )
-			addMarker(positions[i].latlng, i);
+		for ( var i = 0; i < cafePositions.length; i++ )
+			addCafeMarker(cafePositions[i].latlng, i);
 
-		if (positions.length > 0 )
-			favCafeMap.panTo(positions[0].latlng);
+		if (cafePositions.length > 0 )
+			favCafeMap.panTo(cafePositions[0].latlng);
 	}
 	
 	function goFavoriteRegionPage()
@@ -277,7 +277,7 @@
 	
 </script>
 	
-	<div id="favoriteRegionDiv">
+	<div id="favoriteCafeRegionDiv">
 		<div id="linkDiv" onclick="goFavoriteRegionPage();">설정</div>
 		<div id="subTitle">관심지역</div>
 		<% if ( myFavRegionList != null && myFavRegionList.size() > 0 ) { %>
@@ -291,11 +291,11 @@
 				
 				if ( i == 0 )
 					out.println("<li class='selected' level='" + level + "' regionNo='" + regionNo + 
-					"' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+					"' onclick=\"changeCafeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
 						 regionName + "</li>");
 				else
 					out.println("<li  level='" + level + "' regionNo='" + regionNo +
-					"' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+					"' onclick=\"changeCafeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
 							regionName + "</li>");
 			}
 		%>	
@@ -306,8 +306,8 @@
 	</div>
 	
 	<div id="favoriteRegionCafeListDiv">
-		<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
-		<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
+		<div id="optionMap" class="option" onclick="toggleCafeResultView();">지도로 보기</div>
+		<div id="optionList" class="option" onclick="toggleCafeResultView();">리스트로 보기</div>
 		<div id="subTitle">카페 리스트</div>
 		<div id="favoriteRegionCafeList" >
 			
