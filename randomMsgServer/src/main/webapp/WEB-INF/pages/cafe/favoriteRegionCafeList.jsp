@@ -45,7 +45,7 @@
 		pageNo = 1;
 		startIndex = 0;
 		
-		$('#favoriteCafeRegionDiv .favoriteRegion li').removeClass('selected');		
+		$('#favoriteCafeRegionDiv .favoriteCafeRegion li').removeClass('selected');		
 		$(element).addClass('selected');
 		
 		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
@@ -101,20 +101,20 @@
 		{
 			$('#favoriteRegionCafeList').show();
 			$('#favCafeMapDiv').hide();
-			$('#favoriteRegionCafeListDiv #optionMap').show();
-			$('#favoriteRegionCafeListDiv #optionList').hide();
+			$('#favoriteRegionCafeListDiv #optionViewByMap').show();
+			$('#favoriteRegionCafeListDiv #optionViewByList').hide();
 		}
 		else
 		{
 			$('#favoriteRegionCafeList').hide();
 			$('#favCafeMapDiv').show();
-			$('#favoriteRegionCafeListDiv #optionMap').hide();
-			$('#favoriteRegionCafeListDiv #optionList').show();
+			$('#favoriteRegionCafeListDiv #optionViewByMap').hide();
+			$('#favoriteRegionCafeListDiv #optionViewByList').show();
 			
 			if ( !bCafeMapInitialized )
 			{
 				initiateCafeMap();
-				bMapInitialized = true;
+				bCafeMapInitialized = true;
 			}
 			
 			displayCafeMapData();
@@ -246,17 +246,6 @@
 			favCafeMap.panTo(cafePositions[0].latlng);
 	}
 	
-	function goFavoriteRegionPage()
-	{
-		var titleUrlEncoded = encodeURIComponent('관심지역설정');
-		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href="/nearhere/region/favoriteRegion.do?userID=<%= userID %>&isApp=" + isApp;
-	}
-	
 	function goMeetingDetail( cafeID, meetingNo )
 	{
 		try
@@ -281,7 +270,7 @@
 		<div id="linkDiv" onclick="goFavoriteRegionPage();">설정</div>
 		<div id="subTitle">관심지역</div>
 		<% if ( myFavRegionList != null && myFavRegionList.size() > 0 ) { %>
-		<ul class="favoriteRegion">
+		<ul class="favoriteCafeRegion">
 		<%
 			for ( int i = 0; i < myFavRegionList.size(); i++ )
 			{
@@ -306,8 +295,8 @@
 	</div>
 	
 	<div id="favoriteRegionCafeListDiv">
-		<div id="optionMap" class="option" onclick="toggleCafeResultView();">지도로 보기</div>
-		<div id="optionList" class="option" onclick="toggleCafeResultView();">리스트로 보기</div>
+		<div id="optionViewByMap" class="option" onclick="toggleCafeResultView();">지도로 보기</div>
+		<div id="optionViewByList" class="option" onclick="toggleCafeResultView();">리스트로 보기</div>
 		<div id="subTitle">카페 리스트</div>
 		<div id="favoriteRegionCafeList" >
 			

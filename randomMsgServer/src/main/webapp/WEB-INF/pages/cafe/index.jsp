@@ -91,6 +91,17 @@
 		}
 	});
 	
+	function goFavoriteRegionPage()
+	{
+		var titleUrlEncoded = encodeURIComponent('관심지역설정');
+		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?isApp=<%= isApp %>';
+		
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href="/nearhere/region/favoriteRegion.do?isApp=" + isApp;
+	}
+	
 </script>
 
 </head>

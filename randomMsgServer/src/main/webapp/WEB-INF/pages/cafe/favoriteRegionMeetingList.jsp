@@ -97,8 +97,12 @@
 	var bMapInitialized = false;
 	function toggleResultView()
 	{
+		console.log('toggleResultView');
+		
 		if ( $('#map').is(':visible') )
 		{
+			console.log('1');
+			
 			$('#meetingList').show();
 			$('#map').hide();
 			$('#optionMap').show();
@@ -106,6 +110,8 @@
 		}
 		else
 		{
+			console.log('2');
+			
 			$('#meetingList').hide();
 			$('#map').show();
 			$('#optionMap').hide();
@@ -113,10 +119,12 @@
 			
 			if ( !bMapInitialized )
 			{
+				console.log('3');
 				initiateMap();
 				bMapInitialized = true;
 			}
 			
+			console.log('4');
 			displayMapData();
 		}
 	}
@@ -144,6 +152,7 @@
 		    
 		});
 		
+		console.log('initialized');
 	}
 	
 	// 실제로 정모의 데이터가 담길 배열
@@ -244,17 +253,6 @@
 
 		if (positions.length > 0 )
 			map.panTo(positions[0].latlng);
-	}
-	
-	function goFavoriteRegionPage()
-	{
-		var titleUrlEncoded = encodeURIComponent('관심지역설정');
-		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=<%= userID %>&isApp=<%= isApp %>';
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href="/nearhere/region/favoriteRegion.do?userID=<%= userID %>&isApp=" + isApp;
 	}
 	
 	function goMeetingDetail( cafeID, meetingNo )
