@@ -52,6 +52,8 @@
 		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
 	}
 	
+	var meetingListViewMode = 'list';
+	
 	function onMeetingListResult( result )
 	{
 		try
@@ -61,29 +63,48 @@
 			var html = template(result);
 			$('#meetingList').html(html);
 			
-			if ( result.data != null && result.data.length > 0 )
-			{
-				$('#meetingListDiv').show();
-				
-				if ($('#pagingInfo').length > 0 )
-					$('#pagingInfo').show();
-			}
-			else
-			{
-				$('#meetingListDiv').hide();
-				
-				if ($('#pagingInfo').length > 0 )
-					$('#pagingInfo').hide();
-			}
-			
 			setMapData(result);
 			
-			if ( $('#map').is(':visible') )
+			if ( meetingListViewMode == 'map' )
 			{
 				displayMapData();
 			}
 			
 			totalItemCount = result.data2;
+		
+			if ( result.data != null && result.data.length > 0 )
+			{
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').show();
+				
+				if ( $('#favRegionCafeMeetingList').is(':visible') )
+				{
+					if ( meetingListViewMode == 'list' )
+					{
+						$('#optionMap').show();
+						$('#map').hide();
+						$('#meetingList').show();
+					}
+					else
+					{
+						$('#optionList').show();
+						$('#map').show();
+						$('#meetingList').hide();
+					}
+				}
+					
+			}
+			else
+			{
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').hide();
+				
+				$('#optionMap').hide();
+				$('#optionList').hide();
+				
+				$('#map').hide();
+				$('#meetingList').show();
+			}
 			
 			if ($('#pagingInfo').length > 0 )
 				displayPagingInfo();
@@ -97,21 +118,17 @@
 	var bMapInitialized = false;
 	function toggleResultView()
 	{
-		console.log('toggleResultView');
-		
-		if ( $('#map').is(':visible') )
+		if ( meetingListViewMode == 'map' )
 		{
-			console.log('1');
-			
 			$('#meetingList').show();
 			$('#map').hide();
 			$('#optionMap').show();
 			$('#optionList').hide();
+			
+			meetingListViewMode = 'list';
 		}
 		else
 		{
-			console.log('2');
-			
 			$('#meetingList').hide();
 			$('#map').show();
 			$('#optionMap').hide();
@@ -119,13 +136,12 @@
 			
 			if ( !bMapInitialized )
 			{
-				console.log('3');
 				initiateMap();
 				bMapInitialized = true;
 			}
-			
-			console.log('4');
 			displayMapData();
+			
+			meetingListViewMode = 'map';
 		}
 	}
 	
@@ -151,8 +167,6 @@
 		    }
 		    
 		});
-		
-		console.log('initialized');
 	}
 	
 	// 실제로 정모의 데이터가 담길 배열
@@ -276,7 +290,8 @@
 </script>
 
 	<script id="meetingT" type="text/x-handlebars-template">
-	<ul id="meetingList">
+	{{#if data}}
+	<ul class="meetingListUL">
 		{{#each data}}
 		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
 			<div id="title">{{title}}</div>
@@ -287,6 +302,9 @@
 		</li>
 		{{/each}}
 	</ul>
+	{{else}}
+		<div class="empty">해당 지역에 정모가 존재하지 않습니다.</div>
+	{{/if}}
 	</script>
 	
 	<div id="favoriteRegionDiv">
@@ -321,9 +339,9 @@
 		<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
 		<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
 		<div id="subTitle">정모 리스트</div>
-		<ul id="meetingList" class="meetingListUL">
+		<div id="meetingList">
 			
-		</ul>
+		</div>
 		<div id="map">
 		</div>
 	</div>

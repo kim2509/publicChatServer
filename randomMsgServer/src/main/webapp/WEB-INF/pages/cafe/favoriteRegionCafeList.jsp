@@ -51,6 +51,8 @@
 		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
 		ajaxRequest('POST', '/nearhere/cafe/getCafeListByRegionAjax.do', param , onFavoriteRegionCafeListResult );
 	}
+
+	var cafeListViewMode = 'list';
 	
 	function onFavoriteRegionCafeListResult( result )
 	{
@@ -61,29 +63,47 @@
 			var html = template(result);
 			$('#favRegionCafeList #favoriteRegionCafeList').html(html);
 			
-			if ( result.data != null && result.data.length > 0 )
-			{
-				$('#favoriteRegionCafeListDiv').show();
-				
-				if ($('#pagingInfo').length > 0 )
-					$('#pagingInfo').show();
-			}
-			else
-			{
-				$('#favoriteRegionCafeListDiv').hide();
-				
-				if ($('#pagingInfo').length > 0 )
-					$('#pagingInfo').hide();
-			}
-			
 			setCafeMapData(result);
 			
-			if ( $('#favCafeMapDiv').is(':visible') )
+			if ( cafeListViewMode == 'map' )
 			{
 				displayCafeMapData();
 			}
 			
 			totalItemCount = result.data2;
+			
+			if ( result.data != null && result.data.length > 0 )
+			{
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').show();
+				
+				if ( $('#favRegionCafeList').is(':visible') )
+				{
+					if ( cafeListViewMode == 'list' )
+					{
+						$('#favoriteRegionCafeListDiv #optionViewByMap').show();
+						$('#favCafeMapDiv').hide();
+						$('#favoriteRegionCafeList').show();
+					}
+					else
+					{
+						$('#favoriteRegionCafeListDiv #optionViewByList').show();
+						$('#favCafeMapDiv').show();
+						$('#favoriteRegionCafeList').hide();
+					}
+				}
+			}
+			else
+			{
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').hide();
+				
+				$('#favoriteRegionCafeListDiv #optionViewByMap').hide();
+				$('#favoriteRegionCafeListDiv #optionViewByList').hide();
+				
+				$('#favCafeMapDiv').hide();
+				$('#favoriteRegionCafeList').show();
+			}
 			
 			if ($('#pagingInfo').length > 0 )
 				displayPagingInfo();
@@ -97,12 +117,14 @@
 	var bCafeMapInitialized = false;
 	function toggleCafeResultView()
 	{
-		if ( $('#favCafeMapDiv').is(':visible') )
+		if ( cafeListViewMode == 'map' )
 		{
 			$('#favoriteRegionCafeList').show();
 			$('#favCafeMapDiv').hide();
 			$('#favoriteRegionCafeListDiv #optionViewByMap').show();
 			$('#favoriteRegionCafeListDiv #optionViewByList').hide();
+			
+			cafeListViewMode = 'list';
 		}
 		else
 		{
@@ -118,6 +140,8 @@
 			}
 			
 			displayCafeMapData();
+			
+			cafeListViewMode = 'map';
 		}
 	}
 	
@@ -164,7 +188,7 @@
 	        clickable:true
 	    });
 
-	    daum.maps.event.addListener(marker, 'click', showInfoWindow(marker, index));
+	    daum.maps.event.addListener(marker, 'click', showCafeInfoWindow(marker, index));
 	    
 	    // 마커가 지도 위에 표시되도록 설정합니다
 	    marker.setMap(favCafeMap);
@@ -173,7 +197,7 @@
 	    cafeMarkers.push(marker);
 	}
 	
-	function showInfoWindow( marker, index )
+	function showCafeInfoWindow( marker, index )
 	{
 		return function()
 		{
@@ -220,17 +244,15 @@
 			
 			var position = {
 					"latlng":new daum.maps.LatLng(result.data[i].latitude,result.data[i].longitude),
-					"content":result.data[i].title
+					"content":result.data[i].cafeName
 			}
 			
 			cafePositions.push(position);
 			
 			var infowindow = new daum.maps.InfoWindow({
 			    position: position,
-			    content: '<div style="padding:5px;font-size:17px;width:100%">' + result.data[i].title + 
-			    '<br/>' + displayDateFormat( result.data[i].meetingDate, 'MM-dd HH:mm' ) + '<br/>' + 
-			    '<a href="javascript:void(0)" onclick="goMeetingDetail(\'' + 
-			    		result.data[i].cafeID + '\',\'' + result.data[i].meetingNo + '\');">상세보기</a></div>'
+			    content: '<div style="padding:5px;font-size:17px;width:100%">' + result.data[i].cafeName + '<br/>' + 
+			    '<a href="javascript:void(0)" onclick="goCafeHome(\'' + result.data[i].cafeID + '\');">상세보기</a></div>'
 			});
 			
 			cafeInfoWindows.push(infowindow);
