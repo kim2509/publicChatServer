@@ -865,4 +865,75 @@ public class AdminController extends BaseController{
 		
 		return new ModelAndView("admin/test");
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/admin/UpdateLocationCoordsForAllRegionAjax.do")
+	public @ResponseBody APIResponse UpdateLocationCoordsForAllRegionAjax( HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			String[] levels = {"1", "2", "3", "4"};
+			for ( int i = 0; i < levels.length; i++ )
+			{
+				List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.admin.getAllRegionsByLevel", levels[i] );
+				
+				for ( int j = 0; j < regionList.size(); j++ )
+				{
+					HashMap region = regionList.get(j);
+					
+					if ( !Util.isEmptyForKey(region, "latitude") ) continue;
+					
+					String fullName = Util.getFullRegionName(region);
+					String keyword = getRegionKeyword(fullName, levels[i]);
+					
+					HashMap coords = Util.getCoordsFromKeyword( keyword );
+					
+					if ( Util.isEmptyString( coords.get("latitude") ) )
+						coords = Util.getCoordsFromKeyword( fullName );
+					
+					logger.info( "[" + j + "/" + regionList.size() + "]" + keyword + ":" + coords.get("latitude") + "," + coords.get("longitude") );
+						
+					region.put("latitude", coords.get("latitude"));
+					region.put("longitude", coords.get("longitude"));
+					
+					sqlSession.update("com.tessoft.nearhere.taxi.admin.updateRegionLocation", region );
+				}
+			}
+			
+			response.setResCode("0000");
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	private String getRegionKeyword( String regionName, String level )
+	{
+		if ( "1".equals( level ) )
+		{
+			if ( regionName.endsWith("도") || regionName.endsWith("시") )
+				regionName += "청";
+			else if ("서울".equals(regionName)) return "서울시청";
+		}
+		else if ( "2".equals( level ) )
+		{
+			if ( regionName.endsWith("구") || regionName.endsWith("군") || regionName.endsWith("시") )
+				regionName += "청";
+		}
+		else if ( "3".equals( level ) )
+		{
+			if ( regionName.endsWith("동") || regionName.endsWith("읍") || regionName.endsWith("면") )
+				regionName += "사무소";
+			else regionName += " 동사무소";
+		}
+		else if ( "4".equals( level ) )
+			regionName += " 주민센터";
+		
+		return regionName;
+	}
 }

@@ -9,7 +9,7 @@
 	List<HashMap> myFavRegionList = (List<HashMap>) request.getAttribute("myFavRegionList");
 %>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=23" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=24" />
 
 <script language="javascript">
 

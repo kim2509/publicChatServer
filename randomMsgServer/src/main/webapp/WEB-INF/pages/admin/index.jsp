@@ -116,6 +116,45 @@
 		}
 	}
 	
+	
+	function UpdateLocationCoordsForAllRegionAjax()
+	{
+		if ( !confirm('Really?') ) return;
+		
+		try {
+
+			jQuery.ajax({
+				type : "POST",
+				url : 'UpdateLocationCoordsForAllRegionAjax.do',
+				data : null,
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(data) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					try {
+						console.log(JSON.stringify(data));
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생");
+				}
+			});
+
+		} catch (ex) {
+			alert(ex.message);
+		}
+	}
+	
+	jQuery(document).ready(function(){
+		
+	});
+	
 </script>
 
 </head>
@@ -160,5 +199,7 @@
 	<br/> 집 : YzHLvDaLJkHDMis4Ipu+yhvJUlWLA011Wp9IAWGdOHY=
 	<br/> 회사 : dwhwRpDSNdqUzxIoaOWIvqEEWv3q3h35uBk8CSBiJgY=
 	
+	<br/>
+	<input type="button" value="모든지역 좌표 초기화" onclick="UpdateLocationCoordsForAllRegionAjax();"/>
 </body>
 </html>

@@ -90,7 +90,7 @@ from region r1
 	left outer join region r2 on r2.regionNo=r1.parentNo
 	left outer join region r3 on r3.regionNo=r2.parentNo	
 	left outer join region r4 on r4.regionNo=r3.parentNo
-
+where r1.isHotSpot is null
 
 
 insert into cafe_board_post_detail(postNo, type, locationNo, seq)
