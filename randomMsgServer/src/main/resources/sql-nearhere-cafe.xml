@@ -55,10 +55,10 @@
 			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
 			left outer join cafe_location cl on cd.locationNo = cl.No
 			left outer join region_view rv on cl.regionNo = rv.regionNo
-			left outer join cafe_members cmm2 on cm.cafeNo = cmm2.cafeNo
+			left outer join (select cafeNo, userID, createdDate from cafe_members where userID=#{userID}) cmm2 on cm.cafeNo = cmm2.cafeNo
 		where cm.publishYN = 'Y' 
 		and (rv.lRegionNo = #{regionNo} or rv.mRegionNo = #{regionNo} or rv.sRegionNo = #{regionNo} or rv.tRegionNo = #{regionNo})
-		and cmm2.userID=#{userID}
+		and (cmm2.userID is not null or cm.owner = #{userID})
 		order by joinDate desc
 		limit #{startIndex}, #{showCount}
 	</select>
@@ -591,14 +591,15 @@
 	
 	<select id="getCafeUserInfo" resultType="HashMap" parameterType="HashMap">
 		select u.*
-			, case when cm.owner is null then 'N' else 'Y' end ownerYN
-			, case when cm2.userID is null then 'N' else 'Y' end memberYN
-			, ifnull( cm2.memberType, '' ) as memberType
-		from user u
-			left outer join cafe_master cm on u.userID=cm.owner
-			left outer join cafe_members cm2 on cm2.cafeNo = cm.cafeNo and cm2.userID = #{userID}
+			, ifnull( cmm.memberType, '' ) as memberType
+			, case when cm.owner = u.userID then 'Y' else 'N' end ownerYN
+			, 'Y' as memberYN
+			, case when cmm.deletedDate is null then 'N' else 'Y' end blockYN
+		from cafe_members cmm
+			left outer join cafe_master cm on cmm.cafeNo = cm.cafeNo
+			left outer join user u on cmm.userID = u.userID
 		where u.userID=#{userID}
-		and cm.cafeID = #{cafeID}
+		and cm.cafeID=#{cafeID}
 	</select>
 	
 	<update id="updateCafeMemberType" parameterType="HashMap">
@@ -684,5 +685,17 @@
 	<delete id="deleteCafeMaster" parameterType="HashMap">
 		delete from cafe_master
 		where cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 카페 회원 가입 -->
+	<insert id="insertCafeMember" parameterType="HashMap">
+		insert into cafe_members( cafeNo, userID, memberType, createdDate )
+		values( #{cafeNo}, #{userID}, '회원', NOW() );
+	</insert>
+	
+	<!-- 카페 회원 탈퇴 -->
+	<delete id="deleteCafeMember" parameterType="HashMap">
+		delete from cafe_members
+		where cafeNo = #{cafeNo} and userID = #{userID}
 	</delete>
 </mapper>

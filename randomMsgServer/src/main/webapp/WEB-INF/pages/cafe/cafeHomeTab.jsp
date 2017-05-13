@@ -24,6 +24,24 @@
 %>
 
 <script language="javascript">
+
+	var ownerYN = '<%= ownerYN %>';
+	var memberYN = '<%= memberYN %>';
+	var memberType = '<%= memberType %>';
+
+	jQuery(document).ready( function(){
+		
+		if (ownerYN == 'N' && memberYN == 'N' ) {
+			$('#btnRegister').show();
+			$('#btnRetire').hide();
+		}
+		else if ( ownerYN == 'N' && memberYN == 'Y' ) {
+			$('#btnRegister').hide();
+			$('#btnRetire').show();
+		}
+	
+	});
+
 	function goMeetingDetail( cafeID, meetingNo )
 	{
 		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
@@ -33,6 +51,58 @@
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href= url;
+	}
+	
+	function registerCafeMember()
+	{
+		if ( confirm('가입하시겠습니까?') )
+		{
+			var param = {"cafeID":"<%= cafeMainInfo.get("cafeID") %>" };
+			ajaxRequest('POST', '/nearhere/cafe/registerCafeMemberAjax.do', param , onRegisterCafeMemberResult );	
+		}
+	}
+	
+	function onRegisterCafeMemberResult( result )
+	{
+		if ( result != null && result.resCode == '0000' )
+		{
+			alert('성공적으로 가입되었습니다.');
+			location.reload();
+		}
+		else if ( result != null )
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			alert('가입 도중 오류가 발생했습니다. 관리자에게 문의해 주시기 바랍니다.');
+		}
+	}
+	
+	function cancelCafeMember()
+	{
+		if ( confirm('탈퇴하시겠습니까?') )
+		{
+			var param = {"cafeID":"<%= cafeMainInfo.get("cafeID") %>" };
+			ajaxRequest('POST', '/nearhere/cafe/cancelCafeMemberAjax.do', param , onCancelCafeMemberResult );	
+		}
+	}
+	
+	function onCancelCafeMemberResult( result )
+	{
+		if ( result != null && result.resCode == '0000' )
+		{
+			alert('성공적으로 탈퇴되었습니다.');
+			location.reload();
+		}
+		else if ( result != null )
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			alert('가입 도중 오류가 발생했습니다. 관리자에게 문의해 주시기 바랍니다.');
+		}
 	}
 	
 </script>
@@ -121,11 +191,8 @@
 			
 			<div id="cafeButtons">
 			
-			<% if ( "N".equals(ownerYN) && "N".equals(memberYN) ) { %>
-				<div id="btnRegister">가입하기</div>
-			<% } else if ( "N".equals(ownerYN) && "Y".equals(memberYN) ) { %>
-				<div id="btnRetire">탈퇴하기</div>
-			<% } %>
+			<div id="btnRegister" onclick="registerCafeMember();">가입하기</div>
+			<div id="btnRetire" onclick="cancelCafeMember();">탈퇴하기</div>
 			
 			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
 				<div id="btnManage" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');">관리하기</div>

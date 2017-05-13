@@ -1057,4 +1057,113 @@ public class CafeAjaxController extends BaseController {
 		
 		return response;
 	}
+
+	// 카페 가입
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/registerCafeMemberAjax.do")
+	public @ResponseBody APIResponse registerCafeMemberAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
+
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			
+			HashMap cafeMainInfo = cafeBiz.getCafeMainInfo(param);
+			param.put("cafeNo", Util.getStringFromHash(cafeMainInfo, "cafeNo"));
+			param.put("cafeID", Util.getStringFromHash(cafeMainInfo, "cafeID"));
+			
+			if ( Util.isEmptyString(userID) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("회원정보가 올바르지 않습니다.");
+			}
+			else if ( !"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN")))
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("공개중인 카페가 아닙니다.");
+			}
+			else
+			{
+				HashMap userInfo = cafeBiz.getCafeUserInfo(param);
+				if ("Y".equals( Util.getStringFromHash(userInfo, "blockYN" ) ))
+				{
+					response.setResCode( ErrorCode.UNKNOWN_ERROR );
+					response.setResMsg("탈퇴된 카페는 가입이 불가합니다.");
+				}
+				else
+				{
+					int result = cafeBiz.registerCafeMember( param );	
+				}	
+			}
+
+			insertHistory("/cafe/registerCafeMemberAjax.do", userID , null, null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+
+			insertHistory("/cafe/registerCafeMemberAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+
+		return response;
+	}
+
+	// 카페 탈퇴
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/cancelCafeMemberAjax.do")
+	public @ResponseBody APIResponse cancelCafeMemberAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
+
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+
+			HashMap cafeMainInfo = cafeBiz.getCafeMainInfo(param);
+			param.put("cafeNo", Util.getStringFromHash(cafeMainInfo, "cafeNo"));
+			param.put("cafeID", Util.getStringFromHash(cafeMainInfo, "cafeID"));
+
+			if ( Util.isEmptyString(userID) )
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("회원정보가 올바르지 않습니다.");
+			}
+			else if ( !"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN")))
+			{
+				response.setResCode( ErrorCode.UNKNOWN_ERROR );
+				response.setResMsg("공개중인 카페가 아닙니다.");
+			}
+			else
+			{
+				int result = cafeBiz.cancelCafeMember( param );
+			}
+
+			insertHistory("/cafe/cancelCafeMemberAjax.do", userID , null, null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+
+			insertHistory("/cafe/cancelCafeMemberAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+
+		return response;
+	}
 }
