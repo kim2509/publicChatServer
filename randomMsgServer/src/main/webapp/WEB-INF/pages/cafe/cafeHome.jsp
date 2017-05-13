@@ -15,6 +15,17 @@
 		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
 		cafeName = cafeMainInfo.get("cafeName").toString();
 	}
+	
+	HashMap cafeUserInfo = (HashMap) request.getAttribute("cafeUserInfo");
+	String ownerYN = "N";
+	String memberYN = "N";
+	String memberType = "";
+	if ( cafeUserInfo != null )
+	{
+		ownerYN = cafeUserInfo.get("ownerYN").toString();
+		memberYN = cafeUserInfo.get("memberYN").toString();
+		memberType = cafeUserInfo.get("memberType").toString();
+	}
 %>
 
 <html>
@@ -102,6 +113,16 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 		$(element).addClass('link_tab');
 	}
 	
+	function goCafeManage( cafeID )
+	{
+		var url = '<%= Constants.getServerURL() + "/cafe/manage.do" %>?cafeID=' + cafeID
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
 </script>
 
 </head>
@@ -113,8 +134,11 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 		
 		<div class="titleDiv">
 			<div class="title"><%= cafeName %></div>
-			<div id="manage">i</div>
-			<div id="setting"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
+			<!-- div id="manage">i</div-->
+			
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
+			<div id="setting" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
+			<% } %>
 		</div>
 	
 		<div class="menu">

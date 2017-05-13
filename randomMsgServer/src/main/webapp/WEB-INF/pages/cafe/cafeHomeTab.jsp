@@ -35,16 +35,6 @@
 			document.location.href= url;
 	}
 	
-	function goCafeManage( cafeID )
-	{
-		var url = '<%= Constants.getServerURL() + "/cafe/manage.do" %>?cafeID=' + cafeID
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
-	
 </script>
 
 		<div id="cafeInfo">

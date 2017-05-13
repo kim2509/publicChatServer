@@ -73,6 +73,7 @@
 		
 		if ( tabIndex == 0 )
 		{
+			$('#myCafeList .empty').hide();
 			$('#myCafeList').show();
 			var param = {"startIndex":startIndex, "showCount" : pageSize};
 			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyCafeListReceived );			
@@ -84,6 +85,7 @@
 		}
 		else if ( tabIndex == 2 )
 		{
+			$('#popularCafeList .empty').hide();
 			$('#popularCafeList').show();
 			var param = {"startIndex":startIndex, "showCount" : pageSize};
 			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularCafeListReceived );

@@ -5,6 +5,7 @@
 
 <%
 	String isApp = request.getParameter("isApp");	
+	String loginUserType = Util.getString( request.getAttribute("loginUserType") );
 %>
 <html>
 <head>
@@ -115,9 +116,11 @@
 			
 			<div id="searchCafeDiv" onclick="goSearchCafe();">카페 검색</div>
 
+			<% if ( "normal".equals(loginUserType.toLowerCase())) { %>
 			<div style="float:right;"><input type="button" value="카페 만들기" class="btn1" onclick="goNewCafe();" /></div>
 			<div style="padding: 5px;font-weight:bold;margin-right:20px;width:70%">주위의 사람들과 취미를 공유해 보세요~</div>
-
+			<% } %>
+			
 		</div>
 		
 		<!-- 카페 리스트 -->

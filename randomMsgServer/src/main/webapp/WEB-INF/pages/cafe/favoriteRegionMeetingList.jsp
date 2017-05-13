@@ -335,6 +335,7 @@
 		<% } %>
 	</div>
 	
+	<% if ( myFavRegionList != null && myFavRegionList.size() > 0 ) { %>
 	<div id="meetingListDiv">
 		<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
 		<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
@@ -345,5 +346,6 @@
 		<div id="map">
 		</div>
 	</div>
+	<% } %>
 		
 	

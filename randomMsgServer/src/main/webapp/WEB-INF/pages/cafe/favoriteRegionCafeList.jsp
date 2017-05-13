@@ -316,6 +316,7 @@
 		<% } %>
 	</div>
 	
+	<% if ( myFavRegionList != null && myFavRegionList.size() > 0 ) { %>
 	<div id="favoriteRegionCafeListDiv">
 		<div id="optionViewByMap" class="option" onclick="toggleCafeResultView();">지도로 보기</div>
 		<div id="optionViewByList" class="option" onclick="toggleCafeResultView();">리스트로 보기</div>
@@ -326,5 +327,6 @@
 		<div id="favCafeMapDiv" style="display:none;height:200px;margin:0px 0px 10px 0px;">
 		</div>
 	</div>
+	<% } %>
 		
 	

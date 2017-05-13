@@ -198,7 +198,7 @@
 	
 	<br/> 집 : YzHLvDaLJkHDMis4Ipu+yhvJUlWLA011Wp9IAWGdOHY=
 	<br/> 회사 : dwhwRpDSNdqUzxIoaOWIvqEEWv3q3h35uBk8CSBiJgY=
-	
+	<br/> n0/2wJfv25oiPAXH/4TFE52Dg3K3u5Qh+MTMk0WcoGs=
 	<br/>
 	<input type="button" value="모든지역 좌표 초기화" onclick="UpdateLocationCoordsForAllRegionAjax();"/>
 </body>

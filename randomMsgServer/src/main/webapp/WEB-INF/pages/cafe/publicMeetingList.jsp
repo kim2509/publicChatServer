@@ -18,6 +18,7 @@
 		
 		if ( tabIndex == 0 )
 		{
+			$('#myCafeMeetingList .empty').hide();
 			$('#myCafeMeetingList').show();
 			
 			var param = {"startIndex":0, "showCount" : 3};
@@ -30,6 +31,7 @@
 		}
 		else if ( tabIndex == 2 )
 		{
+			$('#popularCafeMeetingList .empty').hide();
 			$('#popularCafeMeetingList').show();
 			
 			var param = {"startIndex":0, "showCount" : 3};

@@ -19,6 +19,8 @@
 		
 		if ( tabIndex == 0 )
 		{
+			$('#myCafeList .empty').hide();
+			
 			$('#myCafeList').show();
 			var param = {"startIndex":0, "showCount" : 10};
 			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyCafeListReceived );			
@@ -30,6 +32,8 @@
 		}
 		else if ( tabIndex == 2 )
 		{
+			$('#popularCafeList .empty').hide();
+			
 			$('#popularCafeList').show();
 			var param = {"startIndex":0, "showCount" : 10};
 			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularCafeListReceived );

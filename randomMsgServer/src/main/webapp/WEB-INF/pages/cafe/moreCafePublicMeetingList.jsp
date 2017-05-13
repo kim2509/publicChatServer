@@ -73,6 +73,7 @@
 		
 		if ( tabIndex == 0 )
 		{
+			$('#myCafeMeetingList .empty').hide();
 			$('#myCafeMeetingList').show();
 			
 			var param = {"startIndex":startIndex, "showCount" : pageSize};
@@ -87,6 +88,7 @@
 		}
 		else if ( tabIndex == 2 )
 		{
+			$('#popularCafeMeetingList .empty').hide();
 			$('#popularCafeMeetingList').show();
 			
 			var param = {"startIndex":startIndex, "showCount" : pageSize};
@@ -113,7 +115,7 @@
 			
 			totalItemCount = result.data2;
 			
-			if ($('#pagingInfo').length > 0 )
+			if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
 			{
 				$('#pagingInfo').show();
 				displayPagingInfo();
@@ -137,7 +139,7 @@
 			
 			totalItemCount = result.data2;
 			
-			if ($('#pagingInfo').length > 0 )
+			if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
 			{
 				$('#pagingInfo').show();
 				displayPagingInfo();

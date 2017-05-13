@@ -65,6 +65,8 @@ public class CafeController extends BaseController {
 				}
 				
 				model.addAttribute("myFavRegionList", myFavRegionList);
+				model.addAttribute("loginUserID", userID);
+				model.addAttribute("loginUserType", Util.getStringFromHash(userInfo, "type"));
 			}
 		}
 		catch( Exception ex )
