@@ -600,6 +600,16 @@
 			left outer join user u on cmm.userID = u.userID
 		where u.userID=#{userID}
 		and cm.cafeID=#{cafeID}
+		union all
+		select u.*
+			, '운영자' as memberType
+			, case when cm.owner = u.userID then 'Y' else 'N' end ownerYN
+			, 'Y' as memberYN
+			, 'N' as blockYN
+		from cafe_master cm
+			left outer join user u on cm.owner = u.userID
+		where u.userID=#{userID}
+		and cm.cafeID=#{cafeID}
 	</select>
 	
 	<update id="updateCafeMemberType" parameterType="HashMap">

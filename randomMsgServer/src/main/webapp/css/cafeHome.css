@@ -225,9 +225,8 @@ li{
     right: 10px;
 }
 
-#cafeInfo #cafeMeeting #btnMakeMeeting
+#btnMakeMeeting
 {
-	display:inline-block;
 	background:#7b7bba;
 	font-size:14px;
 	font-weight:bold;
@@ -236,6 +235,7 @@ li{
 	padding:10px 10px;
 	margin-top:10px;
 	margin-bottom:10px;
+	text-align:center;
 }
 
 #cafeInfo #cafeMemberInfo
@@ -299,6 +299,11 @@ li{
 	margin-bottom:10px;
 }
 
+#btnRegister, #btnRetire
+{
+	display:none;
+}
+
 .emptyDiv{
 	text-align:center;
 	height:200px;
@@ -307,6 +312,10 @@ li{
 	color:#524c4c;
 	font-weight: bold;
 	line-height: 25px;
+}
+
+#publicMeetingMakeDiv{
+	display:none;background-color: #FFFFFF;position: absolute;height: 250px;width: 80%;padding: 10px;border: 2px solid #E2E2E2;z-Index: 9999;
 }
 
 /* 게시판 탭 */

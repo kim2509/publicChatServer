@@ -28,7 +28,8 @@
 	var ownerYN = '<%= ownerYN %>';
 	var memberYN = '<%= memberYN %>';
 	var memberType = '<%= memberType %>';
-
+	var publicMeetingMakeModal = null;
+	
 	jQuery(document).ready( function(){
 		
 		if (ownerYN == 'N' && memberYN == 'N' ) {
@@ -40,6 +41,11 @@
 			$('#btnRetire').show();
 		}
 	
+		// 모달창 인스턴트 생성
+		publicMeetingMakeModal = new Example.Modal({
+		    id: "publicMeetingMakeDiv" // 모달창 아이디 지정
+		});
+		
 	});
 
 	function goMeetingDetail( cafeID, meetingNo )
@@ -105,6 +111,11 @@
 		}
 	}
 	
+	function makePublicMeeting()
+	{
+		publicMeetingMakeModal.show();
+	}
+	
 </script>
 
 		<div id="cafeInfo">
@@ -160,10 +171,19 @@
 					</li>
 					<% } %>
 					
-					<div id="btnMakeMeeting">정모만들기</div>
 				</ul>
 			</div>
 			
+			<% } %>
+			
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
+				<div id="btnMakeMeeting" onclick="makePublicMeeting();">정모만들기</div>
+				
+				<div id="publicMeetingMakeDiv">
+					정모 만들기
+					<br/>
+					afdsafdsas
+				</div>
 			<% } %>
 			
 			<% if ( cafeMemberList != null && cafeMemberList.size() > 0 ) {

@@ -74,6 +74,8 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=4" />	
 
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
+
 <script language="javascript">
 		
 	var isApp = '<%= isApp %>';
