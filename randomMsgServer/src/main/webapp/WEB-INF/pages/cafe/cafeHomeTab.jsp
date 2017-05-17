@@ -51,7 +51,7 @@
 	function goMeetingDetail( cafeID, meetingNo )
 	{
 		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
-				cafeID + '&meetingNo=' + meetingNo + "&userID=" + userID;
+				cafeID + '&meetingNo=' + meetingNo;
 	
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
@@ -111,9 +111,14 @@
 		}
 	}
 	
-	function makePublicMeeting()
+	function goMakePublicMeeting()
 	{
-		publicMeetingMakeModal.show();
+		var url = '<%= Constants.getServerURL() + "/cafe/makePublicMeeting.do" %>?cafeID=' + cafeID;
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
 	}
 	
 </script>
@@ -177,7 +182,7 @@
 			<% } %>
 			
 			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
-				<div id="btnMakeMeeting" onclick="makePublicMeeting();">정모만들기</div>
+				<div id="btnMakeMeeting" onclick="goMakePublicMeeting();">정모만들기</div>
 				
 				<div id="publicMeetingMakeDiv">
 					정모 만들기

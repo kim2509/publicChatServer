@@ -508,4 +508,26 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("cafe/moreCafeList", model);
 	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
+	@RequestMapping( value ="/cafe/makePublicMeeting.do")
+	public ModelAndView makePublicMeeting ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID ) 
+	{
+		String userID = "";
+		
+		try
+		{
+			if ( !CafeBiz.getInstance(sqlSession).isCafeManager(cafeID, userToken) )
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		insertHistory("/cafe/makePublicMeeting.do", userID , null , null, null );
+		
+		return new ModelAndView("cafe/makePublicMeeting", model);
+	}
 }
