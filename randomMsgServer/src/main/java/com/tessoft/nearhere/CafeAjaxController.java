@@ -1166,4 +1166,108 @@ public class CafeAjaxController extends BaseController {
 
 		return response;
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/cafe/saveCafePublicMeetingAjax.do")
+	public @ResponseBody APIResponse saveCafePublicMeetingAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+			else if ( Util.isEmptyForKey(param, "meetingTitle") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("정모 이름을 입력해 주십시오.");
+			}
+			else if ( Util.isEmptyForKey(param, "meetingDate") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("정모 일자를 입력해 주십시오.");
+			}
+			else
+			{
+				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+				int dbResult = cafeBiz.insertCafePublicMeeting(param);
+				
+				HashMap info = new HashMap();
+				info.put("dbResult", String.valueOf( dbResult ));
+				response.setData(info);
+			}
+			
+			insertHistory("/cafe/saveCafePublicMeetingAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 정보 저장중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/saveCafePublicMeetingAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/cafe/deleteCafePublicMeetingAjax.do")
+	public @ResponseBody APIResponse deleteCafePublicMeetingAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "meetingNo") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+			else
+			{
+				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+				int dbResult = cafeBiz.deleteCafePublicMeeting(param);
+				
+				HashMap info = new HashMap();
+				info.put("dbResult", String.valueOf( dbResult ));
+				response.setData(info);
+			}
+			
+			insertHistory("/cafe/deleteCafePublicMeetingAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("정모 삭제도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/deleteCafePublicMeetingAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

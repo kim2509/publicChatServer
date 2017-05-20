@@ -5,14 +5,16 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-	String userID = request.getParameter("userID");
+	String cafeID = request.getParameter("cafeID");
+	String loginUserID = "";
+	
 	HashMap meetingInfo = (HashMap) request.getAttribute("meetingInfo");
 	List<HashMap> meetingMembers = (List<HashMap>) request.getAttribute("meetingMembers");
 	boolean joinYN = false;
 	
 	for ( int i = 0; i < meetingMembers.size(); i++ ) {
 		HashMap meetingMember = meetingMembers.get(i);
-		if ( userID != null && userID.equals( meetingMember.get("userID").toString() ) )
+		if ( loginUserID != null && loginUserID.equals( meetingMember.get("userID").toString() ) )
 			joinYN = true;
 	}
 %>
@@ -40,7 +42,8 @@
 
 <script language="javascript">
 	
-	var userID = '<%= userID %>';
+	var isApp = '<%= isApp %>';
+	var cafeID = '<%= cafeID %>';
 	var meetingNo = '<%= meetingInfo.get("meetingNo") %>';
 	
 	jQuery(document).ready(function(){
@@ -117,7 +120,7 @@
 	{
 		if ( confirm('참석하시겠습니까?') )
 		{
-			var param = {"meetingNo":meetingNo, "userID": userID , "joinYN":"Y" }
+			var param = {"meetingNo":meetingNo , "joinYN":"Y" }
 			ajaxRequest('POST', '/nearhere/cafe/joinCafeMeeting.do', param , joinResult );
 		}
 	}
@@ -126,7 +129,7 @@
 	{
 		if ( confirm('참석을 취소하시겠습니까?') )
 		{
-			var param = {"meetingNo":meetingNo, "userID": userID , "joinYN":"N" }
+			var param = {"meetingNo":meetingNo , "joinYN":"N" }
 			ajaxRequest('POST', '/nearhere/cafe/joinCafeMeeting.do', param , joinResult );
 		}
 	}
@@ -135,6 +138,44 @@
 	{
 		document.location.reload();
 	}
+	
+	function deleteMeetingClick()
+	{
+		if ( confirm('정모를 삭제하시겠습니까?') )
+		{
+			var param = { "cafeID" : cafeID, "meetingNo": meetingNo };
+			
+			ajaxRequest('POST', '/nearhere/cafe/deleteCafePublicMeetingAjax.do', param , onDeleteMeetingResult );
+		}
+	}
+	
+	function onDeleteMeetingResult( result )
+	{
+		if ( result == null )
+		{
+			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			return;
+		}
+		else if ( result != null && result.resCode != '0000')
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			finish();
+		}
+	}
+	
+	function finish()
+	{
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity('refresh');
+		}
+		
+		return '';
+	}
+	
 </script>
 
 
@@ -144,7 +185,7 @@
 	<div id="wrapper">
 	
 		<div id="Navi">
-			<div id="btnDelete">삭제하기</div>
+			<div id="btnDelete" onclick="deleteMeetingClick();">삭제하기</div>
 			<div id="btnModify">수정하기</div>
 			<div id="naviTitle">&lt; 정모 상세</div>
 		</div>
@@ -184,7 +225,7 @@
 					<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= meetingMember.get("profileImageURL") %>" 
 							width=60 height=60/>
 						
-						<% if ( joinYN && userID.equals( meetingMember.get("userID").toString() )) { %>
+						<% if ( joinYN && loginUserID.equals( meetingMember.get("userID").toString() )) { %>
 						<div id="userName2"><%= meetingMember.get("userName") %></div>
 						<% } else { %>
 						<div id="userName"><%= meetingMember.get("userName") %></div>

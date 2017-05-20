@@ -25,33 +25,13 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage.css?v=" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/makePublicMeeting.css?v=" />
 
 <script language="javascript">
 	
 	var isApp = '<%= isApp %>';
 	var cafeID = '<%= cafeID %>';
 	
-	function goManageBoard()
-	{
-		var url = '<%= Constants.getServerURL() + "/cafe/manageBoard.do" %>?cafeID=' + cafeID
-	
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
-	
-	function goManageMember()
-	{
-		var url = '<%= Constants.getServerURL() + "/cafe/manageMember.do" %>?cafeID=' + cafeID
-	
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
-
 	var selectLocationModal = null;
 	
 	jQuery(document).ready(function(){
@@ -90,39 +70,42 @@
 	{
 		if ( locationResult != null )
 		{
-			$('#cafeLocationDiv').show();
+			$('#meetingLocationDiv').show();
 			$('#locationDesc').hide();
 			
-			$('#cafeLocation').html( locationResult.address );
+			$('#meetingLocation').html( locationResult.address );
 		}
-	}
-	
-	function validateEmail(email) {
-	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	    return re.test(email);
 	}
 	
 	function saveClick()
 	{
-		var cafeName = $('#cafeNameIput').val();
-		var mainDesc = $('#cafeDescInput').val();
-		var contactEmail = $('#contactEmail').val();
+		var meetingTitle = $('#meetingTitle').val();
+		var meetingDesc = $('#meetingDesc').val();
 		
-		// 저장할 때에는 이메일을 입력했을 때에만 validation 검사
-		if ( contactEmail != null && contactEmail.length > 0 && validateEmail(contactEmail) == false )
+		var meetingDate = $('.meetingDate').html();
+		var meetingTime = $('.meetingTime').html();
+		
+		if ( meetingTitle == '' )
 		{
-			alert('이메일 형식이 올바르지 않습니다.');
+			alert('정모이름을 입력해 주십시오.');
+			return;
+		}
+		
+		if ( meetingDate.length != 10 || meetingTime.length != 5 )
+		{
+			alert('정모 일시가 올바르지 않습니다.(yyyy-HH-mm hh:mm)');
 			return;
 		}
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"cafeID":cafeID, "cafeName":cafeName, "mainDesc": mainDesc, "contactEmail": contactEmail };
+			var param = {"cafeID":cafeID, "meetingTitle":meetingTitle, "meetingDesc": meetingDesc, 
+					"meetingDate" : meetingDate + ' ' + meetingTime };
 			
 			if ( locationResult != null )
-				param.cafeLocation = locationResult;
+				param.meetingLocation = locationResult;
 			
-			ajaxRequest('POST', '/nearhere/cafe/saveCafeInfoAjax.do', param , onSaveResult );
+			ajaxRequest('POST', '/nearhere/cafe/saveCafePublicMeetingAjax.do', param , onSaveResult );
 		}
 	}
 	
@@ -143,88 +126,30 @@
 		}
 	}
 	
-	function deleteCafe()
+	function openDatePicker()
 	{
-		if ( confirm('카페의 모든 데이터가 삭제됩니다. 계속하시겠습니까?') )
+		if ( Android && Android != null && typeof Android != 'undefined')
 		{
-			var param = {"cafeID":cafeID };
-			
-			ajaxRequest('POST', '/nearhere/cafe/deleteCafeAjax.do', param , deleteCafeResult );
+			Android.openDatePicker();
 		}
 	}
 	
-	function deleteCafeResult()
+	function setDepartureDate( departureDate )
 	{
-		if ( isApp =='Y' )
+		$('.departureDate').html( departureDate );
+	}
+	
+	function openTimePicker()
+	{
+		if ( Android && Android != null && typeof Android != 'undefined')
 		{
-		
-		}
-		else
-		{
-			window.history.back();
+			Android.openTimePicker();
 		}
 	}
 	
-	function publishCafe()
+	function setDepartureTime( departureTime )
 	{
-		if ( confirm('카페를 공개하시겠습니까?') )
-		{
-			var param = {"cafeID":cafeID };
-			ajaxRequest('POST', '/nearhere/cafe/publishCafeAjax.do', param , publishCafeResult );	
-		}
-	}
-	
-	function publishCafeResult( result )
-	{
-		if ( result == null )
-		{
-			alert('처리도중 오류가 발생했습니다.');
-			return;
-		}
-		
-		if ( result.resCode != '0000' )
-		{
-			alert( result.resMsg );
-			return;
-		}
-		else
-		{
-			$('#btnUnPublish').show();
-			$('#btnPublish').hide();
-			
-			alert('공개되었습니다.');	
-		}
-	}
-	
-	function unpublishCafe()
-	{
-		if ( confirm('운영자외에는 카페접근이 금지됩니다.\r\n정말카페를 비공개하시겠습니까?') )
-		{
-			var param = {"cafeID":cafeID };
-			ajaxRequest('POST', '/nearhere/cafe/unpublishCafeAjax.do', param , unpublishCafeResult );	
-		}
-	}
-	
-	function unpublishCafeResult( result )
-	{
-		if ( result == null )
-		{
-			alert('처리도중 오류가 발생했습니다.');
-			return;
-		}
-		
-		if ( result.resCode != '0000' )
-		{
-			alert( result.resMsg );
-			return;
-		}
-		else
-		{
-			$('#btnUnPublish').hide();
-			$('#btnPublish').show();
-			
-			alert('비공개되었습니다.');	
-		}
+		$('.departureTime').html( departureTime );
 	}
 	
 </script>
@@ -243,20 +168,20 @@
 			<p class="subTitle paddingLR10 paddingTop10">정모 이름</p>
 			
 			<div class="inputContainer marginLR10 marginB20">
-				<input type="text" id="cafeNameIput" class="inputTxt" placeholder="정모 이름" value="" />
+				<input type="text" id="meetingTitle" class="inputTxt" placeholder="정모 이름" value="" />
 			</div>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">상세 공지 내용</p>
 			
-			<textarea id="cafeDescInput" class="marginLR10 marginB20" value="" rows="3">
+			<textarea id="meetingDesc" class="marginLR10 marginB20" value="" rows="3">
 			</textarea>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">정모 위치</p>
 			
 			<div id="locationDiv" class="marginLR10">
-				<div id="cafeLocationDiv" style="display:none">
+				<div id="meetingLocationDiv" style="display:none">
 					<span>지역: </span>
-					<span id="cafeLocation"></span>
+					<span id="meetingLocation"></span>
 				</div>
 				<div id="locationDesc">현재 설정된 위치가 없습니다. 위치를 설정하시면 해당지역의 사용자들에게 검색이 됩니다.</div>
 			</div>
@@ -265,10 +190,17 @@
 				<div id="btnManageBoard" class="wideBtn whiteBG" onclick="goSelectLocation();">위치 지정</div>
 			</div>
 			
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">정모 일시</p>
+			
+			<div class="meetingDateTime">
+				<div class="meetingDate" onclick="openDatePicker();">2018-12-28</div>
+				<div class="meetingTime" onclick="openTimePicker();">19:00</div>
+			</div>
+			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">전체 인원</p>
 			
 			<div class="inputContainer marginLR10 marginB20">
-				<input type="text" id="contactEmail" class="inputTxt" placeholder="이메일" value="" />
+				<input type="text" id="contactEmail" class="inputTxt" placeholder="최대 인원수" value="" />
 			</div>
 			
 			<div class="upperLine">
@@ -278,10 +210,7 @@
 			
 				<div class="wideBtn btnBG" onclick="saveClick();">저장</div>
 				
-				<div class="wideBtn redBG" onclick="deleteCafe();">카페 폐쇄</div>
-			
 			</div>
-		
 		
 			<!-- 모달창 -->
 			<div id="modal">

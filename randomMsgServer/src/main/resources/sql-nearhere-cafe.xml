@@ -708,4 +708,18 @@
 		delete from cafe_members
 		where cafeNo = #{cafeNo} and userID = #{userID}
 	</delete>
+	
+	<!-- 정모 만들기 -->
+	<insert id="insertCafePublicMeeting" parameterType="HashMap">
+		insert into cafe_public_meeting(cafeNo, title, meetingDate, locationNo, maxNo, createdDate)
+		select cafeNo, #{meetingTitle}, #{meetingDate}, #{locationNo}, #{maxNo}, NOW()
+			FROM cafe_master cm
+		where cm.cafeID=#{cafeID}
+	</insert>
+	
+	<!-- 정모 삭제 -->
+	<delete id="deleteCafePublicMeeting" parameterType="HashMap">
+		delete from cafe_public_meeting
+		where meetingNo = #{meetingNo}
+	</delete>
 </mapper>
