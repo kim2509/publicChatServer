@@ -432,7 +432,9 @@
 	</select>
 	
 	<select id="getCafeMeetingInfo" resultType="HashMap" parameterType="HashMap">
-		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDate, cl.latitude, cl.longitude, cl.address, ifnull(cm.maxNo, 0 ) as maxNo
+		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDesc, cm.meetingDate
+			, cl.latitude, cl.longitude, cl.locationName, cl.address
+			, ifnull(cm.maxNo, 0 ) as maxNo
 			, ifnull(cmm.curNo,0) as curNo
 		from cafe_public_meeting cm
 			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm

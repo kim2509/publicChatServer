@@ -6,6 +6,7 @@
 <% 
 	String cafeID = request.getParameter("cafeID");
 	String isApp = request.getParameter("isApp");
+	String meetingNo = request.getParameter("meetingNo");
 %>
 
 <html>
@@ -31,6 +32,7 @@
 	
 	var isApp = '<%= isApp %>';
 	var cafeID = '<%= cafeID %>';
+	var meetingNo = '<%= meetingNo %>';
 	
 	var selectLocationModal = null;
 	
@@ -40,6 +42,11 @@
 		selectLocationModal = new Example.Modal({
 		    id: "modal" // 모달창 아이디 지정
 		});
+		
+		if ( meetingNo != null && meetingNo.length > 0 )
+		{
+			getMeetingInfo();
+		}
 	});
 	
 	function goSelectLocation()
@@ -152,6 +159,36 @@
 		$('.departureTime').html( departureTime );
 	}
 	
+	function getMeetingInfo()
+	{
+		var param = {"meetingNo":meetingNo};
+		
+		ajaxRequest('POST', '/nearhere/cafe/getCafePublicMeetingInfoAjax.do', param , onMeetingInfoFetched );
+	}
+	
+	var meetingInfo = null;
+	function onMeetingInfoFetched( result )
+	{
+		if ( result == null )
+		{
+			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			return;
+		}
+		else if ( result != null && result.resCode != '0000')
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			console.log( JSON.stringify( result ) );
+			
+			meetingInfo = result.data.meetingInfo;
+			$('#meetingTitle').val( meetingInfo.title );
+			$('#meetingDesc').val( meetingInfo.meetingDesc );
+			$('#maxNo').val( meetingInfo.maxNo );
+		}
+	}
+	
 </script>
 
 </head>
@@ -173,8 +210,7 @@
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">상세 공지 내용</p>
 			
-			<textarea id="meetingDesc" class="marginLR10 marginB20" value="" rows="3">
-			</textarea>
+			<textarea id="meetingDesc" class="marginLR10 marginB20" value="" rows="3"></textarea>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">정모 위치</p>
 			
@@ -200,7 +236,7 @@
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">전체 인원</p>
 			
 			<div class="inputContainer marginLR10 marginB20">
-				<input type="text" id="contactEmail" class="inputTxt" placeholder="최대 인원수" value="" />
+				<input type="text" id="maxNo" class="inputTxt" placeholder="최대 인원수" value="" />
 			</div>
 			
 			<div class="upperLine">

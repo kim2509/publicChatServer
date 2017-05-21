@@ -17,6 +17,9 @@
 		if ( loginUserID != null && loginUserID.equals( meetingMember.get("userID").toString() ) )
 			joinYN = true;
 	}
+	
+	String locationName = Util.getStringFromHash(meetingInfo, "locationName");
+	String locationAddress = Util.getStringFromHash(meetingInfo, "locationAddress");
 %>
 
 <html>
@@ -176,6 +179,16 @@
 		return '';
 	}
 	
+	function goModifyPublicMeeting()
+	{
+		var url = '<%= Constants.getServerURL() + "/cafe/makePublicMeeting.do" %>?cafeID=' + cafeID + '&meetingNo=' + meetingNo;
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
 </script>
 
 
@@ -186,7 +199,7 @@
 	
 		<div id="Navi">
 			<div id="btnDelete" onclick="deleteMeetingClick();">삭제하기</div>
-			<div id="btnModify">수정하기</div>
+			<div id="btnModify" onclick="goModifyPublicMeeting();">수정하기</div>
 			<div id="naviTitle">&lt; 정모 상세</div>
 		</div>
 
@@ -199,14 +212,17 @@
 		</div>
 		
 		<table id="locationInfo">
-			<tr><th>위치</th><td>서울시 송파구 방이동 방이 재래시장</td></tr>
+			<tr><th>위치</th>
+			<td>
+			<%= Util.isEmptyString(locationName) ? "" : "(" + locationName + ")" %>
+			<%= locationAddress %>
+			</td></tr>
 		</table>
 		
 		<div id="map"></div>
 		
 		<div id="meetingDesc">
-			늦으면 곤란하고 주차 안되고 하니 빨랑 오세요~
-			회비는 2만원입니다.
+			<%= Util.getStringFromHash(meetingInfo, "meetingDesc") %>
 		</div>
 		
 		<div>

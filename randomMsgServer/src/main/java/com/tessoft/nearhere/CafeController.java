@@ -332,7 +332,7 @@ public class CafeController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/cafe/meetingDetail.do")
-	public ModelAndView meetingDetail ( String cafeID , String meetingNo, String userID, ModelMap model,
+	public ModelAndView meetingDetail ( String cafeID , String meetingNo, ModelMap model,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
 	{
 		try
@@ -347,13 +347,20 @@ public class CafeController extends BaseController {
 			
 			List<HashMap> meetingMembers = cafeBiz.getCafeMeetingMembers(param);
 			model.addAttribute("meetingMembers", meetingMembers);
+			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+			if ( userInfo != null )
+			{
+				model.addAttribute("loginUserID", Util.getStringFromHash(userInfo, "userID") );	
+			}
 		}
 		catch( Exception ex )
 		{
 			logger.error( ex );
 		}
 		
-		insertHistory("/cafe/meetingDetail.do", cafeID , meetingNo , userID, null );
+		insertHistory("/cafe/meetingDetail.do", cafeID , meetingNo , null , null );
 		
 		return new ModelAndView("cafe/meetingDetail", model);
 	}
@@ -512,7 +519,7 @@ public class CafeController extends BaseController {
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked"})
 	@RequestMapping( value ="/cafe/makePublicMeeting.do")
 	public ModelAndView makePublicMeeting ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID ) 
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID, String meetingNo ) 
 	{
 		String userID = "";
 		

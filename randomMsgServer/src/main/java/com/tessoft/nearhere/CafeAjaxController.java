@@ -1270,4 +1270,43 @@ public class CafeAjaxController extends BaseController {
 		
 		return response;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getCafePublicMeetingInfoAjax.do")
+	public @ResponseBody APIResponse getCafePublicMeetingInfoAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "meetingNo") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			
+			HashMap info = new HashMap();
+			
+			info.put("meetingInfo", cafeBiz.getCafeMeetingInfo(param) );
+			
+			response.setData(info);
+			
+			insertHistory("/cafe/getCafePublicMeetingInfoAjax.do", param.get("meetingNo").toString() , null , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/getCafePublicMeetingInfoAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }
