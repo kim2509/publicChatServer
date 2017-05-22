@@ -364,6 +364,7 @@
 			}
 			
 			result.address = result.address1;
+			result.locationName = $('#searchLocationKeyword').val();
 			
 			// parent 의 함수를 호출
 			locationSelected( result );

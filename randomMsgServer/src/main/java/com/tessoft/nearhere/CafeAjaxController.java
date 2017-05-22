@@ -1203,7 +1203,13 @@ public class CafeAjaxController extends BaseController {
 			else
 			{
 				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-				int dbResult = cafeBiz.insertCafePublicMeeting(param);
+				
+				int dbResult = 0;
+				
+				if ( Util.isEmptyForKey(param, "meetingNo") )
+					dbResult = cafeBiz.insertCafePublicMeeting(param);
+				else
+					dbResult = cafeBiz.updateCafePublicMeeting(param);
 				
 				HashMap info = new HashMap();
 				info.put("dbResult", String.valueOf( dbResult ));

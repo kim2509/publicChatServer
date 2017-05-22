@@ -391,8 +391,8 @@
 	
 	<insert id="insertCafeLocation" parameterType="HashMap"
 		useGeneratedKeys="true" keyProperty="locationNo" keyColumn="locationNo">
-		insert into cafe_location( type, latitude, longitude, regionNo, address, createdDate )
-		values( #{locationType}, #{latitude}, #{longitude}, #{regionNo}, #{address}, NOW() );
+		insert into cafe_location( type, latitude, longitude, regionNo, locationName, address, createdDate )
+		values( #{locationType}, #{latitude}, #{longitude}, #{regionNo}, #{locationName}, #{address}, NOW() );
 		<selectKey keyProperty="locationNo" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
@@ -403,6 +403,7 @@
 		set type=#{locationType}
 		, latitude=#{latitude}
 		, longitude=#{longitude}
+		, locationName=#{locationName}
 		, regionNo=#{regionNo}
 		, address=#{address}
 		where No = #{locationNo}
@@ -713,11 +714,20 @@
 	
 	<!-- 정모 만들기 -->
 	<insert id="insertCafePublicMeeting" parameterType="HashMap">
-		insert into cafe_public_meeting(cafeNo, title, meetingDate, locationNo, maxNo, createdDate)
-		select cafeNo, #{meetingTitle}, #{meetingDate}, #{locationNo}, #{maxNo}, NOW()
+		insert into cafe_public_meeting(cafeNo, title, meetingDesc, meetingDate, locationNo, maxNo, createdDate)
+		select cafeNo, #{meetingTitle}, #{meetingDesc}, #{meetingDate}, #{locationNo}, #{maxNo}, NOW()
 			FROM cafe_master cm
 		where cm.cafeID=#{cafeID}
 	</insert>
+	
+	<!-- 정모 수정 -->
+	<update id="updateCafePublicMeeting" parameterType="HashMap">
+		update cafe_public_meeting
+		set title = #{meetingTitle}, meetingDesc = #{meetingDesc}, meetingDate = #{meetingDate}
+		, locationNo = #{locationNo}, maxNo = #{maxNo}
+		, createdDate = NOW()
+		where meetingNo = #{meetingNo}
+	</update>
 	
 	<!-- 정모 삭제 -->
 	<delete id="deleteCafePublicMeeting" parameterType="HashMap">

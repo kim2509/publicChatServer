@@ -583,10 +583,51 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public int insertCafePublicMeeting( HashMap param )
+	public int insertCafePublicMeeting( HashMap param ) throws Exception
 	{
+		handleCafeLocation(param);
+		
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafePublicMeeting", param);
 		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafePublicMeeting( HashMap param ) throws Exception
+	{
+		handleCafeLocation(param);
+		
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafePublicMeeting", param);
+		return result;
+	}
+
+	private void handleCafeLocation(HashMap param) throws Exception {
+		
+		if ( !Util.isEmptyForKey( param, "meetingLocation") && param.get("meetingLocation") != null )
+		{
+			HashMap locationInfo = (HashMap) param.get("meetingLocation");
+			
+			if ( !Util.isEmptyForKey(locationInfo, "latitude") && !Util.isEmptyForKey(locationInfo, "longitude") )
+			{
+				String fullAddress = Util.getFullAddress(Util.getStringFromHash(locationInfo, "latitude"), Util.getStringFromHash(locationInfo, "longitude"));
+				HashMap regionInfo = getRegionInfo(fullAddress);
+				HashMap theRegion = (HashMap) regionInfo.get("region");
+				locationInfo.put("regionNo", theRegion.get("regionNo") );
+			}
+			
+			long locationNo = 0;
+			
+			if ( Util.isEmptyForKey( locationInfo, "locationNo") )
+			{
+				insertCafeLocation(locationInfo);
+				locationNo = Long.parseLong( locationInfo.get("locationNo").toString() );
+				param.put("locationNo", locationNo );
+			}
+			else
+			{
+				param.put("locationNo", locationInfo.get("locationNo") );
+				updateCafeLocation(locationInfo);
+			}
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")

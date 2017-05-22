@@ -80,7 +80,18 @@
 			$('#meetingLocationDiv').show();
 			$('#locationDesc').hide();
 			
-			$('#meetingLocation').html( locationResult.address );
+			if ( locationResult.locationName != null && locationResult.locationName.length > 0 )
+			{
+				$('#meetingLocationName').html( locationResult.locationName );
+				$('#meetingLocation').html( '(' + locationResult.address + ')' );
+			}
+			else
+			{
+				$('#meetingLocation').html( locationResult.address );
+			}
+				
+			
+			
 		}
 	}
 	
@@ -88,6 +99,7 @@
 	{
 		var meetingTitle = $('#meetingTitle').val();
 		var meetingDesc = $('#meetingDesc').val();
+		var maxNo = $('#maxNo').val();
 		
 		var meetingDate = $('.meetingDate').html();
 		var meetingTime = $('.meetingTime').html();
@@ -106,11 +118,13 @@
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"cafeID":cafeID, "meetingTitle":meetingTitle, "meetingDesc": meetingDesc, 
-					"meetingDate" : meetingDate + ' ' + meetingTime };
+			var param = {"cafeID":cafeID, "meetingTitle":meetingTitle, "meetingDesc": meetingDesc, "meetingNo": meetingNo,
+					"maxNo": maxNo, "meetingDate" : meetingDate + ' ' + meetingTime };
 			
 			if ( locationResult != null )
 				param.meetingLocation = locationResult;
+			
+			console.log( JSON.stringify( param ) );
 			
 			ajaxRequest('POST', '/nearhere/cafe/saveCafePublicMeetingAjax.do', param , onSaveResult );
 		}
@@ -217,6 +231,7 @@
 			<div id="locationDiv" class="marginLR10">
 				<div id="meetingLocationDiv" style="display:none">
 					<span>지역: </span>
+					<span id="meetingLocationName"></span>
 					<span id="meetingLocation"></span>
 				</div>
 				<div id="locationDesc">현재 설정된 위치가 없습니다. 위치를 설정하시면 해당지역의 사용자들에게 검색이 됩니다.</div>
