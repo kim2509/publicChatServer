@@ -62,6 +62,9 @@
 			{
 				locationTabSelect(0);
 				
+				if ( locationObject.locationName != null && locationObject.locationName.length > 0 )
+					$('#searchLocationKeyword').val( locationObject.locationName );
+				
 				var latLng = new daum.maps.LatLng( locationObject.latitude, locationObject.longitude);
 				
 				// 지도 초기 위치 설정

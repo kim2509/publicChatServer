@@ -181,14 +181,9 @@
 			
 			<% } %>
 			
-			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "운영자".equals( memberType ) ) { %>
 				<div id="btnMakeMeeting" onclick="goMakePublicMeeting();">정모만들기</div>
 				
-				<div id="publicMeetingMakeDiv">
-					정모 만들기
-					<br/>
-					afdsafdsas
-				</div>
 			<% } %>
 			
 			<% if ( cafeMemberList != null && cafeMemberList.size() > 0 ) {

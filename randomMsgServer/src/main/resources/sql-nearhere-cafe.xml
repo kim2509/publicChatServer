@@ -434,7 +434,7 @@
 	
 	<select id="getCafeMeetingInfo" resultType="HashMap" parameterType="HashMap">
 		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDesc, cm.meetingDate
-			, cl.latitude, cl.longitude, cl.locationName, cl.address
+			, cl.No as locationNo, cl.latitude, cl.longitude, cl.locationName, cl.address, cl.type as locationType
 			, ifnull(cm.maxNo, 0 ) as maxNo
 			, ifnull(cmm.curNo,0) as curNo
 		from cafe_public_meeting cm

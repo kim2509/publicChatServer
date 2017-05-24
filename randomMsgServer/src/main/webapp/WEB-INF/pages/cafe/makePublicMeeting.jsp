@@ -6,7 +6,7 @@
 <% 
 	String cafeID = request.getParameter("cafeID");
 	String isApp = request.getParameter("isApp");
-	String meetingNo = request.getParameter("meetingNo");
+	String meetingNo = Util.getString(request.getParameter("meetingNo"));
 %>
 
 <html>
@@ -26,7 +26,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/makePublicMeeting.css?v=" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/makePublicMeeting.css?v=3" />
 
 <script language="javascript">
 	
@@ -87,6 +87,7 @@
 			}
 			else
 			{
+				$('#meetingLocationName').html('');
 				$('#meetingLocation').html( locationResult.address );
 			}
 				
@@ -200,7 +201,40 @@
 			$('#meetingTitle').val( meetingInfo.title );
 			$('#meetingDesc').val( meetingInfo.meetingDesc );
 			$('#maxNo').val( meetingInfo.maxNo );
+			
+			if ( meetingInfo.locationNo > 0 )
+			{
+				$('#meetingLocationDiv').show();
+				$('#locationDesc').hide();
+				$('#meetingLocationName').html( meetingInfo.locationName);
+				$('#meetingLocation').html( meetingInfo.address);
+				
+				locationResult = {};
+				locationResult.locationNo = meetingInfo.locationNo;
+				locationResult.locationType = meetingInfo.locationType;
+				locationResult.latitude = meetingInfo.latitude;
+				locationResult.longitude = meetingInfo.longitude;
+				locationResult.address = meetingInfo.address;
+				locationResult.locationName = meetingInfo.locationName;
+			}
+			
+			if ( meetingInfo.meetingDate > 0 )
+			{
+				var meetingDate = displayDateFormat( meetingInfo.meetingDate, 'yyyy-MM-dd HH:mm' );
+				$('.meetingDateTime .meetingDate').html( meetingDate.substring(0,10));
+				$('.meetingDateTime .meetingTime').html( meetingDate.substring(11));
+			}
 		}
+	}
+	
+	function onDateSet( dateString )
+	{
+		$('.meetingDateTime .meetingDate').html( dateString );
+	}
+	
+	function onTimeSet( timeString )
+	{
+		$('.meetingDateTime .meetingTime').html( timeString );
 	}
 	
 </script>
@@ -211,7 +245,11 @@
 	<div id="wrapper">
 
 		<div class="titleDiv">
+		<% if (Util.isEmptyString(meetingNo)) { %>
 			<div class="title">정모 만들기</div>
+		<% } else { %>
+			<div class="title">정모 수정하기</div>
+		<% } %>
 		</div>
 		
 		<div id="container">
@@ -244,8 +282,8 @@
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">정모 일시</p>
 			
 			<div class="meetingDateTime">
-				<div class="meetingDate" onclick="openDatePicker();">2018-12-28</div>
-				<div class="meetingTime" onclick="openTimePicker();">19:00</div>
+				<div class="meetingDate" onclick="openDatePicker();">날짜 설정</div>
+				<div class="meetingTime" onclick="openTimePicker();">시간 설정</div>
 			</div>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">전체 인원</p>

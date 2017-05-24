@@ -191,6 +191,34 @@ li{
 	clear:both;
 }
 
+.meetingDateTime{
+	height: 50px;
+}
+
+.meetingDateTime .meetingDate{
+	position: absolute;
+    left: 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background: white;
+    line-height: 40px;
+    color: gray;
+    text-align: center;
+    width: 45%;
+}
+
+.meetingDateTime .meetingTime{
+	position: absolute;
+    right: 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background: white;
+    line-height: 40px;
+    color: gray;
+    text-align: center;
+    width: 45%;
+}
+
 /* 모달 */
 #modal {
 	display:none;
