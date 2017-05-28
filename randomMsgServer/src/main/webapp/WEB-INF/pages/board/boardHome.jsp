@@ -38,6 +38,7 @@
 <script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	var boardNo = '<%= boardNo %>';
 	var boardName = '<%= boardName %>';
 
 	function goPostDetail( postNo )
@@ -49,6 +50,15 @@
 		document.location.href="/nearhere/cafe/boardPost/detail/" + postNo + "?boardName=" + encodeURIComponent(boardName);
 	}
 	
+	function goNewBoardPost()
+	{
+		var url = '<%= Constants.getServerURL() + "/boardPost/newBoardPost.do" %>?boardNo=' + boardNo;
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
 </script>
 
 </head>
@@ -62,7 +72,7 @@
 	
 		<div id="menu">
 			<div id="navBack">&lt; <%= boardName %></div>
-			<div id="btnNew">글쓰기</div>
+			<div id="btnNew" onclick="goNewBoardPost();">글쓰기</div>
 			<div id="btnNoti">공지</div>
 		</div>
 		
