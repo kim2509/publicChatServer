@@ -4,9 +4,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <% 
-	String cafeID = request.getParameter("cafeID");
 	String isApp = request.getParameter("isApp");
-	String meetingNo = Util.getString(request.getParameter("meetingNo"));
+	String cafeID = request.getParameter("cafeID");
+	String boardNo = Util.getString(request.getParameter("boardNo"));	
+	String postNo = Util.getString(request.getParameter("postNo"));
 %>
 
 <html>
@@ -14,7 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>카페 관리하기</title>
+<title>게시글 작성</title>
 
 
 <!-- Include the jQuery library -->
@@ -32,7 +33,8 @@
 	
 	var isApp = '<%= isApp %>';
 	var cafeID = '<%= cafeID %>';
-	var meetingNo = '<%= meetingNo %>';
+	var boardNo = '<%= boardNo %>';
+	var postNo = '<%= postNo %>';
 	
 	var selectLocationModal = null;
 	
@@ -43,10 +45,6 @@
 		    id: "modal" // 모달창 아이디 지정
 		});
 		
-		if ( meetingNo != null && meetingNo.length > 0 )
-		{
-			getMeetingInfo();
-		}
 	});
 	
 	function goSelectLocation()
@@ -98,36 +96,26 @@
 	
 	function saveClick()
 	{
-		var meetingTitle = $('#meetingTitle').val();
-		var meetingDesc = $('#meetingDesc').val();
+		var title = $('#title').val();
+		var desc = $('#desc').val();
 		var maxNo = $('#maxNo').val();
 		
-		var meetingDate = $('.meetingDate').html();
-		var meetingTime = $('.meetingTime').html();
-		
-		if ( meetingTitle == '' )
+		if ( title == '' )
 		{
-			alert('정모이름을 입력해 주십시오.');
-			return;
-		}
-		
-		if ( meetingDate.length != 10 || meetingTime.length != 5 )
-		{
-			alert('정모 일시가 올바르지 않습니다.(yyyy-HH-mm hh:mm)');
+			alert('제목을 입력해 주십시오.');
 			return;
 		}
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"cafeID":cafeID, "meetingTitle":meetingTitle, "meetingDesc": meetingDesc, "meetingNo": meetingNo,
-					"maxNo": maxNo, "meetingDate" : meetingDate + ' ' + meetingTime };
+			var param = {"cafeID":cafeID, "boardNo":boardNo, "title": title };
 			
 			if ( locationResult != null )
 				param.meetingLocation = locationResult;
 			
 			console.log( JSON.stringify( param ) );
 			
-			ajaxRequest('POST', '/nearhere/cafe/saveCafePublicMeetingAjax.do', param , onSaveResult );
+			ajaxRequest('POST', '/nearhere/boardPost/saveCafeBoardPostAjax.do', param , onSaveResult );
 		}
 	}
 	
@@ -146,32 +134,6 @@
 		{
 			alert('저장되었습니다.');
 		}
-	}
-	
-	function openDatePicker()
-	{
-		if ( Android && Android != null && typeof Android != 'undefined')
-		{
-			Android.openDatePicker();
-		}
-	}
-	
-	function setDepartureDate( departureDate )
-	{
-		$('.departureDate').html( departureDate );
-	}
-	
-	function openTimePicker()
-	{
-		if ( Android && Android != null && typeof Android != 'undefined')
-		{
-			Android.openTimePicker();
-		}
-	}
-	
-	function setDepartureTime( departureTime )
-	{
-		$('.departureTime').html( departureTime );
 	}
 	
 	function getMeetingInfo()
@@ -245,7 +207,7 @@
 	<div id="wrapper">
 
 		<div class="titleDiv">
-		<% if (Util.isEmptyString(meetingNo)) { %>
+		<% if (Util.isEmptyString(postNo)) { %>
 			<div class="title">게시글 쓰기</div>
 		<% } else { %>
 			<div class="title">게시글 수정하기</div>
@@ -257,12 +219,12 @@
 			<p class="subTitle paddingLR10 paddingTop10">제목</p>
 			
 			<div class="inputContainer marginLR10 marginB20">
-				<input type="text" id="meetingTitle" class="inputTxt" placeholder="정모 이름" value="" />
+				<input type="text" id="title" class="inputTxt" placeholder="글 제목" value="" />
 			</div>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">내용</p>
 			
-			<textarea id="meetingDesc" class="marginLR10 marginB20" value="" rows="3"></textarea>
+			<textarea id="desc" class="marginLR10 marginB20" value="" rows="3"></textarea>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">첨부된 이미지</p>
 			

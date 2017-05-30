@@ -5,6 +5,8 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String cafeID = request.getParameter("cafeID");
+
 	List<HashMap> boardPostList = (List<HashMap>) request.getAttribute("boardPostList");
 	
 	String boardNo = "";
@@ -38,6 +40,7 @@
 <script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	var cafeID = '<%= cafeID %>';
 	var boardNo = '<%= boardNo %>';
 	var boardName = '<%= boardName %>';
 
@@ -52,7 +55,7 @@
 	
 	function goNewBoardPost()
 	{
-		var url = '<%= Constants.getServerURL() + "/boardPost/newBoardPost.do" %>?boardNo=' + boardNo;
+		var url = '<%= Constants.getServerURL() + "/boardPost/newBoardPost.do" %>?cafeID=' + cafeID + '&boardNo=' + boardNo;
 
 		if ( isApp == 'Y' )
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
@@ -81,13 +84,15 @@
 			<% if ( boardPostList != null && boardPostList.size() > 0 ) { %>
 			<ul>
 				<% for ( int i = 0; i < boardPostList.size(); i++ ) { 
-					String postNo = boardPostList.get(i).get("postNo").toString();
-					String postTitle = boardPostList.get(i).get("title").toString();
-					String noticeYN = boardPostList.get(i).get("noticeYN").toString();
-					String userName = boardPostList.get(i).get("userName").toString();
-					String readCount = boardPostList.get(i).get("readCount").toString();
-					String replyCount = boardPostList.get(i).get("replyCount").toString();
-					String createdDate = boardPostList.get(i).get("createdDate").toString();
+					
+					HashMap boardPost = boardPostList.get(i);
+					String postNo = Util.getStringFromHash(boardPost, "postNo");
+					String postTitle = Util.getStringFromHash(boardPost, "title");
+					String noticeYN = Util.getStringFromHash(boardPost, "noticeYN");
+					String userName = Util.getStringFromHash(boardPost, "userName");
+					String readCount = Util.getStringFromHash(boardPost, "readCount");
+					String replyCount = Util.getStringFromHash(boardPost, "replyCount");
+					String createdDate = Util.getStringFromHash(boardPost, "createdDate");
 					Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
 				%>
 				<li onclick="goPostDetail('<%= postNo %>');">

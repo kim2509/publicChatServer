@@ -17,6 +17,7 @@ import com.nearhere.domain.APIResponse;
 
 import common.CafeBiz;
 import common.CafeBoardPostBiz;
+import common.UserBiz;
 
 @Controller
 public class BoardPostAjaxController extends BaseController {
@@ -34,10 +35,8 @@ public class BoardPostAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			HashMap cafeBoardInfo = CafeBiz.getInstance(sqlSession).getCafeBoardInfo(param);
-			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
-			
-			String writePermission = Util.getStringFromHash(cafeBoardInfo, "writePermission");
+			userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
 			
 			if ( Util.isEmptyForKey(param, "boardNo") )
 			{
@@ -49,30 +48,65 @@ public class BoardPostAjaxController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("제목을 입력해 주십시오.");
 			}
+			else if ( Util.isEmptyString(userID) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("사용자 정보가 올바르지 않습니다.");
+			}
 			else
 			{
-				CafeBoardPostBiz cafeBoardPostBiz = CafeBoardPostBiz.getInstance(sqlSession);
+				HashMap cafeBoardInfo = CafeBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+				HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
 				
-				int dbResult = 0;
-				
-				if ( Util.isEmptyForKey(param, "postNo") )
+				String ownerYN = "N";
+				String memberYN = "N";
+				String memberType = "";
+				if ( cafeUserInfo != null )
 				{
-					cafeBoardPostBiz.insertCafeBoardPostMaster(param);
+					ownerYN = cafeUserInfo.get("ownerYN").toString();
+					memberYN = cafeUserInfo.get("memberYN").toString();
+					memberType = cafeUserInfo.get("memberType").toString();
 				}
 				
-				HashMap info = new HashMap();
-				info.put("dbResult", String.valueOf( dbResult ));
-				response.setData(info);
+				String writePermission = Util.getStringFromHash(cafeBoardInfo, "writePermission");
+				
+				if ("1".equals(writePermission) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("글쓰기 권한이 없는 사용자입니다.");
+				}
+				else if ("2".equals(writePermission) && !"Y".equals(ownerYN) )  // 카페 주인만
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("글쓰기 권한이 없는 사용자입니다.");
+				}			
+				else
+				{
+					CafeBoardPostBiz cafeBoardPostBiz = CafeBoardPostBiz.getInstance(sqlSession);
+					
+					int dbResult = 0;
+					
+					if ( Util.isEmptyForKey(param, "postNo") )
+					{
+						dbResult = cafeBoardPostBiz.insertCafeBoardPostMaster(param);
+						dbResult = cafeBoardPostBiz.insertCafeBoardPostDetail(param);
+					}
+					
+					HashMap info = new HashMap();
+					info.put("dbResult", String.valueOf( dbResult ));
+					response.setData(info);
+				}
+				
+				insertHistory("/cafe/saveCafeBoardPostAjax.do", param.get("cafeID").toString() , null , null , null );
 			}
-			
-			insertHistory("/cafe/saveCafePublicMeetingAjax.do", param.get("cafeID").toString() , null , null , null );
+
 		}
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("카페 정보 저장중 오류가 발생했습니다.");
+			response.setResMsg("게시글 저장 중 오류가 발생했습니다.");
 			
-			insertHistory("/cafe/saveCafePublicMeetingAjax.do", null , null , null, "exception" );
+			insertHistory("/cafe/saveCafeBoardPostAjax.do", null , null , null, "exception" );
 			logger.error( ex );
 		}
 		
