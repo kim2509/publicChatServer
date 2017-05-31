@@ -5,8 +5,11 @@
 
 <%
 	String isApp = request.getParameter("isApp");
+	String cafeID = request.getParameter("cafeID");
+	String boardNo = request.getParameter("boardNo");
 	String boardName = request.getParameter("boardName");
 	HashMap postInfo = (HashMap) request.getAttribute("postInfo");
+	String postNo = Util.getStringFromHash(postInfo, "postNo");
 	List<HashMap> contentList = (List<HashMap>) request.getAttribute("contentList");
 	List<HashMap> postReplyList = (List<HashMap>) request.getAttribute("postReplyList");
 	
@@ -39,6 +42,11 @@
 
 <script language="javascript">
 	
+	var isApp = '<%= isApp %>';
+	var cafeID = '<%= cafeID %>';
+	var boardNo = '<%= boardNo %>';
+	var postNo = '<%= postNo %>';
+	
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
 	});
@@ -63,7 +71,7 @@
 	{
 		if ( confirm('게시 글을 삭제하시겠습니까?') )
 		{
-			var param = { "cafeID" : cafeID, "meetingNo": meetingNo };
+			var param = { "cafeID" : cafeID, "boardNo": boardNo, "postNo": postNo };
 			
 			ajaxRequest('POST', '/nearhere/boardPost/deleteBoardPostAjax.do', param , deleteBoardPostResult );
 		}

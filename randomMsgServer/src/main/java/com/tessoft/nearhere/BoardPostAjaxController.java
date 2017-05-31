@@ -134,11 +134,6 @@ public class BoardPostAjaxController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("요청값이 올바르지 않습니다.");
 			}
-			else if ( Util.isEmptyForKey(param, "title") )
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("제목을 입력해 주십시오.");
-			}
 			else if ( Util.isEmptyString(userID) )
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
@@ -146,7 +141,8 @@ public class BoardPostAjaxController extends BaseController {
 			}
 			else
 			{
-				HashMap cafeBoardInfo = CafeBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+				HashMap postInfo = CafeBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
+				
 				HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
 				
 				String ownerYN = "N";
@@ -159,18 +155,13 @@ public class BoardPostAjaxController extends BaseController {
 					memberType = cafeUserInfo.get("memberType").toString();
 				}
 				
-				String writePermission = Util.getStringFromHash(cafeBoardInfo, "writePermission");
+				String writerUserID = Util.getStringFromHash(postInfo, "userID");
 				
-				if ("1".equals(writePermission) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
+				if ( !userID.equals(writerUserID) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
-					response.setResMsg("글쓰기 권한이 없는 사용자입니다.");
+					response.setResMsg("삭제 권한이 없는 사용자입니다.");
 				}
-				else if ("2".equals(writePermission) && !"Y".equals(ownerYN) )  // 카페 주인만
-				{
-					response.setResCode( ErrorCode.INVALID_INPUT );
-					response.setResMsg("글쓰기 권한이 없는 사용자입니다.");
-				}			
 				else
 				{
 					CafeBoardPostBiz cafeBiz = CafeBoardPostBiz.getInstance(sqlSession);

@@ -46,11 +46,13 @@
 
 	function goPostDetail( postNo )
 	{
-		//var titleUrlEncoded = encodeURIComponent( title );
-		//if ( isApp == 'Y' )
-			//document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
-		
-		document.location.href="/nearhere/cafe/boardPost/detail/" + postNo + "?boardName=" + encodeURIComponent(boardName);
+		var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo + "?cafeID=" + cafeID + "&boardNo=" + boardNo +
+				"&boardName=" + encodeURIComponent(boardName);
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
 	}
 	
 	function goNewBoardPost()
