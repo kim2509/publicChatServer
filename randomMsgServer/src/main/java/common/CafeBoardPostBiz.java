@@ -39,4 +39,14 @@ public class CafeBoardPostBiz extends CommonBiz{
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.board.insertCafeBoardPostDetail", param);
 		return result;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public int deleteCafeBoardPost( HashMap param )
+	{
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardReplies", param);
+		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostDetailEach", param);
+		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardAllPosts", param);
+		
+		return result;
+	}
 }

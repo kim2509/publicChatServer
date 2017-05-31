@@ -120,6 +120,30 @@ body{
 	height:44px;
 }
 
+#boardNavi #btnModify {
+    float: right;
+    border: 1px solid blue;
+    color: blue;
+    line-height: 28px;
+    margin: 8px 0px 8px 0px;
+    padding: 0px 5px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#boardNavi #btnDelete {
+    float: right;
+    border: 1px solid red;
+    color: red;
+    line-height: 28px;
+    margin: 8px;
+    padding: 0px 5px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
 #boardNavi #naviTitle{
 	padding-left:10px;
 	color:#e74337;

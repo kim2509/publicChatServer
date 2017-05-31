@@ -16,4 +16,59 @@
 		values(#{postNo}, #{type}, #{imageNo}, #{locationNo}, #{seq});
 	</insert>
 	
+	<!-- 해당 카페 게시판 댓글 삭제 -->
+	<delete id="deleteCafeBoardAllPostReplies" parameterType="HashMap">
+		delete cbpr
+		from cafe_board_post_reply cbpr
+			left outer join cafe_board_post_master cbpm on cbpm.postNo=cbpr.postNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 특정 게시글 상세내용 삭제 -->
+	<delete id="deleteCafeBoardReplies" parameterType="HashMap">
+		delete from cafe_board_post_reply
+		where postNo = #{postNo}
+	</delete>
+	
+	<!-- 해당 카페 게시판 글 상세내용 삭제 -->
+	<delete id="deleteCafeBoardPostDetail" parameterType="HashMap">
+		delete cbpd
+		from cafe_board_post_detail cbpd
+			left outer join cafe_board_post_master cbpm on cbpm.postNo = cbpd.postNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 특정 게시글 상세내용 삭제 -->
+	<delete id="deleteCafeBoardPostDetailEach" parameterType="HashMap">
+		delete from cafe_board_post_detail
+		where postNo = #{postNo}
+	</delete>
+	
+	<!-- 해당 카페 게시판 글 전체 삭제 -->
+	<delete id="deleteCafeBoardAllPosts" parameterType="HashMap">
+		delete cbpm
+		from cafe_board_post_master cbpm
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 특정 게시글 삭제 -->
+	<delete id="deleteCafeBoardPostEach" parameterType="HashMap">
+		delete from cafe_board_post_master
+		where postNo = #{postNo} and boardNo = #{boardNo}
+	</delete>
+	
+	<!-- 해당 카페 게시판 전체 삭제 -->
+	<delete id="deleteCafeAllBoard" parameterType="HashMap">
+		delete cbm
+		from cafe_board_master cbm
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
 </mapper>

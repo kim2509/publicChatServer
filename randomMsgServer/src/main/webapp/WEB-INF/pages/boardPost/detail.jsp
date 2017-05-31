@@ -23,7 +23,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>게시 글 상제</title>
 
 
 <!-- Include the jQuery library -->
@@ -49,12 +49,51 @@
 		return date.format('yy-MM-dd HH:mm');
 	}
 	
+	function goModifyBoardPost()
+	{
+		var url = '<%= Constants.getServerURL() + "/boardPost/newBoardPost.do" %>?cafeID=' + cafeID + '&boardNo=' + boardNo;
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
+	function deleteBoardPost()
+	{
+		if ( confirm('게시 글을 삭제하시겠습니까?') )
+		{
+			var param = { "cafeID" : cafeID, "meetingNo": meetingNo };
+			
+			ajaxRequest('POST', '/nearhere/boardPost/deleteBoardPostAjax.do', param , deleteBoardPostResult );
+		}
+	}
+	
+	function deleteBoardPostResult( result )
+	{
+		if ( result == null )
+		{
+			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			return;
+		}
+		else if ( result != null && result.resCode != '0000')
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			finish();
+		}
+	}
+	
 </script>
 <body>
 
 	<div id="wrapper" style="padding-bottom:10px;">
 
 		<div id="boardNavi">
+			<div id="btnDelete" onclick="deleteBoardPost();">삭제하기</div>
+			<div id="btnModify" onclick="goModifyBoardPost();">수정하기</div>
 			<div id="naviTitle">&lt; <%= boardName %></div>
 		</div>
 		

@@ -544,12 +544,12 @@ public class CafeBiz extends CommonBiz{
 	{
 		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
 		
-		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoardAllPostReplies", param);
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoardPostDetail", param);		
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoardAllPosts", param);
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeAllBoard", param);
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeDetail", param);
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeMaster", param);
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardAllPostReplies", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostDetail", param);		
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardAllPosts", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeAllBoard", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeDetail", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeMaster", param);
 		
 		return result;
 	}

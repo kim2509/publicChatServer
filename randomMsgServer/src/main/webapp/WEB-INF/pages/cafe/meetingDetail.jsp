@@ -9,13 +9,19 @@
 	String loginUserID = "";
 	
 	HashMap meetingInfo = (HashMap) request.getAttribute("meetingInfo");
-	List<HashMap> meetingMembers = (List<HashMap>) request.getAttribute("meetingMembers");
+	
+	List<HashMap> meetingMembers = null;
 	boolean joinYN = false;
 	
-	for ( int i = 0; i < meetingMembers.size(); i++ ) {
-		HashMap meetingMember = meetingMembers.get(i);
-		if ( loginUserID != null && loginUserID.equals( meetingMember.get("userID").toString() ) )
-			joinYN = true;
+	if ( request.getAttribute("meetingMembers") != null )
+	{
+		meetingMembers = (List<HashMap>) request.getAttribute("meetingMembers");
+		
+		for ( int i = 0; i < meetingMembers.size(); i++ ) {
+			HashMap meetingMember = meetingMembers.get(i);
+			if ( loginUserID != null && meetingMember != null && loginUserID.equals( Util.getStringFromHash(meetingMember, "userID") ) )
+				joinYN = true;
+		}
 	}
 	
 	String locationName = Util.getStringFromHash(meetingInfo, "locationName");
@@ -234,7 +240,9 @@
 		</div>
 		<div id="membersDiv">
 			<ul>
-				<% for ( int i = 0; i < meetingMembers.size(); i++ ) {
+				<% 
+					if ( meetingMembers != null ){
+					for ( int i = 0; i < meetingMembers.size(); i++ ) {
 					HashMap meetingMember = meetingMembers.get(i);
 				%>
 					<li>
@@ -248,7 +256,10 @@
 						<% } %>
 						<div id="memberType"><%= meetingMember.get("memberType") %></div>
 					</li>
-				<% } %>
+				<% 
+					}
+				} 
+				%>
 			</ul>
 		</div>
 		
