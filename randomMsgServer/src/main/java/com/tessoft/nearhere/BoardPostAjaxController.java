@@ -83,6 +83,8 @@ public class BoardPostAjaxController extends BaseController {
 				else
 				{
 					CafeBoardPostBiz cafeBoardPostBiz = CafeBoardPostBiz.getInstance(sqlSession);
+
+					CafeBiz.getInstance(sqlSession).handleLocation(param, "postLocation");
 					
 					int dbResult = 0;
 					

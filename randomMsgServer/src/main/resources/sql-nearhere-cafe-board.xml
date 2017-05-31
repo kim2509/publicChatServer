@@ -5,15 +5,19 @@
 <mapper namespace="com.tessoft.nearhere.cafe.board">
 
 	<!-- 게시글 master 작성-->
-	<insert id="insertCafeBoardPostMaster" parameterType="HashMap">
+	<insert id="insertCafeBoardPostMaster" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="postNo" keyColumn="postNo">
 		insert into cafe_board_post_master(title, boardNo, userID, readCount, replyCount, noticeYN, createdDate )
 		values (#{title}, #{boardNo}, #{userID}, #{readCount}, #{replyCount}, #{noticeYN}, NOW());
+		<selectKey keyProperty="postNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
 	</insert>
 	
 	<!-- 게시글 detail 작성 -->
 	<insert id="insertCafeBoardPostDetail" parameterType="HashMap">
-		insert into cafe_board_post_detail(postNo, type, imageNo, locationNo, seq )
-		values(#{postNo}, #{type}, #{imageNo}, #{locationNo}, #{seq});
+		insert into cafe_board_post_detail(postNo, type, content, imageNo, locationNo, seq )
+		values(#{postNo}, #{type}, #{content}, #{imageNo}, #{locationNo}, #{seq});
 	</insert>
 	
 	<!-- 해당 카페 게시판 댓글 삭제 -->

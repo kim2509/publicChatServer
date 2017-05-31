@@ -585,7 +585,7 @@ public class CafeBiz extends CommonBiz{
 	@SuppressWarnings("rawtypes")
 	public int insertCafePublicMeeting( HashMap param ) throws Exception
 	{
-		handleCafeLocation(param);
+		handleLocation(param,  "meetingLocation");
 		
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafePublicMeeting", param);
 		return result;
@@ -594,17 +594,17 @@ public class CafeBiz extends CommonBiz{
 	@SuppressWarnings("rawtypes")
 	public int updateCafePublicMeeting( HashMap param ) throws Exception
 	{
-		handleCafeLocation(param);
+		handleLocation(param, "meetingLocation");
 		
 		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafePublicMeeting", param);
 		return result;
 	}
 
-	private void handleCafeLocation(HashMap param) throws Exception {
+	public void handleLocation(HashMap param, String locationName) throws Exception {
 		
-		if ( !Util.isEmptyForKey( param, "meetingLocation") && param.get("meetingLocation") != null )
+		if ( !Util.isEmptyForKey( param, locationName ) && param.get( locationName ) != null )
 		{
-			HashMap locationInfo = (HashMap) param.get("meetingLocation");
+			HashMap locationInfo = (HashMap) param.get( locationName );
 			
 			if ( !Util.isEmptyForKey(locationInfo, "latitude") && !Util.isEmptyForKey(locationInfo, "longitude") )
 			{

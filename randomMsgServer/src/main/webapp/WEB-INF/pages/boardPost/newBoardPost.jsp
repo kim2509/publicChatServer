@@ -108,10 +108,10 @@
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"cafeID":cafeID, "boardNo":boardNo, "title": title };
+			var param = {"cafeID":cafeID, "boardNo":boardNo, "title": title , "content": desc, "type":"1"};
 			
 			if ( locationResult != null )
-				param.meetingLocation = locationResult;
+				param.postLocation = locationResult;
 			
 			console.log( JSON.stringify( param ) );
 			

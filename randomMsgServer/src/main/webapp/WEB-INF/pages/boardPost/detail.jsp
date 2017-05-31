@@ -18,7 +18,7 @@
 	Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
 	
 	String replyCount = postInfo.get("replyCount").toString();
-	String lastReplyIndex = "";
+	String lastReplyIndex = "0";
 %>
 
 <html>
@@ -121,9 +121,9 @@
 				
 				for ( int i = 0; i < contentList.size(); i++ )
 				{
-					String type = contentList.get(i).get("type").toString();
-					String content = contentList.get(i).get("content").toString();
-					String imageURL = contentList.get(i).get("imageURL").toString();
+					String type = Util.getStringFromHash( contentList.get(i), "type");
+					String content = Util.getStringFromHash( contentList.get(i), "content");
+					String imageURL = Util.getStringFromHash( contentList.get(i), "imageURL");
 					
 					if ("1".equals( type ) )
 						out.println( content );
