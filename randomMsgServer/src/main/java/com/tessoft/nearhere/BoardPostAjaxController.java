@@ -1,6 +1,7 @@
 package com.tessoft.nearhere;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -117,7 +118,7 @@ public class BoardPostAjaxController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/boardPost/deleteBoardPostAjax.do")
-	public @ResponseBody APIResponse deleteCafePublicMeetingAjax(HttpServletRequest request, @RequestBody String bodyString,
+	public @ResponseBody APIResponse deleteBoardPostAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
 	{
 		APIResponse response = new APIResponse();
@@ -183,6 +184,43 @@ public class BoardPostAjaxController extends BaseController {
 			response.setResMsg("게시글 삭제도중 오류가 발생했습니다.");
 			
 			insertHistory("/boardPost/deleteBoardPostAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/boardPost/getCafeBoardPostInfoAjax.do")
+	public @ResponseBody APIResponse getCafeBoardPostInfoAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			HashMap postInfo = CafeBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
+			
+			HashMap resultData = new HashMap();
+			resultData.put("postInfo", postInfo);
+			
+			List<HashMap> contentList = CafeBiz.getInstance(sqlSession).getCafeBoardPostContent(param);
+			resultData.put("contentList", contentList);
+			
+			response.setData( resultData );
+			
+			insertHistory("/boardPost/getCafeBoardPostInfoAjax.do", userID , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("게시글 가져오는 도중 오류가 발생했습니다.");
+			
+			insertHistory("/boardPost/getCafeBoardPostInfoAjax.do", null , null , null, "exception" );
 			logger.error( ex );
 		}
 		
