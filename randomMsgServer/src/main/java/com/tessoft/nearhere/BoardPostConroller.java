@@ -22,6 +22,33 @@ import common.UserBiz;
 @Controller
 public class BoardPostConroller extends BaseController {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/boardPost/{boardNo}")
+	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		try
+		{
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("boardNo", boardNo);
+			
+			HashMap boardInfo = cafeBiz.getCafeBoardInfo(param);
+			model.addAttribute("boardInfo", boardInfo);
+			
+			List<HashMap> boardPostList = CafeBoardPostBiz.getInstance(sqlSession).getBoardPostList(param);
+			model.addAttribute("boardPostList", boardPostList);
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/board/" + boardNo, null , null , null, null );
+		
+		return new ModelAndView("board/boardHome", model);
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/boardPost/detail/{postNo}")
 	public ModelAndView detail ( @PathVariable(value="postNo") String postNo , ModelMap model,

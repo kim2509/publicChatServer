@@ -35,7 +35,7 @@
 	
 	function goBoardHome( boardName, boardNo )
 	{
-		var url = '<%= Constants.getServerURL() + "/cafe/board/" %>' + boardNo + '?cafeID=' + cafeID;
+		var url = '<%= Constants.getServerURL() + "/boardPost/" %>' + boardNo + '?cafeID=' + cafeID;
 		
 		var titleUrlEncoded = encodeURIComponent( boardName );
 		if ( isApp == 'Y' )

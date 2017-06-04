@@ -106,7 +106,11 @@
 		</div>
 		
 		<div id="postHeaderDiv">
-			<div id="postTitle"><%= postInfo.get("title") %></div>
+			<div id="postTitle">
+			<% if ("Y".equals( Util.getStringFromHash(postInfo, "noticeYN") ) ) { %>
+			<span id="noti">공지</span>
+			<% } %>
+			<%= postInfo.get("title") %></div>
 			
 			<div id="postInfo">
 				<span>대용</span>|<span><%= Util.getDateStringFromDate(dtCreatedDate, "yy.MM.dd") %></span>|<span><%= Util.getNumberWithComma(readCount) %></span>

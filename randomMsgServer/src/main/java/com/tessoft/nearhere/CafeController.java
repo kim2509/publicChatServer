@@ -24,6 +24,7 @@ import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
 
 import common.CafeBiz;
+import common.CafeBoardPostBiz;
 import common.RegionBiz;
 import common.UserBiz;
 
@@ -243,33 +244,6 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/" + cafeID, null , null , null, null );
 		
 		return new ModelAndView("cafe/cafeHome", model);
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping( value ="/cafe/board/{boardNo}")
-	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , ModelMap model,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken )
-	{
-		try
-		{
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			HashMap param = new HashMap();
-			param.put("boardNo", boardNo);
-			
-			HashMap boardInfo = cafeBiz.getCafeBoardInfo(param);
-			model.addAttribute("boardInfo", boardInfo);
-			
-			List<HashMap> boardPostList = cafeBiz.getBoardPostList(param);
-			model.addAttribute("boardPostList", boardPostList);
-		}
-		catch( Exception ex )
-		{
-			logger.error( ex );
-		}
-		
-		insertHistory("/board/" + boardNo, null , null , null, null );
-		
-		return new ModelAndView("board/boardHome", model);
 	}
 	
 	@RequestMapping( value ="/cafe/terms.do")

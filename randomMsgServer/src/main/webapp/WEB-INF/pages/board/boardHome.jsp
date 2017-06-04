@@ -36,6 +36,8 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/board.css?v=2" />
 
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
+
 
 <script language="javascript">
 	
@@ -122,6 +124,13 @@
 			
 			<% } %>
 		</div>
+		
+		<div id="pagingInfo" style="text-align: center; margin-top: 20px; font-weight: bold; display: block;">
+			<a href="javascript:void(0)" onclick="goPage(1);" class="pageSelected">1</a>
+			<a href="javascript:void(0)" onclick="goPage(2);">2</a>
+			<a href="javascript:void(0)" onclick="goPage(3);">3</a>
+		</div>
+		
 	</div>
 
 	

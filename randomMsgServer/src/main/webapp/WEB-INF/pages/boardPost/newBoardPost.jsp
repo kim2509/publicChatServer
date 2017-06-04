@@ -112,12 +112,13 @@
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"postNo": postNo, "cafeID":cafeID, "boardNo":boardNo, "title": title , "content": desc, "type":"1"};
+			var noticeYN = $('input[name=rdoNoticeYN]:checked').val();
+			
+			var param = {"postNo": postNo, "cafeID":cafeID, "boardNo":boardNo, "title": title , 
+					"content": desc, "type":"1", "noticeYN": noticeYN };
 			
 			if ( locationResult != null )
 				param.postLocation = locationResult;
-			
-			console.log( JSON.stringify( param ) );
 			
 			ajaxRequest('POST', '/nearhere/boardPost/saveCafeBoardPostAjax.do', param , onSaveResult );
 		}
@@ -161,6 +162,11 @@
 			if ( postInfo != null )
 			{
 				$('#title').val( postInfo.title );
+				
+				if ( postInfo.noticeYN == 'Y' )
+					$('#rdoNoticeYes').prop('checked', true);
+				else
+					$('#rdoNoticeNo').prop('checked', true);
 				
 				if ( postInfo.locationNo > 0 )
 				{

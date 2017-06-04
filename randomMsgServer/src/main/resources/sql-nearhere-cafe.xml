@@ -513,15 +513,6 @@
 		where bm.boardNo = #{boardNo}
 	</select>
 	
-	<select id="getBoardPostList" resultType="HashMap" parameterType="HashMap">
-		select bpm.postNo, bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
-			ifnull(bpm.replyCount,0) as replyCount, bm.boardName, u.userName, bpm.createdDate
-		from cafe_board_post_master bpm
-			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
-			left outer join user u on u.userID = bpm.userID
-		where bm.boardNo = #{boardNo}
-	</select>
-	
 	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
 		select cpr.*, u.userName from cafe_board_post_reply cpr
 			left outer join user u on cpr.userID = u.userID

@@ -27,6 +27,13 @@ public class CafeBoardPostBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public List<HashMap> getBoardPostList(HashMap param)
+	{
+		List<HashMap> postList = sqlSession.selectList("com.tessoft.nearhere.cafe.board.getBoardPostList", param);
+		return postList;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public HashMap getCafeBoardPostInfo(HashMap param)
 	{
 		HashMap postInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.board.getCafeBoardPostInfo", param);
