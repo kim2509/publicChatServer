@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dy.common.Util;
 
 import common.CafeBiz;
+import common.CafeBoardPostBiz;
 import common.UserBiz;
 
 @Controller
@@ -32,10 +33,10 @@ public class BoardPostConroller extends BaseController {
 			HashMap param = new HashMap();
 			param.put("postNo", postNo);
 			
-			HashMap postInfo = cafeBiz.getCafeBoardPostInfo(param);
+			HashMap postInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
 			model.addAttribute("postInfo", postInfo);
 			
-			List<HashMap> contentList = cafeBiz.getCafeBoardPostContent(param);
+			List<HashMap> contentList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostContent(param);
 			model.addAttribute("contentList", contentList);
 			
 			param.put("startIndex", "0");

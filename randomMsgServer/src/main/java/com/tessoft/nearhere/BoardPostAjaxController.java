@@ -94,6 +94,11 @@ public class BoardPostAjaxController extends BaseController {
 						dbResult = cafeBoardPostBiz.insertCafeBoardPostMaster(param);
 						dbResult = cafeBoardPostBiz.insertCafeBoardPostDetail(param);
 					}
+					else
+					{
+						dbResult = cafeBoardPostBiz.updateCafeBoardPostMaster(param);
+						dbResult = cafeBoardPostBiz.updateCafeBoardPostDetail(param);
+					}
 					
 					HashMap info = new HashMap();
 					info.put("dbResult", String.valueOf( dbResult ));
@@ -144,7 +149,7 @@ public class BoardPostAjaxController extends BaseController {
 			}
 			else
 			{
-				HashMap postInfo = CafeBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
+				HashMap postInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
 				
 				HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
 				
@@ -203,12 +208,12 @@ public class BoardPostAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			HashMap postInfo = CafeBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
+			HashMap postInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
 			
 			HashMap resultData = new HashMap();
 			resultData.put("postInfo", postInfo);
 			
-			List<HashMap> contentList = CafeBiz.getInstance(sqlSession).getCafeBoardPostContent(param);
+			List<HashMap> contentList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostContent(param);
 			resultData.put("contentList", contentList);
 			
 			response.setData( resultData );

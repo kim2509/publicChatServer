@@ -522,22 +522,6 @@
 		where bm.boardNo = #{boardNo}
 	</select>
 	
-	<select id="getCafeBoardPostInfo" resultType="HashMap" parameterType="HashMap">
-		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
-			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate
-		from cafe_board_post_master bpm
-		where bpm.postNo=#{postNo}
-	</select>
-	
-	<select id="getCafeBoardPostContent" resultType="HashMap" parameterType="HashMap">
-		select ifnull(cd.content,'') as content, cd.type, 
-			concat( ifnull(ci.url1,''), ifnull(ci.url2,'') ) as imageURL 
-		from cafe_board_post_detail cd
-			left outer join cafe_image ci on ci.imageNo = cd.imageNo
-		where postNo = #{postNo}
-		order by seq
-	</select>
-	
 	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
 		select cpr.*, u.userName from cafe_board_post_reply cpr
 			left outer join user u on cpr.userID = u.userID

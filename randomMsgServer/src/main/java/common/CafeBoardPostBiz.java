@@ -27,6 +27,20 @@ public class CafeBoardPostBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public HashMap getCafeBoardPostInfo(HashMap param)
+	{
+		HashMap postInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.board.getCafeBoardPostInfo", param);
+		return postInfo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getCafeBoardPostContent(HashMap param)
+	{
+		List<HashMap> content = sqlSession.selectList("com.tessoft.nearhere.cafe.board.getCafeBoardPostContent", param);
+		return content;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public int insertCafeBoardPostMaster( HashMap param ) throws Exception
 	{
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.board.insertCafeBoardPostMaster", param);
@@ -41,11 +55,26 @@ public class CafeBoardPostBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public int updateCafeBoardPostMaster( HashMap param ) throws Exception
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.board.updateCafeBoardPostMaster", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeBoardPostDetail( HashMap param ) throws Exception
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.board.updateCafeBoardPostDetail", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public int deleteCafeBoardPost( HashMap param )
 	{
+		CafeLocationBiz.getInstance(sqlSession).deleteCafeLocation(param);
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardReplies", param);
 		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostDetailEach", param);
-		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardAllPosts", param);
+		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostEach", param);
 		
 		return result;
 	}

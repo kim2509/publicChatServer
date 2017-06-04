@@ -4,11 +4,31 @@
 
 <mapper namespace="com.tessoft.nearhere.cafe.board">
 
+	<!-- 게시글 master 불러오기 -->
+	<select id="getCafeBoardPostInfo" resultType="HashMap" parameterType="HashMap">
+		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
+			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate
+			, cl.No as locationNo, cl.type as locationType, cl.locationName, cl.latitude, cl.longitude, cl.address, cl.regionNo
+		from cafe_board_post_master bpm
+			left outer join cafe_location cl on cl.No = bpm.locationNo
+		where bpm.postNo=#{postNo}
+	</select>
+	
+	<!-- 게시글 detail 불러오기 -->
+	<select id="getCafeBoardPostContent" resultType="HashMap" parameterType="HashMap">
+		select ifnull(cd.content,'') as content, cd.type, 
+			concat( ifnull(ci.url1,''), ifnull(ci.url2,'') ) as imageURL 
+		from cafe_board_post_detail cd
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+		where postNo = #{postNo}
+		order by seq
+	</select>
+	
 	<!-- 게시글 master 작성-->
 	<insert id="insertCafeBoardPostMaster" parameterType="HashMap"
 		useGeneratedKeys="true" keyProperty="postNo" keyColumn="postNo">
-		insert into cafe_board_post_master(title, boardNo, userID, readCount, replyCount, noticeYN, createdDate )
-		values (#{title}, #{boardNo}, #{userID}, #{readCount}, #{replyCount}, #{noticeYN}, NOW());
+		insert into cafe_board_post_master(title, boardNo, userID, readCount, replyCount, noticeYN, locationNo, createdDate )
+		values (#{title}, #{boardNo}, #{userID}, #{readCount}, #{replyCount}, #{noticeYN}, #{locationNo}, NOW());
 		<selectKey keyProperty="postNo" resultType="String" order="AFTER">
 			select LAST_INSERT_ID();
 		</selectKey>
@@ -16,9 +36,28 @@
 	
 	<!-- 게시글 detail 작성 -->
 	<insert id="insertCafeBoardPostDetail" parameterType="HashMap">
-		insert into cafe_board_post_detail(postNo, type, content, imageNo, locationNo, seq )
-		values(#{postNo}, #{type}, #{content}, #{imageNo}, #{locationNo}, #{seq});
+		insert into cafe_board_post_detail(postNo, type, content, imageNo, seq )
+		values(#{postNo}, #{type}, #{content}, #{imageNo}, #{seq});
 	</insert>
+	
+	<!-- 게시글 master 수정 -->
+	<update id="updateCafeBoardPostMaster" parameterType="HashMap">
+		update cafe_board_post_master
+		set title = #{title}
+		, noticeYN = #{noticeYN}
+		, locationNo = #{locationNo}
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 게시글 master 수정 -->
+	<update id="updateCafeBoardPostDetail" parameterType="HashMap">
+		update cafe_board_post_detail
+		set type = #{type}
+		, content = #{content}
+		, imageNo = #{imageNo}
+		, seq = #{seq}
+		where postNo = #{postNo}
+	</update>
 	
 	<!-- 해당 카페 게시판 댓글 삭제 -->
 	<delete id="deleteCafeBoardAllPostReplies" parameterType="HashMap">

@@ -23,6 +23,18 @@ body{
 	font-weight:bold;
 }
 
+.f12{
+	font-size:12px;
+}
+
+.f13{
+	font-size:13px;
+}
+
+.f14{
+	font-size:14px;
+}
+
 .paddingLR10{
 	padding-left:10px;
 	padding-right:10px;
@@ -35,6 +47,10 @@ body{
 .marginLR10{
 	margin-left:10px;
 	margin-right:10px;
+}
+
+.marginT5{
+	margin-top:5px;
 }
 
 .marginT10{

@@ -45,6 +45,10 @@
 		    id: "modal" // 모달창 아이디 지정
 		});
 		
+		if ( postNo != null && parseInt(postNo) > 0 )
+		{
+			getBoardPost();
+		}
 	});
 	
 	function goSelectLocation()
@@ -108,7 +112,7 @@
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"cafeID":cafeID, "boardNo":boardNo, "title": title , "content": desc, "type":"1"};
+			var param = {"postNo": postNo, "cafeID":cafeID, "boardNo":boardNo, "title": title , "content": desc, "type":"1"};
 			
 			if ( locationResult != null )
 				param.postLocation = locationResult;
@@ -136,67 +140,56 @@
 		}
 	}
 	
-	function getMeetingInfo()
+	function getBoardPost()
 	{
-		var param = {"meetingNo":meetingNo};
+		var param = {"postNo":postNo};
+		ajaxRequest('POST', '/nearhere/boardPost/getCafeBoardPostInfoAjax.do', param , getBoardPostResult );
+	}
+	
+	function getBoardPostResult( result )
+	{
+		console.log(JSON.stringify( result ) );
 		
-		ajaxRequest('POST', '/nearhere/cafe/getCafePublicMeetingInfoAjax.do', param , onMeetingInfoFetched );
-	}
-	
-	var meetingInfo = null;
-	function onMeetingInfoFetched( result )
-	{
-		if ( result == null )
+		var postInfo = null;
+		var contentList = null;
+		
+		if ( result != null && result.data != null )
 		{
-			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
-			return;
-		}
-		else if ( result != null && result.resCode != '0000')
-		{
-			alert( result.resMsg );
-		}
-		else
-		{
-			console.log( JSON.stringify( result ) );
+			postInfo = result.data.postInfo;
+			contentList = result.data.contentList;
 			
-			meetingInfo = result.data.meetingInfo;
-			$('#meetingTitle').val( meetingInfo.title );
-			$('#meetingDesc').val( meetingInfo.meetingDesc );
-			$('#maxNo').val( meetingInfo.maxNo );
-			
-			if ( meetingInfo.locationNo > 0 )
+			if ( postInfo != null )
 			{
-				$('#meetingLocationDiv').show();
-				$('#locationDesc').hide();
-				$('#meetingLocationName').html( meetingInfo.locationName);
-				$('#meetingLocation').html( meetingInfo.address);
+				$('#title').val( postInfo.title );
 				
-				locationResult = {};
-				locationResult.locationNo = meetingInfo.locationNo;
-				locationResult.locationType = meetingInfo.locationType;
-				locationResult.latitude = meetingInfo.latitude;
-				locationResult.longitude = meetingInfo.longitude;
-				locationResult.address = meetingInfo.address;
-				locationResult.locationName = meetingInfo.locationName;
+				if ( postInfo.locationNo > 0 )
+				{
+					$('#meetingLocationDiv').show();
+					$('#locationDesc').hide();
+					$('#meetingLocationName').html( postInfo.locationName);
+					$('#meetingLocation').html( postInfo.address);
+					
+					locationResult = {};
+					locationResult.locationNo = postInfo.locationNo;
+					locationResult.locationType = postInfo.locationType;
+					locationResult.latitude = postInfo.latitude;
+					locationResult.longitude = postInfo.longitude;
+					locationResult.address = postInfo.address;
+					locationResult.locationName = postInfo.locationName;
+				}
 			}
-			
-			if ( meetingInfo.meetingDate > 0 )
+			if ( contentList != null && contentList.length > 0 )
 			{
-				var meetingDate = displayDateFormat( meetingInfo.meetingDate, 'yyyy-MM-dd HH:mm' );
-				$('.meetingDateTime .meetingDate').html( meetingDate.substring(0,10));
-				$('.meetingDateTime .meetingTime').html( meetingDate.substring(11));
+				for ( var i = 0; i < result.data.contentList.length; i++  )
+				{
+					var content = result.data.contentList[i];
+					if ( content.type == 1 )
+					{
+						$('#desc').val( content.content );
+					}
+				}
 			}
 		}
-	}
-	
-	function onDateSet( dateString )
-	{
-		$('.meetingDateTime .meetingDate').html( dateString );
-	}
-	
-	function onTimeSet( timeString )
-	{
-		$('.meetingDateTime .meetingTime').html( timeString );
 	}
 	
 </script>
@@ -224,7 +217,19 @@
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">내용</p>
 			
-			<textarea id="desc" class="marginLR10 marginB20" value="" rows="3"></textarea>
+			<textarea id="desc" class="marginLR10 marginB20" value="" rows="5"></textarea>
+			
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">공지여부</p>
+			
+			<div class="marginLR10 marginB20 f13">
+				<div>공지 글입니까? 공지글은 게시판 상단에 표시됩니다.</div>
+				<div class="marginT5">
+					<input type="radio" name="rdoNoticeYN" id="rdoNoticeYes" value="Y">
+					<label for="rdoNoticeYes">예</label>
+					<input type="radio" name="rdoNoticeYN" id="rdoNoticeNo" value="N">
+					<label for="rdoNoticeNo">아니오</label>
+				</div>
+			</div>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">첨부된 이미지</p>
 			

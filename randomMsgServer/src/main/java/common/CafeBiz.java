@@ -292,20 +292,6 @@ public class CafeBiz extends CommonBiz{
 		return postList;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public HashMap getCafeBoardPostInfo(HashMap param)
-	{
-		HashMap postInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeBoardPostInfo", param);
-		return postInfo;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public List<HashMap> getCafeBoardPostContent(HashMap param)
-	{
-		List<HashMap> content = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardPostContent", param);
-		return content;
-	}
-	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<HashMap> getCafeBoardPostReplyList(HashMap param)
 	{
