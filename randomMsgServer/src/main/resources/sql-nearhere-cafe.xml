@@ -58,7 +58,7 @@
 			left outer join (select cafeNo, userID, createdDate from cafe_members where userID=#{userID}) cmm2 on cm.cafeNo = cmm2.cafeNo
 		where cm.publishYN = 'Y' 
 		and (rv.lRegionNo = #{regionNo} or rv.mRegionNo = #{regionNo} or rv.sRegionNo = #{regionNo} or rv.tRegionNo = #{regionNo})
-		and (cmm2.userID is not null or cm.owner = #{userID})
+		and (cmm2.userID is not null)
 		order by joinDate desc
 		limit #{startIndex}, #{showCount}
 	</select>

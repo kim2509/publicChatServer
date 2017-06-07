@@ -93,6 +93,8 @@
 		
 		$('#cafeTab li').removeClass('selected');
 		$('#cafeTab li').eq(tabIndex).addClass('selected');
+		
+		selectedTabIndex = tabIndex;
 	}
 
 	function onMyCafeListReceived( result )
@@ -120,6 +122,7 @@
 			{
 				$('#pagingInfo').show();
 				displayPagingInfo();
+				console.log('myCafe list not empty.');
 			}
 		}
 	}
@@ -161,6 +164,9 @@
 	function displayPagingInfo()
 	{
 		$('#pagingInfo').empty();
+		
+		if ( totalItemCount < 1 )
+			return;
 		
 		if ( pageNo <= numOfPagesOnScreen )
 			firstPage = 1;

@@ -35,9 +35,6 @@ public class BoardPostConroller extends BaseController {
 			
 			HashMap boardInfo = cafeBiz.getCafeBoardInfo(param);
 			model.addAttribute("boardInfo", boardInfo);
-			
-			List<HashMap> boardPostList = CafeBoardPostBiz.getInstance(sqlSession).getBoardPostList(param);
-			model.addAttribute("boardPostList", boardPostList);
 		}
 		catch( Exception ex )
 		{

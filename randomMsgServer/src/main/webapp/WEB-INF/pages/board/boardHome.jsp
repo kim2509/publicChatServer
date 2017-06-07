@@ -33,6 +33,8 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=3"></script>
+
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/board.css?v=2" />
 
@@ -46,6 +48,61 @@
 	var boardNo = '<%= boardNo %>';
 	var boardName = '<%= boardName %>';
 
+	var startIndex = 0;
+	var firstPage = 0;
+	var lastPage = 0;
+	var numOfPagesOnScreen = 5;
+	var pageNo = 1;
+	var pageSize = 10;
+	var totalItemCount = 0;
+	
+	jQuery(document).ready(function(){
+		
+		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
+		Handlebars.registerHelper('displayPostTitle', displayPostTitle );
+		Handlebars.registerHelper('numberWithCommas', numberWithCommas );
+		
+		getBoardPostList();
+		
+	});
+	
+	function getBoardPostList()
+	{
+		var param = {"startIndex":startIndex, "showCount" : pageSize, "boardNo": boardNo};
+		ajaxRequest('POST', '/nearhere/boardPost/getCafeBoardPostListAjax.do', param , onBoardPostListFetched );
+	}
+	
+	function onBoardPostListFetched( result )
+	{
+		console.log(JSON.stringify( result ) );
+		
+		var source = $('#boardPostT').html();
+		var template = Handlebars.compile(source);
+		var html = template(result.data);
+
+		$('#postContainerDiv').html(html);
+		
+		totalItemCount = result.data2;
+		
+		if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
+		{
+			$('#pagingInfo').show();
+			displayPagingInfo();
+		}
+	}
+	
+	function displayPostTitle(noticeYN, title)
+	{
+		var innerHTML = '';
+		
+		if ( noticeYN == 'Y')
+			innerHTML += '<span id="noti">공지</span>';
+
+		innerHTML += title;
+
+		return new Handlebars.SafeString( innerHTML );
+	}
+	
 	function goPostDetail( postNo )
 	{
 		var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo + "?cafeID=" + cafeID + "&boardNo=" + boardNo +
@@ -66,6 +123,83 @@
 		else
 			document.location.href= url;
 	}
+	
+	function displayPagingInfo()
+	{
+		$('#pagingInfo').empty();
+		
+		if ( totalItemCount < 1 )
+			return;
+		
+		if ( pageNo <= numOfPagesOnScreen )
+			firstPage = 1;
+		else
+		{
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
+			if ( pageNo % numOfPagesOnScreen == 0 )
+				firstPage = firstPage - numOfPagesOnScreen + 1;
+			else
+				firstPage++;
+		}
+		
+		lastPage = parseInt( totalItemCount / pageSize );
+		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
+			lastPage++;
+		
+		if ( firstPage > numOfPagesOnScreen + 1)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);">&lt;&lt;</a>');
+		
+		if ( firstPage != 1 )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');">&lt;</a>');
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+		{
+			if ( firstPage + i == pageNo)
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" class="pageSelected">' + (firstPage + i) + '</a>');
+			}
+			else
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" >' + (firstPage + i) + '</a>');
+			}
+		
+			if ( (firstPage + i) == lastPage )
+				break;
+		}
+		
+		if ( lastPage > firstPage + numOfPagesOnScreen )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" >&gt;</a>');
+		
+		if ( firstPage + numOfPagesOnScreen <= lastPage )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" >&gt;&gt;</a>');
+		
+	}
+	
+	function goPage(num)
+	{
+		pageNo = num;
+		startIndex = (pageNo - 1) * pageSize;
+		
+		getBoardPostList();
+	}
+	
+</script>
+<script id="boardPostT" type="text/x-handlebars-template">
+	{{#if boardPostList}}
+	<ul>
+		{{#each boardPostList}}
+		<li onclick="goPostDetail('{{postNo}}');">
+			<div id="commentCount">{{replyCount}}</div>
+			<div id="postDiv">{{displayPostTitle noticeYN title}}</div>
+			<div id="postInfo">
+				<span>{{userName}}</span>|<span>{{displayDateFormat createdDate 'yyyy-MM-dd HH:mm:ss'}}</span>|<span>{{numberWithCommas readCount}}</span>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+		<div id="emptyDiv">게시글이 존재하지 않습니다.</div>
+	{{/if}}
 </script>
 
 </head>
@@ -84,51 +218,9 @@
 		</div>
 		
 		<div id="postContainerDiv">
-		
-			<% if ( boardPostList != null && boardPostList.size() > 0 ) { %>
-			<ul>
-				<% for ( int i = 0; i < boardPostList.size(); i++ ) { 
-					
-					HashMap boardPost = boardPostList.get(i);
-					String postNo = Util.getStringFromHash(boardPost, "postNo");
-					String postTitle = Util.getStringFromHash(boardPost, "title");
-					String noticeYN = Util.getStringFromHash(boardPost, "noticeYN");
-					String userName = Util.getStringFromHash(boardPost, "userName");
-					String readCount = Util.getStringFromHash(boardPost, "readCount");
-					String replyCount = Util.getStringFromHash(boardPost, "replyCount");
-					String createdDate = Util.getStringFromHash(boardPost, "createdDate");
-					Date dtCreatedDate = Util.getDateFromString(createdDate, "yyyy-MM-dd HH:mm:ss");
-				%>
-				<li onclick="goPostDetail('<%= postNo %>');">
-				
-					<% if ( Integer.parseInt(replyCount) > 0 ) { %>
-					<div id="commentCount"><%= replyCount %></div>
-					<% } %>
-					
-					<div id="postDiv">
-						<% if ("Y".equals( noticeYN )) { %>
-						<span id="noti">공지</span>
-						<% } %>
-						
-						<%= postTitle %>
-					</div>
-					<div id="postInfo">
-						<span><%= userName %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate, "yy.MM.dd") %></span>|<span><%= Util.getNumberWithComma(readCount) %></span>
-					</div>
-				</li>
-				<% } %>
-			</ul>
-			<% } else { %>
-			
-			<div id="emptyDiv">게시글이 존재하지 않습니다.</div>
-			
-			<% } %>
 		</div>
 		
 		<div id="pagingInfo" style="text-align: center; margin-top: 20px; font-weight: bold; display: block;">
-			<a href="javascript:void(0)" onclick="goPage(1);" class="pageSelected">1</a>
-			<a href="javascript:void(0)" onclick="goPage(2);">2</a>
-			<a href="javascript:void(0)" onclick="goPage(3);">3</a>
 		</div>
 		
 	</div>

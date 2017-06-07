@@ -24,6 +24,47 @@ import common.UserBiz;
 public class BoardPostAjaxController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/boardPost/getCafeBoardPostListAjax.do")
+	public @ResponseBody APIResponse getCafeBoardPostListAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			HashMap resultData = new HashMap();
+			
+			HashMap boardInfo = CafeBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+			resultData.put("boardInfo", boardInfo);
+			
+			List<HashMap> boardPostList = CafeBoardPostBiz.getInstance(sqlSession).getBoardPostList(param);
+			resultData.put("boardPostList", boardPostList);
+			
+			response.setData( resultData );
+			
+			int totalItemCount = CafeBoardPostBiz.getInstance(sqlSession).getBoardPostListCount(param);
+			
+			response.setData2( totalItemCount );
+			
+			insertHistory("/boardPost/getCafeBoardPostListAjax.do", userID , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("게시글 가져오는 도중 오류가 발생했습니다.");
+			
+			insertHistory("/boardPost/getCafeBoardPostListAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/boardPost/saveCafeBoardPostAjax.do")
 	public @ResponseBody APIResponse saveCafePublicMeetingAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)

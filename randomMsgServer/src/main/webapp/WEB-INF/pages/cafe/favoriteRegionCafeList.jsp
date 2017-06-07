@@ -70,15 +70,17 @@
 				displayCafeMapData();
 			}
 			
+			console.log( JSON.stringify( result ) );
+			
 			totalItemCount = result.data2;
 			
 			if ( result.data != null && result.data.length > 0 )
 			{
-				if ($('#pagingInfo').length > 0 )
-					$('#pagingInfo').show();
-				
 				if ( $('#favRegionCafeList').is(':visible') )
 				{
+					if ($('#pagingInfo').length > 0 )
+						$('#pagingInfo').show();
+					
 					if ( cafeListViewMode == 'list' )
 					{
 						$('#favoriteRegionCafeListDiv #optionViewByMap').show();
@@ -95,8 +97,11 @@
 			}
 			else
 			{
-				if ($('#pagingInfo').length > 0 )
-					$('#pagingInfo').hide();
+				if ( $('#favRegionCafeList').is(':visible') )
+				{
+					if ($('#pagingInfo').length > 0 )
+						$('#pagingInfo').hide();	
+				}
 				
 				$('#favoriteRegionCafeListDiv #optionViewByMap').hide();
 				$('#favoriteRegionCafeListDiv #optionViewByList').hide();
@@ -105,7 +110,7 @@
 				$('#favoriteRegionCafeList').show();
 			}
 			
-			if ($('#pagingInfo').length > 0 )
+			if ( $('#favRegionCafeList').is(':visible') && $('#pagingInfo').length > 0 )
 				displayPagingInfo();
 		}
 		catch( ex )

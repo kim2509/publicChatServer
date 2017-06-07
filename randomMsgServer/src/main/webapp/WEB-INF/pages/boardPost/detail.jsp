@@ -10,8 +10,14 @@
 	String boardName = request.getParameter("boardName");
 	HashMap postInfo = (HashMap) request.getAttribute("postInfo");
 	String postNo = Util.getStringFromHash(postInfo, "postNo");
-	List<HashMap> contentList = (List<HashMap>) request.getAttribute("contentList");
-	List<HashMap> postReplyList = (List<HashMap>) request.getAttribute("postReplyList");
+	
+	List<HashMap> contentList = null;
+	if ( request.getAttribute("contentList") != null )
+		contentList = (List<HashMap>) request.getAttribute("contentList");
+	
+	List<HashMap> postReplyList = null;
+	if ( request.getAttribute("postReplyList") != null )
+		postReplyList = (List<HashMap>) request.getAttribute("postReplyList");
 	
 	String readCount = postInfo.get("readCount").toString();
 	String createdDate = postInfo.get("createdDate").toString();
