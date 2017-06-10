@@ -65,8 +65,28 @@ public class BoardPostConroller extends BaseController {
 			
 			param.put("startIndex", "0");
 			param.put("showCount", "5");
-			List<HashMap> postReplyList = cafeBiz.getCafeBoardPostReplyList(param);
+			List<HashMap> postReplyList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostReplyList(param);
 			model.addAttribute("postReplyList", postReplyList);
+			
+			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			model.addAttribute("loginUserID", loginUserID);
+			
+			param.put("userID", loginUserID);
+			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
+			
+			String ownerYN = "N";
+			String memberYN = "N";
+			String memberType = "";
+			if ( cafeUserInfo != null )
+			{
+				ownerYN = cafeUserInfo.get("ownerYN").toString();
+				memberYN = cafeUserInfo.get("memberYN").toString();
+				memberType = cafeUserInfo.get("memberType").toString();
+			}
+			
+			model.addAttribute("ownerYN", ownerYN);
+			model.addAttribute("memberYN", memberYN);
+			model.addAttribute("memberType", memberType);
 		}
 		catch( Exception ex )
 		{
@@ -106,5 +126,35 @@ public class BoardPostConroller extends BaseController {
 		insertHistory("/boardPost/newBoardPost.do", boardNo , userID , null , null );
 		
 		return new ModelAndView("boardPost/newBoardPost", model);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/boardPost/newBoardPostReply.do")
+	public ModelAndView newBoardPostReply ( String boardNo, ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		String userID = "";
+		try
+		{
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("boardNo", boardNo);
+			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+			if ( userInfo != null )
+			{
+				model.addAttribute("loginUserID", Util.getStringFromHash(userInfo, "userID") );
+				userID = Util.getStringFromHash(userInfo, "userID");
+			}
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/boardPost/newBoardPostReply.do", boardNo , userID , null , null );
+		
+		return new ModelAndView("boardPost/newBoardPostReply", model);
 	}
 }

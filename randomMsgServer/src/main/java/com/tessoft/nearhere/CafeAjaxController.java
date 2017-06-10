@@ -24,6 +24,7 @@ import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
 
 import common.CafeBiz;
+import common.CafeBoardPostBiz;
 import common.RegionBiz;
 import common.UserBiz;
 
@@ -398,8 +399,7 @@ public class CafeAjaxController extends BaseController {
 			String startIndex = info.get("startIndex").toString();
 			String showCount = info.get("showCount").toString();
 			
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			List<HashMap> replyList = cafeBiz.getCafeBoardPostReplyList(info);
+			List<HashMap> replyList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostReplyList(info);
 			
 			response.setData(replyList);
 			

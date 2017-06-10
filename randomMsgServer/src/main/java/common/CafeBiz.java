@@ -286,20 +286,6 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<HashMap> getCafeBoardPostReplyList(HashMap param)
-	{
-		int startIndex = Integer.parseInt( param.get("startIndex").toString() );
-		int showCount = Integer.parseInt( param.get("showCount").toString() );
-		param.remove("startIndex");
-		param.remove("showCount");
-		param.put("startIndex", startIndex);
-		param.put("showCount", showCount);
-		
-		List<HashMap> replyList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardPostReplyList", param);
-		return replyList;
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<HashMap> getCafeBoardPostImageList(HashMap param)
 	{
 		int startIndex = Integer.parseInt( param.get("startIndex").toString() );

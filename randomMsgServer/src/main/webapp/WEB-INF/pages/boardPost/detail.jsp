@@ -25,6 +25,12 @@
 	
 	String replyCount = postInfo.get("replyCount").toString();
 	String lastReplyIndex = "0";
+	
+	String loginUserID = Util.getString( request.getAttribute("loginUserID") );
+	
+	String ownerYN = Util.getString( request.getAttribute("loginUserID") );
+	String memberYN = Util.getString( request.getAttribute("loginUserID") );
+	String memberType = Util.getString( request.getAttribute("loginUserID") );
 %>
 
 <html>
@@ -32,7 +38,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>게시 글 상제</title>
+<title>게시 글 상세</title>
 
 
 <!-- Include the jQuery library -->
@@ -53,8 +59,14 @@
 	var boardNo = '<%= boardNo %>';
 	var postNo = '<%= postNo %>';
 	
+	var loginUserID = '<%= loginUserID %>';
+	var ownerYN = '<%= ownerYN %>';
+	var memberYN = '<%= memberYN %>';
+	var memberType = '<%= memberType %>';
+	
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
+		Handlebars.registerHelper('displayDeleteButton', displayDeleteButton);
 	});
 	
 	function displayDateFormat( jsonDate )
@@ -97,6 +109,42 @@
 		else
 		{
 			finish();
+		}
+	}
+	
+	function goNewBoardPostReply()
+	{
+		var url = '<%= Constants.getServerURL() + "/boardPost/newBoardPostReply.do" %>?cafeID=' + cafeID + '&boardNo=' + boardNo + '&postNo=' + postNo;
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+		else
+			document.location.href= url;
+	}
+	
+	function deleteBoardPostReply( postNo, postReplyNo )
+	{
+		if ( confirm('댓글을 삭제하시겠습니까?') )
+		{
+			var param = { "cafeID" : cafeID, "replyNo": postReplyNo, "postNo": postNo };
+			ajaxRequest('POST', '/nearhere/boardPost/deleteBoardPostReplyAjax.do', param , deleteBoardPostReplyResult );
+		}
+	}
+	
+	function deleteBoardPostReplyResult( result )
+	{
+		if ( result == null )
+		{
+			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			return;
+		}
+		else if ( result != null && result.resCode != '0000')
+		{
+			alert( result.resMsg );
+		}
+		else
+		{
+			document.location.reload();
 		}
 	}
 	
@@ -146,7 +194,7 @@
 		<div id="postReplyDiv">
 			<ul id="replyBtns">
 				<li>댓글 <span><%= replyCount %></span></li>
-				<li>댓글쓰기</li>
+				<li onclick="goNewBoardPostReply();">댓글쓰기</li>
 			</ul>
 			
 			<% if ( Integer.parseInt(replyCount) > 0 ) { %>
@@ -157,9 +205,21 @@
 					String createdDate2 = postReply.get("createdDate").toString();
 					Date dtCreatedDate2 = Util.getDateFromString(createdDate2, "yyyy-MM-dd HH:mm:ss");
 					lastReplyIndex = String.valueOf(i+1);
+					String writeUserID = Util.getStringFromHash(postReply, "userID");
+					String deleteYN = "N";
+					if (loginUserID.equals(writeUserID) && !"".equals(loginUserID))
+						deleteYN = "Y";
+					else if ( "Y".equals(ownerYN) || "운영자".equals(memberType))
+						deleteYN = "Y";
+					else
+						deleteYN = "N";
+					
+					String replyNo = Util.getStringFromHash(postReply, "replyNo");
 				%>
 				<li>
-					<div id="replyInfo"><span><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy-MM-dd HH:mm") %></span></div>
+					<div id="replyInfo">
+						<span><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy-MM-dd HH:mm") %></span><% if ("Y".equals(deleteYN) ) { %>|<span onclick="deleteBoardPostReply('<%= postNo %>','<%= replyNo %>')">삭제하기</span><% } %>
+					</div>
 					<div><%= postReply.get("content") %></div>
 				</li>
 				<% } %>
@@ -177,7 +237,7 @@
 <script id="replyT" type="text/x-handlebars-template">
 		{{#each data}}
 		<li>
-			<div id="replyInfo"><span>{{userName}}</span>|<span>{{displayDateFormat createdDate}}</span></div>
+			<div id="replyInfo"><span>{{userName}}</span>|<span>{{displayDateFormat createdDate}}</span>{{displayDeleteButton userID replyNo}}</div>
 			<div>{{content}}</div>
 		</li>
 		{{/each}}
@@ -212,6 +272,15 @@
 		else
 			$('#replyDiv').hide();
 			
+	}
+	
+	function displayDeleteButton( userID, replyNo)
+	{
+		console.log( loginUserID + ' ' + userID + ' ' + replyNo );
+		
+		if ( loginUserID == userID || ownerYN == 'Y' || memberType == '운영자')
+			return new Handlebars.SafeString('|<span onclick="deleteBoardPostReply(\'' + postNo + '\',\'' + replyNo + '\')">삭제하기</span>');
+		else return '';
 	}
 	
 </script>

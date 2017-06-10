@@ -37,6 +37,14 @@
 		) A
 	</select>
 	
+	<!-- 댓글 불러오기 -->
+	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
+		select cpr.*, u.userName from cafe_board_post_reply cpr
+			left outer join user u on cpr.userID = u.userID
+		where cpr.postNo=#{postNo} and cpr.deletedDate is null
+		limit #{startIndex},#{showCount};
+	</select>
+	
 	<!-- 게시글 master 불러오기 -->
 	<select id="getCafeBoardPostInfo" resultType="HashMap" parameterType="HashMap">
 		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
@@ -55,6 +63,12 @@
 			left outer join cafe_image ci on ci.imageNo = cd.imageNo
 		where postNo = #{postNo}
 		order by seq
+	</select>
+	
+	<!-- 댓글 정보 불러오기 -->
+	<select id="getCafeBoardPostReplyInfo" resultType="HashMap" parameterType="HashMap">
+		select * from cafe_board_post_reply
+		where replyNo = #{replyNo}
 	</select>
 	
 	<!-- 게시글 master 작성-->
@@ -89,6 +103,26 @@
 		, content = #{content}
 		, imageNo = #{imageNo}
 		, seq = #{seq}
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 댓글 작성 -->
+	<insert id="insertCafeBoardPostReply" parameterType="HashMap">
+		insert into cafe_board_post_reply(postNo, userID, content, createdDate)
+		values(#{postNo}, #{userID}, #{content}, NOW() );
+	</insert>
+	
+	<!-- 댓글 수 증가 -->
+	<update id="increaseCafeBoardPostReplyCount" parameterType="HashMap">
+		update cafe_board_post_master
+		set replyCount = ifnull(replyCount,0) + 1
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 댓글 수 감소 -->
+	<update id="decreaseCafeBoardPostReplyCount" parameterType="HashMap">
+		update cafe_board_post_master
+		set replyCount = ifnull(replyCount,0) - 1
 		where postNo = #{postNo}
 	</update>
 	
@@ -147,4 +181,9 @@
 		where cm.cafeID = #{cafeID}
 	</delete>
 	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteCafeBoardPostReply" parameterType="HashMap">
+		delete from cafe_board_post_reply
+		where replyNo = #{replyNo}
+	</delete>
 </mapper>

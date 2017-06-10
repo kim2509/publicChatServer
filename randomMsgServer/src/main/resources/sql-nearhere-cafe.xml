@@ -513,13 +513,6 @@
 		where bm.boardNo = #{boardNo}
 	</select>
 	
-	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
-		select cpr.*, u.userName from cafe_board_post_reply cpr
-			left outer join user u on cpr.userID = u.userID
-		where cpr.postNo=#{postNo} and cpr.deletedDate is null
-		limit #{startIndex},#{showCount};
-	</select>
-	
 	<select id="getCafeBoardPostImageList" resultType="HashMap" parameterType="HashMap">
 		select cm.*, u.userName, bm.boardName, concat( ifnull(ci.url1,'') , ifnull(ci.url2,'') ) as imageURL 
 		from cafe_board_post_master cm
@@ -576,16 +569,6 @@
 		from cafe_members cmm
 			left outer join cafe_master cm on cmm.cafeNo = cm.cafeNo
 			left outer join user u on cmm.userID = u.userID
-		where u.userID=#{userID}
-		and cm.cafeID=#{cafeID}
-		union all
-		select u.*
-			, '운영자' as memberType
-			, case when cm.owner = u.userID then 'Y' else 'N' end ownerYN
-			, 'Y' as memberYN
-			, 'N' as blockYN
-		from cafe_master cm
-			left outer join user u on cm.owner = u.userID
 		where u.userID=#{userID}
 		and cm.cafeID=#{cafeID}
 	</select>

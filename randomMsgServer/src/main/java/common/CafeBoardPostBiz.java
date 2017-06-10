@@ -5,10 +5,6 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
-import com.dy.common.ErrorCode;
-import com.dy.common.Util;
-import com.nearhere.domain.User;
-
 public class CafeBoardPostBiz extends CommonBiz{
 
 	private static CafeBoardPostBiz cafeBiz = null;
@@ -53,6 +49,27 @@ public class CafeBoardPostBiz extends CommonBiz{
 		return content;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<HashMap> getCafeBoardPostReplyList(HashMap param)
+	{
+		int startIndex = Integer.parseInt( param.get("startIndex").toString() );
+		int showCount = Integer.parseInt( param.get("showCount").toString() );
+		param.remove("startIndex");
+		param.remove("showCount");
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> replyList = sqlSession.selectList("com.tessoft.nearhere.cafe.board.getCafeBoardPostReplyList", param);
+		return replyList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public HashMap getCafeBoardPostReplyInfo(HashMap param)
+	{
+		HashMap postInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.board.getCafeBoardPostReplyInfo", param);
+		return postInfo;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public int insertCafeBoardPostMaster( HashMap param ) throws Exception
 	{
@@ -68,9 +85,30 @@ public class CafeBoardPostBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public int insertCafeBoardPostReply( HashMap param ) throws Exception
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.board.insertCafeBoardPostReply", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public int updateCafeBoardPostMaster( HashMap param ) throws Exception
 	{
 		int result = sqlSession.update("com.tessoft.nearhere.cafe.board.updateCafeBoardPostMaster", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int increaseCafeBoardPostReplyCount( HashMap param ) throws Exception
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.board.increaseCafeBoardPostReplyCount", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int decreaseCafeBoardPostReplyCount( HashMap param ) throws Exception
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.board.decreaseCafeBoardPostReplyCount", param);
 		return result;
 	}
 	
@@ -89,6 +127,14 @@ public class CafeBoardPostBiz extends CommonBiz{
 		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostDetailEach", param);
 		result += sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostEach", param);
 		
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int deleteCafeBoardPostReply( HashMap param )
+	{
+		CafeLocationBiz.getInstance(sqlSession).deleteCafeLocation(param);
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostReply", param);
 		return result;
 	}
 }
