@@ -133,7 +133,6 @@ public class CafeBoardPostBiz extends CommonBiz{
 	@SuppressWarnings("rawtypes")
 	public int deleteCafeBoardPostReply( HashMap param )
 	{
-		CafeLocationBiz.getInstance(sqlSession).deleteCafeLocation(param);
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostReply", param);
 		return result;
 	}

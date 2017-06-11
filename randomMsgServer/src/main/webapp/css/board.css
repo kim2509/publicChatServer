@@ -213,6 +213,28 @@ body{
 	width:100%;
 }
 
+#postLocation{
+	margin-top:20px;
+	padding:15px;
+	font-size:14px;
+}
+
+#postLocation #btnMap{
+	margin-left:10px;
+	font-size:12px;
+	font-weight:bold;
+	text-decoration: underline;
+	color: blue;
+}
+
+#postLocation #postMap{
+	display:none;
+	margin:10px 10px;
+	height:200px;
+	border-radius:10px;
+	z-index:10;
+}
+
 #postReplyDiv{
 	margin-bottom:30px;
 }

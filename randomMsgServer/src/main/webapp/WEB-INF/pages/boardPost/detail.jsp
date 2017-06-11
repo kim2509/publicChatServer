@@ -50,6 +50,8 @@
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/board.css?v=1" />
 
+<script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
+
 </head>
 
 <script language="javascript">
@@ -63,6 +65,11 @@
 	var ownerYN = '<%= ownerYN %>';
 	var memberYN = '<%= memberYN %>';
 	var memberType = '<%= memberType %>';
+	
+	var locationName = '<%= Util.getStringFromHash(postInfo, "locationName") %>';
+	var address = '<%= Util.getStringFromHash(postInfo, "address") %>';
+	var latitude = '<%= Util.getStringFromHash(postInfo, "latitude") %>';
+	var longitude = '<%= Util.getStringFromHash(postInfo, "longitude") %>';
 	
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
@@ -148,6 +155,55 @@
 		}
 	}
 	
+	function toggleMap()
+	{
+		if ( $('#postLocation #postMap').is(':visible') )
+		{
+			$('#postLocation #postMap').hide();
+		}
+		else
+		{
+			if ( latitude != null && latitude.length > 0 &&
+					longitude != null && longitude.length > 0 )
+			{
+				$('#postLocation #postMap').show();
+				
+				if ( mapInitialized == false )
+					initiateMap();
+			}
+		}
+	}
+	
+	var map = null;
+	var mapInitialized = false;
+	
+	function initiateMap()
+	{
+		var container = document.getElementById('postMap'); //지도를 담을 영역의 DOM 레퍼런스
+	
+		var options = { //지도를 생성할 때 필요한 기본 옵션
+				center: new daum.maps.LatLng(latitude, longitude), //지도의 중심좌표.
+				level: 3 //지도의 레벨(확대, 축소 정도)
+			};
+
+		map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		
+		var position = new daum.maps.LatLng( latitude, longitude );
+		
+		map.setCenter(position);
+		
+		// 마커를 생성합니다
+	    var marker = new daum.maps.Marker({
+	        position: position,
+	        clickable:true
+	    });
+		
+	 	// 마커가 지도 위에 표시되도록 설정합니다
+	    marker.setMap(map);
+		 
+	    mapInitialized = true;
+	}
+	
 </script>
 <body>
 
@@ -191,6 +247,19 @@
 			}
 			%>
 		</div>
+		
+		<% if ( !Util.isEmptyString( Util.getStringFromHash(postInfo, "address") ) ) {%>
+		
+		<div id="postLocation">
+			<% if ( !Util.isEmptyString( Util.getStringFromHash(postInfo, "locationName") ) ) {%>
+			위치 : <%=Util.getStringFromHash(postInfo, "locationName")%><br/>
+			<% } %>
+			주소 : <%= Util.getStringFromHash(postInfo, "address") %><a id="btnMap" onclick="toggleMap();">지도보기</a>
+			<div id="postMap"></div>
+		</div>
+		
+		<% } %>
+		
 		<div id="postReplyDiv">
 			<ul id="replyBtns">
 				<li>댓글 <span><%= replyCount %></span></li>
