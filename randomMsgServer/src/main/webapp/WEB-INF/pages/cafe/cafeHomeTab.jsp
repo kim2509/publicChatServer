@@ -201,6 +201,7 @@
 						</div>
 						<div id="memberInfo">
 							<div><%= member.get("userName") %></div>
+							<div id="memberType"><%= Util.getStringFromHash(member, "memberType") %></div>
 						</div>
 					</li>
 					<% } %>

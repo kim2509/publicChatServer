@@ -201,7 +201,7 @@
 	{
 		if ( isApp =='Y' )
 		{
-		
+			finish();
 		}
 		else
 		{
@@ -269,6 +269,22 @@
 			
 			alert('비공개되었습니다.');	
 		}
+	}
+	
+	function finish()
+	{
+		var broadcastList = [];
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_INDEX %>"};
+		broadcastList[1] = {"broadcastName":"BROADCAST_FINISH_ACTIVITY", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+		
+		var param = {"broadcastList": broadcastList };
+		
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity2( JSON.stringify( param ) );
+		}
+		
+		return '';
 	}
 	
 </script>

@@ -187,6 +187,9 @@ public class CafeBiz extends CommonBiz{
 		
 		sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeDetail", param);
 		
+		param.put("memberType", "카페주인");
+		registerCafeMember(param);
+		
 		return result;
 	}
 	
@@ -513,8 +516,8 @@ public class CafeBiz extends CommonBiz{
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostDetail", param);		
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardAllPosts", param);
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeAllBoard", param);
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeDetail", param);
-		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeMaster", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeDetail", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeMaster", param);
 		
 		return result;
 	}
@@ -536,6 +539,9 @@ public class CafeBiz extends CommonBiz{
 	@SuppressWarnings("rawtypes")
 	public int registerCafeMember( HashMap param )
 	{
+		if ( Util.isEmptyForKey(param, "memberType") )
+			param.put("memberType", "회원");
+		
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeMember", param);
 		return result;
 	}

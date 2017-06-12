@@ -624,7 +624,7 @@
 	<!-- 카페 회원 가입 -->
 	<insert id="insertCafeMember" parameterType="HashMap">
 		insert into cafe_members( cafeNo, userID, memberType, createdDate )
-		values( #{cafeNo}, #{userID}, '회원', NOW() );
+		values( #{cafeNo}, #{userID}, #{memberType}, NOW() );
 	</insert>
 	
 	<!-- 카페 회원 탈퇴 -->

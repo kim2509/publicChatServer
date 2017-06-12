@@ -279,6 +279,15 @@ li{
 #cafeInfo #cafeMemberInfo #memberInfo
 {
 	margin-left:70px;
+	position:relative;
+	height:60px;
+}
+
+#memberInfo #memberType
+{
+	position:absolute;
+	bottom:5px;
+	font-size:14px;
 }
 
 #cafeInfo #cafeButtons

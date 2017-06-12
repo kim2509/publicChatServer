@@ -8,6 +8,7 @@ public class Constants {
 	
 	public static String ServerIP = "192.168.0.200";
 //	public static String ServerIP = "192.168.43.137";
+//	public static String ServerIP = "localhost";
 	
 	public static String CSS_PATH = "http://" + ServerIP + ":8080/nearhere/css/";
 	public static String SECURE_CSS_PATH = "http://" + ServerIP + ":8080/nearhere/css/";
@@ -44,4 +45,7 @@ public class Constants {
 		return Constants.bReal ? "https://www.hereby.co.kr/thumbnail/" : "http://www.hereby.co.kr/thumbnail/";
 //		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://172.30.1.200/thumbnail/";
 	}
+	
+	public static String PAGE_ID_CAFE_INDEX = "P0000";
+	public static String PAGE_ID_CAFE_HOME = "P0001";
 }

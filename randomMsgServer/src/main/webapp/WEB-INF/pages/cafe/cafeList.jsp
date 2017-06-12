@@ -90,17 +90,7 @@
 			$('#popularCafeList').html(html);
 		}
 	}
-	
-	function goCafeHome( cafeID )
-	{
-		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent( url ) + '';
-		else
-			document.location.href= url;
-	}
-	
+		
 </script>
 <script id="cafeT" type="text/x-handlebars-template">
 	{{#if data}}
