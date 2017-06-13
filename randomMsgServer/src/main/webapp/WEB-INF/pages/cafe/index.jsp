@@ -48,9 +48,9 @@
 		var url = '<%= Constants.getServerURL() %>/cafe/newCafe.do?isApp=<%= isApp %>';
 		
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent( url );
 		else
-			document.location.href="/nearhere/cafe/newCafe.do";
+			document.location.href= url;
 	}
 	
 	function goCafeHome( cafeID )

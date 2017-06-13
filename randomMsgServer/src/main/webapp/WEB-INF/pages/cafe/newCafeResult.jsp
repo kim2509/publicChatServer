@@ -29,11 +29,24 @@
 	function goCafeHome( cafeID )
 	{
 		var url ='<%= Constants.getServerURL() %>/cafe/' + cafeID;
-		
+
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + url + '';
+		{
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url);
+			finish();
+		}
 		else
-			document.location.href= url;
+			document.location.href=url;
+	}
+	
+	function finish()
+	{
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity2('');
+		}
+		
+		return '';
 	}
 </script>
 

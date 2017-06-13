@@ -80,19 +80,20 @@
 	{
 		try
 		{
-			console.log( JSON.stringify( result ) );
-			
 			if ( result.resCode != '0000' )
 			{
 				notice( result.resMsg );
 				return;
 			}
 			
-			var url ='<%= Constants.getServerURL() %>/cafe/newCafeResult.do?cafeID=' + result.data.cafeID 
+			var url ='<%= Constants.getServerURL() %>/cafe/newCafeResult.do?isApp=<%= isApp %>&cafeID=' + result.data.cafeID 
 					+ '&cafeName=' + encodeURIComponent(result.data.cafeName);
 			
 			if ( isApp == 'Y' )
-				document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
+			{
+				document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url);
+				finish();
+			}
 			else
 				document.location.href=url;
 		}
@@ -100,6 +101,21 @@
 		{
 			notice( ex.message );
 		}
+	}
+	
+	function finish()
+	{
+		var broadcastList = [];
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_INDEX %>"};
+		
+		var param = {"broadcastList": broadcastList };
+		
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity2( JSON.stringify( param ) );
+		}
+		
+		return '';
 	}
 	
 </script>
