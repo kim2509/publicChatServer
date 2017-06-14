@@ -31,13 +31,16 @@
 	{
 		try
 		{
-			if ( $('#cafeName').val() == '' )
+			var cafeName = $('#cafeName').val();
+			cafeName = cafeName.replace(' ', '');
+			
+			if ( cafeName == '' )
 			{
 				notice('카페이름을 입력해 주십시오.');
 				return;
 			}
 			
-			if ( isAlphaNumberKorOnly($('#cafeName').val()) == false )
+			if ( isAlphaNumberKorOnly( cafeName ) == false )
 			{
 				notice("한글, 영문, 숫자만 입력할 수 있습니다.");
 			 	return;

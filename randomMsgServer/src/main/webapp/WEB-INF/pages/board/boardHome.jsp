@@ -109,7 +109,7 @@
 				"&boardName=" + encodeURIComponent(boardName);
 
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
+			document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href= url;
 	}

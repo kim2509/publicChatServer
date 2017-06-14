@@ -106,7 +106,7 @@
 		
 		if ( title == '' )
 		{
-			alert('제목을 입력해 주십시오.');
+			notice('제목을 입력해 주십시오.');
 			return;
 		}
 		
@@ -128,17 +128,39 @@
 	{
 		if ( result == null )
 		{
-			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			notice('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
 			return;
 		}
 		else if ( result != null && result.resCode != '0000')
 		{
-			alert( result.resMsg );
+			notice( result.resMsg );
 		}
 		else
 		{
-			alert('저장되었습니다.');
+			notice('저장되었습니다.');
+			
+			if ( isApp == 'Y' )
+			{
+				finish();	
+			}
 		}
+	}
+	
+	function finish()
+	{
+		var broadcastList = [];
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_HOME %>"};
+		broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+		broadcastList[2] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>"};
+		
+		var param = {"broadcastList": broadcastList };
+		
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity2( JSON.stringify( param ) );
+		}
+		
+		return '';
 	}
 	
 	function getBoardPost()

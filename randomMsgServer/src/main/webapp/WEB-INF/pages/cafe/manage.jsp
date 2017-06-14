@@ -20,7 +20,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=3"></script>
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
@@ -155,7 +155,7 @@
 		// 저장할 때에는 이메일을 입력했을 때에만 validation 검사
 		if ( contactEmail != null && contactEmail.length > 0 && validateEmail(contactEmail) == false )
 		{
-			alert('이메일 형식이 올바르지 않습니다.');
+			notice('이메일 형식이 올바르지 않습니다.');
 			return;
 		}
 		
@@ -174,16 +174,16 @@
 	{
 		if ( result == null )
 		{
-			alert('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
+			notice('처리결과가 올바르지 않습니다.\r\n다시 시도해 주시기 바랍니다.');
 			return;
 		}
 		else if ( result != null && result.resCode != '0000')
 		{
-			alert( result.resMsg );
+			notice( result.resMsg );
 		}
 		else
 		{
-			alert('저장되었습니다.');
+			notice('저장되었습니다.');
 		}
 	}
 	
@@ -211,7 +211,7 @@
 	
 	function publishCafe()
 	{
-		if ( confirm('카페를 공개하시겠습니까?') )
+		if ( confirm('저장은 하셨나요? 저장 후 공개를 클릭하시기 바랍니다.\r\n공개 하시겠습니까?') )
 		{
 			var param = {"cafeID":cafeID };
 			ajaxRequest('POST', '/nearhere/cafe/publishCafeAjax.do', param , publishCafeResult );	
@@ -222,13 +222,13 @@
 	{
 		if ( result == null )
 		{
-			alert('처리도중 오류가 발생했습니다.');
+			notice('처리도중 오류가 발생했습니다.');
 			return;
 		}
 		
 		if ( result.resCode != '0000' )
 		{
-			alert( result.resMsg );
+			notice( result.resMsg );
 			return;
 		}
 		else
@@ -236,7 +236,15 @@
 			$('#btnUnPublish').show();
 			$('#btnPublish').hide();
 			
-			alert('공개되었습니다.');	
+			notice('공개되었습니다.');
+			
+			if ( isApp == 'Y')
+			{
+				var broadcastList = [];
+				broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+				var param = {"broadcastList": broadcastList };
+				sendBroadcasts(param);	
+			}
 		}
 	}
 	
@@ -253,13 +261,13 @@
 	{
 		if ( result == null )
 		{
-			alert('처리도중 오류가 발생했습니다.');
+			notice('처리도중 오류가 발생했습니다.');
 			return;
 		}
 		
 		if ( result.resCode != '0000' )
 		{
-			alert( result.resMsg );
+			notice( result.resMsg );
 			return;
 		}
 		else
@@ -267,7 +275,15 @@
 			$('#btnUnPublish').hide();
 			$('#btnPublish').show();
 			
-			alert('비공개되었습니다.');	
+			notice('비공개되었습니다.');	
+			
+			if ( isApp == 'Y')
+			{
+				var broadcastList = [];
+				broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+				var param = {"broadcastList": broadcastList };
+				sendBroadcasts(param);	
+			}
 		}
 	}
 	

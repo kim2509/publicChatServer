@@ -39,7 +39,7 @@
 		
 		var titleUrlEncoded = encodeURIComponent( boardName );
 		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&title=' + titleUrlEncoded + '&url=' + url + '';
+			document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_BOARD_HOME %>&title=' + titleUrlEncoded + '&url=' + url + '';
 		else
 			document.location.href= url;
 	}

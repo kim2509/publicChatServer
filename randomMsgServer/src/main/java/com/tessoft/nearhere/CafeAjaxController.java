@@ -999,7 +999,7 @@ public class CafeAjaxController extends BaseController {
 				response.setResMsg("고객님은 해당메뉴에 권한이 없습니다.");
 			}
 
-			param.put("publishYN", "Y");
+			param.put("publishYN", "N");
 			CafeBiz.getInstance(sqlSession).updateCafePublishYN(param);
 			
 			insertHistory("/cafe/unpublishCafeAjax.do", param.get("cafeID").toString() , null , null , null );

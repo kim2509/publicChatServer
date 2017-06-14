@@ -33,6 +33,16 @@ function notice( message )
 		alert( message );
 }
 
+function sendBroadcasts( jsonObj )
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		return Android.sendBroadcasts( JSON.stringify( jsonObj ) );
+	}
+	
+	return '';
+}
+
 function isAlphaNumberKorOnly( str )
 {
 	if ( str.match(/[^0-9a-zA-Z가-힝ㄱ-ㅎ]/) != null ) {

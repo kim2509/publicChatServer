@@ -115,8 +115,26 @@
 		}
 		else
 		{
-			finish();
+			if ( isApp == 'Y' )
+			{
+				finish();	
+			}
 		}
+	}
+	
+	function finish()
+	{
+		var broadcastList = [];
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_HOME %>"};
+		
+		var param = {"broadcastList": broadcastList };
+		
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity2( JSON.stringify( param ) );
+		}
+		
+		return '';
 	}
 	
 	function goNewBoardPostReply()

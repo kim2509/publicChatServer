@@ -18,7 +18,7 @@
 		from cafe_board_post_master bpm
 			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
 			left outer join user u on u.userID = bpm.userID
-		where bm.boardNo = #{boardNo} and noticeYN = 'N'
+		where bm.boardNo = #{boardNo} and ifnull(noticeYN,'N') = 'N'
 		limit #{startIndex}, #{showCount}
 	</select>
 	
