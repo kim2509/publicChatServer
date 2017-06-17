@@ -33,6 +33,24 @@ function notice( message )
 		alert( message );
 }
 
+function finishActivity()
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		return Android.finishActivity('');
+	}
+	
+	return '';
+}
+
+function goBack()
+{
+	if ( isApp == 'Y' )
+		finishActivity();
+	else
+		history.back(-1);
+}
+
 function sendBroadcasts( jsonObj )
 {
 	if ( Android && Android != null && typeof Android != 'undefined')

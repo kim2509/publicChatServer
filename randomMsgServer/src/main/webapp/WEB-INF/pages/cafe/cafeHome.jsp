@@ -127,6 +127,8 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 	
 </script>
 
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
+
 </head>
 <body>
 

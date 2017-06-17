@@ -258,24 +258,6 @@
 		document.location.href='nearhere://viewPost?postID=' + postID;
 	}
 	
-	function openUserProfile( userID )
-	{
-		<% if ( appVersion < 1.53 ) { %>
-			
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
-		
-		<% } else { %>
-		
-		var url = '<%= userInfoPage %>' + '?userID=' + userID;
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
-		else
-			document.location.href = decodeURIComponent(url);
-		
-		<% }%>
-	}
-	
 	function snsLogin()
 	{
 		document.location.href='nearhere://snsLogin';

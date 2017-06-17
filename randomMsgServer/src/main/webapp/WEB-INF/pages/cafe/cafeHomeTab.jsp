@@ -47,17 +47,6 @@
 		});
 		
 	});
-
-	function goMeetingDetail( cafeID, meetingNo )
-	{
-		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
-				cafeID + '&meetingNo=' + meetingNo;
-	
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
 	
 	function registerCafeMember()
 	{
@@ -194,7 +183,7 @@
 					<% for ( int i = 0; i < cafeMemberList.size(); i++ ) { 
 						HashMap member = cafeMemberList.get(i);
 					%>
-					<li>
+					<li onclick="openUserProfile('<%= Util.getStringFromHash(member, "userID") %>')">
 						<div id="imgProfile">
 							<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= member.get("profileImageURL") %>" 
 							width=60 height=60/>

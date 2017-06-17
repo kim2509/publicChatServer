@@ -131,8 +131,6 @@
 			if ( locationResult != null )
 				param.meetingLocation = locationResult;
 			
-			console.log( JSON.stringify( param ) );
-			
 			ajaxRequest('POST', '/nearhere/cafe/saveCafePublicMeetingAjax.do', param , onSaveResult );
 		}
 	}
@@ -150,7 +148,7 @@
 		}
 		else
 		{
-			notice('저장되었습니다.');
+			alert('저장되었습니다.');
 			
 			if ( isApp == 'Y' )
 			{
@@ -162,7 +160,8 @@
 	function finish()
 	{
 		var broadcastList = [];
-		broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+		broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_PUBLIC_MEETING_DETAIL %>"};
 		
 		var param = {"broadcastList": broadcastList };
 		

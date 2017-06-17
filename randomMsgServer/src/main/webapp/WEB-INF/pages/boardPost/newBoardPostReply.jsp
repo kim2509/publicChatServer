@@ -68,8 +68,27 @@
 		}
 		else
 		{
-			alert('저장되었습니다.');
+			if ( isApp == 'Y' )
+			{
+				finish();	
+			}
 		}
+	}
+	
+	function finish()
+	{
+		var broadcastList = [];
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_HOME %>"};
+		broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>"};
+		
+		var param = {"broadcastList": broadcastList };
+		
+		if ( Android && Android != null && typeof Android != 'undefined')
+		{
+			return Android.finishActivity2( JSON.stringify( param ) );
+		}
+		
+		return '';
 	}
 	
 </script>

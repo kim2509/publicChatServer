@@ -36,11 +36,6 @@
 
 	
 	});
-
-	function openUserProfile( userID )
-	{
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
-	}
 	
 	function viewPost( postID, element )
 	{
@@ -80,6 +75,8 @@
 		font-size:14px;
 	}
 </style>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body>

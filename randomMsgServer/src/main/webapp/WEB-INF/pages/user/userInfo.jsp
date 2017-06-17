@@ -107,13 +107,6 @@
 			});
 		}
 	});
-
-	function openUserProfile( userID )
-	{
-		var url = '<%= userInfoPage %>' + '?userID=' + userID;
-		
-		document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
-	}
 	
 	function goFriendInfo()
 	{

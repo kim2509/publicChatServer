@@ -45,12 +45,14 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=1"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=4"></script>
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/board.css?v=1" />
 
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 
@@ -117,12 +119,12 @@
 		{
 			if ( isApp == 'Y' )
 			{
-				finish();	
+				finishWithReload();	
 			}
 		}
 	}
 	
-	function finish()
+	function finishWithReload()
 	{
 		var broadcastList = [];
 		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_HOME %>"};
@@ -241,11 +243,11 @@
 			<%= postInfo.get("title") %></div>
 			
 			<div id="postInfo">
-				<span>대용</span>|<span><%= Util.getDateStringFromDate(dtCreatedDate, "yy.MM.dd") %></span>|<span><%= Util.getNumberWithComma(readCount) %></span>
+				<span onclick="openUserProfile('<%= Util.getStringFromHash(postInfo, "userID") %>')"><%= Util.getStringFromHash(postInfo, "userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate, "yy.MM.dd") %></span>|<span><%= Util.getNumberWithComma(readCount) %></span>
 			</div>
 			
 			<div id="btns">
-				<div id="listBtn" onclick="history.back(-1);">목록</div>
+				<div id="listBtn" onclick="goBack();">목록</div>
 			</div>
 		</div>
 		<div id="postBodyDiv">
@@ -258,7 +260,7 @@
 					String imageURL = Util.getStringFromHash( contentList.get(i), "imageURL");
 					
 					if ("1".equals( type ) )
-						out.println( content );
+						out.println( content.replaceAll("\r\n", "\n").replaceAll("\n", "<br/>") );
 					else
 						out.println("<img src='" + imageURL + "' />");
 				}
@@ -305,7 +307,7 @@
 				%>
 				<li>
 					<div id="replyInfo">
-						<span><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy-MM-dd HH:mm") %></span><% if ("Y".equals(deleteYN) ) { %>|<span onclick="deleteBoardPostReply('<%= postNo %>','<%= replyNo %>')">삭제하기</span><% } %>
+						<span onclick="openUserProfile('<%= Util.getStringFromHash(postReply, "userID") %>')"><%= postReply.get("userName") %></span>|<span><%= Util.getDateStringFromDate(dtCreatedDate2, "yy-MM-dd HH:mm") %></span><% if ("Y".equals(deleteYN) ) { %>|<span onclick="deleteBoardPostReply('<%= postNo %>','<%= replyNo %>')">삭제하기</span><% } %>
 					</div>
 					<div><%= postReply.get("content") %></div>
 				</li>

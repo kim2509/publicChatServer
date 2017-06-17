@@ -154,19 +154,6 @@
 		getImagePostList();
 	}
 	
-	function goPostDetail( boardName, postNo )
-	{
-		//document.location.href="/nearhere/cafe/boardPost/detail/" + postNo + "?boardName=" + encodeURIComponent(boardName);
-		
-		var url = '<%= Constants.getServerURL() + "/cafe/boardPost/detail/" %>' + 
-			postNo + "?boardName=" + encodeURIComponent(boardName);
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
-	
 </script>
 <script id="imagePostT" type="text/x-handlebars-template">
 	<ul>

@@ -269,24 +269,6 @@
 			map.panTo(positions[0].latlng);
 	}
 	
-	function goMeetingDetail( cafeID, meetingNo )
-	{
-		try
-		{
-			var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
-			cafeID + '&meetingNo=' + meetingNo + "&userID=" + userID;
-
-			if ( isApp == 'Y' )
-				document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-			else
-				document.location.href= url;	
-		}
-		catch( ex )
-		{
-			alert( ex.message );
-		}
-	}
-	
 </script>
 
 	<script id="meetingT" type="text/x-handlebars-template">

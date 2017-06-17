@@ -43,7 +43,9 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/meetingDetail.css?v=6" />
+	href="<%=Constants.CSS_PATH%>/meetingDetail.css?v=7" />
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 
@@ -54,16 +56,14 @@
 	var isApp = '<%= isApp %>';
 	var cafeID = '<%= cafeID %>';
 	var meetingNo = '<%= meetingInfo.get("meetingNo") %>';
-	
-	jQuery(document).ready(function(){
-		initiateMap();
-	});
-	
+
 	var map = null;
 	var latitude = '<%= meetingInfo.get("latitude") %>';
 	var longitude = '<%= meetingInfo.get("longitude") %>';
 	var address = '<%= meetingInfo.get("address") %>';
 	var infoWindow = null;
+	
+	var mapInitialized = false;
 	
 	function initiateMap()
 	{
@@ -109,6 +109,8 @@
 		 	
 		    infoWindow.open(map, marker);
 		}
+		
+		mapInitialized = true;
 	}
 	
 	function showInfoWindow( marker )
@@ -171,15 +173,25 @@
 		}
 		else
 		{
-			finish();
+			alert('삭제되었습니다.');
+			
+			if ( isApp == 'Y' )
+			{
+				finish();	
+			}
 		}
 	}
 	
 	function finish()
 	{
+		var broadcastList = [];
+		broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+		
+		var param = {"broadcastList": broadcastList };
+		
 		if ( Android && Android != null && typeof Android != 'undefined')
 		{
-			return Android.finishActivity('refresh');
+			return Android.finishActivity2( JSON.stringify( param ) );
 		}
 		
 		return '';
@@ -193,6 +205,28 @@
 			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
 		else
 			document.location.href= url;
+	}
+	
+	function toggleMap()
+	{
+		if ( $('#meetingLocation #map').is(':visible') )
+		{
+			$('#meetingLocation #map').hide();
+			$('#meetingLocation a').html('지도보기');
+		}
+		else
+		{
+			if ( latitude != null && latitude.length > 0 &&
+					longitude != null && longitude.length > 0 )
+			{
+				$('#meetingLocation #map').show();
+				
+				if ( mapInitialized == false )
+					initiateMap();
+				
+				$('#meetingLocation a').html('지도 숨기기');
+			}
+		}
 	}
 	
 </script>
@@ -217,18 +251,16 @@
 			</div>
 		</div>
 		
-		<table id="locationInfo">
-			<tr><th>위치</th>
-			<td>
-			<%= Util.isEmptyString(locationName) ? "" : "(" + locationName + ")" %>
-			<%= locationAddress %>
-			</td></tr>
-		</table>
-		
-		<div id="map"></div>
-		
 		<div id="meetingDesc">
-			<%= Util.getStringFromHash(meetingInfo, "meetingDesc") %>
+			<%= Util.getStringFromHash(meetingInfo, "meetingDesc").replaceAll("\r\n", "\n").replaceAll("\n", "<br/>") %>
+		</div>
+		
+		<div id="meetingLocation">
+			<% if ( !Util.isEmptyString( Util.getStringFromHash(meetingInfo, "locationName") ) ) {%>
+			위치 : <%=Util.getStringFromHash(meetingInfo, "locationName")%><br/>
+			<% } %>
+			주소 : <%= Util.getStringFromHash(meetingInfo, "locationAddress") %><a id="btnMap" onclick="toggleMap();">지도보기</a>
+			<div id="map"></div>
 		</div>
 		
 		<div>
@@ -245,7 +277,7 @@
 					for ( int i = 0; i < meetingMembers.size(); i++ ) {
 					HashMap meetingMember = meetingMembers.get(i);
 				%>
-					<li>
+					<li onclick="openUserProfile('<%= Util.getStringFromHash(meetingMember, "userID") %>')">
 					<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= meetingMember.get("profileImageURL") %>" 
 							width=60 height=60/>
 						

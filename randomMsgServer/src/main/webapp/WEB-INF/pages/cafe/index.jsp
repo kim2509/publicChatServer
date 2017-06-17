@@ -63,17 +63,6 @@
 			document.location.href= url;
 	}
 	
-	function goMeetingDetail( cafeID, meetingNo )
-	{
-		var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
-				cafeID + '&meetingNo=' + meetingNo;
-	
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
-	
 	jQuery(document).ready( function () {
 		
 		try
@@ -104,6 +93,8 @@
 	}
 	
 </script>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body>

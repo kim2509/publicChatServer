@@ -137,7 +137,7 @@
 		}
 		else
 		{
-			notice('저장되었습니다.');
+			alert('저장되었습니다.');
 			
 			if ( isApp == 'Y' )
 			{
@@ -171,8 +171,6 @@
 	
 	function getBoardPostResult( result )
 	{
-		console.log(JSON.stringify( result ) );
-		
 		var postInfo = null;
 		var contentList = null;
 		

@@ -103,16 +103,6 @@
 			}
 		});
 	}
-
-	function openUserProfile( userID )
-	{
-		var url = '<%= userInfoPage %>' + '?userID=' + userID;
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
-		else
-			document.location.href = decodeURIComponent(url);
-	}
 	
 	function searchUser()
 	{
@@ -399,6 +389,8 @@
 		{{/each}}
 	</dl>
 </script>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body>

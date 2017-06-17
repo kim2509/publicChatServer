@@ -50,8 +50,10 @@
 		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
 			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate
 			, cl.No as locationNo, cl.type as locationType, cl.locationName, cl.latitude, cl.longitude, cl.address, cl.regionNo
+			, u.userName
 		from cafe_board_post_master bpm
 			left outer join cafe_location cl on cl.No = bpm.locationNo
+			left outer join user u on bpm.userID = u.userID
 		where bpm.postNo=#{postNo}
 	</select>
 	

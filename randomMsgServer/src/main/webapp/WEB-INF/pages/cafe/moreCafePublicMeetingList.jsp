@@ -235,6 +235,8 @@
 	{{/if}}			
 </script>
 
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
+
 </head>
 <body>
 	

@@ -103,17 +103,6 @@
 		return new Handlebars.SafeString( innerHTML );
 	}
 	
-	function goPostDetail( postNo )
-	{
-		var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo + "?cafeID=" + cafeID + "&boardNo=" + boardNo +
-				"&boardName=" + encodeURIComponent(boardName);
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href= url;
-	}
-	
 	function goNewBoardPost()
 	{
 		var url = '<%= Constants.getServerURL() + "/boardPost/newBoardPost.do" %>?cafeID=' + cafeID + '&boardNo=' + boardNo;
@@ -188,7 +177,7 @@
 	{{#if boardPostList}}
 	<ul>
 		{{#each boardPostList}}
-		<li onclick="goPostDetail('{{postNo}}');">
+		<li onclick="goPostDetail( boardName, '{{postNo}}');">
 			<div id="commentCount">{{replyCount}}</div>
 			<div id="postDiv">{{displayPostTitle noticeYN title}}</div>
 			<div id="postInfo">
@@ -201,6 +190,8 @@
 		<div id="emptyDiv">게시글이 존재하지 않습니다.</div>
 	{{/if}}
 </script>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body>
