@@ -61,6 +61,16 @@ function sendBroadcasts( jsonObj )
 	return '';
 }
 
+function selectPhotoUpload( jsonObj )
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		return Android.selectPhotoUpload( JSON.stringify( jsonObj ) );
+	}
+	
+	return '';
+}
+
 function isAlphaNumberKorOnly( str )
 {
 	if ( str.match(/[^0-9a-zA-Z가-힝ㄱ-ㅎ]/) != null ) {

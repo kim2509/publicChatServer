@@ -20,7 +20,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=3"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=4"></script>
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
@@ -303,6 +303,12 @@
 		return '';
 	}
 	
+	function uploadCafeIcon()
+	{
+		if ( isApp == 'Y' )
+			selectPhotoUpload();
+	}
+	
 </script>
 
 </head>
@@ -348,7 +354,7 @@
 			</div>
 			
 			<div id="iconBtnDiv" class="marginLR10 marginB20">
-				<div class="splitBtn">
+				<div class="splitBtn" onclick="uploadCafeIcon();">
 					<div class="wideBtn darkBG" id="btnUploadMainImg">카페 아이콘 업로드</div>
 				</div>
 				<div class="splitBtn">
