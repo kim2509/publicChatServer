@@ -306,9 +306,13 @@
 	function uploadCafeIcon()
 	{
 		if ( isApp == 'Y' )
-			selectPhotoUpload();
+			selectPhotoUpload('a');
 	}
 	
+	function onImageUploaded( result )
+	{
+		alert( result );
+	}
 </script>
 
 </head>

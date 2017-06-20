@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.FileDTO;
+import com.dy.common.UploadImageDTO;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
 
@@ -119,6 +120,50 @@ public class FileUploadController {
 		// 데이터 베이스 처리를 현재 위치에서 처리
 
 		logger.info("uploadUserProfilePhoto.do end");
+
+		return response; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
+	}
+	
+	@RequestMapping(value = "/cafe/uploadImageFile.do", method = RequestMethod.POST)
+	public @ResponseBody APIResponse uploadImageFile(UploadImageDTO request) {
+
+		logger.info("uploadImageFile.do start");
+		APIResponse response = new APIResponse();
+
+		MultipartFile uploadfile = (MultipartFile) request.getFile();
+		if (uploadfile != null) {
+
+			String fileName = uploadfile.getOriginalFilename();
+			
+			try {
+
+				String rootPath = "";
+				if ( Constants.bReal )
+					rootPath = "/var/lib/tomcat7/webapps/ROOT";
+				else
+					rootPath = "D:\\wamp\\www";
+				
+				File dir = new File(rootPath + File.separator + "cafe_image");
+				if (!dir.exists())
+					dir.mkdirs();
+
+				// 2. File 사용
+				File file = new File( dir.getAbsolutePath() + File.separator + fileName);
+				uploadfile.transferTo(file);
+
+				logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
+
+			} catch (Exception e) {
+
+				logger.error( e );
+				
+				response.setResCode(ErrorCode.IMAGE_UPLOAD_ERROR );
+				response.setResMsg("이미지 업로드중 오류");
+				
+			}
+		}
+
+		logger.info("uploadImageFile.do end");
 
 		return response; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
 	}
