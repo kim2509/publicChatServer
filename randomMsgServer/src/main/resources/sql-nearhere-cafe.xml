@@ -657,8 +657,12 @@
 	</delete>
 	
 	<!-- 이미지 등록 -->
-	<insert id="insertCafeImageRow" parameterType="HashMap">
+	<insert id="insertCafeImageRow" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="imageNo" keyColumn="imageNo">
 		insert into cafe_image(imageName, url1, url2, serverPath, createdDate)
 		values(#{imageName}, #{url1}, #{url2}, #{serverPath}, NOW());
+		<selectKey keyProperty="imageNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
 	</insert>
 </mapper>
