@@ -1,4 +1,4 @@
-package com.dy.common;
+package com.tessoft.nearhere.background;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +10,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.dy.common.Constants;
+import com.dy.common.Util;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
