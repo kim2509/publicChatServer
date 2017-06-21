@@ -128,6 +128,7 @@ public class FileUploadController {
 		return response; // 리스트 요청으로 보내야하는데 일단 제외하고 구현
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping(value = "/cafe/uploadImageFile.do", method = RequestMethod.POST)
 	public @ResponseBody APIResponse uploadImageFile(UploadImageDTO request) {
 
