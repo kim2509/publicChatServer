@@ -173,7 +173,7 @@ public class FileUploadController {
 
 				HashMap param = new HashMap();
 				param.put("imageName", "이미지 이름");
-				param.put("url1", Constants.getServerURL() + relativePath + File.separator + fileName );
+				param.put("url1", Constants.getServerURL() + "/" + relativePath + "/" + fileName );
 				param.put("serverPath", file.getAbsolutePath() );
 				
 				CafeBiz.getInstance(sqlSession).insertCafeImageRow(param);
