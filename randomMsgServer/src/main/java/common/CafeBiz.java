@@ -607,4 +607,11 @@ public class CafeBiz extends CommonBiz{
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafePublicMeeting", param);
 		return result;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public int insertCafeImageRow( HashMap param )
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeImageRow", param);
+		return result;
+	}
 }

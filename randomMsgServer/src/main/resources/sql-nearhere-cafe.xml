@@ -655,4 +655,10 @@
 		delete from cafe_public_meeting
 		where meetingNo = #{meetingNo}
 	</delete>
+	
+	<!-- 이미지 등록 -->
+	<insert id="insertCafeImageRow" parameterType="HashMap">
+		insert into cafe_image(imageName, url1, url2, serverPath, createdDate)
+		values(#{imageName}, #{url1}, #{url2}, #{serverPath}, NOW());
+	</insert>
 </mapper>

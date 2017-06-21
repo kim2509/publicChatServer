@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -25,8 +26,11 @@ import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.FileDTO;
 import com.dy.common.UploadImageDTO;
+import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
+
+import common.CafeBiz;
 
 /**
  * Handles requests for the application file upload requests
@@ -133,7 +137,7 @@ public class FileUploadController {
 		MultipartFile uploadfile = (MultipartFile) request.getFile();
 		if (uploadfile != null) {
 
-			String fileName = uploadfile.getOriginalFilename();
+			String fileName = "";//uploadfile.getOriginalFilename();
 			
 			try {
 
@@ -143,14 +147,38 @@ public class FileUploadController {
 				else
 					rootPath = "D:\\wamp\\www";
 				
-				File dir = new File(rootPath + File.separator + "cafe_image");
+				String relativePath = "cafe_image" + File.separator + Util.getNow("yyyyMMdd");
+				
+				File dir = new File(rootPath + File.separator + relativePath );
 				if (!dir.exists())
 					dir.mkdirs();
 
-				// 2. File 사용
-				File file = new File( dir.getAbsolutePath() + File.separator + fileName);
-				uploadfile.transferTo(file);
+				File file = null;
+				// 동일 파일명일 경우 다시 파일명 생성
+				while( true )
+				{
+					java.util.Date d = new java.util.Date();
+					fileName = Util.getRandomSeed() + String.valueOf(d.getTime()) + ".png";
+					
+					// 2. File 사용
+					file = new File( dir.getAbsolutePath() + File.separator + fileName);
+					
+					if ( file.exists() )
+						continue;
+					
+					uploadfile.transferTo(file);
+					break;
+				}
 
+				HashMap param = new HashMap();
+				param.put("imageName", "이미지 이름");
+				param.put("url1", Constants.getServerURL() + relativePath + File.separator + fileName );
+				param.put("serverPath", file.getAbsolutePath() );
+				
+				CafeBiz.getInstance(sqlSession).insertCafeImageRow(param);
+
+				response.setData( param );
+				
 				logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );
 
 			} catch (Exception e) {
