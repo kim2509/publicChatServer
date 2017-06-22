@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -148,9 +149,9 @@ public class FileUploadController {
 				else
 					rootPath = "D:\\wamp\\www";
 				
-				String relativePath = "cafe_image" + File.separator + Util.getNow("yyyyMMdd");
+				String relativePath = "cafe_image/" +  Util.getNow("yyyyMMdd");
 				
-				File dir = new File(rootPath + File.separator + relativePath );
+				File dir = new File(rootPath + File.separator + "cafe_image" + File.separator + Util.getNow("yyyyMMdd") );
 				if (!dir.exists())
 					dir.mkdirs();
 
@@ -172,12 +173,18 @@ public class FileUploadController {
 				}
 
 				HashMap param = new HashMap();
-				param.put("imageName", "이미지 이름");
-				param.put("url1", Constants.getServerURL() + "/" + relativePath + "/" + fileName );
+				
+				if ( !Util.isEmptyString(request.getRequestInfo()))
+					param = mapper.readValue( request.getRequestInfo() , new TypeReference<HashMap>(){});
+				
+				param.put("url1", Constants.getApacheHome() + "/" + relativePath + "/" + fileName );
 				param.put("serverPath", file.getAbsolutePath() );
 				
 				CafeBiz.getInstance(sqlSession).insertCafeImageRow(param);
 
+				if ( "Y".equals( Util.getStringFromHash(param, "commitYN") ) )
+					CafeBiz.getInstance(sqlSession).updateCafeImageAsCommitted(param);
+				
 				response.setData( param );
 				
 				logger.info( "RESPONSE: " + mapper.writeValueAsString(response) );

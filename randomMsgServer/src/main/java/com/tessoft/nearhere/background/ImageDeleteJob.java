@@ -34,7 +34,7 @@ public class ImageDeleteJob {
 	}
 
 	// 임시 이미지 삭제처리 commitDate 가 null 인 애들 모두 삭제하는 Job
-	@Scheduled(fixedRate = 1000 * 60 ) // 1시간마다
+	@Scheduled(fixedRate = 1000 * 60 * 60 ) // 1시간마다
 	public void deleteTemporaryImages() {
 
 		try

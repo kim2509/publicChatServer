@@ -614,4 +614,11 @@ public class CafeBiz extends CommonBiz{
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeImageRow", param);
 		return result;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeImageAsCommitted( HashMap param )
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeImageAsCommitted", param);
+		return result;
+	}
 }

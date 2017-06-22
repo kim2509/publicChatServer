@@ -665,4 +665,11 @@
 			select LAST_INSERT_ID();
 		</selectKey>
 	</insert>
+	
+	<!-- 이미지 commit -->
+	<update id="updateCafeImageAsCommitted" parameterType="HashMap">
+		update cafe_image
+		set commitDate = NOW()
+		where imageNo = #{imageNo}
+	</update>
 </mapper>
