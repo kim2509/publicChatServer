@@ -345,7 +345,7 @@ public class CafeController extends BaseController {
 			{
 				HashMap param = new HashMap();
 				param.put("cafeID", cafeID);
-				List<HashMap> boardList = CafeBiz.getInstance(sqlSession).getCafeBoardList(param);
+				List<HashMap> boardList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param);
 				model.addAttribute("cafeBoardListJSON", mapper.writeValueAsString(boardList));
 			}
 		}

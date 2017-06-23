@@ -303,8 +303,7 @@ public class CafeAjaxController extends BaseController {
 			String userID = info.get("userID").toString();
 			String cafeID = info.get("cafeID").toString();
 			
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			List<HashMap> cafeBoardList = cafeBiz.getCafeBoardList(info);
+			List<HashMap> cafeBoardList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(info);
 			
 			response.setData(cafeBoardList);
 			
@@ -358,7 +357,7 @@ public class CafeAjaxController extends BaseController {
 				String showCount = info.get("showCount").toString();
 				
 				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-				List<HashMap> boardList = cafeBiz.getCafeBoardList(info);
+				List<HashMap> boardList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(info);
 				List<HashMap> postList = cafeBiz.getCafeBoardPostImageList(info);
 				int totalCount = cafeBiz.getCafeBoardPostImageCount(info);
 				
@@ -585,7 +584,7 @@ public class CafeAjaxController extends BaseController {
 			int dbResult = cafeBiz.insertCafeBoard(param);
 			
 			HashMap info = new HashMap();
-			info.put("boardList", cafeBiz.getCafeBoardList(param) );
+			info.put("boardList", CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param) );
 			info.put("dbResult", String.valueOf( dbResult ));
 			
 			response.setData(info);
@@ -631,7 +630,7 @@ public class CafeAjaxController extends BaseController {
 			int dbResult = cafeBiz.modifyCafeBoard(param);
 			
 			HashMap info = new HashMap();
-			info.put("boardList", cafeBiz.getCafeBoardList(param) );
+			info.put("boardList", CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param) );
 			info.put("dbResult", String.valueOf( dbResult ));
 			
 			response.setData(info);
@@ -677,7 +676,7 @@ public class CafeAjaxController extends BaseController {
 			int dbResult = cafeBiz.deleteCafeBoard(param);
 			
 			HashMap info = new HashMap();
-			info.put("boardList", cafeBiz.getCafeBoardList(param) );
+			info.put("boardList", CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param) );
 			info.put("dbResult", String.valueOf( dbResult ));
 			
 			response.setData(info);
@@ -951,7 +950,7 @@ public class CafeAjaxController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("운영자 이메일이 설정되어 있지 않습니다.");
 			}
-			else if ( CafeBiz.getInstance(sqlSession).getCafeBoardList(param).size() < 1 )
+			else if ( CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param).size() < 1 )
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("게시판이 최소한 1개 이상이어야 합니다.");
