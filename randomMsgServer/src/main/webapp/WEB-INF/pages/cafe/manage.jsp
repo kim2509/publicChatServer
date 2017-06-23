@@ -306,12 +306,23 @@
 	function uploadCafeIcon()
 	{
 		if ( isApp == 'Y' )
-			selectPhotoUpload('a');
+		{
+			var param = {"imageName":"카페메인 아이콘", "cafeID":cafeID };
+			selectPhotoUpload( param );	
+		}
 	}
 	
-	function onImageUploaded( result )
+	function onImageUploaded( url )
 	{
-		alert( result );
+		try
+		{
+			alert( url );
+			$('#imgCafeIcon').attr('src', url );	
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
 	}
 </script>
 
