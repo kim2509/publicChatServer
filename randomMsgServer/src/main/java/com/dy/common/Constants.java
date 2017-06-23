@@ -7,13 +7,13 @@ public class Constants {
 	public static boolean bReal = false;
 	
 //	public static String ServerIP = "www.hereby.co.kr";
-//	public static String Port = "80";
+	public static String Port = "80";
 	
-	public static String ServerIP = "192.168.0.200";
-	public static String Port = "8080";
+//	public static String ServerIP = "192.168.0.200";
+//	public static String Port = "8080";
 	
 //	public static String ServerIP = "192.168.43.137";
-//	public static String ServerIP = "localhost";
+	public static String ServerIP = "localhost";
 	
 	public static String CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
 	public static String SECURE_CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
@@ -57,6 +57,7 @@ public class Constants {
 	
 	public static String PAGE_ID_BOARD_HOME = "P1001";
 	public static String PAGE_ID_BOARD_POST_DETAIL = "P1002";
+	public static String PAGE_ID_SEARCH_BOARD = "P1003";
 	
 	public static String PAGE_ID_PUBLIC_MEETING_DETAIL = "P2001";
 }
