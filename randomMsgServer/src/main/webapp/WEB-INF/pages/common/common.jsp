@@ -114,10 +114,9 @@ function openUserProfile( userID )
 		document.location.href = decodeURIComponent(url);
 }
 
-function goPostDetail( boardName, postNo )
+function goPostDetail(postNo )
 {
-	var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo + "?cafeID=" + cafeID + "&boardNo=" + boardNo +
-			"&boardName=" + encodeURIComponent(boardName);
+	var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo;
 
 	if ( isApp == 'Y' )
 		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>&url=' + encodeURIComponent(url) + '';
@@ -132,6 +131,17 @@ function goMeetingDetail( cafeID, meetingNo )
 
 	if ( isApp == 'Y' )
 		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_PUBLIC_MEETING_DETAIL %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
+
+function goSearchCafeBoard( cafeID, boardNo )
+{
+	var url = '<%= Constants.getServerURL() + "/boardPost/searchCafeBoard.do" %>?cafeID=' +
+			cafeID + '&boardNo=' + boardNo;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_SEARCH_BOARD %>&url=' + encodeURIComponent(url) + '';
 	else
 		document.location.href= url;
 }

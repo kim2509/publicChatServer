@@ -72,7 +72,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=7" />	
+	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=8" />	
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 
@@ -138,11 +138,14 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 		
 		<div class="titleDiv">
 			<div class="title"><%= cafeName %></div>
-			<!-- div id="manage">i</div-->
 			
 			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
 			<div id="setting" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
 			<% } %>
+			
+			<div id="search" onclick="goSearchCafeBoard('<%= cafeID %>');">
+				<img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24">
+			</div>
 		</div>
 	
 		<div class="menu">

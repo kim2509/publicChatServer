@@ -4,6 +4,17 @@
 
 <mapper namespace="com.tessoft.nearhere.cafe.board">
 
+	<select id="getCafeBoardList" resultType="HashMap" parameterType="HashMap">
+		select bm.* from cafe_board_master bm
+			left outer join cafe_master cm on cm.cafeNo=bm.cafeNo
+		where cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafeBoardInfo" resultType="HashMap" parameterType="HashMap">
+		select bm.* from cafe_board_master bm
+		where bm.boardNo = #{boardNo}
+	</select>
+	
 	<!-- 게시글 리스트 불러오기 -->
 	<select id="getBoardPostList" resultType="HashMap" parameterType="HashMap">
 		select bpm.postNo, bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
@@ -50,8 +61,10 @@
 		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
 			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate
 			, cl.No as locationNo, cl.type as locationType, cl.locationName, cl.latitude, cl.longitude, cl.address, cl.regionNo
-			, u.userName
+			, u.userName, cbm.boardName, cm.cafeID, cm.cafeName
 		from cafe_board_post_master bpm
+			left outer join cafe_board_master cbm on cbm.boardNo = bpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
 			left outer join cafe_location cl on cl.No = bpm.locationNo
 			left outer join user u on bpm.userID = u.userID
 		where bpm.postNo=#{postNo}

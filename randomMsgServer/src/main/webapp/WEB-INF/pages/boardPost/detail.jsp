@@ -5,10 +5,12 @@
 
 <%
 	String isApp = request.getParameter("isApp");
-	String cafeID = request.getParameter("cafeID");
-	String boardNo = request.getParameter("boardNo");
-	String boardName = request.getParameter("boardName");
+	
 	HashMap postInfo = (HashMap) request.getAttribute("postInfo");
+	
+	String cafeID = Util.getStringFromHash(postInfo, "cafeID");
+	String boardNo = Util.getStringFromHash(postInfo, "boardNo");
+	String boardName = Util.getStringFromHash(postInfo, "boardName");
 	String postNo = Util.getStringFromHash(postInfo, "postNo");
 	
 	List<HashMap> contentList = null;

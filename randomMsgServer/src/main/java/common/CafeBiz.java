@@ -254,13 +254,6 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public List<HashMap> getCafeBoardList(HashMap param)
-	{
-		List<HashMap> boardList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeBoardList", param);
-		return boardList;
-	}
-	
-	@SuppressWarnings("rawtypes")
 	public int insertCafeBoard( HashMap param )
 	{
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeBoard", param);
@@ -279,13 +272,6 @@ public class CafeBiz extends CommonBiz{
 	{
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoard", param);
 		return result;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public HashMap getCafeBoardInfo(HashMap param)
-	{
-		HashMap boardInfo = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeBoardInfo", param);
-		return boardInfo;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

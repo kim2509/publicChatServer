@@ -158,7 +158,7 @@
 <script id="imagePostT" type="text/x-handlebars-template">
 	<ul>
 		{{#each postList}}
-		<li onclick="goPostDetail('{{boardName}}','{{postNo}}')">
+		<li onclick="goPostDetail('{{postNo}}')">
 			<img src="{{imageURL}}" />
 			<div id="postInfo">
 				<p>{{title}}</p>

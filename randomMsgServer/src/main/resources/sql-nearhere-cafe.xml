@@ -502,17 +502,6 @@
 		and cafeNo in ( select cafeNo from cafe_master where cafeID= #{cafeID})
 	</insert>
 	
-	<select id="getCafeBoardList" resultType="HashMap" parameterType="HashMap">
-		select bm.* from cafe_board_master bm
-			left outer join cafe_master cm on cm.cafeNo=bm.cafeNo
-		where cm.cafeID=#{cafeID}
-	</select>
-	
-	<select id="getCafeBoardInfo" resultType="HashMap" parameterType="HashMap">
-		select bm.* from cafe_board_master bm
-		where bm.boardNo = #{boardNo}
-	</select>
-	
 	<select id="getCafeBoardPostImageList" resultType="HashMap" parameterType="HashMap">
 		select cm.*, u.userName, bm.boardName, concat( ifnull(ci.url1,'') , ifnull(ci.url2,'') ) as imageURL 
 		from cafe_board_post_master cm

@@ -80,9 +80,9 @@ public class CafeController extends BaseController {
 		return new ModelAndView("cafe/index", model);
 	}
 	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	@RequestMapping( value ="/cafe/searchCafe.do")
-	public ModelAndView searchByName ( HttpServletRequest request, HttpServletResponse response , 
+	public ModelAndView searchCafe ( HttpServletRequest request, HttpServletResponse response , 
 			String userID, ModelMap model ) throws IOException
 	{
 		try

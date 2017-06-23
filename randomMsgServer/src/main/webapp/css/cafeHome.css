@@ -93,13 +93,24 @@ li{
 {
 	position:absolute;
 	top:0px;
-	right:10px;
+	left:10px;
 	line-height:16px;
 	color:white;
 	border-radius:20px;
 	margin:13px 0px;
 	font-size:13px;
 	font-weight:bold;
+}
+
+#search
+{
+	position: absolute;
+    top: 0px;
+    right: 10px;
+    line-height: 16px;
+    color: white;
+    border-radius: 20px;
+    margin: 10px 5px;
 }
 
 .link_bnr

@@ -6,6 +6,7 @@
 <%
 	String isApp = request.getParameter("isApp");
 	String userID = request.getParameter("userID");
+	String cafeID = request.getParameter("cafeID");
 	List<HashMap> cities = (List<HashMap>) request.getAttribute("cities");
 %>
 
@@ -29,6 +30,7 @@
 
 	var level = 0;
 	var regionNo = '';
+	var cafeID = '<%= cafeID %>';
 
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
@@ -199,10 +201,7 @@
 		var param = {"keyword": keyword, "level":level, "regionNo": regionNo, 
 				"startIndex":startIndex, "showCount" : pageSize };
 		
-		if ( searchMode == 1 )
-			ajaxRequest('POST', '/nearhere/cafe/searchCafeAjax.do', param , onResult );
-		else if ( searchMode == 2 )
-			ajaxRequest('POST', '/nearhere/cafe/searchCafePostsAjax.do', param , onResult );
+		ajaxRequest('POST', '/nearhere/cafe/searchCafePostsAjax.do', param , onResult );
 	}
 	
 	function searchByCafeName()
@@ -225,16 +224,7 @@
 	{
 		$('#searchResultInfo #cntResult').html( result.data2 );
 		
-		var source = null;
-		
-		if ( searchMode == 1 )
-		{
-			source = $('#cafeT').html();
-		}
-		else if ( searchMode == 2 )
-		{
-			source = $('#cafePostT').html();
-		}
+		var source = $('#cafePostT').html();
 		
 		var template = Handlebars.compile(source);
 		var html = template(result);
@@ -254,17 +244,6 @@
 		}
 		
 		displayPagingInfo();
-	}
-
-	function goCafeHome( cafeID )
-	{
-		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>&userID=<%= userID %>';
-		url = encodeURIComponent( url );
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
-		else
-			document.location.href="/nearhere/cafe/" + cafeID;
 	}
 	
 	function displayPagingInfo()
@@ -316,26 +295,6 @@
 	}
 	
 </script>
-<script id="cafeT" type="text/x-handlebars-template">
-	<ul>
-		{{#each data}}
-		<li onclick="goCafeHome('{{cafeID}}');">
-			<div>
-				<div class="cafeImage">
-					<img src='{{iconImageURL}}'
-					width="60" height="60"/>
-				</div>
-				<div class="cafeInfo">
-					<div class="cafeTitle">{{cafeName}}</div>
-					<div class="cafeDesc">{{mainDesc}}</div>
-					<div class="regionInfo">{{lRegionName}} {{mRegionName}} {{sRegionName}} {{tRegionName}}</div>
-					<div class="memberInfo">멤버수 : {{cntMembers}}명</div>
-				</div>
-			</div>
-		</li>
-		{{/each}}
-	</ul>
-</script>
 <script id="cafePostT" type="text/x-handlebars-template">
 	<ul>
 		{{#each data}}
@@ -355,10 +314,10 @@
 		{{/each}}
 	</ul>
 </script>
-</head>
 
 <jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
+</head>
 <body>
 
 
@@ -368,7 +327,7 @@
 			<div id="searchBoxDiv">
 				<div id="backDiv"><img src="<%=Constants.IMAGE_PATH%>/back.png" width="24" height="24"/></div>
 				<div id="searchDiv" onclick="searchKeyword();"><img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24"/></div>
-				<input type="text" class="searchInput" id="txtKeyword" placeholder="카페 검색"/>
+				<input type="text" class="searchInput" id="txtKeyword" placeholder="카페글 검색"/>
 			</div>
 			
 			<div id="searchRegionDiv">
@@ -421,14 +380,6 @@
 		</div>
 		
 		<div id="searchResultDiv">
-			<div id="searchResultTab">
-				<div class="tab" onclick="searchByCafeName();">
-					<div id='cafeTab' class="selected">카페명</div>
-				</div>
-				<div class="tab" onclick="searchByCafePost();">
-					<div id='cafePostTab'>카페글</div>
-				</div>
-			</div>
 			<div id="searchResultInfo">
 				<span class="keyword">검색결과</span>
 				<span id="cntResult"></span> 

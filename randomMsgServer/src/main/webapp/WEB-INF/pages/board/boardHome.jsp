@@ -177,7 +177,7 @@
 	{{#if boardPostList}}
 	<ul>
 		{{#each boardPostList}}
-		<li onclick="goPostDetail( boardName, '{{postNo}}');">
+		<li onclick="goPostDetail('{{postNo}}');">
 			<div id="commentCount">{{replyCount}}</div>
 			<div id="postDiv">{{displayPostTitle noticeYN title}}</div>
 			<div id="postInfo">

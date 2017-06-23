@@ -17,6 +17,7 @@ import com.dy.common.Util;
 
 import common.CafeBiz;
 import common.CafeBoardPostBiz;
+import common.RegionBiz;
 import common.UserBiz;
 
 @Controller
@@ -29,11 +30,11 @@ public class BoardPostConroller extends BaseController {
 	{
 		try
 		{
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			CafeBoardPostBiz cafeBoardPostBiz = CafeBoardPostBiz.getInstance(sqlSession);
 			HashMap param = new HashMap();
 			param.put("boardNo", boardNo);
 			
-			HashMap boardInfo = cafeBiz.getCafeBoardInfo(param);
+			HashMap boardInfo = cafeBoardPostBiz.getCafeBoardInfo(param);
 			model.addAttribute("boardInfo", boardInfo);
 		}
 		catch( Exception ex )
@@ -156,5 +157,25 @@ public class BoardPostConroller extends BaseController {
 		insertHistory("/boardPost/newBoardPostReply.do", boardNo , userID , null , null );
 		
 		return new ModelAndView("boardPost/newBoardPostReply", model);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/boardPost/searchCafeBoard.do")
+	public ModelAndView searchCafeBoard ( HttpServletRequest request, HttpServletResponse response , 
+			String userID, ModelMap model ) throws IOException
+	{
+		try
+		{
+			List<HashMap> bigCities = RegionBiz.getInstance(sqlSession).getBigCities();
+			model.addAttribute("cities", bigCities);
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/searchCafeBoard.do", userID , null , null, null );
+		
+		return new ModelAndView("boardPost/searchCafeBoard", model);
 	}
 }
