@@ -143,7 +143,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 			<div id="setting" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
 			<% } %>
 			
-			<div id="search" onclick="goSearchCafeBoard('<%= cafeID %>');">
+			<div id="search" onclick="goSearchCafeBoard('<%= cafeID %>','');">
 				<img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24">
 			</div>
 		</div>
