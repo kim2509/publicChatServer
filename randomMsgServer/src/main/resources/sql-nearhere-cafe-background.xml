@@ -5,9 +5,12 @@
 <mapper namespace="com.tessoft.nearhere.cafe.background">
 
 	<select id="getTemporaryImageList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
 		select * from cafe_image
-		where commitDate is null
+		where createdDate < DATE_ADD( NOW(), INTERVAL -1 DAY)
+		and commitDate is null
 		limit 0, 100;
+		]]>
 	</select>
 	
 	<delete id="deleteCafeTemporaryImage" parameterType="java.util.HashMap">

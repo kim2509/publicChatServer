@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.User;
@@ -387,7 +388,7 @@ public class CafeBiz extends CommonBiz{
 			
 			if ( "Y".equals( ownerYN ) ) return true;
 			
-			if ( "Y".equals( memberYN ) && "운영자".equals( memberType ) ) return true;
+			if ( "Y".equals( memberYN ) && Constants.CafeMemberTypeOperator.equals( memberType ) ) return true;
 		}
 		
 		return false;
@@ -427,7 +428,7 @@ public class CafeBiz extends CommonBiz{
 			Util.isEmptyForKey(param, "memberType") ) return -1;
 		
 		if ( "1".equals( param.get("memberType") ) )
-			param.put("memberType", "운영자");
+			param.put("memberType", Constants.CafeMemberTypeOperator);
 		else
 			param.put("memberType", "회원");
 		
@@ -476,6 +477,11 @@ public class CafeBiz extends CommonBiz{
 				updateCafeLocation(locationInfo);
 			}
 		}
+		
+		if ( Util.isEmptyForKey(param, "iconImageNo") )
+			param.put("iconImageNo", null);
+		if ( Util.isEmptyForKey(param, "mainImageNo") )
+			param.put("mainImageNo", null);
 		
 		result += sqlSession.update("com.tessoft.nearhere.cafe.updateCafeDetailInfo", param);
 		
@@ -605,6 +611,29 @@ public class CafeBiz extends CommonBiz{
 	public int updateCafeImageAsCommitted( HashMap param )
 	{
 		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeImageAsCommitted", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeImageAsDeleted( String imageNo )
+	{
+		HashMap param = new HashMap();
+		param.put("imageNo", imageNo);
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeImageAsDeleted", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeIconAsNull( HashMap param )
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeIconAsNull", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeImageAsNull( HashMap param )
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeImageAsNull", param);
 		return result;
 	}
 }

@@ -139,7 +139,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 		<div class="titleDiv">
 			<div class="title"><%= cafeName %></div>
 			
-			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && Constants.CafeMemberTypeOperator.equals( memberType ) ) { %>
 			<div id="setting" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');"><img src="<%= Constants.IMAGE_PATH %>/ic_setting_on.png" width="24" height="24" /></div>
 			<% } %>
 			

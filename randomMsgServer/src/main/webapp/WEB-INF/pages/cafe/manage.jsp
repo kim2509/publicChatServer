@@ -25,7 +25,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage.css?v=" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage.css?v=1" />
 
 <script language="javascript">
 	
@@ -87,6 +87,32 @@
 		$('#cafeNameIput').val( result.data.cafeMainInfo.cafeName );
 		$('#cafeDescInput').val( result.data.cafeMainInfo.mainDesc );
 		$('#contactEmail').val( result.data.cafeMainInfo.contactEmail );
+		
+		if ( result.data.cafeMainInfo.iconImageURL != null && result.data.cafeMainInfo.iconImageURL.length > 0 )
+		{
+			$('#imgCafeIcon').attr('src', result.data.cafeMainInfo.iconImageURL );
+			$('#imgCafeIcon').attr('imageNo', result.data.cafeMainInfo.iconImageNo );
+			$('#imgCafeIcon').show();
+			$('#iconDiv #emptyDiv').hide();
+		}
+		else
+		{
+			$('#iconDiv #emptyDiv').show();
+			$('#imgCafeIcon').hide();
+		}
+		
+		if ( result.data.cafeMainInfo.mainImageURL != null && result.data.cafeMainInfo.mainImageURL.length > 0 )
+		{
+			$('#imgMainImage').attr('src', result.data.cafeMainInfo.mainImageURL );
+			$('#imgMainImage').attr('imageNo', result.data.cafeMainInfo.mainImageNo );
+			$('#imgMainImage').show();
+			$('#mainImageDiv #emptyDiv').hide();
+		}
+		else
+		{
+			$('#mainImageDiv #emptyDiv').show();
+			$('#imgMainImage').hide();
+		}
 		
 		if ( result.data.cafeMainInfo.cafeLocationNo > 0 )
 		{
@@ -151,6 +177,8 @@
 		var cafeName = $('#cafeNameIput').val();
 		var mainDesc = $('#cafeDescInput').val();
 		var contactEmail = $('#contactEmail').val();
+		var iconImageNo = $('#imgCafeIcon').attr('imageNo');
+		var mainImageNo = $('#imgMainImage').attr('imageNo');
 		
 		// 저장할 때에는 이메일을 입력했을 때에만 validation 검사
 		if ( contactEmail != null && contactEmail.length > 0 && validateEmail(contactEmail) == false )
@@ -161,7 +189,8 @@
 		
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
-			var param = {"cafeID":cafeID, "cafeName":cafeName, "mainDesc": mainDesc, "contactEmail": contactEmail };
+			var param = {"cafeID":cafeID, "cafeName":cafeName, "mainDesc": mainDesc, "contactEmail": contactEmail,
+					"iconImageNo": iconImageNo, "mainImageNo": mainImageNo };
 			
 			if ( locationResult != null )
 				param.cafeLocation = locationResult;
@@ -184,6 +213,7 @@
 		else
 		{
 			notice('저장되었습니다.');
+			refreshCafeHome();
 		}
 	}
 	
@@ -240,10 +270,7 @@
 			
 			if ( isApp == 'Y')
 			{
-				var broadcastList = [];
-				broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
-				var param = {"broadcastList": broadcastList };
-				sendBroadcasts(param);	
+				refreshCafeHome();
 			}
 		}
 	}
@@ -279,10 +306,7 @@
 			
 			if ( isApp == 'Y')
 			{
-				var broadcastList = [];
-				broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
-				var param = {"broadcastList": broadcastList };
-				sendBroadcasts(param);	
+				refreshCafeHome();
 			}
 		}
 	}
@@ -312,18 +336,110 @@
 		}
 	}
 	
-	function onImageUploaded( url )
+	function uploadCafeMainImage()
+	{
+		if ( isApp == 'Y' )
+		{
+			var param = {"imageName":"카페메인이미지", "cafeID":cafeID };
+			selectPhotoUpload( param );	
+		}
+	}
+	
+	function onImageUploaded( result )
 	{
 		try
 		{
-			alert( url );
-			$('#imgCafeIcon').attr('src', url );	
+			if ( result == null || result.data == null )
+			{
+				notice('처리도중 오류가 발생했습니다.');
+				return;
+			}
+			
+			if ( result.resCode != '0000' )
+			{
+				notice( result.resMsg );
+				return;
+			}
+			else
+			{
+				if ( result.data.imageName == '카페메인 아이콘')
+				{
+					$('#imgCafeIcon').attr('src', result.data.url1 );
+					$('#imgCafeIcon').attr('imageNo', result.data.imageNo );
+					$('#iconDiv #emptyDiv').hide();
+					$('#imgCafeIcon').show();
+				}
+				else if ( result.data.imageName == '카페메인이미지')
+				{
+					$('#imgMainImage').attr('src', result.data.url1 );
+					$('#imgMainImage').attr('imageNo', result.data.imageNo );
+					$('#mainImageDiv #emptyDiv').hide();
+					$('#imgMainImage').show();
+				}
+			}
 		}
 		catch( ex )
 		{
 			alert( ex.message );
 		}
 	}
+	
+	function deleteImage( imageType )
+	{
+		if ( imageType == 'mainIcon')
+		{
+			if ( confirm('카페 아이콘이 삭제 됩니다. 계속 하시겠습니까?') )
+			{
+				var param = {"cafeID":cafeID, "imageType": imageType };
+				ajaxRequest('POST', '/nearhere/cafe/deleteCafeImageAjax.do', param , deleteImageResult );
+				$('#imgCafeIcon').attr('src', '');
+				$('#imgCafeIcon').attr('imageNo', '');
+				$('#iconDiv #emptyDiv').show();
+				$('#imgCafeIcon').hide();
+			}	
+		}
+		else if ( imageType == 'mainImage')
+		{
+			if ( confirm('카페 아이콘이 삭제 됩니다. 계속 하시겠습니까?') )
+			{
+				var param = {"cafeID":cafeID, "imageType": imageType };
+				ajaxRequest('POST', '/nearhere/cafe/deleteCafeImageAjax.do', param , deleteImageResult );
+				$('#imgMainImage').attr('src', '');
+				$('#imgMainImage').attr('imageNo', '');
+				$('#mainImageDiv #emptyDiv').show();
+				$('#imgMainImage').hide();
+			}	
+		}
+	}
+	
+	function deleteImageResult( result )
+	{
+		if ( result == null )
+		{
+			notice('처리도중 오류가 발생했습니다.');
+			return;
+		}
+		
+		if ( result.resCode != '0000' )
+		{
+			notice( result.resMsg );
+			return;
+		}
+		else
+		{
+			notice('삭제되었습니다.');
+			refreshCafeHome();
+		}
+	}
+	
+	function refreshCafeHome()
+	{
+		var broadcastList = [];
+		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+		var param = {"broadcastList": broadcastList };
+		sendBroadcasts(param);	
+	}
+	
 </script>
 
 </head>
@@ -372,8 +488,11 @@
 				<div class="splitBtn" onclick="uploadCafeIcon();">
 					<div class="wideBtn darkBG" id="btnUploadMainImg">카페 아이콘 업로드</div>
 				</div>
-				<div class="splitBtn">
+				<div class="splitBtn" onclick="deleteImage('mainIcon');">
 					<div class="wideBtn redBG">지우기</div>
+				</div>
+				<div class="marginT10 marginB10 f14">
+				이미지 업로드 후 저장버튼을 눌러 주시기 바랍니다.
 				</div>
 			</div>
 			
@@ -385,11 +504,14 @@
 			</div>
 			
 			<div id="mainImageBtnDiv" class="marginLR10 marginB20">
-				<div class="splitBtn">
+				<div class="splitBtn" onclick="uploadCafeMainImage();">
 					<div class="wideBtn darkBG" id="btnUploadMainImg">메인 이미지 업로드</div>
 				</div>
-				<div class="splitBtn">
+				<div class="splitBtn" onclick="deleteImage('mainImage');">
 					<div class="wideBtn redBG">지우기</div>
+				</div>
+				<div class="marginT10 marginB10 f14">
+				이미지 업로드 후 저장버튼을 눌러 주시기 바랍니다.
 				</div>
 			</div>
 			

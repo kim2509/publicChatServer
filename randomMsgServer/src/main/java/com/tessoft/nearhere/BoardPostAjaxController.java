@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
@@ -112,7 +113,7 @@ public class BoardPostAjaxController extends BaseController {
 				
 				String writePermission = Util.getStringFromHash(cafeBoardInfo, "writePermission");
 				
-				if ("1".equals(writePermission) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
+				if ("1".equals(writePermission) && (!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType)))  // 운영진 이상
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("글쓰기 권한이 없는 사용자입니다.");
@@ -206,7 +207,7 @@ public class BoardPostAjaxController extends BaseController {
 				
 				String writerUserID = Util.getStringFromHash(postInfo, "userID");
 				
-				if ( !userID.equals(writerUserID) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
+				if ( !userID.equals(writerUserID) && (!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType)))  // 운영진 이상
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("삭제 권한이 없는 사용자입니다.");
@@ -316,7 +317,7 @@ public class BoardPostAjaxController extends BaseController {
 				
 				String writePermission = Util.getStringFromHash(cafeBoardInfo, "writePermission");
 				
-				if ("1".equals(writePermission) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
+				if ("1".equals(writePermission) && (!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType)))  // 운영진 이상
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("글쓰기 권한이 없는 사용자입니다.");
@@ -399,7 +400,7 @@ public class BoardPostAjaxController extends BaseController {
 				
 				String writerUserID = Util.getStringFromHash(replyInfo, "userID");
 				
-				if ( !userID.equals(writerUserID) && (!"Y".equals(ownerYN) && !"운영자".equals(memberType)))  // 운영진 이상
+				if ( !userID.equals(writerUserID) && (!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType)))  // 운영진 이상
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
 					response.setResMsg("삭제 권한이 없는 사용자입니다.");

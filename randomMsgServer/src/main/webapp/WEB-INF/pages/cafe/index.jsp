@@ -97,7 +97,7 @@
 <jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
-<body>
+<body style="background:#eeeeee;">
 
 	<div id="wrapper" style="padding:10px;margin:10px auto;">
 		

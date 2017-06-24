@@ -300,7 +300,7 @@
 					String deleteYN = "N";
 					if (loginUserID.equals(writeUserID) && !"".equals(loginUserID))
 						deleteYN = "Y";
-					else if ( "Y".equals(ownerYN) || "운영자".equals(memberType))
+					else if ( "Y".equals(ownerYN) || Constants.CafeMemberTypeOperator.equals(memberType))
 						deleteYN = "Y";
 					else
 						deleteYN = "N";

@@ -7,13 +7,13 @@ public class Constants {
 	public static boolean bReal = false;
 	
 //	public static String ServerIP = "www.hereby.co.kr";
-	public static String Port = "80";
+//	public static String Port = "80";
 	
 //	public static String ServerIP = "192.168.0.200";
-//	public static String Port = "8080";
+	public static String Port = "8080";
 	
-//	public static String ServerIP = "192.168.43.137";
-	public static String ServerIP = "localhost";
+	public static String ServerIP = "192.168.43.137";
+//	public static String ServerIP = "localhost";
 	
 	public static String CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
 	public static String SECURE_CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
@@ -51,6 +51,10 @@ public class Constants {
 	{
 		return Constants.bReal ? "https://www.hereby.co.kr/" : "http://" + ServerIP + "/";
 	}
+	
+	public static String CafeMemberTypeOwner = "카페주인";
+	public static String CafeMemberTypeOperator = "운영자";
+	public static String CafeMemberTypeMember = "회원";
 	
 	public static String PAGE_ID_CAFE_INDEX = "P0000";
 	public static String PAGE_ID_CAFE_HOME = "P0001";

@@ -4,7 +4,7 @@
 
 <%
 	HashMap cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
-	String mainImageURL = cafeMainInfo.get("url1").toString() + cafeMainInfo.get("url2");
+	String mainImageURL = Util.getStringFromHash(cafeMainInfo, "mainImageURL");
 	List<HashMap> cafePublicMeetingList = (List<HashMap>) request.getAttribute("cafePublicMeetingList");
 	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
 	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
@@ -170,7 +170,7 @@
 			
 			<% } %>
 			
-			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "운영자".equals( memberType ) ) { %>
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && Constants.CafeMemberTypeOperator.equals( memberType ) ) { %>
 				<div id="btnMakeMeeting" onclick="goMakePublicMeeting();">정모만들기</div>
 				
 			<% } %>
@@ -204,7 +204,7 @@
 			<div id="btnRegister" onclick="registerCafeMember();">가입하기</div>
 			<div id="btnRetire" onclick="cancelCafeMember();">탈퇴하기</div>
 			
-			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && "관리자".equals( memberType ) ) { %>
+			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && Constants.CafeMemberTypeOperator.equals( memberType ) ) { %>
 				<div id="btnManage" onclick="goCafeManage('<%= cafeMainInfo.get("cafeID") %>');">관리하기</div>
 			<% } %>
 			
