@@ -72,7 +72,7 @@
 	
 	<!-- 게시글 detail 불러오기 -->
 	<select id="getCafeBoardPostContent" resultType="HashMap" parameterType="HashMap">
-		select ifnull(cd.content,'') as content, cd.type, 
+		select cd.imageNo, ifnull(cd.content,'') as content, cd.type, 
 			concat( ifnull(ci.url1,''), ifnull(ci.url2,'') ) as imageURL 
 		from cafe_board_post_detail cd
 			left outer join cafe_image ci on ci.imageNo = cd.imageNo
@@ -118,7 +118,7 @@
 		, content = #{content}
 		, imageNo = #{imageNo}
 		, seq = #{seq}
-		where postNo = #{postNo}
+		where postNo = #{postNo} and type=#{type}
 	</update>
 	
 	<!-- 댓글 작성 -->
@@ -171,6 +171,12 @@
 	<delete id="deleteCafeBoardPostDetailEach" parameterType="HashMap">
 		delete from cafe_board_post_detail
 		where postNo = #{postNo}
+	</delete>
+	
+	<!-- 특정 게시글 이미지 삭제 -->
+	<delete id="deleteCafeBoardPostImages" parameterType="HashMap">
+		delete from cafe_board_post_detail
+		where postNo = #{postNo} and type = 2
 	</delete>
 	
 	<!-- 해당 카페 게시판 글 전체 삭제 -->

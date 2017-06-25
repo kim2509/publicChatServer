@@ -150,4 +150,11 @@ public class CafeBoardPostBiz extends CommonBiz{
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostReply", param);
 		return result;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public int deleteCafeBoardPostImages( HashMap param )
+	{
+		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostImages", param);
+		return result;
+	}
 }

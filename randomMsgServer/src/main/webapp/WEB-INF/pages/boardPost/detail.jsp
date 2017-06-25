@@ -262,7 +262,7 @@
 					String imageURL = Util.getStringFromHash( contentList.get(i), "imageURL");
 					
 					if ("1".equals( type ) )
-						out.println( content.replaceAll("\r\n", "\n").replaceAll("\n", "<br/>") );
+						out.println( content.replaceAll("\r\n", "\n").replaceAll("\n", "<br/>") + "<br/>" );
 					else
 						out.println("<img src='" + imageURL + "' />");
 				}

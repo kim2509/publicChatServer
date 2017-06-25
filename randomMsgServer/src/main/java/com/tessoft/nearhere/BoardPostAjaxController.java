@@ -142,6 +142,19 @@ public class BoardPostAjaxController extends BaseController {
 						dbResult = cafeBoardPostBiz.updateCafeBoardPostDetail(param);
 					}
 					
+					cafeBoardPostBiz.deleteCafeBoardPostImages(param);
+					
+					if ( param.get("imageList") != null )
+					{
+						List<HashMap> imageList = (List<HashMap>) param.get("imageList");
+						for ( int i = 0; i < imageList.size(); i++ )
+						{
+							imageList.get(i).put("postNo", Util.getStringFromHash(param, "postNo"));
+							cafeBoardPostBiz.insertCafeBoardPostDetail( imageList.get(i) );
+							CafeBiz.getInstance(sqlSession).updateCafeImageAsCommitted(Util.getStringFromHash(imageList.get(i), "imageNo"));
+						}
+					}
+					
 					HashMap info = new HashMap();
 					info.put("dbResult", String.valueOf( dbResult ));
 					response.setData(info);

@@ -173,36 +173,6 @@ li{
 	float:left;
 }
 
-#iconDiv{
-	height:120px;
-	text-align:center;
-}
-
-#iconBtnDiv{
-	overflow:auto;
-}
-
-#imgCafeIcon{
-	width:100px;
-	height:100px;
-	border:1px solid #d9d9d9;	
-}
-
-#mainImageDiv{
-	clear:both;
-	margin-bottom:10px;
-	border:1px solid #d9d9d9;	
-}
-
-#mainImageBtnDiv{
-	overflow:auto;
-}
-
-.splitBtn{
-	width:50%;
-	float:left;
-}
-
 #btnUploadMainImg{
 	margin-right:5px;	
 }
@@ -215,43 +185,22 @@ li{
 	line-height:100px;
 }
 
-
-#imgMainImage{
-	width:100%;
-	height:100px;
-	display:none;
-}
-
-#btnManageBoard{
+#imageListDiv li{
 	clear:both;
+	margin-bottom: 10px;
 }
 
-.meetingDateTime{
-	height: 50px;
+#imageListDiv #optionDiv{
+	line-height:40px;
+	float:right;
 }
 
-.meetingDateTime .meetingDate{
-	position: absolute;
-    left: 10px;
-    border-radius: 10px;
-    border: 1px solid gray;
-    background: white;
-    line-height: 40px;
-    color: gray;
-    text-align: center;
-    width: 45%;
-}
-
-.meetingDateTime .meetingTime{
-	position: absolute;
-    right: 10px;
-    border-radius: 10px;
-    border: 1px solid gray;
-    background: white;
-    line-height: 40px;
-    color: gray;
-    text-align: center;
-    width: 45%;
+#imageListDiv #optionDiv span{
+	font-weight:bold;
+	font-size:14px;
+	border: 1px solid blue;
+    color: blue;
+    padding: 5px;
 }
 
 /* 모달 */

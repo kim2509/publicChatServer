@@ -480,8 +480,12 @@ public class CafeBiz extends CommonBiz{
 		
 		if ( Util.isEmptyForKey(param, "iconImageNo") )
 			param.put("iconImageNo", null);
+		else
+			CafeBiz.getInstance(sqlSession).updateCafeImageAsCommitted( Util.getStringFromHash(param, "iconImageNo"));
 		if ( Util.isEmptyForKey(param, "mainImageNo") )
 			param.put("mainImageNo", null);
+		else
+			CafeBiz.getInstance(sqlSession).updateCafeImageAsCommitted( Util.getStringFromHash(param, "mainImageNo"));
 		
 		result += sqlSession.update("com.tessoft.nearhere.cafe.updateCafeDetailInfo", param);
 		
@@ -608,8 +612,10 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public int updateCafeImageAsCommitted( HashMap param )
+	public int updateCafeImageAsCommitted( String imageNo )
 	{
+		HashMap param = new HashMap();
+		param.put("imageNo", imageNo);
 		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeImageAsCommitted", param);
 		return result;
 	}

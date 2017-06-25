@@ -183,7 +183,7 @@ public class FileUploadController {
 				CafeBiz.getInstance(sqlSession).insertCafeImageRow(param);
 
 				if ( "Y".equals( Util.getStringFromHash(param, "commitYN") ) )
-					CafeBiz.getInstance(sqlSession).updateCafeImageAsCommitted(param);
+					CafeBiz.getInstance(sqlSession).updateCafeImageAsCommitted( Util.getStringFromHash(param, "imageNo"));
 				
 				response.setData( param );
 				
