@@ -56,6 +56,30 @@ body, div, ul{
 .tab3 li:nth-child(3){
 	width:33%;
 }
+
+.tab2{
+	list-style:none;
+	overflow:auto;
+	line-height:30px;
+}
+
+.tab2 li{
+	float:left;
+	text-align:center;
+	font-size:14px;
+	width:50%;
+}
+
+.tab2 li.selected{
+	font-weight:bold;
+	color:#1c8c01;
+	background:red;
+	border-radius:5px;
+	background: #b5e49d;
+    border-radius: 5px;
+    cursor:pointer;
+}
+
 /* 탭 스타일 */
 
 /* 공통 */

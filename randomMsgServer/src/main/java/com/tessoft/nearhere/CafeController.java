@@ -202,7 +202,7 @@ public class CafeController extends BaseController {
 			{
 				model.addAttribute("cafeMainInfo", cafeMainInfo);
 				
-				List<HashMap> cafePublicMeetingList = cafeBiz.getCafePublicMeetingList(cafeMainInfoParam);
+				List<HashMap> cafePublicMeetingList = cafeBiz.getCafePublicMeetingListByCafeID(cafeMainInfoParam);
 				
 				RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
 				
@@ -220,6 +220,8 @@ public class CafeController extends BaseController {
 				}
 				
 				model.addAttribute("cafePublicMeetingList", cafePublicMeetingList);
+				model.addAttribute("totalCafeMeetingCount", cafeBiz.getTotalCafeMeetingCountByCafeID(cafeMainInfoParam));
+				model.addAttribute("upcomingCafePublicMeetingCount", cafeBiz.getUpcomingCafePublicMeetingCount(cafeMainInfoParam));
 				
 				List<HashMap> cafeMemberList = cafeBiz.getCafeMemberList(cafeMainInfoParam);
 				model.addAttribute("cafeMemberList", cafeMemberList);
@@ -478,5 +480,28 @@ public class CafeController extends BaseController {
 		insertHistory("/cafe/makePublicMeeting.do", userID , null , null, null );
 		
 		return new ModelAndView("cafe/makePublicMeeting", model);
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+	@RequestMapping( value ="/cafe/moreCafeMeetingList.do")
+	public ModelAndView moreCafeMeetingList ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID )
+	{
+		try
+		{
+			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("cafeID", cafeID);
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/moreCafeMeetingList.do", null , null , null, null );
+		
+		return new ModelAndView("cafe/cafeMeetingList", model);
 	}
 }

@@ -237,6 +237,18 @@ li{
     right: 10px;
 }
 
+.moreDiv
+{
+	text-align:center;
+	font-weight:bold;
+	font-size:14px;
+	color: #614343;
+	border: 1px solid #f7dbd0;
+	background: #ffe0e0;
+	padding:7px;
+	margin:10px 0px;
+}
+
 #btnMakeMeeting
 {
 	background:#7b7bba;

@@ -196,10 +196,26 @@
 		<input type="submit" value="token 전송"/>
 	</form>
 	
+	<div>
 	<br/> 집 : aJRfZflWC7x9Rzs8cV0zvK0j/ZfYCzxjQ12GLkwBb3Q=
-	<br/> 회사 : dwhwRpDSNdqUzxIoaOWIvqEEWv3q3h35uBk8CSBiJgY=
 	<br/> n0/2wJfv25oiPAXH/4TFE52Dg3K3u5Qh+MTMk0WcoGs=
-	<br/>
+	</div>
+	
+	<div style="border:1px solid blue">
+	<br/> 회사 : dwhwRpDSNdqUzxIoaOWIvqEEWv3q3h35uBk8CSBiJgY=
+	<br/> user969 : qaNyx93+5QDkiku3G/JhNN36t1MBd+QY3tgiUXVHvNE=
+	<br/> user1061 : W33uczJjO/WAfP1YVeuU2y7aQzkkTht1UDOv0FDODVE=
+	</div>
+	
+	<br/><br/>
+	<textarea rows="10" cols="150">select * from user u
+	left outer join user_token ut on u.userID= ut.userID
+where isDeleted is null and ut.hash is not null and ut.activeYN = 'Y'
+and u.profileImageURL is not null and u.sex = 'F'
+order by u.createdDate desc</textarea>
+
+	<br/><br/>
+	
 	<input type="button" value="모든지역 좌표 초기화" onclick="UpdateLocationCoordsForAllRegionAjax();"/>
 </body>
 </html>
