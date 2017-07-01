@@ -99,7 +99,8 @@
 		<li onclick="goCafeHome('{{cafeID}}');">
 			<div>
 				<div class="cafeImage">
-				<img src="http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png" width="60" height="60">
+				<img src="{{url1}}" width="60" height="60"
+					onerror="this.onerror=null;this.src='<%= Constants.CAFE_DEAULT_ICON %>';">
 				</div>
 				<div class="cafeInfo">
 					<div class="cafeTitle">{{cafeName}}</div>

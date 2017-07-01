@@ -45,7 +45,7 @@
 	</select>
 	
 	<select id="getFavCafeListByRegion" resultType="HashMap" parameterType="HashMap">
-		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as url1
 		, ifnull(cmm.cntMembers,0) as cntMembers
 		, rv.*, cl.address, cl.latitude, cl.longitude
 		, cmm2.createdDate as joinDate
@@ -77,7 +77,7 @@
 	</select>
 	
 	<select id="getPopularCafeList" resultType="HashMap" parameterType="HashMap">
-		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as url1
 		, ifnull(cmm.cntMembers,0) as cntMembers, cmm2.cntLatestMembers
 		, rv.*, cl.address
 		from cafe_master cm
