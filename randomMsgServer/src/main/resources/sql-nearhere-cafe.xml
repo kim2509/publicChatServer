@@ -367,11 +367,46 @@
 		order by cp.meetingDate
 	</select>
 	
-	<select id="getCafePublicMeetingList" resultType="HashMap" parameterType="HashMap">
+	<select id="getUpcomingCafePublicMeetingCount" resultType="Integer" parameterType="HashMap">
+		select count(cp.meetingNo) 
+		from cafe_public_meeting cp			
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate >= NOW()
+		and cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getTotalCafeMeetingCountByCafeID" resultType="Integer" parameterType="HashMap">
+		select count(cp.meetingNo) 
+		from cafe_public_meeting cp			
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafePublicMeetingListByCafeID" resultType="HashMap" parameterType="HashMap">
 		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
 		where cp.meetingDate >= NOW()
+		and cm.cafeID=#{cafeID}
+		order by cp.meetingDate
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getLastCafeMeetingListByCafeID" resultType="HashMap" parameterType="HashMap">
+		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
+			left outer join cafe_location cl on cp.locationNo=cl.No
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate &lt; NOW()
+		and cm.cafeID=#{cafeID}
+		order by cp.meetingDate
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getLastCafeMeetingCountByCafeID" resultType="Integer" parameterType="HashMap">
+		select count(cp.meetingNo) 
+		from cafe_public_meeting cp			
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate &lt; NOW()
 		and cm.cafeID=#{cafeID}
 	</select>
 	

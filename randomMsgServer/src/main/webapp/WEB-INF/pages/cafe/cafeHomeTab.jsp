@@ -6,6 +6,9 @@
 	HashMap cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
 	String mainImageURL = Util.getStringFromHash(cafeMainInfo, "mainImageURL");
 	List<HashMap> cafePublicMeetingList = (List<HashMap>) request.getAttribute("cafePublicMeetingList");
+	
+	int totalCafeMeetingCount = Integer.parseInt(request.getAttribute("totalCafeMeetingCount").toString());
+	int upcomingCafePublicMeetingCount = Integer.parseInt(request.getAttribute("upcomingCafePublicMeetingCount").toString());
 	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
 	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
 	
@@ -168,11 +171,14 @@
 				</ul>
 			</div>
 			
+			<% if ( totalCafeMeetingCount > 0 || upcomingCafePublicMeetingCount > 3 ){ %>
+				<div class="moreDiv" onclick="goMoreCafeMeetingList( cafeID );">더 보기</div>
+			<% } %>
+			
 			<% } %>
 			
 			<% if ( "Y".equals(ownerYN) || "Y".equals(memberYN) && Constants.CafeMemberTypeOperator.equals( memberType ) ) { %>
 				<div id="btnMakeMeeting" onclick="goMakePublicMeeting();">정모만들기</div>
-				
 			<% } %>
 			
 			<% if ( cafeMemberList != null && cafeMemberList.size() > 0 ) {

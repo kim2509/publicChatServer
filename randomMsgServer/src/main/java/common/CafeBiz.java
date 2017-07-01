@@ -202,10 +202,55 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public List<HashMap> getCafePublicMeetingList(HashMap param)
+	public List<HashMap> getCafePublicMeetingListByCafeID(HashMap param)
 	{
-		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafePublicMeetingList", param);
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 3;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafePublicMeetingListByCafeID", param);
 		return myCafeList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int getUpcomingCafePublicMeetingCount(HashMap param)
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getUpcomingCafePublicMeetingCount", param);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getLastCafeMeetingListByCafeID(HashMap param)
+	{
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 3;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		List<HashMap> myCafeList = sqlSession.selectList("com.tessoft.nearhere.cafe.getLastCafeMeetingListByCafeID", param);
+		return myCafeList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int getLastCafeMeetingCountByCafeID(HashMap param)
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getLastCafeMeetingCountByCafeID", param);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int getTotalCafeMeetingCountByCafeID(HashMap param)
+	{
+		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getTotalCafeMeetingCountByCafeID", param);
 	}
 	
 	@SuppressWarnings("rawtypes")

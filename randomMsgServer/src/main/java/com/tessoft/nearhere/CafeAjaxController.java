@@ -1375,4 +1375,44 @@ public class CafeAjaxController extends BaseController {
 		
 		return response;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/cafe/getMeetingListByCafeIDAjax.do")
+	public @ResponseBody APIResponse getMeetingListByCafeIDAjax(HttpServletRequest request, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String cafeID = Util.getStringFromHash(param, "cafeID");
+			String type = Util.getStringFromHash(param, "type");
+			
+			if ( "1".equals(type) )
+			{
+				List<HashMap> meetingList = CafeBiz.getInstance(sqlSession).getCafePublicMeetingListByCafeID(param);
+				response.setData(meetingList);
+				response.setData2( CafeBiz.getInstance(sqlSession).getUpcomingCafePublicMeetingCount( param ));
+			}
+			else if ( "2".equals(type) )
+			{
+				List<HashMap> meetingList = CafeBiz.getInstance(sqlSession).getLastCafeMeetingListByCafeID(param);
+				response.setData(meetingList);
+				response.setData2( CafeBiz.getInstance(sqlSession).getLastCafeMeetingCountByCafeID( param ));
+			}
+			
+			insertHistory("/cafe/getMeetingListByCafeIDAjax.do", cafeID , type , null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/getMeetingListByCafeIDAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }

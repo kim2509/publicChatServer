@@ -53,11 +53,12 @@ public class Constants {
 	}
 	
 	public static String CafeMemberTypeOwner = "카페주인";
-	public static String CafeMemberTypeOperator = "운영자";
-	public static String CafeMemberTypeMember = "회원";
+	public static String CafeMemberTypeOperator = "�영;
+	public static String CafeMemberTypeMember = "�원";
 	
 	public static String PAGE_ID_CAFE_INDEX = "P0000";
 	public static String PAGE_ID_CAFE_HOME = "P0001";
+	public static String PAGE_ID_CAFE_MEETINGlIST = "P0002";
 	
 	public static String PAGE_ID_BOARD_HOME = "P1001";
 	public static String PAGE_ID_BOARD_POST_DETAIL = "P1002";
