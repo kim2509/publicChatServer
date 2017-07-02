@@ -25,6 +25,7 @@ import com.nearhere.domain.User;
 
 import common.CafeBiz;
 import common.CafeBoardPostBiz;
+import common.CafePushBiz;
 import common.RegionBiz;
 import common.UserBiz;
 
@@ -1098,7 +1099,10 @@ public class CafeAjaxController extends BaseController {
 				}
 				else
 				{
-					int result = cafeBiz.registerCafeMember( param );	
+					int result = cafeBiz.registerCafeMember( param );
+					
+					if ("Y".equals( Util.getStringFromHash(cafeMainInfo, "notifyNewMemberYN") ) )
+						CafePushBiz.getInstance(sqlSession).sendCafeNewMemberNotification(param);
 				}	
 			}
 
@@ -1150,6 +1154,9 @@ public class CafeAjaxController extends BaseController {
 			else
 			{
 				int result = cafeBiz.cancelCafeMember( param );
+				
+				if ("Y".equals( Util.getStringFromHash(cafeMainInfo, "notifyMemberLeaveYN") ) )
+					CafePushBiz.getInstance(sqlSession).sendCafeMemberLeaveNotification(param);
 			}
 
 			insertHistory("/cafe/cancelCafeMemberAjax.do", userID , null, null, null );

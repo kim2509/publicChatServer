@@ -239,13 +239,14 @@ li{
 
 .moreDiv
 {
+	clear:both;
 	text-align:center;
 	font-weight:bold;
 	font-size:14px;
 	color: #614343;
 	border: 1px solid #f7dbd0;
 	background: #ffe0e0;
-	padding:7px;
+	padding:10px;
 	margin:10px 0px;
 }
 
@@ -279,14 +280,15 @@ li{
 	margin:0px;
 	margin-top:10px;
 	clear:both;
+	overflow:auto;
 }
 
 #cafeInfo #cafeMemberInfo li
 {
-	clear:both;
-	margin:0px;
-	padding:0px;
-	height:70px;
+	float: left;
+    position: relative;
+    height: 65px;
+    width: 50%;
 }
 
 #cafeInfo #cafeMemberInfo #imgProfile

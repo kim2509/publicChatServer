@@ -152,4 +152,34 @@ public class MessageBiz extends CommonBiz{
 		
 		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
 	}
+	
+	public String sendCafeNotification(String title, String userID, String regID, String msg , String url, String param )
+	{
+		try
+		{
+			Message message = new Message.Builder().addData("title", title )
+					.addData("message",  msg )
+					.addData("type",  "webView" )
+					.addData("url",  url )
+					.addData("param",  param )
+					.addData("sound", "on")
+					.addData("vibrate", "on")
+					.build();
+			
+			String result = sendGCMPush(regID, message);
+			
+			UserPushMessage pushMessage = new UserPushMessage();
+			pushMessage.setToUserID( userID );
+			pushMessage.setType("webView");
+			pushMessage.setMessage( msg );
+			pushMessage.setParam1(param);
+			sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
+			
+			return result;
+		}
+		catch( Exception ex)
+		{
+			return ex.getMessage();
+		}
+	}
 }

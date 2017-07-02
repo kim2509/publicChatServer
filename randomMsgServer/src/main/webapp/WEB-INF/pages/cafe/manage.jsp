@@ -88,6 +88,16 @@
 		$('#cafeDescInput').val( result.data.cafeMainInfo.mainDesc );
 		$('#contactEmail').val( result.data.cafeMainInfo.contactEmail );
 		
+		if ( result.data.cafeMainInfo.notifyNewMemberYN == 'Y' )
+			$('#chkNotifyNewMember').attr('checked', true );
+		else
+			$('#chkNotifyNewMember').attr('checked', false );
+		
+		if ( result.data.cafeMainInfo.notifyMemberLeaveYN == 'Y' )
+			$('#chkNotifyMemberLeave').attr('checked', true );
+		else
+			$('#chkNotifyMemberLeave').attr('checked', false );
+		
 		if ( result.data.cafeMainInfo.iconImageURL != null && result.data.cafeMainInfo.iconImageURL.length > 0 )
 		{
 			$('#imgCafeIcon').attr('src', result.data.cafeMainInfo.iconImageURL );
@@ -179,6 +189,13 @@
 		var contactEmail = $('#contactEmail').val();
 		var iconImageNo = $('#imgCafeIcon').attr('imageNo');
 		var mainImageNo = $('#imgMainImage').attr('imageNo');
+		var notifyNewMemberYN = 'N';
+		if ( $('#chkNotifyNewMember').is(':checked') )
+			notifyNewMemberYN = 'Y';
+		
+		var notifyMemberLeaveYN = 'N';
+		if ( $('#chkNotifyMemberLeave').is(':checked') )
+			notifyMemberLeaveYN = 'Y';
 		
 		// 저장할 때에는 이메일을 입력했을 때에만 validation 검사
 		if ( contactEmail != null && contactEmail.length > 0 && validateEmail(contactEmail) == false )
@@ -190,7 +207,8 @@
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
 			var param = {"cafeID":cafeID, "cafeName":cafeName, "mainDesc": mainDesc, "contactEmail": contactEmail,
-					"iconImageNo": iconImageNo, "mainImageNo": mainImageNo };
+					"iconImageNo": iconImageNo, "mainImageNo": mainImageNo, "notifyNewMemberYN": notifyNewMemberYN,
+					"notifyMemberLeaveYN": notifyMemberLeaveYN };
 			
 			if ( locationResult != null )
 				param.cafeLocation = locationResult;
@@ -519,6 +537,18 @@
 			
 			<div class="inputContainer marginLR10 marginB20">
 				<input type="text" id="contactEmail" class="inputTxt" placeholder="이메일" value="" />
+			</div>
+			
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">알림</p>
+			
+			<div class="marginLR10 marginB10">
+				<input type="checkbox" id="chkNotifyNewMember">
+				<label id="lblNotifyNewMember" for="chkNotifyNewMember" >신규 회원 가입시 알림받기</label>
+			</div>
+			
+			<div class="marginLR10 marginB20">
+				<input type="checkbox" id="chkNotifyMemberLeave">
+				<label id="lblNotifyMemberLeave" for="chkNotifyMemberLeave" >회원탈퇴시 알림받기</label>
 			</div>
 			
 			<div class="upperLine">

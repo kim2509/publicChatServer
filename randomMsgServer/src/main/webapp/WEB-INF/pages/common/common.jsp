@@ -156,4 +156,15 @@ function goMoreCafeMeetingList( cafeID )
 	else
 		document.location.href= url;
 }
+
+function goMoreCafeMemberList( cafeID )
+{
+	var url = '<%= Constants.getServerURL() + "/cafe/moreCafeMemberList.do" %>?cafeID=' +
+			cafeID;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_CAFE_MEETINGlIST %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
 </script>

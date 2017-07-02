@@ -5,7 +5,6 @@
 
 <%
 	String isApp = request.getParameter("isApp");	
-	String cafeID = request.getParameter("cafeID");
 %>
 
 <html>
@@ -13,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>정모 리스트</title>
+<title>카페 리스트</title>
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
@@ -22,13 +21,12 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061"></script>
 		
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=2" />
 
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
-	var cafeID = '<%= cafeID %>';
-	
+
 	var startIndex = 0;
 	var firstPage = 0;
 	var lastPage = 0;
@@ -54,8 +52,9 @@
 		{
 			Handlebars.registerHelper('displayDateFormat', displayDateFormat );
 			
-			// 내 카페 정모 리스트 불러오기
-			publicMeetingTabSelected(0);
+			// 내 카페 리스트 불러오기
+			cafeTabSelected(0);
+
 		}
 		catch( ex )
 		{
@@ -63,61 +62,111 @@
 		}
 	});
 
-	function publicMeetingTabSelected( tabIndex )
+	function cafeTabSelected( tabIndex )
 	{
-		$('#publicMeetingList .loading').show();
+		$('#myCafeList').hide();
+		$('#favRegionCafeList').hide();
+		$('#popularCafeList').hide();
 		
-		initPagingVars();
-		
-		$('#meetingList .empty').hide();
-		$('#meetingList').show();
-		
-		$('#meetingListDiv').html('');
-		$('#pagingInfo').html('');
+		$('#cafeList .loading').show();
+		$('#pagingInfo').hide();
 		
 		if ( tabIndex == 0 )
 		{
-			var param = {"cafeID":cafeID, "startIndex":startIndex, "showCount" : pageSize, "type":"1"};
-			ajaxRequest('POST', '/nearhere/cafe/getMeetingListByCafeIDAjax.do', param , meetingListReceived );
+			$('#myCafeList .empty').hide();
+			$('#myCafeList').show();
+			var param = {"startIndex":startIndex, "showCount" : pageSize};
+			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyCafeListReceived );			
 		}
 		else if ( tabIndex == 1 )
 		{
-			var param = {"cafeID":cafeID, "startIndex":startIndex, "showCount" : pageSize, "type":"2"};
-			ajaxRequest('POST', '/nearhere/cafe/getMeetingListByCafeIDAjax.do', param , meetingListReceived );
+			$('#favRegionCafeList').show();
+			$('#cafeList .loading').hide();
 		}
-
-		$('#publicMeetingTab li').removeClass('selected');
-		$('#publicMeetingTab li').eq(tabIndex).addClass('selected');
+		else if ( tabIndex == 2 )
+		{
+			$('#popularCafeList .empty').hide();
+			$('#popularCafeList').show();
+			var param = {"startIndex":startIndex, "showCount" : pageSize};
+			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularCafeListReceived );
+		}
+		
+		$('#cafeTab li').removeClass('selected');
+		$('#cafeTab li').eq(tabIndex).addClass('selected');
+		
+		selectedTabIndex = tabIndex;
 	}
 
-	function meetingListReceived( result )
+	function onMyCafeListReceived( result )
 	{
 		console.log(JSON.stringify(result));
 		
-		$('#publicMeetingList .loading').hide();
+		$('#cafeList .loading').hide();
 		
 		if ( result != null && result.data != null )
 		{
-			var source = $('#publicMeetingT').html();
+			var source = $('#cafeT').html();
 			var template = Handlebars.compile(source);
 			var html = template(result);
 
-			$('#meetingListDiv').html(html);
+			$('#myCafeList').html(html);
+			
+			if ( result.data.length == 0 )
+			{
+				$('#myCafeList .empty').html('가입한 카페가 존재하지 않습니다.');
+			}
 			
 			totalItemCount = result.data2;
 			
 			if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
 			{
-				$('#meetingListDiv').show();
+				$('#pagingInfo').show();
+				displayPagingInfo();
+				console.log('myCafe list not empty.');
+			}
+		}
+	}
+	
+	function onPopularCafeListReceived( result )
+	{
+		console.log(JSON.stringify(result));
+		
+		$('#cafeList .loading').hide();
+		
+		if ( result != null && result.data != null )
+		{
+			var source = $('#cafeT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+
+			$('#popularCafeList').html(html);
+			
+			totalItemCount = result.data2;
+			
+			if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
+			{
 				$('#pagingInfo').show();
 				displayPagingInfo();
 			}
 		}
 	}
 	
+	function goCafeHome( cafeID )
+	{
+		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
+
+		if ( isApp == 'Y' )
+			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent( url ) + '';
+		else
+			document.location.href= url;
+	}
+	
 	function displayPagingInfo()
 	{
 		$('#pagingInfo').empty();
+		
+		if ( totalItemCount < 1 )
+			return;
 		
 		if ( pageNo <= numOfPagesOnScreen )
 			firstPage = 1;
@@ -168,38 +217,46 @@
 		pageNo = num;
 		startIndex = (pageNo - 1) * pageSize;
 		
-		if ( $('#publicMeetingTab li').eq(0).attr('class') == 'selected' )
+		if ( $('#cafeTab li').eq(0).attr('class') == 'selected' )
 		{
-			var param = {"cafeID":cafeID, "startIndex":startIndex, "showCount" : pageSize, "type":"1"};
-			ajaxRequest('POST', '/nearhere/cafe/getMeetingListByCafeIDAjax.do', param , meetingListReceived );
+			var param = {"startIndex":startIndex, "showCount" : pageSize};
+			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyPublicMeetingListReceived );
 		}
-		if ( $('#publicMeetingTab li').eq(1).attr('class') == 'selected' )
+		else if ( $('#cafeTab li').eq(1).attr('class') == 'selected' )
 		{
-			var param = {"cafeID":cafeID, "startIndex":startIndex, "showCount" : pageSize, "type":"2"};
-			ajaxRequest('POST', '/nearhere/cafe/getMeetingListByCafeIDAjax.do', param , meetingListReceived );
+			
+		}
+		if ( $('#cafeTab li').eq(2).attr('class') == 'selected' )
+		{
+			var param = {"startIndex":startIndex, "showCount" : pageSize};
+			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularPublicMeetingListReceived );
 		}
 	}
 	
 </script>
-<script id="publicMeetingT" type="text/x-handlebars-template">
+<script id="cafeT" type="text/x-handlebars-template">
 	{{#if data}}
-	<ul class="meetingListUL">
+	<ul class="cafeListUL">
 		{{#each data}}
-		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
-			<div id="title">{{title}}</div>
-			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
-			<div id="memberCount">참석인원 : {{curNo}}/{{maxNo}}</div>
-			<div id="cafeName">{{cafeName}}</div>
-			<div id="location">{{address}}</div>
+		<li onclick="goCafeHome('{{cafeID}}');">
+			<div>
+				<div class="cafeImage">
+				<img src="http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png" width="60" height="60">
+				</div>
+				<div class="cafeInfo">
+					<div class="cafeTitle">{{cafeName}}</div>
+					<div class="cafeDesc">{{mainDesc}}</div>
+					<div class="regionInfo">{{lRegionName}} {{mRegionName}} {{sRegionName}} {{tRegionName}}</div>
+					<div class="memberInfo">멤버수 : {{cntMembers}}명</div>
+				</div>
+			</div>
 		</li>
 		{{/each}}
 	</ul>
 	{{else}}
-		<div class="empty">정모가 존재하지 않습니다.</div>
-	{{/if}}			
+		<div class="empty">카페가 존재하지 않습니다.</div>
+	{{/if}}
 </script>
-
-<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body style="background:white;">
@@ -207,28 +264,26 @@
 	<div id="wrapper">
 	
 		<div class="titleDiv">
-			<div class="title">정모 리스트</div>
+			<div class="title">카페 멤버 리스트</div>
 		</div>
 		
-		<ul id="publicMeetingTab" class="tab2 margin10">
-			<li onclick="publicMeetingTabSelected(0);"class="selected">진행중인 정모</li>
-			<li onclick="publicMeetingTabSelected(1);">지난 정모</li>
-		</ul>
 		
-		<div id="publicMeetingList">
+		<div id="cafeList">
 		
 			<div class="loading" style="display:none;">목록을 읽어오는 중입니다.</div>
+	
+			<div id="myCafeList" style="display:none;" class="margin10">
+			</div>
 			
-			<div id="meetingListDiv" style="display:none;" class="margin10">
+			<div id="popularCafeList" style="display:none;" class="margin10">
 				
 			</div>
 			
+		</div>
 		
+		<div id="pagingInfo" style="text-align: center; margin-top: 10px; font-weight: bold; display: none;">
 		</div>
-	
-		<div id="pagingInfo" style="text-align:center;margin-top:20px;font-weight:bold;">
-		</div>
-	
+		
 	</div>
 	
 </body>

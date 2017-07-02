@@ -504,4 +504,27 @@ public class CafeController extends BaseController {
 		
 		return new ModelAndView("cafe/cafeMeetingList", model);
 	}
+	
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+	@RequestMapping( value ="/cafe/moreCafeMemberList.do")
+	public ModelAndView moreCafeMemberList ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken, String cafeID )
+	{
+		try
+		{
+			RegionBiz regionBiz = RegionBiz.getInstance(sqlSession);
+			HashMap param = new HashMap();
+			param.put("cafeID", cafeID);
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
+		
+		insertHistory("/cafe/moreCafeMemberList.do", null , null , null, null );
+		
+		return new ModelAndView("cafe/moreCafeMemberList", model);
+	}
 }

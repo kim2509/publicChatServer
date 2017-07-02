@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.cafe.push">
+
+	<select id="getCafeOperatorList" resultType="HashMap" parameterType="HashMap">
+		select u.userID, u.userName, u.regID, cmm.*, cm.cafeName, cm.cafeID
+		from cafe_members cmm
+			left outer join cafe_master cm on cmm.cafeNo = cm.cafeNo
+			left outer join user u on cmm.userID = u.userID
+		where cm.cafeID=#{cafeID}
+		and (cmm.memberType = '카페주인' or cmm.memberType = '운영자')
+		and u.isDeleted is null and LENGTH(u.regID) > 0
+	</select>
+	
+</mapper>

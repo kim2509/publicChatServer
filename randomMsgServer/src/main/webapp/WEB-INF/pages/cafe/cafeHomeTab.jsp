@@ -11,6 +11,7 @@
 	int upcomingCafePublicMeetingCount = Integer.parseInt(request.getAttribute("upcomingCafePublicMeetingCount").toString());
 	List<HashMap> cafeMemberList = (List<HashMap>) request.getAttribute("cafeMemberList");
 	String cafeMemberCount = request.getAttribute("cafeMemberCount").toString();
+	int totalCafeMemberCount = Integer.parseInt(cafeMemberCount);
 	
 	String publishYN = Util.getStringFromHash(cafeMainInfo, "publishYN");
 	
@@ -192,7 +193,8 @@
 					<li onclick="openUserProfile('<%= Util.getStringFromHash(member, "userID") %>')">
 						<div id="imgProfile">
 							<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= member.get("profileImageURL") %>" 
-							width=60 height=60/>
+							width=60 height=60
+							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 						</div>
 						<div id="memberInfo">
 							<div><%= member.get("userName") %></div>
@@ -202,6 +204,10 @@
 					<% } %>
 				</ul>
 			</div>
+			
+			<% if ( totalCafeMemberCount > 6 ){ %>
+				<div class="moreDiv" onclick="goMoreCafeMemberList( cafeID );">더 보기</div>
+			<% } %>
 			
 			<% } %>
 			

@@ -61,7 +61,10 @@
 
 	<select id="selectUser" parameterType="com.nearhere.domain.User"
 		resultType="com.nearhere.domain.User">
-		select * FROM user where userID = #{userID};
+		select u.*, ut.hash as userToken
+		FROM user u
+			left outer join user_token ut on u.userID= ut.userID
+		where u.userID = #{userID};
 	</select>
 
 	<insert id="insertUser" parameterType="com.nearhere.domain.User"

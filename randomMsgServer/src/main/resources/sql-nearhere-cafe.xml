@@ -460,6 +460,8 @@
 			, rv.mRegionNo
 			, rv.sRegionNo
 			, rv.tRegionNo
+			, cd.notifyNewMemberYN
+			, cd.notifyMemberLeaveYN
 		from cafe_master cm
 			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
 			left outer join cafe_image ci2 on cd.iconImageNo = ci2.imageNo
@@ -495,7 +497,7 @@
 			left outer join cafe_master cm on cm.cafeNo=cfm.cafeNo
 		where cm.cafeID=#{cafeID} and cfm.deletedDate is null
 		order by cfm.createdDate
-		limit 0,5
+		limit 0,6
 	</select>
 	
 	<select id="getCafeMemberListForManage" resultType="HashMap" parameterType="HashMap">
@@ -632,6 +634,8 @@
 		, mainImageNo = #{mainImageNo}
 		, contactEmail = #{contactEmail}
 		, locationNo = #{locationNo}
+		, notifyNewMemberYN = #{notifyNewMemberYN}
+		, notifyMemberLeaveYN = #{notifyMemberLeaveYN}
 		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID}) 
 	</update>
 	
