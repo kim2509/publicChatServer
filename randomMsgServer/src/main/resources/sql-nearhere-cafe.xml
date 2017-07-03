@@ -491,35 +491,6 @@
 		where cm.meetingNo=#{meetingNo}
 	</select>
 	
-	<select id="getCafeMemberList" resultType="HashMap" parameterType="HashMap">
-		select cfm.*, u.userName, u.profileImageURL from cafe_members cfm
-			left outer join user u on cfm.userID=u.userID
-			left outer join cafe_master cm on cm.cafeNo=cfm.cafeNo
-		where cm.cafeID=#{cafeID} and cfm.deletedDate is null
-		order by cfm.createdDate
-		limit 0,6
-	</select>
-	
-	<select id="getCafeMemberListForManage" resultType="HashMap" parameterType="HashMap">
-		select cfm.*, u.userName, u.profileImageURL
-		, case when cfm.memberType = '카페주인' then 1 
-			when cfm.memberType = '운영자' then 2 
-			when cfm.memberType = '회원' then 3 
-			end as memberTypeOrder
-		from cafe_members cfm
-			left outer join user u on cfm.userID=u.userID
-			left outer join cafe_master cm on cm.cafeNo=cfm.cafeNo
-		where cm.cafeID=#{cafeID} and cfm.deletedDate is null
-		order by memberTypeOrder, cfm.createdDate
-		limit #{startIndex},#{showCount};
-	</select>
-	
-	<select id="getCafeMemberCount" resultType="String" parameterType="HashMap">
-		select count(cfm.`no`) as memberCount from cafe_members cfm
-			left outer join cafe_master cm on cfm.cafeNo=cm.cafeNo
-		where cm.cafeID=#{cafeID} and cfm.deletedDate is null
-	</select>
-	
 	<insert id="insertCafeBoard" parameterType="HashMap">
 		insert into cafe_board_master( boardName, cafeNo, boardType, writePermission, createdDate )
 		select #{boardName}, cafeNo, #{boardType}, #{writePermission}, NOW() from cafe_master
@@ -601,20 +572,6 @@
 		and cm.cafeID=#{cafeID}
 	</select>
 	
-	<update id="updateCafeMemberType" parameterType="HashMap">
-		update cafe_members
-		set memberType=#{memberType}
-		where userID=#{userID}
-		and cafeNo = ( select cafeNo from cafe_master where cafeID=#{cafeID} );
-	</update>
-	
-	<update id="updateMemberAsDeleted" parameterType="HashMap">
-		update cafe_members
-		set deletedDate = NOW()
-		where userID=#{userID}
-		and cafeNo = ( select cafeNo from cafe_master where cafeID=#{cafeID} );
-	</update>
-	
 	<update id="updateCafeMasterInfo" parameterType="HashMap">
 		update cafe_master
 		set cafeName=#{cafeName}
@@ -651,18 +608,6 @@
 	<delete id="deleteCafeMaster" parameterType="HashMap">
 		delete from cafe_master
 		where cafeID = #{cafeID}
-	</delete>
-	
-	<!-- 카페 회원 가입 -->
-	<insert id="insertCafeMember" parameterType="HashMap">
-		insert into cafe_members( cafeNo, userID, memberType, createdDate )
-		values( #{cafeNo}, #{userID}, #{memberType}, NOW() );
-	</insert>
-	
-	<!-- 카페 회원 탈퇴 -->
-	<delete id="deleteCafeMember" parameterType="HashMap">
-		delete from cafe_members
-		where cafeNo = #{cafeNo} and userID = #{userID}
 	</delete>
 	
 	<!-- 정모 만들기 -->

@@ -25,6 +25,7 @@ import com.nearhere.domain.User;
 
 import common.CafeBiz;
 import common.CafeBoardPostBiz;
+import common.CafeMemberBiz;
 import common.CafePushBiz;
 import common.RegionBiz;
 import common.UserBiz;
@@ -718,8 +719,6 @@ public class CafeAjaxController extends BaseController {
 				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
 			}
 			
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			
 			HashMap info = new HashMap();
 			
 			HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
@@ -727,8 +726,8 @@ public class CafeAjaxController extends BaseController {
 			tmp.put("startIndex", param.get("startIndex"));
 			tmp.put("showCount", param.get("showCount"));
 			
-			info.put("memberList", cafeBiz.getCafeMemberListForManage(tmp) );
-			info.put("TotalMembersCount", cafeBiz.getCafeMemberCount(tmp) );
+			info.put("memberList", CafeMemberBiz.getInstance(sqlSession).getCafeMemberListForManage(tmp) );
+			info.put("TotalMembersCount", CafeMemberBiz.getInstance(sqlSession).getCafeMemberCount(tmp) );
 			
 			response.setData(info);
 			
@@ -781,8 +780,7 @@ public class CafeAjaxController extends BaseController {
 			}
 			else
 			{
-				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-				int dbResult = cafeBiz.updateCafeMemberType(param);
+				int dbResult = CafeMemberBiz.getInstance(sqlSession).updateCafeMemberType(param);
 				
 				HashMap info = new HashMap();
 				
@@ -836,8 +834,7 @@ public class CafeAjaxController extends BaseController {
 			}
 			else
 			{
-				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-				int dbResult = cafeBiz.updateCafeAsDeleted(param);
+				int dbResult = CafeMemberBiz.getInstance(sqlSession).updateMemberAsDeleted(param);
 				
 				HashMap info = new HashMap();
 				
@@ -1099,7 +1096,7 @@ public class CafeAjaxController extends BaseController {
 				}
 				else
 				{
-					int result = cafeBiz.registerCafeMember( param );
+					int result = CafeMemberBiz.getInstance(sqlSession).registerCafeMember( param );
 					
 					if ("Y".equals( Util.getStringFromHash(cafeMainInfo, "notifyNewMemberYN") ) )
 						CafePushBiz.getInstance(sqlSession).sendCafeNewMemberNotification(param);
@@ -1153,7 +1150,7 @@ public class CafeAjaxController extends BaseController {
 			}
 			else
 			{
-				int result = cafeBiz.cancelCafeMember( param );
+				int result = CafeMemberBiz.getInstance(sqlSession).cancelCafeMember( param );
 				
 				if ("Y".equals( Util.getStringFromHash(cafeMainInfo, "notifyMemberLeaveYN") ) )
 					CafePushBiz.getInstance(sqlSession).sendCafeMemberLeaveNotification(param);

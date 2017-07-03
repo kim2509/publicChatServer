@@ -189,7 +189,7 @@ public class CafeBiz extends CommonBiz{
 		sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeDetail", param);
 		
 		param.put("memberType", "카페주인");
-		registerCafeMember(param);
+		CafeMemberBiz.getInstance(sqlSession).registerCafeMember(param);
 		
 		return result;
 	}
@@ -265,38 +265,6 @@ public class CafeBiz extends CommonBiz{
 	{
 		List<HashMap> meetingMembers = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMeetingMembers", param);
 		return meetingMembers;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public List<HashMap> getCafeMemberList(HashMap param)
-	{
-		List<HashMap> cafeMemberList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMemberList", param);
-		return cafeMemberList;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public String getCafeMemberCount(HashMap param)
-	{
-		String cafeMemberCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeMemberCount", param);
-		return cafeMemberCount;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public List<HashMap> getCafeMemberListForManage(HashMap param)
-	{
-		int startIndex = 0;
-		if ( !Util.isEmptyString(param.get("startIndex")))
-			startIndex = Integer.parseInt(param.get("startIndex").toString());
-		
-		int showCount = 10;
-		if ( !Util.isEmptyString(param.get("showCount")))
-			showCount = Integer.parseInt(param.get("showCount").toString());
-		
-		param.put("startIndex", startIndex);
-		param.put("showCount", showCount);
-		
-		List<HashMap> cafeMemberList = sqlSession.selectList("com.tessoft.nearhere.cafe.getCafeMemberListForManage", param);
-		return cafeMemberList;
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -466,30 +434,6 @@ public class CafeBiz extends CommonBiz{
 	}
 
 	@SuppressWarnings("rawtypes")
-	public int updateCafeMemberType(HashMap param)
-	{
-		if ( Util.isEmptyForKey(param, "cafeID") || 
-			Util.isEmptyForKey(param, "userID") ||
-			Util.isEmptyForKey(param, "memberType") ) return -1;
-		
-		if ( "1".equals( param.get("memberType") ) )
-			param.put("memberType", Constants.CafeMemberTypeOperator);
-		else
-			param.put("memberType", "회원");
-		
-		return sqlSession.update("com.tessoft.nearhere.cafe.updateCafeMemberType", param);
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public int updateCafeAsDeleted(HashMap param)
-	{
-		if ( Util.isEmptyForKey(param, "cafeID") || 
-			Util.isEmptyForKey(param, "userID") ) return -1;
-		
-		return sqlSession.update("com.tessoft.nearhere.cafe.updateMemberAsDeleted", param);
-	}
-	
-	@SuppressWarnings("rawtypes")
 	public int updateCafeInfo(HashMap param) throws Exception
 	{
 		if ( Util.isEmptyForKey(param, "cafeID") ) return -1;
@@ -574,23 +518,6 @@ public class CafeBiz extends CommonBiz{
 	public int updateCafeLocation( HashMap param )
 	{
 		int result = sqlSession.insert("com.tessoft.nearhere.cafe.updateCafeLocation", param);
-		return result;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public int registerCafeMember( HashMap param )
-	{
-		if ( Util.isEmptyForKey(param, "memberType") )
-			param.put("memberType", "회원");
-		
-		int result = sqlSession.insert("com.tessoft.nearhere.cafe.insertCafeMember", param);
-		return result;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public int cancelCafeMember( HashMap param )
-	{
-		int result = sqlSession.insert("com.tessoft.nearhere.cafe.deleteCafeMember", param);
 		return result;
 	}
 	

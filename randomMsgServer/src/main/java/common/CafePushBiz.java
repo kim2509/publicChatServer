@@ -36,38 +36,47 @@ public class CafePushBiz extends CommonBiz{
 	@SuppressWarnings("rawtypes")
 	public void sendCafeNewMemberNotification(HashMap param) throws Exception
 	{
-		String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + Util.getStringFromHash(param, "userID");
+		
+		String cafeID = Util.getStringFromHash(param, "cafeID");
 		
 		List<HashMap> operatorList = getCafeOperatorList(param);
 		HashMap userInfo = UserBiz.getInstance(sqlSession).getUserInfo(Util.getStringFromHash(param, "userID"));
 		for ( int i = 0; i < operatorList.size(); i++ )
 		{
 			String regID = Util.getStringFromHash( operatorList.get(i), "regID");
+			String operatorID = Util.getStringFromHash( operatorList.get(i), "userID");
+			
+			String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + operatorID;
+			
 			String userName = Util.getStringFromHash( userInfo, "userName");
 			String cafeName = Util.getStringFromHash( operatorList.get(i), "cafeName");
 			String msg = userName + "님이 " + cafeName + "카페에 가입하셨습니다.";
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification("신규회원 알림", 
-					Util.getStringFromHash(param, "userID"), regID, msg, url, "알림센터");
+					operatorID, regID, msg, url, "알림센터", "newMember", cafeID );
 		}
 	}
 	
 	@SuppressWarnings("rawtypes")
 	public void sendCafeMemberLeaveNotification(HashMap param) throws Exception
 	{
-		String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + Util.getStringFromHash(param, "userID");
+		String cafeID = Util.getStringFromHash(param, "cafeID");
 		
 		List<HashMap> operatorList = getCafeOperatorList(param);
 		HashMap userInfo = UserBiz.getInstance(sqlSession).getUserInfo(Util.getStringFromHash(param, "userID"));
 		for ( int i = 0; i < operatorList.size(); i++ )
 		{
 			String regID = Util.getStringFromHash( operatorList.get(i), "regID");
+			String operatorID = Util.getStringFromHash( operatorList.get(i), "userID");
+			
+			String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + operatorID;
+			
 			String userName = Util.getStringFromHash( userInfo, "userName");
 			String cafeName = Util.getStringFromHash( operatorList.get(i), "cafeName");
 			String msg = userName + "님이 " + cafeName + "카페를 탈퇴하셨습니다.";
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification("회원탈퇴 알림", 
-					Util.getStringFromHash(param, "userID"), regID, msg, url, "알림센터");
+					operatorID, regID, msg, url, "알림센터", "memberLeave", cafeID );
 		}
 	}
 }

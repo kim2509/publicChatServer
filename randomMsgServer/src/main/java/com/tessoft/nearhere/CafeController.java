@@ -25,6 +25,7 @@ import com.nearhere.domain.User;
 
 import common.CafeBiz;
 import common.CafeBoardPostBiz;
+import common.CafeMemberBiz;
 import common.RegionBiz;
 import common.UserBiz;
 
@@ -223,10 +224,10 @@ public class CafeController extends BaseController {
 				model.addAttribute("totalCafeMeetingCount", cafeBiz.getTotalCafeMeetingCountByCafeID(cafeMainInfoParam));
 				model.addAttribute("upcomingCafePublicMeetingCount", cafeBiz.getUpcomingCafePublicMeetingCount(cafeMainInfoParam));
 				
-				List<HashMap> cafeMemberList = cafeBiz.getCafeMemberList(cafeMainInfoParam);
+				List<HashMap> cafeMemberList = CafeMemberBiz.getInstance(sqlSession).getCafeMemberList(cafeMainInfoParam);
 				model.addAttribute("cafeMemberList", cafeMemberList);
 				
-				String cafeMemberCount = cafeBiz.getCafeMemberCount(cafeMainInfoParam);
+				String cafeMemberCount = CafeMemberBiz.getInstance(sqlSession).getCafeMemberCount(cafeMainInfoParam);
 				model.addAttribute("cafeMemberCount", cafeMemberCount);
 				
 				HashMap tmp = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
@@ -379,7 +380,7 @@ public class CafeController extends BaseController {
 			param.put("cafeID", cafeID);
 			param.put("userID", userInfo.get("userID") );
 
-			List<HashMap> cafeMemberList = CafeBiz.getInstance(sqlSession).getCafeMemberListForManage(param);
+			List<HashMap> cafeMemberList = CafeMemberBiz.getInstance(sqlSession).getCafeMemberListForManage(param);
 			model.addAttribute("cafeMemberListJSON", mapper.writeValueAsString(cafeMemberList) );
 		}
 		catch( Exception ex )

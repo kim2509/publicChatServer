@@ -27,6 +27,7 @@
 	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 <script type="text/javascript"
 	src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>	
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 
 <script language="javascript">
 
@@ -60,6 +61,20 @@
 		$(element).find('#new').hide();
 	}
 	
+	function goMemberList( element, pushNo, cafeID )
+	{
+		$(element).find('#new').hide();
+		var param = {"cafeID":cafeID, "pushNo":pushNo};
+		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+		
+		goMoreCafeMemberList( cafeID );
+	}
+	
+	function onPushReadResult( result )
+	{
+		document.location.reload();
+	}
+	
 </script>
 
 <style type="text/css">
@@ -90,13 +105,21 @@
 			
 			HashMap message = userPushMessageList.get(i);
 			
-			if ( "newPostByDistance".equals( message.get("type")) || "postReply".equals( message.get("type")) )
+			String type = Util.getStringFromHash(message, "type");
+			String param1 = Util.getStringFromHash(message, "param1");
+			String pushNo = Util.getStringFromHash(message, "pushNo");
+			
+			if ( "newPostByDistance".equals( type ) || "postReply".equals( type ) )
 			{
-				script = "viewPost('" + message.get("param1") + "', this );";
+				script = "viewPost('" + param1 + "', this );";
 			}
-			else if ( "event".equals( message.get("type")) || "eventssl".equals( message.get("type")))
+			else if ( "event".equals( type ) || "eventssl".equals( type ))
 			{
-				script = "goEventViewer('" + message.get("pushNo") + "', '" + message.get("param1") + "', this );"; 				
+				script = "goEventViewer('" + message.get("pushNo") + "', '" + param1 + "', this );"; 				
+			}
+			else if ("newMember".equals( type ) || "memberLeave".equals(type) )
+			{
+				script = "goMemberList( this, '" + pushNo + "', '" + param1 + "')";
 			}
 		%>
 			<dd>

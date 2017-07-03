@@ -75,6 +75,12 @@ public class UserBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public void updateUserPushMessageAsRead( HashMap param )
+	{
+		sqlSession.update("com.tessoft.nearhere.user.updateUserPushMessageAsRead", param );
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public HashMap selectUserByUserToken( String userToken ) throws Exception
 	{
 		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.selectUserByUserToken", userToken );

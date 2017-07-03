@@ -118,4 +118,10 @@
 		where ut.hash = #{value}
 		and u.isDeleted is null
 	</select>
+	
+	<update id="updateUserPushMessageAsRead" parameterType="java.util.HashMap">
+		update user_push_message set
+		isRead = 'Y'
+		where toUserID=#{userID} and pushNo = #{pushNo};
+	</update>
 </mapper>

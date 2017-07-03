@@ -83,7 +83,7 @@
 	{
 		if ( profileImageURL != null && profileImageURL.length > 0 )
 			return new Handlebars.SafeString('<img src="<%= Constants.getThumbnailImageSSLURL() %>/' + 
-					profileImageURL + '" width=80 height=80/>');
+					profileImageURL + '" width=80 height=80 ' + 'onError="this.src=\'<%= Constants.IMAGE_PATH %>/no_image.png\';"' + '/>');
 		else return new Handlebars.SafeString('<img src="<%= Constants.IMAGE_PATH %>/no_image.png" width=80 height=80/>');
 	}
 

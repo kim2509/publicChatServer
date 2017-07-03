@@ -153,7 +153,8 @@ public class MessageBiz extends CommonBiz{
 		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
 	}
 	
-	public String sendCafeNotification(String title, String userID, String regID, String msg , String url, String param )
+	public String sendCafeNotification(String title, String userID, String regID, 
+			String msg , String url, String popupTitle, String messageType, String param1 )
 	{
 		try
 		{
@@ -161,7 +162,7 @@ public class MessageBiz extends CommonBiz{
 					.addData("message",  msg )
 					.addData("type",  "webView" )
 					.addData("url",  url )
-					.addData("param",  param )
+					.addData("param",  popupTitle )
 					.addData("sound", "on")
 					.addData("vibrate", "on")
 					.build();
@@ -170,9 +171,9 @@ public class MessageBiz extends CommonBiz{
 			
 			UserPushMessage pushMessage = new UserPushMessage();
 			pushMessage.setToUserID( userID );
-			pushMessage.setType("webView");
+			pushMessage.setType(messageType);
 			pushMessage.setMessage( msg );
-			pushMessage.setParam1(param);
+			pushMessage.setParam1(param1);
 			sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
 			
 			return result;

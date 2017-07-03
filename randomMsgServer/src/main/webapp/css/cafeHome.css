@@ -157,6 +157,11 @@ li{
 	border-radius:10px;
 }
 
+#cafeImage img
+{
+	width:100%;
+}
+
 #cafeInfo #cafeDesc
 {
 	margin:20px 0px;
