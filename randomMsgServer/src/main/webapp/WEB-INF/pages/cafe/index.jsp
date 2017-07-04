@@ -26,7 +26,7 @@
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_index.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_index.css?v=4" />
 
 <script language="javascript">
 		

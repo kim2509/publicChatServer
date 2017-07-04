@@ -140,6 +140,10 @@ body, div, ul{
     float: left;
 }
 
+.cafeListUL li .cafeImage img{
+    border-radius:10px;
+}
+
 .cafeListUL li .cafeInfo {
     margin-left: 70px;
 }
