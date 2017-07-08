@@ -79,4 +79,33 @@ public class CafePushBiz extends CommonBiz{
 					operatorID, regID, msg, url, "알림센터", "memberLeave", cafeID );
 		}
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getBoardPostWriterNRepliers(HashMap param)
+	{
+		List<HashMap> operatorList = sqlSession.selectList("com.tessoft.nearhere.cafe.push.getBoardPostWriterNRepliers", param);
+		return operatorList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void sendPushToBoardPostWriterNRepliers(HashMap param) throws Exception
+	{
+		String postNo = Util.getStringFromHash( param, "postNo" );
+		String content = Util.getStringFromHash( param, "content" );
+		List<HashMap> targetUserList = getBoardPostWriterNRepliers(param);
+		
+		HashMap userInfo = UserBiz.getInstance(sqlSession).getUserInfo(Util.getStringFromHash(param, "userID"));
+		String userName = Util.getStringFromHash( userInfo, "userName");
+		
+		for ( int i = 0; i < targetUserList.size(); i++ )
+		{
+			String regID = Util.getStringFromHash( targetUserList.get(i), "regID");
+			String targetUserID = Util.getStringFromHash( targetUserList.get(i), "userID");
+			
+			String url = Constants.getServerURL() + "/boardPost/detail/" + postNo + "?isApp=Y";
+			
+			MessageBiz.getInstance(sqlSession).sendCafeNotification("댓글 알림", 
+					targetUserID, regID, userName + ":" + content, url, "게시 글 상세", "newCafeBoardPostReply", postNo );
+		}
+	}
 }

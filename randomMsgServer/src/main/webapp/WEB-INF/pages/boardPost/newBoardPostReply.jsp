@@ -47,7 +47,7 @@
 			return;
 		}
 		
-		if ( confirm('설정을 저장하시겠습니까?') )
+		if ( confirm('댓글을 저장하시겠습니까?') )
 		{
 			var param = {"postNo": postNo, "cafeID":cafeID, "boardNo":boardNo, "content": desc };
 			
@@ -71,6 +71,11 @@
 			if ( isApp == 'Y' )
 			{
 				finish();	
+			}
+			else
+			{
+				alert('완료되었습니다.');
+				window.history.back();
 			}
 		}
 	}

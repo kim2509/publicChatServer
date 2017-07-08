@@ -232,8 +232,10 @@
 	<div id="wrapper" style="padding-bottom:10px;">
 
 		<div id="boardNavi">
+		<% if ("Y".equals(ownerYN) || "Y".equals(memberYN) || Util.getStringFromHash(postInfo, "userID").equals(loginUserID)) { %>
 			<div id="btnDelete" onclick="deleteBoardPost();">삭제하기</div>
 			<div id="btnModify" onclick="goModifyBoardPost();">수정하기</div>
+		<% } %>
 			<div id="naviTitle">&lt; <%= boardName %></div>
 		</div>
 		

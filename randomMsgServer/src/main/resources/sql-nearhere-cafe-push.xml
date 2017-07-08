@@ -14,4 +14,18 @@
 		and u.isDeleted is null and LENGTH(u.regID) > 0
 	</select>
 	
+	<select id="getBoardPostWriterNRepliers" resultType="HashMap" parameterType="HashMap">
+		<![CDATA[
+		select u.* from
+		(
+		select userID from cafe_board_post_master 
+		where postNo = #{postNo}
+		union
+		select userID from cafe_board_post_reply
+		where postNo = #{postNo}
+		) A
+			inner join user u on A.userID=u.userID
+		where u.userID <> #{userID}
+		]]>
+	</select>
 </mapper>

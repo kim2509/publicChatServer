@@ -75,6 +75,15 @@
 		document.location.reload();
 	}
 	
+	function goCafeBoardPostDetail( element, pushNo, postNo )
+	{
+		$(element).find('#new').hide();
+		var param = {"pushNo":pushNo};
+		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+		
+		goPostDetail( postNo );
+	}
+	
 </script>
 
 <style type="text/css">
@@ -109,6 +118,7 @@
 			String param1 = Util.getStringFromHash(message, "param1");
 			String pushNo = Util.getStringFromHash(message, "pushNo");
 			
+			
 			if ( "newPostByDistance".equals( type ) || "postReply".equals( type ) )
 			{
 				script = "viewPost('" + param1 + "', this );";
@@ -120,6 +130,10 @@
 			else if ("newMember".equals( type ) || "memberLeave".equals(type) )
 			{
 				script = "goMemberList( this, '" + pushNo + "', '" + param1 + "')";
+			}
+			else if ("newCafeBoardPostReply".equals( type ))
+			{
+				script = "goCafeBoardPostDetail( this, '" + pushNo + "', '" + param1 + "')";
 			}
 		%>
 			<dd>
