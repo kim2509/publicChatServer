@@ -114,6 +114,16 @@ function openUserProfile( userID )
 		document.location.href = decodeURIComponent(url);
 }
 
+function goCafeHome( cafeID )
+{
+	var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_CAFE_HOME %>&url=' + encodeURIComponent( url ) + '';
+	else
+		document.location.href= url;
+}
+
 function goPostDetail(postNo )
 {
 	var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo;

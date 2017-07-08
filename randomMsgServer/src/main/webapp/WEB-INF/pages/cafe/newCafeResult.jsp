@@ -25,19 +25,6 @@
 <script language="javascript">
 
 	var isApp = '<%= isApp %>';
-
-	function goCafeHome( cafeID )
-	{
-		var url ='<%= Constants.getServerURL() %>/cafe/' + cafeID;
-
-		if ( isApp == 'Y' )
-		{
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent(url);
-			finish();
-		}
-		else
-			document.location.href=url;
-	}
 	
 	function finish()
 	{
@@ -49,6 +36,8 @@
 		return '';
 	}
 </script>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body>

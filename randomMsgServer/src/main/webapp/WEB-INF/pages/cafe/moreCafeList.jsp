@@ -151,16 +151,6 @@
 		}
 	}
 	
-	function goCafeHome( cafeID )
-	{
-		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + encodeURIComponent( url ) + '';
-		else
-			document.location.href= url;
-	}
-	
 	function displayPagingInfo()
 	{
 		$('#pagingInfo').empty();
@@ -258,6 +248,8 @@
 		<div class="empty">카페가 존재하지 않습니다.</div>
 	{{/if}}
 </script>
+
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
 </head>
 <body style="background:white;">

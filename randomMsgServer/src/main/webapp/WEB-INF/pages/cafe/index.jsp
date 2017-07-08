@@ -53,16 +53,6 @@
 			document.location.href= url;
 	}
 	
-	function goCafeHome( cafeID )
-	{
-		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>';
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_CAFE_HOME %>&url=' + encodeURIComponent( url ) + '';
-		else
-			document.location.href= url;
-	}
-	
 	jQuery(document).ready( function () {
 		
 		try

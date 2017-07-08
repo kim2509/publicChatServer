@@ -123,7 +123,7 @@
 			return;
 		}
 		
-		if ( confirm('설정을 저장하시겠습니까?') )
+		if ( confirm('정모를 생성하시겠습니까?') )
 		{
 			var param = {"cafeID":cafeID, "meetingTitle":meetingTitle, "meetingDesc": meetingDesc, "meetingNo": meetingNo,
 					"maxNo": maxNo, "meetingDate" : meetingDate + ' ' + meetingTime };

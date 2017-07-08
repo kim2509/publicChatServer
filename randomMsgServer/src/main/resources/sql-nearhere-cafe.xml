@@ -486,8 +486,9 @@
 	<select id="getCafeMeetingMembers" resultType="HashMap" parameterType="HashMap">
 		select cm.*, u.userName, u.profileImageURL, cm2.memberType
 		from cafe_public_meeting_members cm
+			left outer join cafe_public_meeting cpm on cm.meetingNo = cpm.meetingNo
+			left outer join cafe_members cm2 on cm.userID=cm2.userID and cpm.cafeNo=cm2.cafeNo
 			left outer join user u on u.userID=cm.userID
-			left outer join cafe_members cm2 on cm.userID=cm2.userID
 		where cm.meetingNo=#{meetingNo}
 	</select>
 	

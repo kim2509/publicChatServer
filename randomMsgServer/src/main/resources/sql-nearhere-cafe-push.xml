@@ -28,4 +28,13 @@
 		where u.userID <> #{userID}
 		]]>
 	</select>
+	
+	<select id="getPublicMeetingPushTargetUsers" resultType="HashMap" parameterType="HashMap">
+		<![CDATA[
+		select u.* from cafe_members cmm
+			inner join user u on u.userID=cmm.userID
+		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID})
+		and u.userID <> 'user798'
+		]]>
+	</select>
 </mapper>

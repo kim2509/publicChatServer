@@ -420,7 +420,8 @@ public class CafeAjaxController extends BaseController {
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping( value ="/cafe/joinCafeMeeting.do")
-	public @ResponseBody APIResponse joinCafeMeeting(HttpServletRequest request, @RequestBody String bodyString )
+	public @ResponseBody APIResponse joinCafeMeeting(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 		
@@ -428,21 +429,32 @@ public class CafeAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			String meetingNo = param.get("meetingNo").toString();
-			String userID = param.get("userID").toString();
-			String joinYN = param.get("joinYN").toString();
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
 			
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			
-			int result = 0;
-			
-			if ("Y".equals( joinYN ) )
-				result = cafeBiz.insertCafeMeeting(param);
-			else if ("N".equals( joinYN ) )
-				result = cafeBiz.deleteCafeMeeting(param);
-			
-			response.setData(result);
-			
-			insertHistory("/cafe/joinCafeMeeting.do", meetingNo , userID , null, null );
+			if ( Util.isEmptyString( userID ))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("사용자 정보가 올바르지 않습니다.");
+			}
+			else
+			{
+				param.put("userID", userID);
+				
+				String joinYN = param.get("joinYN").toString();
+				
+				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+				
+				int result = 0;
+				
+				if ("Y".equals( joinYN ) )
+					result = cafeBiz.insertCafeMeeting(param);
+				else if ("N".equals( joinYN ) )
+					result = cafeBiz.deleteCafeMeeting(param);
+				
+				response.setData(result);
+				
+				insertHistory("/cafe/joinCafeMeeting.do", meetingNo , userID , null, null );
+			}
 		}
 		catch( Exception ex )
 		{
@@ -1209,17 +1221,22 @@ public class CafeAjaxController extends BaseController {
 				
 				int dbResult = 0;
 				
+				userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+				param.put("userID", userID);
+				
 				if ( Util.isEmptyForKey(param, "meetingNo") )
 					dbResult = cafeBiz.insertCafePublicMeeting(param);
 				else
 					dbResult = cafeBiz.updateCafePublicMeeting(param);
+				
+				CafePushBiz.getInstance(sqlSession).sendPushToPublicMeetingTargetUsers(param);
 				
 				HashMap info = new HashMap();
 				info.put("dbResult", String.valueOf( dbResult ));
 				response.setData(info);
 			}
 			
-			insertHistory("/cafe/saveCafePublicMeetingAjax.do", param.get("cafeID").toString() , null , null , null );
+			insertHistory("/cafe/saveCafePublicMeetingAjax.do", param.get("cafeID").toString() , userID , null , null );
 		}
 		catch( Exception ex )
 		{

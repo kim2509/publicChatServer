@@ -84,6 +84,15 @@
 		goPostDetail( postNo );
 	}
 	
+	function goCafe( element, pushNo, cafeID )
+	{
+		$(element).find('#new').hide();
+		var param = {"pushNo":pushNo};
+		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+		
+		goCafeHome( cafeID );
+	}
+	
 </script>
 
 <style type="text/css">
@@ -134,6 +143,10 @@
 			else if ("newCafeBoardPostReply".equals( type ))
 			{
 				script = "goCafeBoardPostDetail( this, '" + pushNo + "', '" + param1 + "')";
+			}
+			else if ("newCafePublicMeeting".equals(type) )
+			{
+				script = "goCafe( this, '" + pushNo + "', '" + param1 + "')";
 			}
 		%>
 			<dd>

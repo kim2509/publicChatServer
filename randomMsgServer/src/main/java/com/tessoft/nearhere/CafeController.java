@@ -293,12 +293,8 @@ public class CafeController extends BaseController {
 			List<HashMap> meetingMembers = cafeBiz.getCafeMeetingMembers(param);
 			model.addAttribute("meetingMembers", meetingMembers);
 			
-			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
-
-			if ( userInfo != null )
-			{
-				model.addAttribute("loginUserID", Util.getStringFromHash(userInfo, "userID") );	
-			}
+			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			model.addAttribute("loginUserID", loginUserID);
 		}
 		catch( Exception ex )
 		{

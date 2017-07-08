@@ -255,17 +255,6 @@
 		
 		displayPagingInfo();
 	}
-
-	function goCafeHome( cafeID )
-	{
-		var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID +'?isApp=<%= isApp %>&userID=<%= userID %>';
-		url = encodeURIComponent( url );
-
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&url=' + url + '';
-		else
-			document.location.href="/nearhere/cafe/" + cafeID;
-	}
 	
 	function displayPagingInfo()
 	{
@@ -355,9 +344,10 @@
 		{{/each}}
 	</ul>
 </script>
-</head>
 
 <jsp:include page="../common/common.jsp" flush="true"></jsp:include>
+
+</head>
 
 <body>
 

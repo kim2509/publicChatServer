@@ -6,7 +6,7 @@
 <%
 	String isApp = request.getParameter("isApp");
 	String cafeID = request.getParameter("cafeID");
-	String loginUserID = "";
+	String loginUserID = Util.getString( request.getAttribute("loginUserID") );
 	
 	HashMap meetingInfo = (HashMap) request.getAttribute("meetingInfo");
 	
@@ -276,17 +276,20 @@
 					if ( meetingMembers != null ){
 					for ( int i = 0; i < meetingMembers.size(); i++ ) {
 					HashMap meetingMember = meetingMembers.get(i);
+					
+					if ( meetingMember == null ) continue;
 				%>
 					<li onclick="openUserProfile('<%= Util.getStringFromHash(meetingMember, "userID") %>')">
-					<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= meetingMember.get("profileImageURL") %>" 
-							width=60 height=60/>
+					<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= Util.getStringFromHash(meetingMember, "profileImageURL") %>" 
+							width=60 height=60
+							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 						
-						<% if ( joinYN && loginUserID.equals( meetingMember.get("userID").toString() )) { %>
-						<div id="userName2"><%= meetingMember.get("userName") %></div>
+						<% if ( joinYN && loginUserID.equals( Util.getStringFromHash(meetingMember, "userID") )) { %>
+						<div id="userName2"><%= Util.getStringFromHash(meetingMember, "userName") %></div>
 						<% } else { %>
-						<div id="userName"><%= meetingMember.get("userName") %></div>
+						<div id="userName"><%= Util.getStringFromHash(meetingMember, "userName") %></div>
 						<% } %>
-						<div id="memberType"><%= meetingMember.get("memberType") %></div>
+						<div id="memberType"><%= Util.getStringFromHash(meetingMember, "memberType") %></div>
 					</li>
 				<% 
 					}

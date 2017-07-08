@@ -154,7 +154,7 @@ public class MessageBiz extends CommonBiz{
 	}
 	
 	public String sendCafeNotification(String title, String userID, String regID, 
-			String msg , String url, String popupTitle, String messageType, String param1 )
+			String msg , String url, String popupTitle, String messageType, String param1, String titleBarHiddenYN )
 	{
 		try
 		{
@@ -165,6 +165,7 @@ public class MessageBiz extends CommonBiz{
 					.addData("param",  popupTitle )
 					.addData("sound", "on")
 					.addData("vibrate", "on")
+					.addData("titleBarHidden", titleBarHiddenYN )
 					.build();
 			
 			String result = sendGCMPush(regID, message);

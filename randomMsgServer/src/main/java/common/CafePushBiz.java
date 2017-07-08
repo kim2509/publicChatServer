@@ -53,7 +53,7 @@ public class CafePushBiz extends CommonBiz{
 			String msg = userName + "님이 " + cafeName + "카페에 가입하셨습니다.";
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification("신규회원 알림", 
-					operatorID, regID, msg, url, "알림센터", "newMember", cafeID );
+					operatorID, regID, msg, url, "알림센터", "newMember", cafeID, "N" );
 		}
 	}
 	
@@ -76,7 +76,7 @@ public class CafePushBiz extends CommonBiz{
 			String msg = userName + "님이 " + cafeName + "카페를 탈퇴하셨습니다.";
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification("회원탈퇴 알림", 
-					operatorID, regID, msg, url, "알림센터", "memberLeave", cafeID );
+					operatorID, regID, msg, url, "알림센터", "memberLeave", cafeID, "N" );
 		}
 	}
 	
@@ -105,7 +105,37 @@ public class CafePushBiz extends CommonBiz{
 			String url = Constants.getServerURL() + "/boardPost/detail/" + postNo + "?isApp=Y";
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification("댓글 알림", 
-					targetUserID, regID, userName + ":" + content, url, "게시 글 상세", "newCafeBoardPostReply", postNo );
+					targetUserID, regID, userName + ":" + content, url, "게시 글 상세", "newCafeBoardPostReply", postNo, "N" );
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> getPublicMeetingPushTargetUsers(HashMap param)
+	{
+		List<HashMap> operatorList = sqlSession.selectList("com.tessoft.nearhere.cafe.push.getPublicMeetingPushTargetUsers", param);
+		return operatorList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void sendPushToPublicMeetingTargetUsers(HashMap param) throws Exception
+	{
+		String cafeID = Util.getStringFromHash( param, "cafeID" );
+		HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+		String cafeName = Util.getStringFromHash(cafeMainInfo, "cafeName");
+		String meetingTitle = Util.getStringFromHash( param, "meetingTitle" );
+		List<HashMap> targetUserList = getPublicMeetingPushTargetUsers(param);
+		
+		HashMap userInfo = UserBiz.getInstance(sqlSession).getUserInfo(Util.getStringFromHash(param, "userID"));
+		
+		for ( int i = 0; i < targetUserList.size(); i++ )
+		{
+			String regID = Util.getStringFromHash( targetUserList.get(i), "regID");
+			String targetUserID = Util.getStringFromHash( targetUserList.get(i), "userID");
+			
+			String url = Constants.getServerURL() + "/cafe/" + cafeID + "?isApp=Y";
+			
+			MessageBiz.getInstance(sqlSession).sendCafeNotification( cafeName + "카페 정모 알림", 
+					targetUserID, regID, meetingTitle , url, "카페 홈", "newCafePublicMeeting", cafeID, "Y" );
 		}
 	}
 }
