@@ -72,7 +72,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=13" />	
+	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=14" />	
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 

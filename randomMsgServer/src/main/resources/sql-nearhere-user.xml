@@ -24,6 +24,7 @@
 			, jobTitle
 			, sex
 			, appVersion
+			, regID
 		from user
 		where userID=#{value}
 	</select>

@@ -102,10 +102,10 @@ public class CafePushBiz extends CommonBiz{
 			String regID = Util.getStringFromHash( targetUserList.get(i), "regID");
 			String targetUserID = Util.getStringFromHash( targetUserList.get(i), "userID");
 			
-			String url = Constants.getServerURL() + "/boardPost/detail/" + postNo + "?isApp=Y";
+			String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + targetUserID;
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification("댓글 알림", 
-					targetUserID, regID, userName + ":" + content, url, "게시 글 상세", "newCafeBoardPostReply", postNo, "N" );
+					targetUserID, regID, userName + ":" + content, url, "알림센터", "newCafeBoardPostReply", postNo, "N" );
 		}
 	}
 	
@@ -132,10 +132,36 @@ public class CafePushBiz extends CommonBiz{
 			String regID = Util.getStringFromHash( targetUserList.get(i), "regID");
 			String targetUserID = Util.getStringFromHash( targetUserList.get(i), "userID");
 			
-			String url = Constants.getServerURL() + "/cafe/" + cafeID + "?isApp=Y";
+			String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + targetUserID;
 			
 			MessageBiz.getInstance(sqlSession).sendCafeNotification( cafeName + "카페 정모 알림", 
-					targetUserID, regID, meetingTitle , url, "카페 홈", "newCafePublicMeeting", cafeID, "Y" );
+					targetUserID, regID, meetingTitle , url, "알림센터", "newCafePublicMeeting", cafeID, "N" );
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void sendCafeOperatorGrantPush(HashMap param) throws Exception
+	{
+		String cafeID = Util.getStringFromHash( param, "cafeID" );
+		String userID = Util.getStringFromHash(param, "userID");
+		HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+		String cafeName = Util.getStringFromHash(cafeMainInfo, "cafeName");
+		String memberType = Util.getStringFromHash(param, "memberType");
+		
+		HashMap userInfo = UserBiz.getInstance(sqlSession).getUserInfo(Util.getStringFromHash(param, "userID"));
+		
+		String regID = Util.getStringFromHash( userInfo, "regID");
+		String url = Constants.getServerURL() + "/notification/list.do?isApp=Y&userID=" + userID;
+		
+		if ("운영자".equals(memberType) )
+		{
+			MessageBiz.getInstance(sqlSession).sendCafeNotification( cafeName + "카페 공지", 
+					userID, regID, cafeName + "카페에 운영진으로 임명되었습니다." , url, "알림센터", "CafeOperatorGranted", cafeID, "N" );	
+		}
+		else if ("회원".equals(memberType) )
+		{
+			MessageBiz.getInstance(sqlSession).sendCafeNotification( cafeName + "카페 공지", 
+					userID, regID, cafeName + "카페에 운영진에서 해제되었습니다." , url, "알림센터", "CafeOperatorGranted", cafeID, "N" );
 		}
 	}
 }

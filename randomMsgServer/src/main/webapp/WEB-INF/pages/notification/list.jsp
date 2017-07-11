@@ -144,7 +144,7 @@
 			{
 				script = "goCafeBoardPostDetail( this, '" + pushNo + "', '" + param1 + "')";
 			}
-			else if ("newCafePublicMeeting".equals(type) )
+			else if ("newCafePublicMeeting".equals(type) || "CafeOperatorGranted".equals(type))
 			{
 				script = "goCafe( this, '" + pushNo + "', '" + param1 + "')";
 			}

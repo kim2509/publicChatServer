@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dy.common.Constants;
+import com.dy.common.Util;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
@@ -158,6 +159,8 @@ public class MessageBiz extends CommonBiz{
 	{
 		try
 		{
+			if ( Util.isEmptyString(regID) ) return "regID is empty string.";
+				
 			Message message = new Message.Builder().addData("title", title )
 					.addData("message",  msg )
 					.addData("type",  "webView" )

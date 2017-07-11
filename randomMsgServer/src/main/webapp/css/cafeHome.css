@@ -313,6 +313,14 @@ li{
 	height:60px;
 }
 
+#memberInfo #memberName
+{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-right: 10px;
+}
+
 #memberInfo #memberType
 {
 	position:absolute;

@@ -548,6 +548,9 @@ public class CafeBiz extends CommonBiz{
 			if ( !Util.isEmptyForKey(locationInfo, "latitude") && !Util.isEmptyForKey(locationInfo, "longitude") )
 			{
 				String fullAddress = Util.getFullAddress(Util.getStringFromHash(locationInfo, "latitude"), Util.getStringFromHash(locationInfo, "longitude"));
+				if ( Util.isEmptyString(fullAddress) && !Util.isEmptyForKey(locationInfo, "address1"))
+					fullAddress = Util.getStringFromHash(locationInfo, "address1");
+
 				HashMap regionInfo = getRegionInfo(fullAddress);
 				HashMap theRegion = (HashMap) regionInfo.get("region");
 				locationInfo.put("regionNo", theRegion.get("regionNo") );

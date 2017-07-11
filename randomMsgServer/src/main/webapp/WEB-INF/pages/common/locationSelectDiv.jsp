@@ -311,8 +311,8 @@
 					return;
 				}
 				
-				result.latitude = marker.getPosition().hb;
-				result.longitude = marker.getPosition().gb;
+				result.latitude = marker.getPosition().ib;
+				result.longitude = marker.getPosition().hb;
 				result.address1 = $('#mapTabContent .addressInfo #address1').html();
 				result.address2 = $('#mapTabContent .addressInfo #address2').html();
 				

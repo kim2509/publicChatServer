@@ -800,6 +800,9 @@ public class CafeAjaxController extends BaseController {
 				tmp.put("cafeID", param.get("cafeID"));
 				info.put("dbResult", String.valueOf( dbResult ));
 				response.setData(info);
+				
+				// 운영자 임명 푸쉬보내기
+				CafePushBiz.getInstance(sqlSession).sendCafeOperatorGrantPush( param );
 			}
 			
 			insertHistory("/cafe/updateCafeMemberTypeAjax.do", param.get("cafeID").toString() , null , null , null );

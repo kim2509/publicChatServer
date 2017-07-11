@@ -571,7 +571,8 @@ public class Util {
 	
 	public static String getFullAddress( String latitude, String longitude ) throws Exception
 	{
-		String url = "http://apis.daum.net/maps/coord2detailaddr?apikey=" + Constants.DAUM_API_KEY + "&x=" + longitude + "&y=" + latitude + "&inputCoordSystem=WGS84&output=xml";
+		String url = "http://apis.daum.net/maps/coord2detailaddr?apikey=" + Constants.DAUM_API_KEY + 
+				"&x=" + longitude + "&y=" + latitude + "&inputCoordSystem=WGS84&output=xml";
 		
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet req = new HttpGet(url.trim());

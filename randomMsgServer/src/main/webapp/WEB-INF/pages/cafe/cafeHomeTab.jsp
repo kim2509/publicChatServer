@@ -197,7 +197,7 @@
 							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 						</div>
 						<div id="memberInfo">
-							<div><%= member.get("userName") %></div>
+							<div id="memberName"><%= member.get("userName") %></div>
 							<div id="memberType"><%= Util.getStringFromHash(member, "memberType") %></div>
 						</div>
 					</li>
