@@ -133,7 +133,7 @@
 	{
 		if ( confirm('참석하시겠습니까?') )
 		{
-			var param = {"meetingNo":meetingNo , "joinYN":"Y" }
+			var param = {"cafeID":cafeID, "meetingNo":meetingNo , "joinYN":"Y" }
 			ajaxRequest('POST', '/nearhere/cafe/joinCafeMeeting.do', param , joinResult );
 		}
 	}
@@ -142,13 +142,25 @@
 	{
 		if ( confirm('참석을 취소하시겠습니까?') )
 		{
-			var param = {"meetingNo":meetingNo , "joinYN":"N" }
+			var param = {"cafeID":cafeID, "meetingNo":meetingNo , "joinYN":"N" }
 			ajaxRequest('POST', '/nearhere/cafe/joinCafeMeeting.do', param , joinResult );
 		}
 	}
 	
-	function joinResult()
+	function joinResult( result )
 	{
+		if ( result == null )
+		{
+			alert('처리중 오류가 발생했습니다.');
+			return;
+		}
+		
+		if ( result.resCode != '0000' )
+		{
+			alert(result.resMsg);
+			return;
+		}
+
 		document.location.reload();
 	}
 	
@@ -246,10 +258,10 @@
 		</div>
 
 		<div id="HeaderDiv">
-			<div id="title"><%= meetingInfo.get("title") %></div>
+			<div id="title"><%= Util.getStringFromHash(meetingInfo, "title") %></div>
 			
 			<div id="info">
-				<span>정모일시 : <%= meetingInfo.get("meetingDate") %></span><br/>
+				<span>정모일시 : <%= Util.getStringFromHash(meetingInfo, "meetingDate").substring(0, 16) %></span><br/>
 			</div>
 		</div>
 		

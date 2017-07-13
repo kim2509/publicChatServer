@@ -432,6 +432,34 @@ public class CafeBiz extends CommonBiz{
 		
 		return false;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public boolean isCafeMember( String cafeID, String userToken ) throws Exception
+	{
+		HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+		
+		if ( userInfo != null )
+		{
+			userInfo.put("cafeID", cafeID);
+			HashMap cafeUserInfo = getCafeUserInfo(userInfo);
+			
+			String ownerYN = "N";
+			String memberYN = "N";
+			String memberType = "";
+			if ( cafeUserInfo != null )
+			{
+				ownerYN = cafeUserInfo.get("ownerYN").toString();
+				memberYN = cafeUserInfo.get("memberYN").toString();
+				memberType = cafeUserInfo.get("memberType").toString();
+			}
+			
+			if (Constants.CafeMemberTypeOwner.equals( memberType ) ||
+				Constants.CafeMemberTypeOperator.equals( memberType )||
+				Constants.CafeMemberTypeMember.equals( memberType )) return true;
+		}
+		
+		return false;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public int updateCafeInfo(HashMap param) throws Exception

@@ -436,6 +436,11 @@ public class CafeAjaxController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("사용자 정보가 올바르지 않습니다.");
 			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeMember( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당 기능에 대해 권한이 없습니다.");
+			}
 			else
 			{
 				param.put("userID", userID);

@@ -48,7 +48,6 @@
 			if ( result == null || result.data == null || result.data.length < 1 )
 			{
 				$('#emptyDiv3').show();
-				$('#headerDiv').hide();
 				return;
 			}
 			
@@ -74,12 +73,10 @@
 			if ( result.data.postList != null && result.data.postList.length < 1 )
 			{
 				$('#emptyDiv3').show();
-				$('#headerDiv').hide();
 			}
 			else
 			{
 				$('#emptyDiv3').hide();
-				$('#headerDiv').show();
 			}
 			
 			$('#imagePostCount').html( result.data.totalCount );

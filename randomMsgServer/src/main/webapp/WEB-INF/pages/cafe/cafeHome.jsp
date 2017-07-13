@@ -20,11 +20,13 @@
 	String ownerYN = "N";
 	String memberYN = "N";
 	String memberType = "";
+	String blockYN = "N";
 	if ( cafeUserInfo != null )
 	{
 		ownerYN = cafeUserInfo.get("ownerYN").toString();
 		memberYN = cafeUserInfo.get("memberYN").toString();
 		memberType = cafeUserInfo.get("memberType").toString();
+		blockYN = Util.getStringFromHash(cafeUserInfo, "blockYN");
 	}
 %>
 
@@ -71,8 +73,12 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/common_v2.css?v=2" />
+	
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=14" />	
+	href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
+		
+<link rel="stylesheet" type="text/css"
+	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=15" />	
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 
@@ -100,6 +106,22 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 				window.history.back();
 			}
 		}
+		
+		<% if ("Y".equals( blockYN )) { %>
+		
+		alert('탈퇴된 회원은 카페접근이 불가능합니다.');
+		
+		if ( isApp =='Y' )
+		{
+			finishActivity();
+		}
+		else
+		{
+			window.history.back();
+		}
+		
+		<% } %>
+	
 	});
 	
 	function goSlide( slideNo )

@@ -383,9 +383,12 @@
 	</select>
 	
 	<select id="getCafePublicMeetingListByCafeID" resultType="HashMap" parameterType="HashMap">
-		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
+		select cp.*, ifnull(cmm.curNo,0) as cntMembers, cm.cafeName, cm.cafeID, cl.regionNo 
+		from cafe_public_meeting cp
 			left outer join cafe_location cl on cp.locationNo=cl.No
 			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cp.meetingNo = cmm.meetingNo
 		where cp.meetingDate >= NOW()
 		and cm.cafeID=#{cafeID}
 		order by cp.meetingDate

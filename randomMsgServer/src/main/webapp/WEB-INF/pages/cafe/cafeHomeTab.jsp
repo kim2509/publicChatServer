@@ -142,33 +142,25 @@
 			<% if ( cafePublicMeetingList != null && cafePublicMeetingList.size() > 0 ) { %>
 			<div id="cafeMeeting">
 				정모
-				<ul class="slide_lst2">
+				<ul class="meetingListUL">
 				
 					<% for ( int i = 0; i < cafePublicMeetingList.size(); i++ ) {
 						
 						HashMap meeting = cafePublicMeetingList.get(i);
 						String dateString = meeting.get("meetingDate").toString();
 						Date meetingDate = Util.getDateFromString(dateString, "yyyy-MM-dd HH:mm:ss");
-						String regionName = meeting.get("regionName").toString();
 					%>
 					<li onclick="goMeetingDetail('<%= meeting.get("cafeID") %>', '<%= meeting.get("meetingNo") %>');">
-						<div class="date">
-							<%= Util.getDateDay( meetingDate ) %>요일<br>
-							<%= Util.getDate(meetingDate ) %><br>
-							<%= Util.getDateStringFromDate(meetingDate, "HH:mm") %>
+						
+						<div id="title"><%= Util.getStringFromHash(meeting, "title") %></div>
+						<div id="meetingDate"><%= Util.getDateStringFromDate(meetingDate, "MM-dd HH:mm") %></div>
+						<div id="memberCount">
+							참석인원 : <%= Util.getStringFromHash(meeting, "cntMembers") %>/<%= Util.getStringFromHash(meeting, "maxNo") %>
 						</div>
-						<div class="postTitle">
-							<%= meeting.get("title") %>
-						</div>
-						<div class="cafeName">
-							<%= meeting.get("cafeName") %>
-						</div>
-						<div class="regionName">
-							<%= regionName %>
-						</div>
+						<div id="cafeName"><%= Util.getStringFromHash(meeting, "cafeName") %></div>
+						<div id="location"><%= Util.getStringFromHash(meeting, "regionName") %></div>
 					</li>
 					<% } %>
-					
 				</ul>
 			</div>
 			
