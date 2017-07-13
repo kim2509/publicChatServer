@@ -95,3 +95,15 @@ where r1.isHotSpot is null
 
 insert into cafe_board_post_detail(postNo, type, locationNo, seq)
 values(1, 3, 1, 4)
+
+
+CREATE TABLE `cafe_board_post_history` (
+	`postNo` BIGINT(20) NULL DEFAULT NULL,
+	`userID` VARCHAR(20) NULL DEFAULT NULL,
+	INDEX `postNo` (`postNo`),
+	INDEX `userID` (`userID`),
+	INDEX `postNo_userID` (`postNo`, `userID`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;

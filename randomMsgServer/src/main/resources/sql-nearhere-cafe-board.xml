@@ -70,6 +70,21 @@
 		where bpm.postNo=#{postNo}
 	</select>
 	
+	<insert id="insertCafeBoardPostHistory" parameterType="HashMap">
+		INSERT INTO cafe_board_post_history (postNo, userID)
+		SELECT *
+		FROM ( SELECT #{postNo},#{userID} ) AS TMP
+		WHERE NOT EXISTS (
+			select * from cafe_board_post_history where postNo=#{postNo} and userID=#{userID}
+		) LIMIT 1;
+	</insert>
+	
+	<update id="updateCafeBoardPostReadCount" parameterType="HashMap">
+		update cafe_board_post_master
+		set readCount = ( SELECT count(postNo) from cafe_board_post_history where postNo = #{postNo} )
+		where postNo = #{postNo}
+	</update>
+	
 	<!-- 게시글 detail 불러오기 -->
 	<select id="getCafeBoardPostContent" resultType="HashMap" parameterType="HashMap">
 		select cd.imageNo, ifnull(cd.content,'') as content, cd.type, 

@@ -157,4 +157,18 @@ public class CafeBoardPostBiz extends CommonBiz{
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostImages", param);
 		return result;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public int insertCafeBoardPostHistory( HashMap param ) throws Exception
+	{
+		int result = sqlSession.insert("com.tessoft.nearhere.cafe.board.insertCafeBoardPostHistory", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int updateCafeBoardPostReadCount( HashMap param ) throws Exception
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.board.updateCafeBoardPostReadCount", param);
+		return result;
+	}
 }

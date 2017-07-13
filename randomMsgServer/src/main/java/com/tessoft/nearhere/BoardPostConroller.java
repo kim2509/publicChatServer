@@ -58,6 +58,14 @@ public class BoardPostConroller extends BaseController {
 			HashMap param = new HashMap();
 			param.put("postNo", postNo);
 			
+			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			model.addAttribute("loginUserID", loginUserID);
+			param.put("userID", loginUserID);
+			
+			// 조회 수 증가
+			CafeBoardPostBiz.getInstance(sqlSession).insertCafeBoardPostHistory(param);
+			CafeBoardPostBiz.getInstance(sqlSession).updateCafeBoardPostReadCount(param);
+						
 			HashMap postInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
 			model.addAttribute("postInfo", postInfo);
 			
@@ -69,10 +77,6 @@ public class BoardPostConroller extends BaseController {
 			List<HashMap> postReplyList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostReplyList(param);
 			model.addAttribute("postReplyList", postReplyList);
 			
-			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
-			model.addAttribute("loginUserID", loginUserID);
-			
-			param.put("userID", loginUserID);
 			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
 			
 			String ownerYN = "N";

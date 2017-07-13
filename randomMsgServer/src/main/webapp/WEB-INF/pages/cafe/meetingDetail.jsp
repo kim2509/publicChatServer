@@ -160,8 +160,16 @@
 			alert(result.resMsg);
 			return;
 		}
-
+		
 		document.location.reload();
+		
+		if ( isApp == 'Y' )
+		{
+			var broadcastList = [];
+			broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
+			var param = {"broadcastList": broadcastList };
+			sendBroadcasts(param);
+		}
 	}
 	
 	function deleteMeetingClick()
