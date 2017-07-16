@@ -8,8 +8,12 @@
 	String isApp = request.getParameter("isApp");
 
 	List<HashMap> userPushMessageList = null;
+	int notiCount = 0;
 	if ( request.getAttribute("userPushMessageList") != null )
+	{
 		userPushMessageList = (List<HashMap>) request.getAttribute("userPushMessageList");
+		notiCount = userPushMessageList.size();
+	}
 	
 %>
 <html>
@@ -93,6 +97,12 @@
 		goCafeHome( cafeID );
 	}
 	
+	function readAll()
+	{
+		var param = {};
+		ajaxRequest('POST', '/nearhere/notification/updateAllUserPushMessageAsRead.do', param , onPushReadResult );
+	}
+	
 </script>
 
 <style type="text/css">
@@ -166,5 +176,10 @@
 <%		} %>
 	</div>
 
+	<% if ( notiCount > 0 ) { %>
+		<div class="btnFull" 
+			style="position:fixed;bottom:0px;background:gray;color:white;border:1px solid white;width:100%;line-height:40px;text-align:center;"
+			onclick="readAll();">모두 읽음 처리하기</div>
+	<% } %>
 </body>
 </html>

@@ -71,13 +71,13 @@ body{
 	padding:0;
 }
 
-#postContainerDiv li{
+.boardPostUL li{
 	padding:10px;
 	border-bottom:1px solid #d3d3d3;
 	height:80px;
 }
 
-#postContainerDiv li #commentCount{
+.boardPostUL li #commentCount{
 	float:right;
 	color:#6d6550;
 	border:1px solid #b3aa43;
@@ -89,12 +89,12 @@ body{
 	background:beige;
 }
 
-#postContainerDiv li #postDiv{
+.boardPostUL li #postDiv{
 	margin-right:50px;
 	line-height:25px;
 }
 
-#postContainerDiv li #noti{
+.boardPostUL li #noti{
 	background:black;
 	color:white;
 	font-size:12px;
@@ -103,13 +103,13 @@ body{
 	margin:0px 5px;
 }
 
-#postContainerDiv li #postInfo{
+.boardPostUL li #postInfo{
 	margin-top:10px;
 	font-size:14px;
 	color:#909090;
 }
 
-#postContainerDiv li #postInfo span{
+.boardPostUL li #postInfo span{
 	margin-left:5px;
 }
 

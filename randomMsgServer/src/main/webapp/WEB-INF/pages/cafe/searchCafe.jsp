@@ -196,6 +196,12 @@
 	{
 		keyword = $('#txtKeyword').val();
 		
+		if ( keyword == null || keyword.length < 1 )
+		{
+			notice('검색어를 입력해 주십시오.');
+			return;
+		}
+		
 		var param = {"keyword": keyword, "level":level, "regionNo": regionNo, 
 				"startIndex":startIndex, "showCount" : pageSize };
 		

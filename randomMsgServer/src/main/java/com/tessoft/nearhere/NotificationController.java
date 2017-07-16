@@ -75,4 +75,35 @@ public class NotificationController extends BaseController{
 
 		return response;
 	}
+	
+	// 푸쉬 읽음 처리
+	@SuppressWarnings("rawtypes")
+	@RequestMapping( value ="/notification/updateAllUserPushMessageAsRead.do")
+	public @ResponseBody APIResponse updateAllPushMessageesAsReadAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		APIResponse response = new APIResponse();
+
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
+
+			UserBiz.getInstance(sqlSession).updateAllUserPushMessageAsRead(param);
+
+			insertHistory("/cafe/updateAllUserPushMessageAsRead.do", userID , null, null, null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("처리도중 오류가 발생했습니다.");
+
+			insertHistory("/cafe/updateAllUserPushMessageAsRead.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+
+		return response;
+	}
 }

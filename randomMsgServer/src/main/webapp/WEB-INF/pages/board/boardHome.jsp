@@ -19,6 +19,21 @@
 		boardNo = boardInfo.get("boardNo").toString();	
 		boardName = boardInfo.get("boardName").toString();
 	}
+	
+	HashMap cafeMainInfo = null;
+	if ( request.getAttribute("cafeMainInfo") != null )
+	{
+		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+	}
+	
+	HashMap cafeUserInfo = (HashMap) request.getAttribute("cafeUserInfo");
+	String ownerYN = "N";
+	String memberType = "";
+	if ( cafeUserInfo != null )
+	{
+		ownerYN = cafeUserInfo.get("ownerYN").toString();
+		memberType = cafeUserInfo.get("memberType").toString();
+	}
 %>
 
 <html>
@@ -36,7 +51,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=3"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/board.css?v=2" />
+	href="<%=Constants.CSS_PATH%>/board.css?v=3" />
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
 
@@ -62,14 +77,44 @@
 		Handlebars.registerHelper('displayPostTitle', displayPostTitle );
 		Handlebars.registerHelper('numberWithCommas', numberWithCommas );
 		
+		<% if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+				!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
+		
+		alert('해당 카페는 비공개상태로 진입이 불가능합니다.');
+		
+		if ( isApp =='Y' )
+		{
+			finishActivity();
+		}
+		else
+		{
+			window.history.back();
+		}
+		
+		<% } %>
+		
 		getBoardPostList();
 		
 	});
 	
 	function getBoardPostList()
 	{
+		var param = {"boardNo": boardNo};
+		ajaxRequest('POST', '/nearhere/boardPost/getCafeBoardPostNoticeListAjax.do', param , onBoardPostNoticeListFetched );
+		
 		var param = {"startIndex":startIndex, "showCount" : pageSize, "boardNo": boardNo};
 		ajaxRequest('POST', '/nearhere/boardPost/getCafeBoardPostListAjax.do', param , onBoardPostListFetched );
+	}
+	
+	function onBoardPostNoticeListFetched( result )
+	{
+		console.log(JSON.stringify( result ) );
+		
+		var source = $('#boardPostNoticeT').html();
+		var template = Handlebars.compile(source);
+		var html = template(result.data);
+
+		$('#postNoticeContainerDiv').html(html);		
 	}
 	
 	function onBoardPostListFetched( result )
@@ -173,9 +218,24 @@
 	}
 	
 </script>
+<script id="boardPostNoticeT" type="text/x-handlebars-template">
+	{{#if boardPostList}}
+	<ul class="boardPostUL">
+		{{#each boardPostList}}
+		<li onclick="goPostDetail('{{postNo}}');">
+			<div id="commentCount">{{replyCount}}</div>
+			<div id="postDiv">{{displayPostTitle noticeYN title}}</div>
+			<div id="postInfo">
+				<span>{{userName}}</span>|<span>{{displayDateFormat createdDate 'yyyy-MM-dd HH:mm:ss'}}</span>|<span>{{numberWithCommas readCount}}</span>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{/if}}
+</script>
 <script id="boardPostT" type="text/x-handlebars-template">
 	{{#if boardPostList}}
-	<ul>
+	<ul class="boardPostUL">
 		{{#each boardPostList}}
 		<li onclick="goPostDetail('{{postNo}}');">
 			<div id="commentCount">{{replyCount}}</div>
@@ -206,6 +266,9 @@
 			<div id="navBack">&lt; <%= boardName %></div>
 			<div id="btnNew" onclick="goNewBoardPost();">글쓰기</div>
 			<div id="btnNoti">공지</div>
+		</div>
+		
+		<div id="postNoticeContainerDiv">
 		</div>
 		
 		<div id="postContainerDiv">

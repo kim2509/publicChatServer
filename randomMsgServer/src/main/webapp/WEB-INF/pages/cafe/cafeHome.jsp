@@ -78,7 +78,7 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 	href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
 		
 <link rel="stylesheet" type="text/css"
-	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=15" />	
+	href="<%=Constants.CSS_PATH%>/cafeHome.css?v=18" />	
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 
@@ -110,6 +110,22 @@ body{background:#eee;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-
 		<% if ("Y".equals( blockYN )) { %>
 		
 		alert('탈퇴된 회원은 카페접근이 불가능합니다.');
+		
+		if ( isApp =='Y' )
+		{
+			finishActivity();
+		}
+		else
+		{
+			window.history.back();
+		}
+		
+		<% } %>
+		
+		<% if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+				!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
+		
+		alert('해당 카페는 비공개상태로 진입이 불가능합니다.');
 		
 		if ( isApp =='Y' )
 		{

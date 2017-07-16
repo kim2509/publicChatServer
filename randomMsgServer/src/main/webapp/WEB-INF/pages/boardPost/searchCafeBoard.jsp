@@ -199,7 +199,7 @@
 		keyword = $('#txtKeyword').val();
 		
 		var param = {"keyword": keyword, "level":level, "regionNo": regionNo, 
-				"startIndex":startIndex, "showCount" : pageSize };
+				"startIndex":startIndex, "showCount" : pageSize, "cafeID":cafeID };
 		
 		ajaxRequest('POST', '/nearhere/cafe/searchCafePostsAjax.do', param , onResult );
 	}

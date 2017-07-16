@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
 import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
@@ -430,11 +431,29 @@ public class CafeAjaxController extends BaseController {
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			String meetingNo = param.get("meetingNo").toString();
 			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
+			
+			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			
+			String ownerYN = "N";
+			String memberType = "";
+			if ( cafeUserInfo != null )
+			{
+				ownerYN = cafeUserInfo.get("ownerYN").toString();
+				memberType = cafeUserInfo.get("memberType").toString();
+			}
 			
 			if ( Util.isEmptyString( userID ))
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("사용자 정보가 올바르지 않습니다.");
+			}
+			else if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+					!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("해당 카페는 비공개상태로 해당 기능이 제한되어있습니다.");
 			}
 			else if ( !CafeBiz.getInstance(sqlSession).isCafeMember( param.get("cafeID").toString() , userToken) )
 			{
@@ -1271,10 +1290,30 @@ public class CafeAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
+			userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", userID);
+			
+			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			
+			String ownerYN = "N";
+			String memberType = "";
+			if ( cafeUserInfo != null )
+			{
+				ownerYN = cafeUserInfo.get("ownerYN").toString();
+				memberType = cafeUserInfo.get("memberType").toString();
+			}
+			
 			if ( Util.isEmptyForKey(param, "meetingNo") )
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+					!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("해당 카페는 비공개상태로 해당 기능이 제한되어있습니다.");
 			}
 			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
 			{

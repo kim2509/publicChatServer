@@ -36,6 +36,15 @@ public class BoardPostConroller extends BaseController {
 			
 			HashMap boardInfo = cafeBoardPostBiz.getCafeBoardInfo(param);
 			model.addAttribute("boardInfo", boardInfo);
+			
+			String cafeID = Util.getStringFromHash(boardInfo, "cafeID");
+			param.put("cafeID", cafeID);
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
+			
+			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			param.put("userID", loginUserID);
+			model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(param) );
 		}
 		catch( Exception ex )
 		{
@@ -77,6 +86,7 @@ public class BoardPostConroller extends BaseController {
 			List<HashMap> postReplyList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostReplyList(param);
 			model.addAttribute("postReplyList", postReplyList);
 			
+			param.put("cafeID", Util.getStringFromHash(postInfo, "cafeID"));
 			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
 			
 			String ownerYN = "N";
@@ -88,6 +98,9 @@ public class BoardPostConroller extends BaseController {
 				memberYN = cafeUserInfo.get("memberYN").toString();
 				memberType = cafeUserInfo.get("memberType").toString();
 			}
+			
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
 			
 			model.addAttribute("ownerYN", ownerYN);
 			model.addAttribute("memberYN", memberYN);
@@ -115,13 +128,25 @@ public class BoardPostConroller extends BaseController {
 			HashMap param = new HashMap();
 			param.put("boardNo", boardNo);
 			
+			HashMap boardInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+			model.addAttribute("boardInfo", boardInfo);
+
+			param.put("cafeID", Util.getStringFromHash(boardInfo, "cafeID"));
+			
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
+			
 			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
 
 			if ( userInfo != null )
 			{
 				model.addAttribute("loginUserID", Util.getStringFromHash(userInfo, "userID") );
 				userID = Util.getStringFromHash(userInfo, "userID");
+				param.put("userID", userID);
 			}
+			
+			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
+			model.addAttribute("cafeUserInfo", cafeUserInfo);
 		}
 		catch( Exception ex )
 		{

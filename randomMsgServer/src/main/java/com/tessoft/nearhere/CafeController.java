@@ -237,6 +237,9 @@ public class CafeController extends BaseController {
 					tmp.put("cafeID", cafeID);
 					model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(tmp) );
 				}	
+				
+				String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+				model.addAttribute("loginUserID", loginUserID);
 			}
 		}
 		catch( Exception ex )
@@ -295,6 +298,11 @@ public class CafeController extends BaseController {
 			
 			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
 			model.addAttribute("loginUserID", loginUserID);
+			
+			HashMap cafeMainInfo = cafeBiz.getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
+			param.put("userID", loginUserID);
+			model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(param) );
 		}
 		catch( Exception ex )
 		{

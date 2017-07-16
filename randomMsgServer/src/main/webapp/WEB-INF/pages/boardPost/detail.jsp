@@ -30,9 +30,16 @@
 	
 	String loginUserID = Util.getString( request.getAttribute("loginUserID") );
 	
-	String ownerYN = Util.getString( request.getAttribute("loginUserID") );
-	String memberYN = Util.getString( request.getAttribute("loginUserID") );
-	String memberType = Util.getString( request.getAttribute("loginUserID") );
+	String ownerYN = Util.getString( request.getAttribute("ownerYN") );
+	String memberYN = Util.getString( request.getAttribute("memberYN") );
+	String memberType = Util.getString( request.getAttribute("memberType") );
+
+	HashMap cafeMainInfo = null;
+	if ( request.getAttribute("cafeMainInfo") != null )
+	{
+		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+	}
+	
 %>
 
 <html>
@@ -78,6 +85,23 @@
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );	
 		Handlebars.registerHelper('displayDeleteButton', displayDeleteButton);
+		
+		<% if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+				!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
+		
+		alert('해당 카페는 비공개상태로 진입이 불가능합니다.');
+		
+		if ( isApp =='Y' )
+		{
+			finishActivity();
+		}
+		else
+		{
+			window.history.back();
+		}
+		
+		<% } %>
+		
 	});
 	
 	function displayDateFormat( jsonDate )

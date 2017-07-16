@@ -226,6 +226,7 @@ li{
     position: relative;
     height: 65px;
     width: 50%;
+    margin-bottom:5px;
 }
 
 #cafeInfo #cafeMemberInfo #imgProfile
@@ -251,13 +252,14 @@ li{
     white-space: nowrap;
     overflow: hidden;
     padding-right: 10px;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:5px;
 }
 
 #memberInfo #memberType
 {
-	position:absolute;
-	bottom:5px;
-	font-size:14px;
+	font-size:13px;
 }
 
 #cafeInfo #cafeButtons

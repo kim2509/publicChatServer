@@ -11,8 +11,20 @@
 	</select>
 	
 	<select id="getCafeBoardInfo" resultType="HashMap" parameterType="HashMap">
-		select bm.* from cafe_board_master bm
+		select bm.*, cm.cafeID from cafe_board_master bm
+			left outer join cafe_master cm on bm.cafeNo = cm.cafeNo
 		where bm.boardNo = #{boardNo}
+	</select>
+	
+	<!-- 게시글 공지 리스트 불러오기 -->
+	<select id="getBoardPostNoticeList" resultType="HashMap" parameterType="HashMap">
+		select bpm.postNo, bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
+			ifnull(bpm.replyCount,0) as replyCount, bm.boardName, u.userName, bpm.createdDate
+		from cafe_board_post_master bpm
+			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
+			left outer join user u on u.userID = bpm.userID
+		where bm.boardNo = #{boardNo} and noticeYN = 'Y'
+		order by createdDate
 	</select>
 	
 	<!-- 게시글 리스트 불러오기 -->
@@ -22,25 +34,14 @@
 		from cafe_board_post_master bpm
 			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
 			left outer join user u on u.userID = bpm.userID
-		where bm.boardNo = #{boardNo} and noticeYN = 'Y'
-		union
-		select bpm.postNo, bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
-			ifnull(bpm.replyCount,0) as replyCount, bm.boardName, u.userName, bpm.createdDate
-		from cafe_board_post_master bpm
-			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
-			left outer join user u on u.userID = bpm.userID
 		where bm.boardNo = #{boardNo} and ifnull(noticeYN,'N') = 'N'
+		order by createdDate desc
 		limit #{startIndex}, #{showCount}
 	</select>
 	
 	<!-- 게시글 리스트 카운트 불러오기 -->
 	<select id="getBoardPostListCount" resultType="Integer" parameterType="HashMap">
 		select count(postNo) as totalCount from (
-		select bpm.postNo
-		from cafe_board_post_master bpm
-			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
-		where bm.boardNo = #{boardNo} and noticeYN = 'Y'
-		union
 		select bpm.postNo
 		from cafe_board_post_master bpm
 			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo

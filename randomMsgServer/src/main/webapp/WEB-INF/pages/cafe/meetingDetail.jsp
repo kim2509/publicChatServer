@@ -26,6 +26,25 @@
 	
 	String locationName = Util.getStringFromHash(meetingInfo, "locationName");
 	String locationAddress = Util.getStringFromHash(meetingInfo, "locationAddress");
+	
+	HashMap cafeMainInfo = null;
+	if ( request.getAttribute("cafeMainInfo") != null )
+	{
+		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+	}
+	
+	HashMap cafeUserInfo = (HashMap) request.getAttribute("cafeUserInfo");
+	String ownerYN = "N";
+	String memberYN = "N";
+	String memberType = "";
+	String blockYN = "N";
+	if ( cafeUserInfo != null )
+	{
+		ownerYN = cafeUserInfo.get("ownerYN").toString();
+		memberYN = cafeUserInfo.get("memberYN").toString();
+		memberType = cafeUserInfo.get("memberType").toString();
+		blockYN = Util.getStringFromHash(cafeUserInfo, "blockYN");
+	}
 %>
 
 <html>
@@ -62,6 +81,25 @@
 	var longitude = '<%= meetingInfo.get("longitude") %>';
 	var address = '<%= meetingInfo.get("address") %>';
 	var infoWindow = null;
+	
+	jQuery(document).ready(function(){
+		
+		<% if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+				!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
+				
+		alert('해당 카페는 비공개상태로 진입이 불가능합니다.');
+		
+		if ( isApp =='Y' )
+		{
+			finishActivity();
+		}
+		else
+		{
+			window.history.back();
+		}
+		
+		<% } %>
+	});
 	
 	var mapInitialized = false;
 	

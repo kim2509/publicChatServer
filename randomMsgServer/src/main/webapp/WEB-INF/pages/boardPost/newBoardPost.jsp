@@ -8,6 +8,23 @@
 	String cafeID = request.getParameter("cafeID");
 	String boardNo = Util.getString(request.getParameter("boardNo"));	
 	String postNo = Util.getString(request.getParameter("postNo"));
+	
+	HashMap cafeMainInfo = null;
+	if ( request.getAttribute("cafeMainInfo") != null )
+	{
+		cafeMainInfo = (HashMap) request.getAttribute("cafeMainInfo");
+	}
+	
+	HashMap cafeUserInfo = (HashMap) request.getAttribute("cafeUserInfo");
+	String ownerYN = "N";
+	String memberYN = "N";
+	String memberType = "";
+	String blockYN = "N";
+	if ( cafeUserInfo != null )
+	{
+		ownerYN = cafeUserInfo.get("ownerYN").toString();
+		memberType = cafeUserInfo.get("memberType").toString();
+	}
 %>
 
 <html>
@@ -39,6 +56,22 @@
 	var selectLocationModal = null;
 	
 	jQuery(document).ready(function(){
+		
+		<% if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+				!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
+		
+		alert('해당 카페는 비공개상태로 진입이 불가능합니다.');
+		
+		if ( isApp =='Y' )
+		{
+			finishActivity();
+		}
+		else
+		{
+			window.history.back();
+		}
+		
+		<% } %>
 		
 		// 모달창 인스턴트 생성
 		selectLocationModal = new Example.Modal({
@@ -120,6 +153,7 @@
 		if ( confirm('설정을 저장하시겠습니까?') )
 		{
 			var noticeYN = $('input[name=rdoNoticeYN]:checked').val();
+			if ( noticeYN != 'Y' ) noticeYN = 'N';
 			
 			var param = {"postNo": postNo, "cafeID":cafeID, "boardNo":boardNo, "title": title , 
 					"content": desc, "type":"1", "noticeYN": noticeYN };
@@ -395,6 +429,7 @@
 			
 			<textarea id="desc" class="marginLR10 marginB20" value="" rows="5"></textarea>
 			
+			<% if ("Y".equals(ownerYN) || Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">공지여부</p>
 			
 			<div class="marginLR10 marginB20 f13">
@@ -406,6 +441,7 @@
 					<label for="rdoNoticeNo">아니오</label>
 				</div>
 			</div>
+			<% } %>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">첨부된 이미지</p>
 			

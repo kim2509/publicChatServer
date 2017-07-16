@@ -100,7 +100,7 @@
 			<div>
 				<div class="cafeImage">
 				<img src="{{url1}}" width="60" height="60"
-					onerror="this.onerror=null;this.src='<%= Constants.CAFE_DEAULT_ICON %>';">
+					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH + "/" + Constants.CAFE_DEAULT_ICON %>';">
 				</div>
 				<div class="cafeInfo">
 					<div class="cafeTitle">{{cafeName}}</div>

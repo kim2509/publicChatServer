@@ -125,4 +125,10 @@
 		isRead = 'Y'
 		where toUserID=#{userID} and pushNo = #{pushNo};
 	</update>
+	
+	<update id="updateAllUserPushMessageAsRead" parameterType="java.util.HashMap">
+		update user_push_message set
+		isRead = 'Y'
+		where toUserID=#{userID};
+	</update>
 </mapper>

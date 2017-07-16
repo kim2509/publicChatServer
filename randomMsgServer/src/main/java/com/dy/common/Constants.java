@@ -66,5 +66,5 @@ public class Constants {
 	
 	public static String PAGE_ID_PUBLIC_MEETING_DETAIL = "P2001";
 	
-	public static String CAFE_DEAULT_ICON = "http://static.naver.net/m/cafe/mobile/img_thumb_20150618.png";
+	public static String CAFE_DEAULT_ICON = "cafe_default.png";
 }

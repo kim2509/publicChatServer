@@ -26,6 +26,43 @@ import common.UserBiz;
 public class BoardPostAjaxController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/boardPost/getCafeBoardPostNoticeListAjax.do")
+	public @ResponseBody APIResponse getCafeBoardPostNoticeListAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			HashMap resultData = new HashMap();
+			
+			HashMap boardInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+			resultData.put("boardInfo", boardInfo);
+			
+			List<HashMap> boardPostList = CafeBoardPostBiz.getInstance(sqlSession).getBoardPostNoticeList(param);
+			resultData.put("boardPostList", boardPostList);
+			
+			response.setData( resultData );
+			
+			insertHistory("/boardPost/getCafeBoardPostNoticeListAjax.do", userID , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("게시글 가져오는 도중 오류가 발생했습니다.");
+			
+			insertHistory("/boardPost/getCafeBoardPostNoticeListAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/boardPost/getCafeBoardPostListAjax.do")
 	public @ResponseBody APIResponse getCafeBoardPostListAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
@@ -100,6 +137,8 @@ public class BoardPostAjaxController extends BaseController {
 			else
 			{
 				HashMap cafeBoardInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+				param.put("cafeID", Util.getStringFromHash(cafeBoardInfo, "cafeID"));
+				HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
 				HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
 				
 				String ownerYN = "N";
@@ -112,6 +151,12 @@ public class BoardPostAjaxController extends BaseController {
 					memberType = cafeUserInfo.get("memberType").toString();
 				}
 				
+				if (!"Y".equals( Util.getStringFromHash(cafeMainInfo, "publishYN") ) &&
+						!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType) )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("해당 카페는 비공개상태로 해당 기능이 제한되어있습니다.");
+				}
 				if ("N".equals(ownerYN) && "N".equals(memberYN) )
 				{
 					response.setResCode( ErrorCode.INVALID_INPUT );
