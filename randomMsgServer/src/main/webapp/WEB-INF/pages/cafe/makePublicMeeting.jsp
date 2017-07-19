@@ -68,8 +68,7 @@
 			result.locationNo = locationResult.locationNo;
 			locationResult = result;
 		}
-		console.log(JSON.stringify( locationResult ) );
-		
+
 		setAddress();
 	}
 	
@@ -220,8 +219,6 @@
 		}
 		else
 		{
-			console.log( JSON.stringify( result ) );
-			
 			meetingInfo = result.data.meetingInfo;
 			$('#meetingTitle').val( meetingInfo.title );
 			$('#meetingDesc').val( meetingInfo.meetingDesc );

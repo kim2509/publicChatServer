@@ -49,8 +49,6 @@
 				// TODO
 				try {
 					
-					console.log( JSON.stringify( data ) );
-
 					displayPosts( data );
 					
 				} catch (ex) {

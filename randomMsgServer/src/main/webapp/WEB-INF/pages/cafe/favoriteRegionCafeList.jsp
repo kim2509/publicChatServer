@@ -70,8 +70,6 @@
 				displayCafeMapData();
 			}
 			
-			console.log( JSON.stringify( result ) );
-			
 			totalItemCount = result.data2;
 			
 			if ( result.data != null && result.data.length > 0 )

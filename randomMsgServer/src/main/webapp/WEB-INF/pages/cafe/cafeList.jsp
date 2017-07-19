@@ -12,7 +12,6 @@
 	function cafeTabSelected( tabIndex )
 	{
 		$('#myCafeList').hide();
-		$('#favRegionCafeList').hide();
 		$('#popularCafeList').hide();
 		
 		$('#cafeList .loading').show();
@@ -20,20 +19,15 @@
 		if ( tabIndex == 0 )
 		{
 			$('#popularCafeList .empty').hide();
-			
+			$('#popularCafeList').html('');
 			$('#popularCafeList').show();
 			var param = {"startIndex":0, "showCount" : 10};
 			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularCafeListReceived );			
 		}
 		else if ( tabIndex == 1 )
 		{
-			$('#favRegionCafeList').show();
-			$('#cafeList .loading').hide();
-		}
-		else if ( tabIndex == 2 )
-		{
 			$('#myCafeList .empty').hide();
-			
+			$('#myCafeList').html('');
 			$('#myCafeList').show();
 			var param = {"startIndex":0, "showCount" : 10};
 			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyCafeListReceived );
@@ -56,8 +50,6 @@
 	
 	function onMyCafeListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#cafeList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -77,8 +69,6 @@
 	
 	function onPopularCafeListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#cafeList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -92,37 +82,12 @@
 	}
 		
 </script>
-<script id="cafeT" type="text/x-handlebars-template">
-	{{#if data}}
-	<ul class="cafeListUL">
-		{{#each data}}
-		<li onclick="goCafeHome('{{cafeID}}');">
-			<div>
-				<div class="cafeImage">
-				<img src="{{url1}}" width="60" height="60"
-					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH + "/" + Constants.CAFE_DEAULT_ICON %>';">
-				</div>
-				<div class="cafeInfo">
-					<div class="cafeTitle">{{cafeName}}</div>
-					<div class="cafeDesc">{{mainDesc}}</div>
-					<div class="regionInfo">{{lRegionName}} {{mRegionName}} {{sRegionName}} {{tRegionName}}</div>
-					<div class="memberInfo">멤버수 : {{cntMembers}}명</div>
-				</div>
-			</div>
-		</li>
-		{{/each}}
-	</ul>
-	{{else}}
-		<div class="empty">카페가 존재하지 않습니다.</div>
-	{{/if}}
-</script>
 
 <div id="section">
 
-	<ul id="cafeTab" class="tab3">
+	<ul id="cafeTab" class="tab2">
 		<li onclick="cafeTabSelected(0);" class="selected">인기 카페</li>
-		<li onclick="cafeTabSelected(1);">관심지역 카페</li>
-		<li onclick="cafeTabSelected(2);">내 카페</li>
+		<li onclick="cafeTabSelected(1);">내 카페</li>
 	</ul>
 
 	<div id="cafeList">
@@ -130,14 +95,6 @@
 		<div class="loading" style="display:none;">목록을 읽어오는 중입니다.</div>
 	
 		<div id="myCafeList" style="display:none;">
-		</div>
-		
-		<div id="favRegionCafeList" style="display:none;">
-		
-			<!-- 관심지역 카페 리스트 -->
-			<jsp:include page="favoriteRegionCafeList.jsp" flush="true"></jsp:include>
-			<!-- 관심지역 카페 리스트 -->
-			
 		</div>
 		
 		<div id="popularCafeList" style="display:none;">

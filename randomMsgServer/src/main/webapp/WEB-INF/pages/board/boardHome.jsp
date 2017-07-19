@@ -108,8 +108,6 @@
 	
 	function onBoardPostNoticeListFetched( result )
 	{
-		console.log(JSON.stringify( result ) );
-		
 		var source = $('#boardPostNoticeT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result.data);
@@ -119,8 +117,6 @@
 	
 	function onBoardPostListFetched( result )
 	{
-		console.log(JSON.stringify( result ) );
-		
 		var source = $('#boardPostT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result.data);

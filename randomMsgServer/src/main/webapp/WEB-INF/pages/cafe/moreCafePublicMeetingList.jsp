@@ -101,8 +101,6 @@
 
 	function onMyPublicMeetingListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#publicMeetingList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -125,8 +123,6 @@
 	
 	function onPopularPublicMeetingListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#publicMeetingList .loading').hide();
 		
 		if ( result != null && result.data != null )

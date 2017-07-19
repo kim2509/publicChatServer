@@ -110,7 +110,6 @@
 			result.locationNo = locationResult.locationNo;
 			locationResult = result;
 		}
-		console.log(JSON.stringify( locationResult ) );
 		
 		setAddress();
 	}

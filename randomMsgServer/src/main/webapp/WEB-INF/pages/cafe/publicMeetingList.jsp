@@ -11,7 +11,6 @@
 	function publicMeetingTabSelected( tabIndex )
 	{
 		$('#myCafeMeetingList').hide();
-		$('#favRegionCafeMeetingList').hide();
 		$('#popularCafeMeetingList').hide();
 		
 		$('#publicMeetingList .loading').show();
@@ -25,11 +24,6 @@
 			ajaxRequest('POST', '/nearhere/cafe/getPopularPublicMeetingListAjax.do', param , onPopularPublicMeetingListReceived );
 		}
 		else if ( tabIndex == 1 )
-		{
-			$('#favRegionCafeMeetingList').show();
-			$('#publicMeetingList .loading').hide();
-		}
-		else if ( tabIndex == 2 )
 		{
 			$('#myCafeMeetingList .empty').hide();
 			$('#myCafeMeetingList').show();
@@ -55,8 +49,6 @@
 	
 	function onMyPublicMeetingListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#publicMeetingList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -71,8 +63,6 @@
 	
 	function onPopularPublicMeetingListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#publicMeetingList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -86,30 +76,12 @@
 	}
 	
 </script>
-<script id="publicMeetingT" type="text/x-handlebars-template">
-	{{#if data}}
-	<ul class="meetingListUL">
-		{{#each data}}
-		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
-			<div id="title">{{title}}</div>
-			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
-			<div id="memberCount">참석인원 : {{cntMembers}}/{{maxNo}}</div>
-			<div id="cafeName">{{cafeName}}</div>
-			<div id="location">{{address}}</div>
-		</li>
-		{{/each}}
-	</ul>
-	{{else}}
-		<div class="empty">정모가 존재하지 않습니다.</div>
-	{{/if}}			
-</script>
 
 <div id="section">
 
-	<ul id="publicMeetingTab" class="tab3">
+	<ul id="publicMeetingTab" class="tab2">
 		<li onclick="publicMeetingTabSelected(0);" class="selected">인기 정모</li>
-		<li onclick="publicMeetingTabSelected(1);">관심지역 정모</li>
-		<li onclick="publicMeetingTabSelected(2);">내 카페 정모</li>
+		<li onclick="publicMeetingTabSelected(1);">내 카페 정모</li>
 	</ul>
 
 	<div id="publicMeetingList">
@@ -117,14 +89,6 @@
 		<div class="loading" style="display:none;">목록을 읽어오는 중입니다.</div>
 		
 		<div id="myCafeMeetingList" style="display:none;">
-			
-		</div>
-		
-		<div id="favRegionCafeMeetingList" style="display:none;">
-			
-			<!-- 관심지역 정모 리스트 -->
-			<jsp:include page="favoriteRegionMeetingList.jsp" flush="true"></jsp:include>
-			<!-- 관심지역 정모 리스트 -->
 			
 		</div>
 		
