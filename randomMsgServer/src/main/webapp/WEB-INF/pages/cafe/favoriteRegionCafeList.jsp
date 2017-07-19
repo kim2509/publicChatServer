@@ -10,6 +10,7 @@
 %>
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteCafe.css?v=1" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/moreFavoriteMeeting.css?v=24" />
 
 <script language="javascript">
 
@@ -29,6 +30,7 @@
 			}
 			
 			getCafeList();
+			getMeetingList();
 		}
 	});
 	
@@ -50,6 +52,8 @@
 		
 		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
 		ajaxRequest('POST', '/nearhere/cafe/getCafeListByRegionAjax.do', param , onFavoriteRegionCafeListResult );
+		
+		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );
 	}
 
 	var cafeListViewMode = 'list';
@@ -271,8 +275,261 @@
 			favCafeMap.panTo(cafePositions[0].latlng);
 	}
 	
-</script>
 	
+	function getMeetingList()
+	{
+		var level = $('#favoriteRegionDiv ul .selected').attr('level');
+		var regionNo = $('#favoriteRegionDiv ul .selected').attr('regionNo');
+		var param = {"level":level, "regionNo": regionNo, "startIndex":startIndex, "showCount" : pageSize };
+		ajaxRequest('POST', '/nearhere/cafe/getCafeMeetingsByRegionAjax.do', param , onMeetingListResult );	
+	}
+	
+	function changeRegion( element, regionNo, level )
+	{
+		pageNo = 1;
+		startIndex = 0;
+		
+		$('.favoriteRegion li').removeClass('selected');		
+		$(element).addClass('selected');
+		
+		
+	}
+	
+	var meetingListViewMode = 'list';
+	
+	function onMeetingListResult( result )
+	{
+		try
+		{
+			var source = $('#meetingT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+			$('#meetingList').html(html);
+			
+			setMapData(result);
+			
+			if ( meetingListViewMode == 'map' )
+			{
+				displayMapData();
+			}
+			
+			totalItemCount = result.data2;
+		
+			if ( result.data != null && result.data.length > 0 )
+			{
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').show();
+				
+				if ( $('#favRegionCafeMeetingList').is(':visible') )
+				{
+					if ( meetingListViewMode == 'list' )
+					{
+						$('#optionMap').show();
+						$('#map').hide();
+						$('#meetingList').show();
+					}
+					else
+					{
+						$('#optionList').show();
+						$('#map').show();
+						$('#meetingList').hide();
+					}
+				}
+					
+			}
+			else
+			{
+				if ($('#pagingInfo').length > 0 )
+					$('#pagingInfo').hide();
+				
+				$('#optionMap').hide();
+				$('#optionList').hide();
+				
+				$('#map').hide();
+				$('#meetingList').show();
+			}
+			
+			if ($('#pagingInfo').length > 0 )
+				displayPagingInfo();
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
+	var bMapInitialized = false;
+	function toggleResultView()
+	{
+		if ( meetingListViewMode == 'map' )
+		{
+			$('#meetingList').show();
+			$('#map').hide();
+			$('#optionMap').show();
+			$('#optionList').hide();
+			
+			meetingListViewMode = 'list';
+		}
+		else
+		{
+			$('#meetingList').hide();
+			$('#map').show();
+			$('#optionMap').hide();
+			$('#optionList').show();
+			
+			if ( !bMapInitialized )
+			{
+				initiateMap();
+				bMapInitialized = true;
+			}
+			displayMapData();
+			
+			meetingListViewMode = 'map';
+		}
+	}
+	
+	var map = null;
+	function initiateMap()
+	{
+		var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+	
+		var options = { //지도를 생성할 때 필요한 기본 옵션
+				center: new daum.maps.LatLng(37.566672, 126.978380), //지도의 중심좌표.
+				level: 3 //지도의 레벨(확대, 축소 정도)
+			};
+
+		map = new daum.maps.Map(container, options); //지도 생성 및 객체 리턴
+		
+		// 지도에 클릭 이벤트를 등록합니다
+		// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+		daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
+		    
+		    if ( infoWindows != null && infoWindows.length > 0 ){
+		    	for( var i = 0; i < infoWindows.length; i++ )
+		    		infoWindows[i].close();
+		    }
+		    
+		});
+	}
+	
+	// 실제로 정모의 데이터가 담길 배열
+	var positions = [];
+	
+	// 위 positions 배열의 데이터를 기반으로 markers 를 생성
+	var markers = [];
+	
+	// 위 positions 배열의 데이터를 기반으로 infoWindow 를 생성
+	var infoWindows = [];
+	
+	// 마커를 생성하고 지도위에 표시하는 함수입니다
+	function addMarker(position, index) {
+	    
+	    // 마커를 생성합니다
+	    var marker = new daum.maps.Marker({
+	        position: position,
+	        clickable:true
+	    });
+
+	    daum.maps.event.addListener(marker, 'click', showInfoWindow(marker, index));
+	    
+	    // 마커가 지도 위에 표시되도록 설정합니다
+	    marker.setMap(map);
+	    
+	    // 생성된 마커를 배열에 추가합니다
+	    markers.push(marker);
+	}
+	
+	function showInfoWindow( marker, index )
+	{
+		return function()
+		{
+			for( var i = 0; i < infoWindows.length; i++ )
+				infoWindows[i].close();
+			
+			infoWindows[index].open(map, marker);	
+		};
+	}
+	
+	// 배열에 추가된 마커들을 지도에 표시하거나 삭제하는 함수입니다
+	function setMarkers(map) {
+	    for (var i = 0; i < markers.length; i++) {
+	        markers[i].setMap(map);
+	    }            
+	}
+	
+	// "마커 보이기" 버튼을 클릭하면 호출되어 배열에 추가된 마커를 지도에 표시하는 함수입니다
+	function showMarkers() {
+	    setMarkers(map)    
+	}
+
+	// "마커 감추기" 버튼을 클릭하면 호출되어 배열에 추가된 마커를 지도에서 삭제하는 함수입니다
+	function hideMarkers() {
+	    setMarkers(null);    
+	}
+	
+	function setMapData( result )
+	{
+		if ( result == null || result.data == null || result.data.length < 1 ) return;
+		
+		if ( infoWindows != null && infoWindows.length > 0 ){
+	    	for( var i = 0; i < infoWindows.length; i++ )
+	    		infoWindows[i].close();
+	    }
+		hideMarkers();
+		positions = [];
+		markers = [];
+		infoWindows = [];
+		
+		for ( var i = 0; i < result.data.length; i++ )
+		{
+			if ( result.data[i].latitude == null || typeof result.data[i].latitude == 'undefined') continue;
+			
+			var position = {
+					"latlng":new daum.maps.LatLng(result.data[i].latitude,result.data[i].longitude),
+					"content":result.data[i].title
+			}
+			
+			positions.push(position);
+			
+			var infowindow = new daum.maps.InfoWindow({
+			    position: position,
+			    content: '<div style="padding:5px;font-size:17px;width:100%">' + result.data[i].title + 
+			    '<br/>' + displayDateFormat( result.data[i].meetingDate, 'MM-dd HH:mm' ) + '<br/>' + 
+			    '<a href="javascript:void(0)" onclick="goMeetingDetail(\'' + 
+			    		result.data[i].cafeID + '\',\'' + result.data[i].meetingNo + '\');">상세보기</a></div>'
+			});
+			
+			infoWindows.push(infowindow);
+		}
+	}
+	
+	function displayMapData()
+	{
+		for ( var i = 0; i < positions.length; i++ )
+			addMarker(positions[i].latlng, i);
+
+		if (positions.length > 0 )
+			map.panTo(positions[0].latlng);
+	}
+	
+</script>
+<script id="meetingT" type="text/x-handlebars-template">
+	{{#if data}}
+	<ul class="meetingListUL">
+		{{#each data}}
+		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
+			<div id="title">{{title}}</div>
+			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
+			<div id="memberCount">참석인원 : {{curNo}}/{{maxNo}}</div>
+			<div id="cafeName">{{cafeName}}</div>
+			<div id="location">{{address}}</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+		<div class="empty">해당 지역에 정모가 존재하지 않습니다.</div>
+	{{/if}}
+</script>	
 	<div id="favoriteCafeRegionDiv">
 		<div id="linkDiv" onclick="goFavoriteRegionPage();">설정</div>
 		<div id="subTitle">관심지역</div>
@@ -314,4 +571,15 @@
 	</div>
 	<% } %>
 		
-	
+	<% if ( myFavRegionList != null && myFavRegionList.size() > 0 ) { %>
+	<div id="meetingListDiv">
+		<div id="optionMap" class="option" onclick="toggleResultView();">지도로 보기</div>
+		<div id="optionList" class="option" onclick="toggleResultView();">리스트로 보기</div>
+		<div id="subTitle">정모 리스트</div>
+		<div id="meetingList">
+			
+		</div>
+		<div id="map">
+		</div>
+	</div>
+	<% } %>
