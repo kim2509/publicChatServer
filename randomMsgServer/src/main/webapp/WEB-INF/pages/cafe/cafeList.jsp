@@ -19,11 +19,11 @@
 		
 		if ( tabIndex == 0 )
 		{
-			$('#myCafeList .empty').hide();
+			$('#popularCafeList .empty').hide();
 			
-			$('#myCafeList').show();
+			$('#popularCafeList').show();
 			var param = {"startIndex":0, "showCount" : 10};
-			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyCafeListReceived );			
+			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularCafeListReceived );			
 		}
 		else if ( tabIndex == 1 )
 		{
@@ -32,11 +32,11 @@
 		}
 		else if ( tabIndex == 2 )
 		{
-			$('#popularCafeList .empty').hide();
+			$('#myCafeList .empty').hide();
 			
-			$('#popularCafeList').show();
+			$('#myCafeList').show();
 			var param = {"startIndex":0, "showCount" : 10};
-			ajaxRequest('POST', '/nearhere/cafe/getPopularCafeListAjax.do', param , onPopularCafeListReceived );
+			ajaxRequest('POST', '/nearhere/cafe/getMyCafeListAjax.do', param , onMyCafeListReceived );
 		}
 			
 		$('#cafeTab li').removeClass('selected');
@@ -120,9 +120,9 @@
 <div id="section">
 
 	<ul id="cafeTab" class="tab3">
-		<li onclick="cafeTabSelected(0);" class="selected">내 카페</li>
+		<li onclick="cafeTabSelected(0);" class="selected">인기 카페</li>
 		<li onclick="cafeTabSelected(1);">관심지역 카페</li>
-		<li onclick="cafeTabSelected(2);">인기 카페</li>
+		<li onclick="cafeTabSelected(2);">내 카페</li>
 	</ul>
 
 	<div id="cafeList">

@@ -18,11 +18,11 @@
 		
 		if ( tabIndex == 0 )
 		{
-			$('#myCafeMeetingList .empty').hide();
-			$('#myCafeMeetingList').show();
+			$('#popularCafeMeetingList .empty').hide();
+			$('#popularCafeMeetingList').show();
 			
 			var param = {"startIndex":0, "showCount" : 3};
-			ajaxRequest('POST', '/nearhere/cafe/getMyPublicMeetingListAjax.do', param , onMyPublicMeetingListReceived );
+			ajaxRequest('POST', '/nearhere/cafe/getPopularPublicMeetingListAjax.do', param , onPopularPublicMeetingListReceived );
 		}
 		else if ( tabIndex == 1 )
 		{
@@ -31,11 +31,11 @@
 		}
 		else if ( tabIndex == 2 )
 		{
-			$('#popularCafeMeetingList .empty').hide();
-			$('#popularCafeMeetingList').show();
+			$('#myCafeMeetingList .empty').hide();
+			$('#myCafeMeetingList').show();
 			
 			var param = {"startIndex":0, "showCount" : 3};
-			ajaxRequest('POST', '/nearhere/cafe/getPopularPublicMeetingListAjax.do', param , onPopularPublicMeetingListReceived );
+			ajaxRequest('POST', '/nearhere/cafe/getMyPublicMeetingListAjax.do', param , onMyPublicMeetingListReceived );
 		}
 		
 		$('#publicMeetingTab li').removeClass('selected');
@@ -107,9 +107,9 @@
 <div id="section">
 
 	<ul id="publicMeetingTab" class="tab3">
-		<li onclick="publicMeetingTabSelected(0);" class="selected">내 카페 정모</li>
+		<li onclick="publicMeetingTabSelected(0);" class="selected">인기 정모</li>
 		<li onclick="publicMeetingTabSelected(1);">관심지역 정모</li>
-		<li onclick="publicMeetingTabSelected(2);">인기 정모</li>
+		<li onclick="publicMeetingTabSelected(2);">내 카페 정모</li>
 	</ul>
 
 	<div id="publicMeetingList">
