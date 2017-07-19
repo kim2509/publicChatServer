@@ -27,6 +27,18 @@ body{
 	display: table-cell;
 }
 
+#search
+{
+	position: absolute;
+    top: 0px;
+    right: 10px;
+    line-height: 16px;
+    color: white;
+    border-radius: 20px;
+    margin: 10px 5px;
+}
+
+
 #menu{
 	border-bottom:1px solid #d3d3d3;
 	height:44px;

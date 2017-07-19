@@ -11,7 +11,7 @@
 
 	jQuery(document).ready(function(){
 		
-		var param = {"cafeID":cafeID, "userID": userID };
+		var param = {"cafeID":cafeID };
 		
 		ajaxRequest('POST', '/nearhere/cafe/getCafeBoardListAjax.do', param , onResult );
 		

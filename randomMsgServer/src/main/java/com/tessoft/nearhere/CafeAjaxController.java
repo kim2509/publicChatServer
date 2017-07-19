@@ -303,14 +303,13 @@ public class CafeAjaxController extends BaseController {
 		try
 		{
 			HashMap info = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
-			String userID = info.get("userID").toString();
 			String cafeID = info.get("cafeID").toString();
 			
 			List<HashMap> cafeBoardList = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(info);
 			
 			response.setData(cafeBoardList);
 			
-			insertHistory("/cafe/getCafeBoardListAjax.do", userID , cafeID , null, null );
+			insertHistory("/cafe/getCafeBoardListAjax.do", cafeID , null , null, null );
 		}
 		catch( Exception ex )
 		{
@@ -535,14 +534,14 @@ public class CafeAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			String keyword = param.get("keyword").toString();
-			String level = param.get("level").toString();
-			String regionNo = param.get("regionNo").toString();
+			String keyword = Util.getStringFromHash(param, "keyword");
+			String level = Util.getStringFromHash(param, "level");
+			String regionNo = Util.getStringFromHash(param, "regionNo");
 			
-			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
-			List<HashMap> cafeMeetings = cafeBiz.searchCafePosts(param);
+			
+			List<HashMap> cafeMeetings = CafeBoardPostBiz.getInstance(sqlSession).searchCafePosts(param);
 			response.setData(cafeMeetings);
-			response.setData2( cafeBiz.searchCafePostsCount(param) );
+			response.setData2( CafeBoardPostBiz.getInstance(sqlSession).searchCafePostsCount(param) );
 			
 			insertHistory("/cafe/searchCafePostsAjax.do", keyword , level , regionNo, null );
 		}
