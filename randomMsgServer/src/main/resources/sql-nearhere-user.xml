@@ -24,6 +24,7 @@
 			, jobTitle
 			, sex
 			, appVersion
+			, regID
 		from user
 		where userID=#{value}
 	</select>
@@ -109,5 +110,25 @@
 		update user
 		set appVersion=#{AppVersion}
 		where userID=#{userID}
+	</update>
+	
+	<select id="selectUserByUserToken" resultType="java.util.HashMap" parameterType="String">
+		select ut.seed, ut.hash, ut.expireDate, ut.activeYN, u.*
+		from user_token ut
+			left outer join user u on ut.userID = u.userID
+		where ut.hash = #{value}
+		and u.isDeleted is null
+	</select>
+	
+	<update id="updateUserPushMessageAsRead" parameterType="java.util.HashMap">
+		update user_push_message set
+		isRead = 'Y'
+		where toUserID=#{userID} and pushNo = #{pushNo};
+	</update>
+	
+	<update id="updateAllUserPushMessageAsRead" parameterType="java.util.HashMap">
+		update user_push_message set
+		isRead = 'Y'
+		where toUserID=#{userID};
 	</update>
 </mapper>

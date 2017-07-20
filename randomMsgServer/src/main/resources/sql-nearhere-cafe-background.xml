@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.cafe.background">
+
+	<select id="getTemporaryImageList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select * from cafe_image
+		where createdDate < DATE_ADD( NOW(), INTERVAL -1 DAY)
+		and commitDate is null
+		limit 0, 100;
+		]]>
+	</select>
+	
+	<delete id="deleteCafeTemporaryImage" parameterType="java.util.HashMap">
+		delete from cafe_image
+		where imageNo = #{imageNo}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.cafe.board">
+
+	<select id="getCafeBoardList" resultType="HashMap" parameterType="HashMap">
+		select bm.* from cafe_board_master bm
+			left outer join cafe_master cm on cm.cafeNo=bm.cafeNo
+		where cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafeBoardInfo" resultType="HashMap" parameterType="HashMap">
+		select bm.*, cm.cafeID from cafe_board_master bm
+			left outer join cafe_master cm on bm.cafeNo = cm.cafeNo
+		where bm.boardNo = #{boardNo}
+	</select>
+	
+	<!-- 게시글 공지 리스트 불러오기 -->
+	<select id="getBoardPostNoticeList" resultType="HashMap" parameterType="HashMap">
+		select bpm.postNo, bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
+			ifnull(bpm.replyCount,0) as replyCount, bm.boardName, u.userName, bpm.createdDate
+		from cafe_board_post_master bpm
+			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
+			left outer join user u on u.userID = bpm.userID
+		where bm.boardNo = #{boardNo} and noticeYN = 'Y'
+		order by createdDate
+	</select>
+	
+	<!-- 게시글 리스트 불러오기 -->
+	<select id="getBoardPostList" resultType="HashMap" parameterType="HashMap">
+		select bpm.postNo, bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, 
+			ifnull(bpm.replyCount,0) as replyCount, bm.boardName, u.userName, bpm.createdDate
+		from cafe_board_post_master bpm
+			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
+			left outer join user u on u.userID = bpm.userID
+		where bm.boardNo = #{boardNo} and ifnull(noticeYN,'N') = 'N'
+		order by createdDate desc
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<!-- 게시글 리스트 카운트 불러오기 -->
+	<select id="getBoardPostListCount" resultType="Integer" parameterType="HashMap">
+		select count(postNo) as totalCount from (
+		select bpm.postNo
+		from cafe_board_post_master bpm
+			left outer join cafe_board_master bm on bpm.boardNo=bm.boardNo
+		where bm.boardNo = #{boardNo} and noticeYN = 'N'
+		) A
+	</select>
+	
+	<select id="searchCafePosts" resultType="HashMap" parameterType="HashMap">
+		select cbm.boardName, cbpm.*, cbpd.content, cbpm.locationNo, rv.* 
+			, concat( ifnull( ci.url1, '' ), ifnull( ci.url2, '' ) ) as imageURL
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join cafe_location cl on cbpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join (
+				select postNo, imageNo from cafe_board_post_detail
+				where type = 2
+				group by postNo
+			) cbpd3 on cbpm.postNo = cbpd3.postNo
+			left outer join cafe_image ci on ci.imageNo = cbpd3.imageNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
+		where 
+		(cbpm.title like concat('%',#{keyword},'%') or cbpd.content like concat('%',#{keyword},'%'))
+		and (cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		<if test="cafeID != null">
+			AND cm.cafeID= #{cafeID}
+		</if>
+		<if test="boardNo != ''">
+			AND cbm.boardNo= #{boardNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="searchCafePostsCount" resultType="Integer" parameterType="HashMap">
+		select count(cbpm.postNo)
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join cafe_location cl on cbpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
+		where 
+		(cbpm.title like concat('%',#{keyword},'%') or cbpd.content like concat('%',#{keyword},'%'))
+		and (cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		<if test="cafeID != null">
+			AND cm.cafeID= #{cafeID}
+		</if>
+		<if test="boardNo != ''">
+			AND cbm.boardNo= #{boardNo}
+		</if>
+	</select>
+	
+	<!-- 댓글 불러오기 -->
+	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
+		select cpr.*, u.userName from cafe_board_post_reply cpr
+			left outer join user u on cpr.userID = u.userID
+		where cpr.postNo=#{postNo} and cpr.deletedDate is null
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<!-- 게시글 master 불러오기 -->
+	<select id="getCafeBoardPostInfo" resultType="HashMap" parameterType="HashMap">
+		select bpm.title, bpm.boardNo, bpm.userID, ifnull(bpm.readCount,0) as readCount, bpm.noticeYN, bpm.postNo,
+			ifnull(bpm.replyCount,0) as replyCount, bpm.createdDate
+			, cl.No as locationNo, cl.type as locationType, cl.locationName, cl.latitude, cl.longitude, cl.address, cl.regionNo
+			, u.userName, cbm.boardName, cm.cafeID, cm.cafeName
+		from cafe_board_post_master bpm
+			left outer join cafe_board_master cbm on cbm.boardNo = bpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+			left outer join cafe_location cl on cl.No = bpm.locationNo
+			left outer join user u on bpm.userID = u.userID
+		where bpm.postNo=#{postNo}
+	</select>
+	
+	<insert id="insertCafeBoardPostHistory" parameterType="HashMap">
+		INSERT INTO cafe_board_post_history (postNo, userID)
+		SELECT *
+		FROM ( SELECT #{postNo},#{userID} ) AS TMP
+		WHERE NOT EXISTS (
+			select * from cafe_board_post_history where postNo=#{postNo} and userID=#{userID}
+		) LIMIT 1;
+	</insert>
+	
+	<update id="updateCafeBoardPostReadCount" parameterType="HashMap">
+		update cafe_board_post_master
+		set readCount = ( SELECT count(postNo) from cafe_board_post_history where postNo = #{postNo} )
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 게시글 detail 불러오기 -->
+	<select id="getCafeBoardPostContent" resultType="HashMap" parameterType="HashMap">
+		select cd.imageNo, ifnull(cd.content,'') as content, cd.type, 
+			concat( ifnull(ci.url1,''), ifnull(ci.url2,'') ) as imageURL 
+		from cafe_board_post_detail cd
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+		where postNo = #{postNo}
+		order by seq
+	</select>
+	
+	<!-- 댓글 정보 불러오기 -->
+	<select id="getCafeBoardPostReplyInfo" resultType="HashMap" parameterType="HashMap">
+		select * from cafe_board_post_reply
+		where replyNo = #{replyNo}
+	</select>
+	
+	<!-- 게시글 master 작성-->
+	<insert id="insertCafeBoardPostMaster" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="postNo" keyColumn="postNo">
+		insert into cafe_board_post_master(title, boardNo, userID, readCount, replyCount, noticeYN, locationNo, createdDate )
+		values (#{title}, #{boardNo}, #{userID}, #{readCount}, #{replyCount}, #{noticeYN}, #{locationNo}, NOW());
+		<selectKey keyProperty="postNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<!-- 게시글 detail 작성 -->
+	<insert id="insertCafeBoardPostDetail" parameterType="HashMap">
+		insert into cafe_board_post_detail(postNo, type, content, imageNo, seq )
+		values(#{postNo}, #{type}, #{content}, #{imageNo}, #{seq});
+	</insert>
+	
+	<!-- 게시글 master 수정 -->
+	<update id="updateCafeBoardPostMaster" parameterType="HashMap">
+		update cafe_board_post_master
+		set title = #{title}
+		, noticeYN = #{noticeYN}
+		, locationNo = #{locationNo}
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 게시글 master 수정 -->
+	<update id="updateCafeBoardPostDetail" parameterType="HashMap">
+		update cafe_board_post_detail
+		set type = #{type}
+		, content = #{content}
+		, imageNo = #{imageNo}
+		, seq = #{seq}
+		where postNo = #{postNo} and type=#{type}
+	</update>
+	
+	<!-- 댓글 작성 -->
+	<insert id="insertCafeBoardPostReply" parameterType="HashMap">
+		insert into cafe_board_post_reply(postNo, userID, content, createdDate)
+		values(#{postNo}, #{userID}, #{content}, NOW() );
+	</insert>
+	
+	<!-- 댓글 수 증가 -->
+	<update id="increaseCafeBoardPostReplyCount" parameterType="HashMap">
+		update cafe_board_post_master
+		set replyCount = ifnull(replyCount,0) + 1
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 댓글 수 감소 -->
+	<update id="decreaseCafeBoardPostReplyCount" parameterType="HashMap">
+		update cafe_board_post_master
+		set replyCount = ifnull(replyCount,0) - 1
+		where postNo = #{postNo}
+	</update>
+	
+	<!-- 해당 카페 게시판 댓글 삭제 -->
+	<delete id="deleteCafeBoardAllPostReplies" parameterType="HashMap">
+		delete cbpr
+		from cafe_board_post_reply cbpr
+			left outer join cafe_board_post_master cbpm on cbpm.postNo=cbpr.postNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 특정 게시글 상세내용 삭제 -->
+	<delete id="deleteCafeBoardReplies" parameterType="HashMap">
+		delete from cafe_board_post_reply
+		where postNo = #{postNo}
+	</delete>
+	
+	<!-- 해당 카페 게시판 글 상세내용 삭제 -->
+	<delete id="deleteCafeBoardPostDetail" parameterType="HashMap">
+		delete cbpd
+		from cafe_board_post_detail cbpd
+			left outer join cafe_board_post_master cbpm on cbpm.postNo = cbpd.postNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 특정 게시글 상세내용 삭제 -->
+	<delete id="deleteCafeBoardPostDetailEach" parameterType="HashMap">
+		delete from cafe_board_post_detail
+		where postNo = #{postNo}
+	</delete>
+	
+	<!-- 특정 게시글 이미지 삭제 -->
+	<delete id="deleteCafeBoardPostImages" parameterType="HashMap">
+		delete from cafe_board_post_detail
+		where postNo = #{postNo} and type = 2
+	</delete>
+	
+	<!-- 해당 카페 게시판 글 전체 삭제 -->
+	<delete id="deleteCafeBoardAllPosts" parameterType="HashMap">
+		delete cbpm
+		from cafe_board_post_master cbpm
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 특정 게시글 삭제 -->
+	<delete id="deleteCafeBoardPostEach" parameterType="HashMap">
+		delete from cafe_board_post_master
+		where postNo = #{postNo} and boardNo = #{boardNo}
+	</delete>
+	
+	<!-- 해당 카페 게시판 전체 삭제 -->
+	<delete id="deleteCafeAllBoard" parameterType="HashMap">
+		delete cbm
+		from cafe_board_master cbm
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteCafeBoardPostReply" parameterType="HashMap">
+		delete from cafe_board_post_reply
+		where replyNo = #{replyNo}
+	</delete>
+</mapper>

@@ -8,14 +8,18 @@
 	String isApp = request.getParameter("isApp");
 
 	List<HashMap> userPushMessageList = null;
+	int notiCount = 0;
 	if ( request.getAttribute("userPushMessageList") != null )
+	{
 		userPushMessageList = (List<HashMap>) request.getAttribute("userPushMessageList");
+		notiCount = userPushMessageList.size();
+	}
 	
 %>
 <html>
 
 <head>
-<title>이근처 합승</title>
+<title>이근처</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -27,6 +31,7 @@
 	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 <script type="text/javascript"
 	src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>	
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 
 <script language="javascript">
 
@@ -36,11 +41,6 @@
 
 	
 	});
-
-	function openUserProfile( userID )
-	{
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
-	}
 	
 	function viewPost( postID, element )
 	{
@@ -65,6 +65,44 @@
 		$(element).find('#new').hide();
 	}
 	
+	function goMemberList( element, pushNo, cafeID )
+	{
+		$(element).find('#new').hide();
+		var param = {"cafeID":cafeID, "pushNo":pushNo};
+		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+		
+		goMoreCafeMemberList( cafeID );
+	}
+	
+	function onPushReadResult( result )
+	{
+		document.location.reload();
+	}
+	
+	function goCafeBoardPostDetail( element, pushNo, postNo )
+	{
+		$(element).find('#new').hide();
+		var param = {"pushNo":pushNo};
+		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+		
+		goPostDetail( postNo );
+	}
+	
+	function goCafe( element, pushNo, cafeID )
+	{
+		$(element).find('#new').hide();
+		var param = {"pushNo":pushNo};
+		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+		
+		goCafeHome( cafeID );
+	}
+	
+	function readAll()
+	{
+		var param = {};
+		ajaxRequest('POST', '/nearhere/notification/updateAllUserPushMessageAsRead.do', param , onPushReadResult );
+	}
+	
 </script>
 
 <style type="text/css">
@@ -81,6 +119,8 @@
 	}
 </style>
 
+<jsp:include page="../common/common.jsp" flush="true"></jsp:include>
+
 </head>
 <body>
 
@@ -93,13 +133,30 @@
 			
 			HashMap message = userPushMessageList.get(i);
 			
-			if ( "newPostByDistance".equals( message.get("type")) || "postReply".equals( message.get("type")) )
+			String type = Util.getStringFromHash(message, "type");
+			String param1 = Util.getStringFromHash(message, "param1");
+			String pushNo = Util.getStringFromHash(message, "pushNo");
+			
+			
+			if ( "newPostByDistance".equals( type ) || "postReply".equals( type ) )
 			{
-				script = "viewPost('" + message.get("param1") + "', this );";
+				script = "viewPost('" + param1 + "', this );";
 			}
-			else if ( "event".equals( message.get("type")) || "eventssl".equals( message.get("type")))
+			else if ( "event".equals( type ) || "eventssl".equals( type ))
 			{
-				script = "goEventViewer('" + message.get("pushNo") + "', '" + message.get("param1") + "', this );"; 				
+				script = "goEventViewer('" + message.get("pushNo") + "', '" + param1 + "', this );"; 				
+			}
+			else if ("newMember".equals( type ) || "memberLeave".equals(type) )
+			{
+				script = "goMemberList( this, '" + pushNo + "', '" + param1 + "')";
+			}
+			else if ("newCafeBoardPostReply".equals( type ))
+			{
+				script = "goCafeBoardPostDetail( this, '" + pushNo + "', '" + param1 + "')";
+			}
+			else if ("newCafePublicMeeting".equals(type) || "CafeOperatorGranted".equals(type))
+			{
+				script = "goCafe( this, '" + pushNo + "', '" + param1 + "')";
 			}
 		%>
 			<dd>
@@ -119,5 +176,10 @@
 <%		} %>
 	</div>
 
+	<% if ( notiCount > 0 ) { %>
+		<div class="btnFull" 
+			style="position:fixed;bottom:0px;background:gray;color:white;border:1px solid white;width:100%;line-height:40px;text-align:center;"
+			onclick="readAll();">모두 읽음 처리하기</div>
+	<% } %>
 </body>
 </html>

@@ -1,0 +1,40 @@
+body{
+	background: #eeeeee;
+}
+
+#section{
+	border-radius: 10px;
+	border: 1px solid gray;
+	background:white;
+	padding:10px;
+	margin-bottom:10px;
+	overflow:auto;
+	clear:both;
+}
+
+
+.sectionTitle {
+    font-weight: bold;
+    font-size: 16px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid gray;
+}
+
+.btn1{
+    padding: 5px;
+    color: white;
+    background: #00c73c;
+    border: 0;
+}
+
+#pagingInfo a {
+    border: 1px solid #ccc;
+    text-decoration: none;
+    margin: 2px;
+    background: white;
+}
+
+.pageSelected {
+    color: blue;
+}

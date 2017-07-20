@@ -18,5 +18,11 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="sql-nearhere-news.xml"/>
 		<mapper resource="sql-nearhere-travel.xml"/>
 		<mapper resource="sql-nearhere-region.xml"/>
+		<mapper resource="sql-nearhere-cafe.xml"/>
+		<mapper resource="sql-nearhere-cafe-board.xml"/>
+		<mapper resource="sql-nearhere-cafe-location.xml"/>
+		<mapper resource="sql-nearhere-cafe-background.xml"/>
+		<mapper resource="sql-nearhere-cafe-push.xml"/>
+		<mapper resource="sql-nearhere-cafe-member.xml"/>
 	</mappers>
 </configuration>

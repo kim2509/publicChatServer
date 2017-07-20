@@ -1,0 +1,47 @@
+@CHARSET "utf-8";
+
+#headerInfo{
+	text-align:right;
+	margin:10px 10px;
+}
+
+#memberList ul{
+	margin:10px 10px;
+	list-style:none;
+	border-top: 1px solid #d9d9d9;
+	border-radius: 10px;
+}
+
+#memberList ul li{
+	position:relative;
+	clear:both;
+	padding: 10px;
+    border-bottom: 1px solid #d9d9d9;
+    border-left: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
+    border-radius: 10px;
+    overflow: auto;
+}
+
+#memberList ul li #imgProfile{
+	float:left;
+}
+
+#memberList ul li #imgProfile img{
+	border-radius:10px;
+}
+
+#memberList ul li #memberType{
+	float:right;
+}
+
+#memberList ul li #memberInfo{
+	margin-left:90px;
+}
+
+#memberList ul li #memberJoinDate{
+	position:absolute;
+	right:10px;
+	bottom:10px;
+	font-size:13px;
+}

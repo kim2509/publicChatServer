@@ -151,4 +151,14 @@
 		value (#{name}, #{param1}, #{param2}, #{param3}, #{param4},  NOW() );
 	</insert>
 	
+	<select id="getAllRegionsByLevel" parameterType="String" resultType="java.util.HashMap">
+		select * from region_view
+		where level=#{level}
+	</select>
+	
+	<update id="updateRegionLocation" parameterType="java.util.HashMap">
+		update region
+		set latitude = #{latitude}, longitude = #{longitude}
+		where regionNo=#{regionNo}
+	</update>
 </mapper>

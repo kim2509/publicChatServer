@@ -2,6 +2,41 @@
 <%@ page import="com.nearhere.domain.*"%>
 <%@ page import="com.dy.common.*"%>
 
+<%
+	String version = request.getParameter("appVersion");
+	double appVersion = 0;
+	if ( !Util.isEmptyString(version) )
+		appVersion = Double.parseDouble(version);
+
+	String userInfoPage = Constants.getServerSSLURL() + "/user/userInfo.do";
+	
+%>
+<script id="postT" type="text/x-handlebars-template">
+	<dl class="slide_lst">
+		{{#each postsNearHere}}
+		<dd>
+			<div class="imgStatus" onclick="openUserProfile('{{user.userID}}');">
+				<img src='{{printPostStatus status}}' width="50" height="50"/>
+			</div>
+			<div class='userProfile' onclick="openUserProfile('{{user.userID}}');">
+				<img src='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
+					width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
+				{{printKakaoIcon user.kakaoID}}
+			</div>
+			<div class='postDesc' onclick="goVIP('{{postID}}')">
+				{{printReplyCount replyCount}}
+				<strong class="tit">{{message}}</strong>
+				<div id="departureDateTime">{{departureDateTime}}</div>
+				<div id="readCount">조회수: {{readCount}}</div>
+				<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
+				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span>{{printNumOfUsers numOfUsers}}{{printRepeat repetitiveYN}}</div>
+				<div id="addressInfo">{{fromAddress}} >> {{toAddress}}</div>
+			</div>
+		</dd>
+		{{/each}}
+	</dl>
+</script>
+
 <script language="javascript">
 
 function printPostStatus( status )
@@ -69,30 +104,77 @@ function printNumOfUsers( numOfUsers )
 		return new Handlebars.SafeString('<span>' + numOfUsers + '</span>');;
 }
 
-</script>
+function openUserProfile( userID )
+{
+	var url = '<%= userInfoPage %>' + '?userID=' + userID;
+	
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
+	else
+		document.location.href = decodeURIComponent(url);
+}
 
-<script id="postT" type="text/x-handlebars-template">
-	<dl class="slide_lst">
-		{{#each postsNearHere}}
-		<dd>
-			<div class="imgStatus" onclick="openUserProfile('{{user.userID}}');">
-				<img src='{{printPostStatus status}}' width="50" height="50"/>
-			</div>
-			<div class='userProfile' onclick="openUserProfile('{{user.userID}}');">
-				<img src='<%= Constants.getThumbnailImageURL() %>/{{user.profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
-				{{printKakaoIcon user.kakaoID}}
-			</div>
-			<div class='postDesc' onclick="goVIP('{{postID}}')">
-				{{printReplyCount replyCount}}
-				<strong class="tit">{{message}}</strong>
-				<div id="departureDateTime">{{departureDateTime}}</div>
-				<div id="readCount">조회수: {{readCount}}</div>
-				<div id="personInfo"><div id="userSex">{{printSexInfo user.sex}}</div><div id="userName">{{user.userName}}</div></div>
-				<div id="tags"><span>{{vehicle}}</span><span>{{fareOption}}</span>{{printNumOfUsers numOfUsers}}{{printRepeat repetitiveYN}}</div>
-				<div id="addressInfo">{{fromAddress}} >> {{toAddress}}</div>
-			</div>
-		</dd>
-		{{/each}}
-	</dl>
+function goCafeHome( cafeID )
+{
+	var url = '<%= Constants.getServerURL() %>/cafe/' + cafeID;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_CAFE_HOME %>&url=' + encodeURIComponent( url ) + '';
+	else
+		document.location.href= url;
+}
+
+function goPostDetail(postNo )
+{
+	var url = "<%= Constants.getServerURL() %>/boardPost/detail/" + postNo;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
+
+function goMeetingDetail( cafeID, meetingNo )
+{
+	var url = '<%= Constants.getServerURL() + "/cafe/meetingDetail.do" %>?cafeID=' +
+			cafeID + '&meetingNo=' + meetingNo;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_PUBLIC_MEETING_DETAIL %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
+
+function goSearchCafeBoard( cafeID, boardNo )
+{
+	var url = '<%= Constants.getServerURL() + "/boardPost/searchCafeBoard.do" %>?cafeID=' +
+			cafeID + '&boardNo=' + boardNo;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_SEARCH_BOARD %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
+
+function goMoreCafeMeetingList( cafeID )
+{
+	var url = '<%= Constants.getServerURL() + "/cafe/moreCafeMeetingList.do" %>?cafeID=' +
+			cafeID;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_CAFE_MEETINGlIST %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
+
+function goMoreCafeMemberList( cafeID )
+{
+	var url = '<%= Constants.getServerURL() + "/cafe/moreCafeMemberList.do" %>?cafeID=' +
+			cafeID;
+
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_CAFE_MEETINGlIST %>&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
 </script>

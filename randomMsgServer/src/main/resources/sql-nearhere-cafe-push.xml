@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.cafe.push">
+
+	<select id="getCafeOperatorList" resultType="HashMap" parameterType="HashMap">
+		select u.userID, u.userName, u.regID, cmm.*, cm.cafeName, cm.cafeID
+		from cafe_members cmm
+			left outer join cafe_master cm on cmm.cafeNo = cm.cafeNo
+			left outer join user u on cmm.userID = u.userID
+		where cm.cafeID=#{cafeID}
+		and (cmm.memberType = '카페주인' or cmm.memberType = '운영자')
+		and cmm.deletedDate is null
+		and u.isDeleted is null and LENGTH(u.regID) > 0
+	</select>
+	
+	<select id="getBoardPostWriterNRepliers" resultType="HashMap" parameterType="HashMap">
+		<![CDATA[
+		select u.* from
+		(
+		select userID from cafe_board_post_master 
+		where postNo = #{postNo}
+		union
+		select userID from cafe_board_post_reply
+		where postNo = #{postNo}
+		) A
+			inner join user u on A.userID=u.userID
+			left outer join cafe_board_post_master cbpm on cbpm.postNo = A.postNo
+			left outer join cafe_board_master cbm on cbm.boardNo = cbpm.boardNo
+			left outer join cafe_master cm on cm.cafeNo = cbm.cafeNo
+		where u.userID <> #{userID}
+		and u.userID not in ( select userID from cafe_members cmm where cmm.cafeNo = cm.cafeNo and cmm.deletedDate is not null )
+		]]>
+	</select>
+	
+	<select id="getPublicMeetingPushTargetUsers" resultType="HashMap" parameterType="HashMap">
+		<![CDATA[
+		select u.* from cafe_members cmm
+			inner join user u on u.userID=cmm.userID
+		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID})
+		and u.userID <> 'user798'
+		and cmm.deletedDate is null
+		]]>
+	</select>
+</mapper>

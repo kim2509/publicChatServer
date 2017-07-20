@@ -6,7 +6,7 @@
 <%
 	String isApp = request.getParameter("isApp");
 
-	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
+	List<HashMap> cities = (List<HashMap>) request.getAttribute("cities");
 	String userID = request.getParameter("userID");
 %>
 
@@ -15,7 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>관심지역 설정</title>
 
 <!-- Include the jQuery library -->
 <script type="text/javascript"
@@ -138,7 +138,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/getRegionListByParent.do",
+				url : "/nearhere/region/getRegionListByParentAjax.do",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -179,12 +179,10 @@ select{
 		
 		function getUserFavoriteRegionList()
 		{
-			var param = {"userID":"<%= userID %>"};
-			
 			jQuery.ajax({
 				type : "POST",
 				url : "/nearhere/region/getUserFavoriteRegionList.do",
-				data : JSON.stringify( param ),
+				data : null,
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
 				success : function(result) {

@@ -54,7 +54,7 @@
 				<td style="text-align:center"><img src="<%= Constants.IMAGE_PATH %>/notice6.png" width="90%"/></td>
 			</tr>
 			<tr>
-				<td style="width:50%;text-align:center;padding-top:10px;font-size:12px;">보다 더 발전하는 이근처 합승이 되겠습니다.</td>
+				<td style="width:50%;text-align:center;padding-top:10px;font-size:12px;">보다 더 발전하는 이근처가 되겠습니다.</td>
 			</tr>
 		</table>
 	</div>

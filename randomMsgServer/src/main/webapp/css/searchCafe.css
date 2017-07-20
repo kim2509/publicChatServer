@@ -1,0 +1,195 @@
+body{
+	margin:0;
+	padding:0;
+	background:white;
+}
+
+#searchLayerDiv #backDiv{
+	float:left;
+	color:white;
+	padding:5px 0px; 
+}
+
+#searchLayerDiv #searchDiv{
+	float:right;
+	color:white;
+	padding:5px 0px;
+	margin-right:5px; 
+}
+
+.searchInput{
+	line-height:26px;
+	padding:0px 12px;
+	height:34px;
+	margin-left:10px;
+	font-size:17px;
+	width:70%;
+}
+
+#searchBoxDiv{
+	padding:8px 10px;
+	background:#7bafe3;
+}
+
+.sigugun, .dong, .ri{
+	display:none;
+}
+
+.th1{
+	font-size:14px;
+	font-weight:bold;	
+}
+
+
+#boardListDiv{
+	padding:5px 10px;
+	background:#fbfbfb;
+	border-bottom:1px solid #d9d9d9;
+} 
+
+#boardListDiv table td select{
+	padding:5px;
+}
+
+#searchRegionDiv{
+	padding:5px 10px;
+	background:#fbfbfb;
+	/*border:1px solid #d9d9d9;*/
+	border-bottom:1px solid #d9d9d9;
+}
+
+#searchRegionDiv table td select{
+	padding:5px;
+}
+
+#searchResultDiv{
+}
+
+#searchResultTab{
+	height:40px;
+	border-bottom:1px solid #d9d9d9;
+}
+
+#searchResultTab .tab{
+	float:left;
+	width:50%;
+	text-align:center;
+	line-height:40px;
+	
+}
+
+#searchResultTab .tab .selected{
+	margin:0px 20px;
+	border-bottom:2px solid black;
+}
+
+#searchResultDiv #searchResultInfo{
+	clear:both;
+	height:30px;
+	line-height:30px;
+	padding:10px;
+}
+
+#searchResultDiv #searchResultInfo .keyword{
+	color:blue;
+}
+#searchResultDiv ul{
+	list-style:none;
+	padding:0;
+	margin:0;
+}
+
+#searchResultDiv ul li{
+	clear:both;
+	padding:10px;
+	border-bottom:1px solid #d9d9d9;
+	overflow:auto;
+}
+
+#searchResultDiv ul li .cafeImage{
+	float:left;
+}
+	
+#searchResultDiv ul li .cafeInfo{
+	margin-left:70px;
+}
+
+#searchResultDiv ul li .cafeInfo .cafeTitle{
+	margin:5px 0px;
+}
+
+#searchResultDiv ul li .cafeInfo .cafeDesc{
+	display: -webkit-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+	margin:5px 0px;
+	font-size:14px;
+	color:gray;
+}
+
+#searchResultDiv ul li .cafeInfo .memberInfo{
+	margin:5px 0px;
+	font-size:12px;
+}
+	
+#searchResultDiv ul li .cafeInfo .regionInfo{
+	float:right;
+	font-size:12px;
+}
+
+#searchResultDiv ul li .postImage{
+	float:right;
+}
+
+#searchResultDiv ul li .postInfo{
+	margin-right:70px;
+}
+
+#searchResultDiv ul li .postInfo .createdDate{
+	margin:5px 0px;
+	color:gray;
+	font-size:12px;
+}
+
+#searchResultDiv ul li .postInfo .postDesc{
+	display: -webkit-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+	margin:5px 0px;
+	font-size:14px;
+	color:gray;
+}
+
+#emptyDiv{
+	height:300px;
+	line-height:300px;
+	text-align:center;
+	font-size:15px;
+}
+
+#pagingInfo{
+	clear:both;
+	margin-bottom:50px;
+	display:none;
+}
+
+#pagingInfo a{
+	border:1px solid #d9d9d9;
+	padding:5px;
+	margin:0px 2px;
+}
+
+
+#pagingInfo .pageSelected{
+	text-decoration:none;
+	border:1px solid #d9d9d9;
+	background:#5642f4;
+	color:white;
+}
+
+
+	

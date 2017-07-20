@@ -37,7 +37,7 @@
 <html>
 
 <head>
-<title>이근처 합승</title>
+<title>이근처</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -256,24 +256,6 @@
 	function goVIP(postID)
 	{
 		document.location.href='nearhere://viewPost?postID=' + postID;
-	}
-	
-	function openUserProfile( userID )
-	{
-		<% if ( appVersion < 1.53 ) { %>
-			
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
-		
-		<% } else { %>
-		
-		var url = '<%= userInfoPage %>' + '?userID=' + userID;
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
-		else
-			document.location.href = decodeURIComponent(url);
-		
-		<% }%>
 	}
 	
 	function snsLogin()

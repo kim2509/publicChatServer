@@ -24,3 +24,144 @@ Date.prototype.format = function(f) {
 String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
 String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
 Number.prototype.zf = function(len){return this.toString().zf(len);};
+
+function notice( message )
+{
+	if ( isApp == 'Y' )
+		Android.showOKDialog('알림', message, '');
+	else
+		alert( message );
+}
+
+function finishActivity()
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		return Android.finishActivity('');
+	}
+	
+	return '';
+}
+
+function goBack()
+{
+	if ( isApp == 'Y' )
+		finishActivity();
+	else
+		history.back(-1);
+}
+
+function sendBroadcasts( jsonObj )
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		return Android.sendBroadcasts( JSON.stringify( jsonObj ) );
+	}
+	
+	return '';
+}
+
+function selectPhotoUpload( jsonObj )
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		return Android.selectPhotoUpload( JSON.stringify( jsonObj ) );
+	}
+	
+	return '';
+}
+
+function isAlphaNumberKorOnly( str )
+{
+	if ( str.match(/[^0-9a-zA-Z가-힝ㄱ-ㅎ]/) != null ) {
+	  return false;
+	}
+		
+	return true;
+}
+
+function isAlphaNumberOnly( str )
+{
+	if ( str.match(/[^a-zA-Z0-9]/) != null ) {
+	  return false;
+	}
+	
+	return true;
+}
+
+function displayDateFormat( jsonDate, format )
+{
+	var date = new Date(jsonDate);
+	return date.format( format );
+}
+
+function ajaxRequest( method, url, param , onSuccess, onComplete, onError )
+{
+	try
+	{
+		jQuery.ajax({
+			type : method,
+			url : url,
+			xhrFields: {
+			      withCredentials: true
+			   },
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				onSuccess( result );
+			},
+			complete : function(result) {
+				if ( onComplete != undefined && onComplete != null )
+					onComplete( result );
+			},
+			error : function(xhr, status, error) {
+				if ( onError != undefined && onError != null )
+					onError( xhr, status, error );
+			}
+		});	
+	}
+	catch( ex )
+	{
+		alert( ex.message );
+	}
+}
+
+function ajaxRequest2( method, url, param , param2, onSuccess, onComplete, onError )
+{
+	try
+	{
+		jQuery.ajax({
+			type : method,
+			url : url,
+			xhrFields: {
+			      withCredentials: true
+			   },
+			data : JSON.stringify( param ),
+			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+			contentType : "application/json; charset=UTF-8",
+			success : function(result) {
+				onSuccess( result, param2 );
+			},
+			complete : function(result) {
+				if ( onComplete != undefined && onComplete != null )
+					onComplete( result, param2 );
+			},
+			error : function(xhr, status, error) {
+				if ( onError != undefined && onError != null )
+					onError( param2, xhr, status, error );
+			}
+		});	
+	}
+	catch( ex )
+	{
+		alert( ex.message );
+	}
+}
+
+function numberWithCommas(x) {
+	if ( typeof x == 'undefined' )
+		return '';
+	
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
