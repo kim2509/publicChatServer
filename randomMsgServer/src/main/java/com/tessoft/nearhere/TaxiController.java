@@ -116,10 +116,10 @@ public class TaxiController extends BaseController {
 	}
 	
 	@RequestMapping( value ="/taxi/getRandomIDForGuest.do")
-	public @ResponseBody APIResponse getRandomIDForGuest( HttpServletRequest request, @RequestBody String bodyString )
+	public @ResponseBody APIResponse getRandomIDForGuest( HttpServletRequest request, HttpServletResponse response, @RequestBody String bodyString )
 	{
 		User user = null;
-		APIResponse response = new APIResponse();
+		APIResponse res = new APIResponse();
 
 		try
 		{	
@@ -130,19 +130,27 @@ public class TaxiController extends BaseController {
 			user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			user.setType("Guest");
 			
-			getRandomIDCommon( hash, user, response, logIdentifier );
+			getRandomIDCommon( hash, user, res, logIdentifier );
 
 			insertHistory("getRandomIDForGuest.do", Util.getStringFromHash(hash, "user") , null , null, null );
 
-			return response;
+			/*
+			if ( !Util.isEmptyString(user.getUserToken()))
+			{
+				Cookie cookie = new Cookie("userToken",user.getUserToken());
+				response.addCookie(cookie);	
+			}
+			*/
+			
+			return res;
 
 		}
 		catch( Exception ex )
 		{
-			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			res.setResCode( ErrorCode.UNKNOWN_ERROR );
+			res.setResMsg("회원가입 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( new Exception("회원가입 도중 오류가 발생했습니다.", ex ) );
-			return response;
+			return res;
 		}
 	}
 
@@ -556,11 +564,13 @@ public class TaxiController extends BaseController {
 			
 			res.setData2(addInfo);
 			
+			/*
 			if ( !Util.isEmptyString(user.getUserToken()))
 			{
 				Cookie cookie = new Cookie("userToken",user.getUserToken());
 				response.addCookie(cookie);	
 			}
+			*/
 
 			insertHistory("login_bg.do", user.getUserID() , null , null, null );
 		}
@@ -576,9 +586,10 @@ public class TaxiController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/taxi/login_bg2.do")
-	public @ResponseBody APIResponse login_bg2( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	public @ResponseBody APIResponse login_bg2( HttpServletRequest request, HttpServletResponse response, 
+			ModelMap model, @RequestBody String bodyString )
 	{
-		APIResponse response = new APIResponse();
+		APIResponse res = new APIResponse();
 
 		try
 		{
@@ -586,20 +597,20 @@ public class TaxiController extends BaseController {
 			
 			if ( !loginInfo.containsKey("hash") && !"".equals( loginInfo.get("hash") ) )
 			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("세션키가 올바르지 않습니다.");
-				logger.error( response.getResCode() + " " + response.getResMsg() );
+				res.setResCode( ErrorCode.INVALID_INPUT );
+				res.setResMsg("세션키가 올바르지 않습니다.");
+				logger.error( res.getResCode() + " " + res.getResMsg() );
 				insertHistory("login_bg2.do", "hash is null" , null , null, null );
-				return response;
+				return res;
 			}
 			
 			if ( !loginInfo.containsKey("userID") && !"".equals( loginInfo.get("userID") ) )
 			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("사용자정보가 올바르지 않습니다.");
-				logger.error( response.getResCode() + " " + response.getResMsg() );
+				res.setResCode( ErrorCode.INVALID_INPUT );
+				res.setResMsg("사용자정보가 올바르지 않습니다.");
+				logger.error( res.getResCode() + " " + res.getResMsg() );
 				insertHistory("login_bg2.do", "userID is empty" , null , null, null );
-				return response;
+				return res;
 			}
 			
 			if ( loginInfo != null && !Util.isEmptyString(loginInfo.get("userID")) && loginInfo.containsKey("AppVersion") )
@@ -618,7 +629,7 @@ public class TaxiController extends BaseController {
 			HashMap addInfo = new HashMap();
 			String registerUserFinished = getRegisterUserFinishedYN(user, appVersion);
 			addInfo.put("registerUserFinished", registerUserFinished );
-			response.setData2( addInfo );
+			res.setData2( addInfo );
 			
 			if ( "Y".equals( registerUserFinished ) )
 			{
@@ -628,11 +639,11 @@ public class TaxiController extends BaseController {
 
 				if ( userToken == null || userToken.size() < 1 )
 				{
-					response.setResCode( ErrorCode.INVALID_INPUT );
-					response.setResMsg("로그인정보가 올바르지 않습니다.");
-					logger.error( response.getResCode() + " " + response.getResMsg() );
+					res.setResCode( ErrorCode.INVALID_INPUT );
+					res.setResMsg("로그인정보가 올바르지 않습니다.");
+					logger.error( res.getResCode() + " " + res.getResMsg() );
 					insertHistory("login_bg2.do", "userToken null" , null , null, null );
-					return response;
+					return res;
 				}
 				
 				String seed = userToken.get(0).get("seed").toString();
@@ -640,11 +651,11 @@ public class TaxiController extends BaseController {
 				String hash = Util.getShaHashString( loginInfo.get("userID") + seed );
 				if ( !userToken.get(0).get("hash").equals( hash ))
 				{
-					response.setResCode( ErrorCode.INVALID_INPUT );
-					response.setResMsg("유효한 사용자정보가 아닙니다.");
-					logger.error( response.getResCode() + " " + response.getResMsg() );
+					res.setResCode( ErrorCode.INVALID_INPUT );
+					res.setResMsg("유효한 사용자정보가 아닙니다.");
+					logger.error( res.getResCode() + " " + res.getResMsg() );
 					insertHistory("login_bg2.do", "wrong seed" , null , null, null );
-					return response;
+					return res;
 				}
 				
 				user.setUserToken(hash);
@@ -654,18 +665,26 @@ public class TaxiController extends BaseController {
 			if ( profilePoint == null || "".equals( profilePoint ) )
 				profilePoint = "0";
 			user.setProfilePoint(profilePoint);
-			response.setData(user);
+			res.setData(user);
+			
+			/*
+			if ( !Util.isEmptyString(user.getUserToken()))
+			{
+				Cookie cookie = new Cookie("userToken",user.getUserToken());
+				response.addCookie(cookie);	
+			}
+			*/
 			
 			insertHistory("login_bg2.do", user.getUserID() , null , null, null );
 		}
 		catch( Exception ex )
 		{
-			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			res.setResCode( ErrorCode.UNKNOWN_ERROR );
+			res.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
 		}
 
-		return response;
+		return res;
 	}
 
 	@RequestMapping( value ="/taxi/logout.do")
