@@ -109,6 +109,10 @@ span{ padding:5px; }
 	padding-left:10px;
 }
 
+#favRegionCafeList, #favRegionCafeMeetingList{
+	background:white;	
+}
+
 /* 공통 */
 
 

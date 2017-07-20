@@ -49,6 +49,84 @@
 		) A
 	</select>
 	
+	<select id="searchCafePosts" resultType="HashMap" parameterType="HashMap">
+		select cbm.boardName, cbpm.*, cbpd.content, cbpm.locationNo, rv.* 
+			, concat( ifnull( ci.url1, '' ), ifnull( ci.url2, '' ) ) as imageURL
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join cafe_location cl on cbpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join (
+				select postNo, imageNo from cafe_board_post_detail
+				where type = 2
+				group by postNo
+			) cbpd3 on cbpm.postNo = cbpd3.postNo
+			left outer join cafe_image ci on ci.imageNo = cbpd3.imageNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
+		where 
+		(cbpm.title like concat('%',#{keyword},'%') or cbpd.content like concat('%',#{keyword},'%'))
+		and (cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		<if test="cafeID != null">
+			AND cm.cafeID= #{cafeID}
+		</if>
+		<if test="boardNo != ''">
+			AND cbm.boardNo= #{boardNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="searchCafePostsCount" resultType="Integer" parameterType="HashMap">
+		select count(cbpm.postNo)
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join cafe_location cl on cbpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
+		where 
+		(cbpm.title like concat('%',#{keyword},'%') or cbpd.content like concat('%',#{keyword},'%'))
+		and (cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
+		<if test="level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		<if test="cafeID != null">
+			AND cm.cafeID= #{cafeID}
+		</if>
+		<if test="boardNo != ''">
+			AND cbm.boardNo= #{boardNo}
+		</if>
+	</select>
+	
 	<!-- 댓글 불러오기 -->
 	<select id="getCafeBoardPostReplyList" resultType="HashMap" parameterType="HashMap">
 		select cpr.*, u.userName from cafe_board_post_reply cpr

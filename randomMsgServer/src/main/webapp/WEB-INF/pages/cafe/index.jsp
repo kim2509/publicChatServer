@@ -83,6 +83,47 @@
 	}
 	
 </script>
+<script id="cafeT" type="text/x-handlebars-template">
+	{{#if data}}
+	<ul class="cafeListUL">
+		{{#each data}}
+		<li onclick="goCafeHome('{{cafeID}}');">
+			<div>
+				<div class="cafeImage">
+				<img src="{{url1}}" width="60" height="60"
+					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH + "/" + Constants.CAFE_DEAULT_ICON %>';">
+				</div>
+				<div class="cafeInfo">
+					<div class="cafeTitle">{{cafeName}}</div>
+					<div class="cafeDesc">{{mainDesc}}</div>
+					<div class="regionInfo">{{lRegionName}} {{mRegionName}} {{sRegionName}} {{tRegionName}}</div>
+					<div class="memberInfo">멤버수 : {{cntMembers}}명</div>
+				</div>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+		<div class="empty">카페가 존재하지 않습니다.</div>
+	{{/if}}
+</script>
+<script id="publicMeetingT" type="text/x-handlebars-template">
+	{{#if data}}
+	<ul class="meetingListUL">
+		{{#each data}}
+		<li onclick="goMeetingDetail('{{cafeID}}','{{meetingNo}}')">
+			<div id="title">{{title}}</div>
+			<div id="meetingDate">{{displayDateFormat meetingDate 'MM-dd HH:mm'}}</div>
+			<div id="memberCount">참석인원 : {{cntMembers}}/{{maxNo}}</div>
+			<div id="cafeName">{{cafeName}}</div>
+			<div id="location">{{address}}</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+		<div class="empty">정모가 존재하지 않습니다.</div>
+	{{/if}}			
+</script>
 
 <jsp:include page="../common/common.jsp" flush="true"></jsp:include>
 
@@ -112,6 +153,22 @@
 		<jsp:include page="publicMeetingList.jsp" flush="true"></jsp:include>
 		<!-- 정모 리스트 -->
 			
+		<div id="favRegionCafeList">
+		
+			<!-- 관심지역 카페 리스트 -->
+			<jsp:include page="favoriteRegionCafeList.jsp" flush="true"></jsp:include>
+			<!-- 관심지역 카페 리스트 -->
+			
+		</div>
+		
+		<div id="favRegionCafeMeetingList">
+			
+			<!-- 관심지역 정모 리스트 -->
+			<jsp:include page="favoriteRegionMeetingList.jsp" flush="true"></jsp:include>
+			<!-- 관심지역 정모 리스트 -->
+			
+		</div>
+		
 	</div>
 
 	

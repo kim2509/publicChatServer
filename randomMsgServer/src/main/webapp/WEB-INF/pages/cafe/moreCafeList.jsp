@@ -99,8 +99,6 @@
 
 	function onMyCafeListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#cafeList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -122,15 +120,12 @@
 			{
 				$('#pagingInfo').show();
 				displayPagingInfo();
-				console.log('myCafe list not empty.');
 			}
 		}
 	}
 	
 	function onPopularCafeListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#cafeList .loading').hide();
 		
 		if ( result != null && result.data != null )
@@ -232,7 +227,7 @@
 			<div>
 				<div class="cafeImage">
 				<img src="{{url1}}" width="60" height="60"
-					onerror="this.onerror=null;this.src='<%= Constants.CAFE_DEAULT_ICON %>';">
+					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH + "/" + Constants.CAFE_DEAULT_ICON %>';">
 				</div>
 				<div class="cafeInfo">
 					<div class="cafeTitle">{{cafeName}}</div>

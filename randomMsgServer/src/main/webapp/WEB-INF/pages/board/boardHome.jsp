@@ -108,8 +108,6 @@
 	
 	function onBoardPostNoticeListFetched( result )
 	{
-		console.log(JSON.stringify( result ) );
-		
 		var source = $('#boardPostNoticeT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result.data);
@@ -119,8 +117,6 @@
 	
 	function onBoardPostListFetched( result )
 	{
-		console.log(JSON.stringify( result ) );
-		
 		var source = $('#boardPostT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result.data);
@@ -260,12 +256,16 @@
 
 		<div class="titleDiv">
 			<span class="title"><%= boardName %></span>
+			
+			<div id="search" onclick="goSearchCafeBoard('<%= cafeID %>',boardNo);">
+				<img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24">
+			</div>
 		</div>
 	
 		<div id="menu">
 			<div id="navBack">&lt; <%= boardName %></div>
 			<div id="btnNew" onclick="goNewBoardPost();">글쓰기</div>
-			<div id="btnNoti">공지</div>
+			<!-- div id="btnNoti">공지</div-->
 		</div>
 		
 		<div id="postNoticeContainerDiv">

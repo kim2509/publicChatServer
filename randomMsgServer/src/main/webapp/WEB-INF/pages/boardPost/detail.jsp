@@ -374,8 +374,6 @@
 	
 	function onResult( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		var source = $('#replyT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result);
@@ -393,8 +391,6 @@
 	
 	function displayDeleteButton( userID, replyNo)
 	{
-		console.log( loginUserID + ' ' + userID + ' ' + replyNo );
-		
 		if ( loginUserID == userID || ownerYN == 'Y' || memberType == '운영자')
 			return new Handlebars.SafeString('|<span onclick="deleteBoardPostReply(\'' + postNo + '\',\'' + replyNo + '\')">삭제하기</span>');
 		else return '';

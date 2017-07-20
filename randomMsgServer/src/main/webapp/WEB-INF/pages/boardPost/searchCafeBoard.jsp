@@ -7,6 +7,7 @@
 	String isApp = request.getParameter("isApp");
 	String userID = request.getParameter("userID");
 	String cafeID = request.getParameter("cafeID");
+	String boardNo = request.getParameter("boardNo");
 	List<HashMap> cities = (List<HashMap>) request.getAttribute("cities");
 %>
 
@@ -31,9 +32,15 @@
 	var level = 0;
 	var regionNo = '';
 	var cafeID = '<%= cafeID %>';
+	var boardNo = '<%= boardNo %>';
 
 	jQuery(document).ready(function(){
 		Handlebars.registerHelper('displayDateFormat', displayDateFormat );
+		
+		
+		var param = {"cafeID":cafeID};
+		ajaxRequest('POST', '/nearhere/cafe/getCafeBoardListAjax.do', param , onBoardListResult );
+		
 		
 		$('#selRegionLevel1').change(function(){
 			if ( $(this).val() != '' )
@@ -136,6 +143,31 @@
 		$('#txtKeyword').focus();
 	});
 	
+	function onBoardListResult( result)
+	{
+		try
+		{
+			var source = $('#boardT').html();
+			var template = Handlebars.compile(source);
+			var html = template(result);
+
+			$('#boardListDiv .th2').html(html);
+			
+			$('#selBoardList').change(function(){
+				searchKeyword();
+			});
+			
+			if ( boardNo != null && boardNo > 0 )
+			{
+				$('#selBoardList').val( boardNo );
+			}
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
+	}
+	
 	function getRegionList( elementName, regionNo )
 	{
 		var param = {"regionNo":regionNo};
@@ -197,9 +229,10 @@
 	function searchKeyword()
 	{
 		keyword = $('#txtKeyword').val();
+		var boardNo = $('#selBoardList').val();
 		
 		var param = {"keyword": keyword, "level":level, "regionNo": regionNo, 
-				"startIndex":startIndex, "showCount" : pageSize, "cafeID":cafeID };
+				"startIndex":startIndex, "showCount" : pageSize, "cafeID":cafeID, "boardNo":boardNo };
 		
 		ajaxRequest('POST', '/nearhere/cafe/searchCafePostsAjax.do', param , onResult );
 	}
@@ -295,6 +328,18 @@
 	}
 	
 </script>
+<script id="boardT" type="text/x-handlebars-template">
+	{{#if data}}
+	<select id='selBoardList'>
+		<option value=''>선택하세요</option>
+		{{#each data}}
+		<option value='{{boardNo}}'>{{boardName}}</option>
+		{{/each}}
+	</select>
+	{{else}}
+		<select><option value=''>선택하세요</option></select>
+	{{/if}}
+</script>
 <script id="cafePostT" type="text/x-handlebars-template">
 	<ul>
 		{{#each data}}
@@ -328,6 +373,21 @@
 				<div id="backDiv"><img src="<%=Constants.IMAGE_PATH%>/back.png" width="24" height="24"/></div>
 				<div id="searchDiv" onclick="searchKeyword();"><img src="<%=Constants.IMAGE_PATH%>/search.png" width="24" height="24"/></div>
 				<input type="text" class="searchInput" id="txtKeyword" placeholder="카페글 검색"/>
+			</div>
+			
+			<div id="boardListDiv">
+			
+				<table style="width:100%;">
+				<colgroup>
+					<col width="120px;"></col>
+					<col width="*"></col>
+				</colgroup>
+				<tr>
+					<td class="th1">게시판</td>
+					<td class="th2"></td>
+				</tr>
+				</table>
+				
 			</div>
 			
 			<div id="searchRegionDiv">

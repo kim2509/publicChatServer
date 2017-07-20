@@ -349,31 +349,6 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public List<HashMap> searchCafePosts( HashMap param )
-	{
-		int startIndex = 0;
-		if ( !Util.isEmptyString(param.get("startIndex")))
-			startIndex = Integer.parseInt(param.get("startIndex").toString());
-		
-		int showCount = 10;
-		if ( !Util.isEmptyString(param.get("showCount")))
-			showCount = Integer.parseInt(param.get("showCount").toString());
-		
-		param.put("startIndex", startIndex);
-		param.put("showCount", showCount);
-		
-		List<HashMap> meetingList = sqlSession.selectList("com.tessoft.nearhere.cafe.searchCafePosts", param);
-		return meetingList;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public int searchCafePostsCount(HashMap param)
-	{
-		int totalCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.searchCafePostsCount", param);
-		return totalCount;
-	}
-	
-	@SuppressWarnings("rawtypes")
 	public HashMap getCafeUserInfo(HashMap param)
 	{
 		return sqlSession.selectOne("com.tessoft.nearhere.cafe.getCafeUserInfo", param);

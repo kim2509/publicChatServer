@@ -92,8 +92,6 @@
 
 	function meetingListReceived( result )
 	{
-		console.log(JSON.stringify(result));
-		
 		$('#publicMeetingList .loading').hide();
 		
 		if ( result != null && result.data != null )

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.dy.common.Util;
+
 public class CafeBoardPostBiz extends CommonBiz{
 
 	private static CafeBoardPostBiz cafeBiz = null;
@@ -50,10 +52,36 @@ public class CafeBoardPostBiz extends CommonBiz{
 		return postList;
 	}
 	
+	
 	@SuppressWarnings("rawtypes")
 	public int getBoardPostListCount(HashMap param)
 	{
 		return sqlSession.selectOne("com.tessoft.nearhere.cafe.board.getBoardPostListCount", param);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<HashMap> searchCafePosts( HashMap param )
+	{
+		int startIndex = 0;
+		if ( !Util.isEmptyString(param.get("startIndex")))
+			startIndex = Integer.parseInt(param.get("startIndex").toString());
+		
+		int showCount = 10;
+		if ( !Util.isEmptyString(param.get("showCount")))
+			showCount = Integer.parseInt(param.get("showCount").toString());
+		
+		param.put("startIndex", startIndex);
+		param.put("showCount", showCount);
+		
+		List<HashMap> meetingList = sqlSession.selectList("com.tessoft.nearhere.cafe.board.searchCafePosts", param);
+		return meetingList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public int searchCafePostsCount(HashMap param)
+	{
+		int totalCount = sqlSession.selectOne("com.tessoft.nearhere.cafe.board.searchCafePostsCount", param);
+		return totalCount;
 	}
 	
 	@SuppressWarnings("rawtypes")
