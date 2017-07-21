@@ -177,4 +177,16 @@ function goMoreCafeMemberList( cafeID )
 	else
 		document.location.href= url;
 }
+
+function goFavoriteRegionPage()
+{
+	var titleUrlEncoded = encodeURIComponent('관심지역설정');
+	var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do';
+	
+	if ( isApp == 'Y' )
+		document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
+	else
+		document.location.href= url;
+}
+
 </script>
