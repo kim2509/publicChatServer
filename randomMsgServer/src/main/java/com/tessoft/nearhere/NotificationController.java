@@ -29,7 +29,7 @@ public class NotificationController extends BaseController{
 
 	@RequestMapping( value ="/notification/list.do")
 	public ModelAndView list ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, String userHash )
+			String userID, String userHash, @CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("notification/list");

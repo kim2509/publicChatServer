@@ -308,21 +308,6 @@
 		}
 	}
 	
-	function goFavoriteRegionPage()
-	{
-		if ( isApp == 'Y' )
-		{
-			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
-			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=' + userID + '&isApp=<%= isApp %>';
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
-		}
-		else
-		{
-			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=' + userID + '&isApp=<%= isApp %>';
-			document.location.href= url;
-		}
-	}
-	
 	var currentRegionNo = '';
 	
 	function getFavoriteRegionInfo()

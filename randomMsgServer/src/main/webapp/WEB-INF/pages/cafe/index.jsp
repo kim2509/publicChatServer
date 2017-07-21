@@ -71,17 +71,6 @@
 		}
 	});
 	
-	function goFavoriteRegionPage()
-	{
-		var titleUrlEncoded = encodeURIComponent('관심지역설정');
-		var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?isApp=<%= isApp %>';
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent(url) + '';
-		else
-			document.location.href="/nearhere/region/favoriteRegion.do?isApp=" + isApp;
-	}
-	
 </script>
 <script id="cafeT" type="text/x-handlebars-template">
 	{{#if data}}
@@ -153,19 +142,11 @@
 		<jsp:include page="publicMeetingList.jsp" flush="true"></jsp:include>
 		<!-- 정모 리스트 -->
 			
-		<div id="favRegionCafeList">
+		<div id="favRegionStuff" style="background:white;padding-bottom:10px;border:1px solid black;border-radius:10px;">
 		
 			<!-- 관심지역 카페 리스트 -->
-			<jsp:include page="favoriteRegionCafeList.jsp" flush="true"></jsp:include>
+			<jsp:include page="favoriteRegionStuff.jsp" flush="true"></jsp:include>
 			<!-- 관심지역 카페 리스트 -->
-			
-		</div>
-		
-		<div id="favRegionCafeMeetingList">
-			
-			<!-- 관심지역 정모 리스트 -->
-			<jsp:include page="favoriteRegionMeetingList.jsp" flush="true"></jsp:include>
-			<!-- 관심지역 정모 리스트 -->
 			
 		</div>
 		
