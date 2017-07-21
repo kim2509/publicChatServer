@@ -1,18 +1,44 @@
 package com.dy.common;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.nearhere.domain.Post;
 
@@ -107,6 +133,13 @@ public class Util {
 		}
 	}
 	
+	public static String getNumberWithComma( String num )
+	{
+		double amount = Double.parseDouble(num);
+		DecimalFormat formatter = new DecimalFormat("#,###");
+		return formatter.format(amount);
+	}
+	
 	public static String getString( Object obj )
 	{
 		if ( Util.isEmptyString(obj) ) return "";
@@ -135,6 +168,65 @@ public class Util {
 	{
 		Date d = new Date();
 		return getDateStringFromDate(d, format);
+	}
+	
+	public static String getMonth( Date d )
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		int month = cal.get(Calendar.MONTH);
+		return String.valueOf(month);
+	}
+	
+	public static String getDate( Date d )
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		int month = cal.get(Calendar.DATE);
+		return String.valueOf(month);
+	}
+	
+	/**
+	 * 특정 날짜에 대하여 요일을 구함(일 ~ 토)
+	 * @param date
+	 * @param dateType
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getDateDay( Date d ) throws Exception {
+	    String day = "" ;
+	     
+	    Calendar cal = Calendar.getInstance() ;
+	    cal.setTime(d);
+	     
+	    int dayNum = cal.get(Calendar.DAY_OF_WEEK) ;
+	     
+	    switch(dayNum){
+	        case 1:
+	            day = "일";
+	            break ;
+	        case 2:
+	            day = "월";
+	            break ;
+	        case 3:
+	            day = "화";
+	            break ;
+	        case 4:
+	            day = "수";
+	            break ;
+	        case 5:
+	            day = "목";
+	            break ;
+	        case 6:
+	            day = "금";
+	            break ;
+	        case 7:
+	            day = "토";
+	            break ;
+	             
+	    }
+	     
+	    return day ;
 	}
 	
 	public static void setPostDepartureDateTime( Logger logger, String logIdentifier, Post post) {
@@ -475,5 +567,188 @@ public class Util {
 		String[] result = (String[]) list.toArray(new String[list.size()]);
 		
 		return result;
+	}
+	
+	public static String getFullAddress( String latitude, String longitude ) throws Exception
+	{
+		String url = "http://apis.daum.net/maps/coord2detailaddr?apikey=" + Constants.DAUM_API_KEY + 
+				"&x=" + longitude + "&y=" + latitude + "&inputCoordSystem=WGS84&output=xml";
+		
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet req = new HttpGet(url.trim());
+		
+		StringBuffer resultText = new StringBuffer();
+		
+		// add request header
+		HttpResponse res = null;
+
+		if ( Constants.bReal )
+			res = client.execute(req);
+		else
+		{
+			HttpHost proxy = new HttpHost("localhost", 8888);
+			CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+			res = wf_client.execute(req);
+		}
+
+		BufferedReader rd = new BufferedReader(
+				new InputStreamReader(res.getEntity().getContent(), "utf-8"));
+
+		String line = "";
+		while ((line = rd.readLine()) != null) {
+			resultText.append(line);
+		}
+		
+		DocumentBuilderFactory factory =
+				DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		ByteArrayInputStream input =  new ByteArrayInputStream(
+				resultText.toString().getBytes("UTF-8"));
+		Document doc = builder.parse(input);
+
+		XPath xPath =  XPathFactory.newInstance().newXPath();
+		
+		NodeList list = doc.getElementsByTagName("old").item(0).getChildNodes();
+
+		String address = "";
+		
+		for ( int i = 0; i < list.getLength(); i++ )
+		{
+			Node node = list.item(i);
+			if ("name".equals(node.getNodeName()) )
+			{
+				address = node.getAttributes().item(0).getNodeValue();
+				break;
+			}
+			
+		}
+		
+		return address;
+	}
+	
+	@SuppressWarnings({ "unused", "unchecked", "rawtypes" })
+	public static HashMap getCoordsFromKeyword(String keyword) throws Exception
+	{
+		HashMap coords = new HashMap();
+		
+		String latitude = "";
+		String longitude = "";
+		
+		String temp = "";
+		
+		String url = "http://apis.daum.net/local/v1/search/keyword.json?apikey=" + Constants.DAUM_API_KEY + "&query=" + 
+				URLEncoder.encode(keyword, "UTF-8") + "&output=json";
+		
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet req = new HttpGet(url.trim());
+		
+		StringBuffer resultText = new StringBuffer();
+		
+		// add request header
+		HttpResponse res = null;
+
+		if ( Constants.bReal )
+			res = client.execute(req);
+		else
+		{
+			HttpHost proxy = new HttpHost("localhost", 8888);
+			CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+			res = wf_client.execute(req);
+		}
+
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(res.getEntity().getContent(), writer, "UTF-8" );
+		temp = writer.toString();
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, HashMap> locationInfo = mapper.readValue(temp, new TypeReference<Map<String, HashMap>>(){});
+		
+		HashMap tempHash = locationInfo.get("channel");
+		
+		List<HashMap> locationList = (List<HashMap>) tempHash.get("item");
+		
+		if ( locationList != null && locationList.size() > 0 )
+		{
+			HashMap location = locationList.get(0);
+			
+			latitude = location.get("latitude").toString();
+			longitude = location.get("longitude").toString();
+		}
+		
+		coords.put("latitude", latitude);
+		coords.put("longitude", longitude);
+		
+		return coords;
+	}
+	
+	@SuppressWarnings({ "unused", "unchecked" })
+	public static HashMap getCoordsFromAddress(String address) throws Exception
+	{
+		HashMap coords = new HashMap();
+		
+		String latitude = "";
+		String longitude = "";
+		
+		String theString = "";
+		
+		try
+		{
+			String url = "http://apis.daum.net/local/geo/addr2coord?apikey=" + Constants.DAUM_API_KEY + "&q=" + 
+					URLEncoder.encode(address, "UTF-8") + "&output=json";
+			
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet req = new HttpGet(url.trim());
+			
+			StringBuffer resultText = new StringBuffer();
+			
+			// add request header
+			HttpResponse res = null;
+
+			if ( Constants.bReal )
+				res = client.execute(req);
+			else
+			{
+				HttpHost proxy = new HttpHost("localhost", 8888);
+				CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
+				res = wf_client.execute(req);
+			}
+
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(res.getEntity().getContent(), writer, "UTF-8" );
+			theString = writer.toString();
+
+		}
+		catch( Exception ex )
+		{
+			
+		}
+		
+		theString = theString + "";
+		
+		coords.put("latitude", latitude);
+		coords.put("longitude", longitude);
+		
+		return coords;
+	}
+	
+	public static String getFullRegionName( HashMap region )
+	{
+		String result = "";
+		
+		if ( region == null ) return "";
+		
+		if ( !Util.isEmptyForKey(region, "lRegionName") )
+			result += " " + region.get("lRegionName");
+		
+		if ( !Util.isEmptyForKey(region, "mRegionName") )
+			result += " " + region.get("mRegionName");
+		
+		if ( !Util.isEmptyForKey(region, "sRegionName") )
+			result += " " + region.get("sRegionName");
+		
+		if ( !Util.isEmptyForKey(region, "tRegionName") )
+			result += " " + region.get("tRegionName");
+		
+		return result.trim();
 	}
 }

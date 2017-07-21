@@ -116,6 +116,45 @@
 		}
 	}
 	
+	
+	function UpdateLocationCoordsForAllRegionAjax()
+	{
+		if ( !confirm('Really?') ) return;
+		
+		try {
+
+			jQuery.ajax({
+				type : "POST",
+				url : 'UpdateLocationCoordsForAllRegionAjax.do',
+				data : null,
+				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+				contentType : "application/json; charset=UTF-8",
+				success : function(data) {
+					// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+					try {
+						console.log(JSON.stringify(data));
+					} catch (ex) {
+						alert(ex.message);
+					}
+				},
+				complete : function(data) {
+					// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+					// TODO
+				},
+				error : function(xhr, status, error) {
+					alert("에러발생");
+				}
+			});
+
+		} catch (ex) {
+			alert(ex.message);
+		}
+	}
+	
+	jQuery(document).ready(function(){
+		
+	});
+	
 </script>
 
 </head>
@@ -149,5 +188,40 @@
 	<input type="button" value="전체유저 위치 업데이트"
 		onclick="sendLocationUpdateToAllUsers();" />
 		
+	<br/><br/><br/>
+	
+	<form name="fm" action="" method="post">
+		<label>token</label>
+		<input type="text" name="token" value="" />
+		<input type="submit" value="token 전송"/>
+	</form>
+	
+	<div>
+	<br/> 집 : 
+	<br/> user27 : aJRfZflWC7x9Rzs8cV0zvK0j/ZfYCzxjQ12GLkwBb3Q=
+	<br/> 승균 user798 : n0/2wJfv25oiPAXH/4TFE52Dg3K3u5Qh+MTMk0WcoGs=
+	<br/> 장원영 user5131 : fUWU7qxBr2OqiIgFwWIDdwCsgSkkFQzv7YfHNvsgZ/w=
+	<br/> 정민경 user5080 : WEaXNqbUHVNCqQt7oY7XsJIFtSg4SdxyqzvJwucBZm0=
+	<br/> 황군 user5031 : WVc+8vHc/Blip9zzgBQ8sq7/6oEwt6/dsw23H4nwrC0=
+	<br/> 이애령 user4993 : siorSuZLaxqx7WwYOMANWHbl2BpJrsfGuzaJ/N8PDiM=
+	<br/> 김미정 user4939 : RCLnwlihF5iXaC82+A/MrPyMBPvvzBWdvdakmya8SZo=
+	</div>
+	
+	<div style="border:1px solid blue">
+	<br/> 회사 : dwhwRpDSNdqUzxIoaOWIvqEEWv3q3h35uBk8CSBiJgY=
+	<br/> user969 : qaNyx93+5QDkiku3G/JhNN36t1MBd+QY3tgiUXVHvNE=
+	<br/> user1061 : W33uczJjO/WAfP1YVeuU2y7aQzkkTht1UDOv0FDODVE=
+	</div>
+	
+	<br/><br/>
+	<textarea rows="10" cols="150">select * from user u
+	left outer join user_token ut on u.userID= ut.userID
+where isDeleted is null and ut.hash is not null and ut.activeYN = 'Y'
+and u.profileImageURL is not null and u.sex = 'F'
+order by u.createdDate desc</textarea>
+
+	<br/><br/>
+	
+	<input type="button" value="모든지역 좌표 초기화" onclick="UpdateLocationCoordsForAllRegionAjax();"/>
 </body>
 </html>

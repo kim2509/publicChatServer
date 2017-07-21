@@ -6,7 +6,7 @@
 <%
 	String isApp = request.getParameter("isApp");
 
-	ArrayList<HashMap> cities = (ArrayList<HashMap>) request.getAttribute("cities");
+	List<HashMap> cities = (List<HashMap>) request.getAttribute("cities");
 	String userID = request.getParameter("userID");
 %>
 
@@ -15,7 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>관심지역 설정</title>
 
 <!-- Include the jQuery library -->
 <script type="text/javascript"
@@ -23,6 +23,8 @@
 <script type="text/javascript"
 	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 	
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=5"></script>
+
 <style type="text/css">
 
 body{
@@ -91,6 +93,8 @@ select{
 
 	<script language="javascript">
 	
+	var isApp = '<%= isApp %>';
+	
 		jQuery(document).ready( function() {
 			
 			$('#selRegionLevel1').change(function(){
@@ -138,7 +142,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/getRegionListByParent.do",
+				url : "/nearhere/region/getRegionListByParentAjax.do",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -179,12 +183,10 @@ select{
 		
 		function getUserFavoriteRegionList()
 		{
-			var param = {"userID":"<%= userID %>"};
-			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/getUserFavoriteRegionList.do",
-				data : JSON.stringify( param ),
+				url : "/nearhere/region/getUserFavoriteRegionList.do?userID=<%= userID %>",
+				data : null,
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
 				success : function(result) {
@@ -231,7 +233,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/deleteUserFavoriteRegion.do",
+				url : "/nearhere/region/deleteUserFavoriteRegion.do?userID=<%= userID %>",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -240,6 +242,8 @@ select{
 					// TODO
 					try {
 
+						refreshCafeIndex();
+						
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
@@ -248,6 +252,7 @@ select{
 						}
 						
 						$('#emptyDiv').hide();
+						
 						displayUserFavoriteRegionList( result );
 						
 					} catch (ex) {
@@ -294,7 +299,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/insertUserFavoriteRegion.do",
+				url : "/nearhere/region/insertUserFavoriteRegion.do?userID=<%= userID %>",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -303,6 +308,8 @@ select{
 					// TODO
 					try {
 
+						refreshCafeIndex();
+						
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
@@ -326,6 +333,18 @@ select{
 					alert("에러발생(getUserFavoriteRegionList)" + error );
 				}
 			});
+		}
+		
+		function refreshCafeIndex()
+		{
+			if ( isApp == 'Y' )
+			{
+				var broadcastList = [];
+				broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_INDEX %>"};
+				broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_NEWS_LIST %>"};
+				var param = {"broadcastList": broadcastList };
+				sendBroadcasts(param);
+			}
 		}
 		
 	</script>

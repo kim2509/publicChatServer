@@ -1,0 +1,425 @@
+
+body{
+	background:white;
+	margin:0;
+	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+}
+
+#wrapper{
+	max-width:900px;
+	margin:0 auto;
+	position:relative;
+}
+
+
+.menu{
+	height:45px;
+	border-bottom:1px solid #A3A3A3
+}
+
+.menu ul{
+	padding:0;
+	margin: 0 15px;
+	height:45px;
+}
+
+
+li{ 
+	list-style:none;
+}
+
+
+.menuItem{
+	float:left;
+	width:33%;
+}
+
+.link_tab::before{
+	content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: #d40700;
+}
+
+.link_tab{
+	color: #e8291c;
+}
+
+.menu a, .cafe_bnr a{
+	box-sizing: border-box;
+	position: relative;
+    height: 45px;
+    display: block;
+    font-size: 16px;
+    line-height: 45px;
+    text-align: center;
+    text-decoration: none;
+    color:black;
+}
+
+.titleDiv{
+	background:#7bafe3;;
+	color:white;
+	height:50px;
+	text-align:center;
+	width: 100%;
+}
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	vertical-align:middle;
+	line-height:50px;
+}
+
+#manage{
+	position:absolute;
+	top:0px;
+	left:10px;
+	line-height:20px;
+	color:white;
+	border: 1px solid white;
+	border-radius:20px;
+	margin:15px 0px;
+	padding:0px 8px;
+	font-size:13px;
+	font-weight:bold;
+}
+
+#setting
+{
+	position:absolute;
+	top:0px;
+	left:10px;
+	line-height:16px;
+	color:white;
+	border-radius:20px;
+	margin:13px 0px;
+	font-size:13px;
+	font-weight:bold;
+}
+
+#search
+{
+	position: absolute;
+    top: 0px;
+    right: 10px;
+    line-height: 16px;
+    color: white;
+    border-radius: 20px;
+    margin: 10px 5px;
+}
+
+.link_bnr
+{
+	display: block;
+    margin-right: 43px;
+    padding-left: 15px;
+    font-size: 14px;
+    line-height: 44px;
+    color: #333;
+    text-align: center;
+}
+
+#cafeInfo
+{
+	padding:10px;
+	width:100%;
+	min-height: 600px;
+}
+
+#cafeInfo #cafeStatus{
+	text-align:center;
+	line-height:30px;
+	font-size:15px;
+	font-weight:bold;
+	background: #dcc1d9;
+	color: #612424;
+	border: 1px solid;
+	border-radius:10px;
+	margin-bottom:10px;
+}
+
+#cafeInfo #cafeTitle
+{
+	margin-top:10px;
+	height:40px;
+}
+
+#cafeImage
+{
+	text-align:center;
+	height:140px;
+	border:1px solid #d3d3d3;
+	border-radius:10px;
+}
+
+#cafeImage img
+{
+	width:100%;
+}
+
+#cafeInfo #cafeDesc
+{
+	margin:20px 0px;
+	min-height: 100px;
+	font-size:15px;
+	font-weight:bold;
+	color:#524c4c;
+	text-align:center;
+	line-height:25px;
+}
+
+
+.moreDiv
+{
+	clear:both;
+	text-align:center;
+	font-weight:bold;
+	font-size:14px;
+	color: #614343;
+	border: 1px solid #f7dbd0;
+	background: #ffe0e0;
+	padding:10px;
+	margin:10px 0px;
+}
+
+#btnMakeMeeting
+{
+	background:#7b7bba;
+	font-size:14px;
+	font-weight:bold;
+	color:white;
+	border-radius:10px;
+	padding:10px 10px;
+	margin-top:10px;
+	margin-bottom:10px;
+	text-align:center;
+}
+
+#cafeInfo #cafeMemberInfo
+{
+	border-bottom:1px solid #d3d3d3;
+	margin-top:10px;
+	padding:10px 0px;
+}
+
+#cafeInfo #cafeMemberInfo #membCnt{
+	padding:0px 10px;
+}
+
+#cafeInfo #cafeMemberInfo ul
+{
+	padding:0px;
+	margin:0px;
+	margin-top:10px;
+	clear:both;
+	overflow:auto;
+}
+
+#cafeInfo #cafeMemberInfo li
+{
+	float: left;
+    position: relative;
+    height: 65px;
+    width: 50%;
+    margin-bottom:5px;
+}
+
+#cafeInfo #cafeMemberInfo #imgProfile
+{
+	float:left;
+}
+
+#cafeInfo #cafeMemberInfo #imgProfile img
+{
+	border-radius:10px;
+}
+
+#cafeInfo #cafeMemberInfo #memberInfo
+{
+	margin-left:70px;
+	position:relative;
+	height:60px;
+}
+
+#memberInfo #memberName
+{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-right: 10px;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+#memberInfo #memberType
+{
+	font-size:13px;
+}
+
+#cafeInfo #cafeButtons
+{
+	clear:both;
+	padding:10px 0px;
+	text-align:center;
+}
+
+#btnRegister, #btnRetire, #btnManage
+{
+	display:inline-block;
+	background:#7b7bba;
+	font-size:14px;
+	font-weight:bold;
+	color:white;
+	border-radius:10px;
+	padding:10px 10px;
+	margin-bottom:10px;
+}
+
+#btnRegister, #btnRetire
+{
+	display:none;
+}
+
+.emptyDiv{
+	text-align:center;
+	height:200px;
+	padding-top:140px;
+	font-size:15px;
+	color:#524c4c;
+	font-weight: bold;
+	line-height: 25px;
+}
+
+#publicMeetingMakeDiv{
+	display:none;background-color: #FFFFFF;position: absolute;height: 250px;width: 80%;padding: 10px;border: 2px solid #E2E2E2;z-Index: 9999;
+}
+
+/* 게시판 탭 */
+#boardList{
+	width:100%;
+}
+
+#boardList ul{
+	margin:0;
+	padding:0;
+}
+
+#boardList ul li{
+	line-height:30px;
+	border-bottom:1px solid #d3d3d3;
+	padding:5px 10px;
+}
+
+#boardList ul li a{
+	text-decoration:none;
+	color:black;
+	display:block;
+	line-height:30px;
+}
+
+/* 게시판 탭 */
+
+/* 이미지 탭 start */
+
+#imageList{
+	width:100%;
+	padding:10px;	
+}
+
+#imageList #boardElement{
+	height:30px;
+	font-weight:bold;
+	font-size:15px;
+}
+
+#imageList #countInfo{
+	float:right;	
+	font-size:14px;
+	font-weight:bold;
+	color:#796767;
+	line-height:30px;
+}
+
+#imageList #boardElement{
+	color:#796767;
+}
+
+#imageList #boardElement option{
+	line-height:30px;
+	padding:5px;
+}
+
+#imageList #bodyDiv{
+	margin-top:10px;	
+}
+
+#imageList #bodyDiv ul{
+	margin:0;
+	padding:0;
+}
+
+#imageList #bodyDiv li{
+	float:left;
+	width:50%;
+	text-align:center;
+	margin-bottom:10px;
+}
+
+#imageList #bodyDiv li img{
+	width:95%;
+}
+
+#imageList #bodyDiv li #postInfo{
+	text-align:left;
+	font-size:14px;
+}
+
+#imageList #bodyDiv li p{
+	padding:3px 10px;
+	margin:0;
+	-webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+}
+
+#imageList #bodyDiv li span{
+	padding:0px 10px;
+	margin:0;
+	-webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    color:#909090;
+}
+
+#footerDiv{
+	clear:both;
+}
+
+#footerDiv #pagingInfo{
+	display:none;	
+}
+
+#footerDiv #pagingInfo a{
+	text-decoration:none;
+	border: 1px solid #ccc;
+    padding:0px 5px 3px 5px;
+    background: white;
+    line-height: 1.4em;
+    color:black;
+}
+
+#footerDiv #pagingInfo .pageSelected{
+	color: blue;
+}
+
+/* 이미지 탭 end */

@@ -32,6 +32,7 @@ public class User {
 	private String facebookID;
 	private String facebookProfileImageURL;
 	private String facebookURL;
+	private String userToken;
 
 	public User(){}
 	
@@ -254,5 +255,13 @@ public class User {
 
 	public void setFacebookURL(String facebookURL) {
 		this.facebookURL = facebookURL;
+	}
+
+	public String getUserToken() {
+		return userToken;
+	}
+
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
 	}	
 }

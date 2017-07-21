@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tessoft.nearhere.cafe">
+
+	<!-- 카페 메인  -->
+	<select id="getMyCafeList" resultType="HashMap" parameterType="HashMap">
+		select * from (
+			select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 , ifnull(cmm.cntMembers,0) as cntMembers, 
+			rv.*, cd.mainDesc, cl.address
+			from cafe_members cm2
+				left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo
+				left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+				left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+				left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+				left outer join cafe_location cl on cd.locationNo = cl.No
+				left outer join region_view rv on cl.regionNo = rv.regionNo
+			where cm2.userID=#{userID} and cm.publishYN='Y'
+			union
+			select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 , ifnull(cmm.cntMembers,0) as cntMembers, 
+			rv.*, cd.mainDesc, cl.address
+			from cafe_master cm
+				left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+				left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+				left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+				left outer join cafe_location cl on cd.locationNo = cl.No
+				left outer join region_view rv on cl.regionNo = rv.regionNo
+			where cm.owner=#{userID}
+		) A
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getMyCafeListCount" resultType="Integer" parameterType="String">
+		select count(cafeNo) from (
+			select cm.*
+			from cafe_members cm2
+				left outer join cafe_master cm on cm.cafeNo=cm2.cafeNo
+			where cm2.userID=#{userID} and cm.publishYN='Y'
+			union
+			select cm.*
+			from cafe_master cm
+			where cm.owner=#{userID}
+		) A
+	</select>
+	
+	<select id="getFavCafeListByRegion" resultType="HashMap" parameterType="HashMap">
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as url1
+		, ifnull(cmm.cntMembers,0) as cntMembers
+		, rv.*, cl.address, cl.latitude, cl.longitude
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+		where cm.publishYN = 'Y' 
+		and (rv.lRegionNo = #{regionNo} or rv.mRegionNo = #{regionNo} or rv.sRegionNo = #{regionNo} or rv.tRegionNo = #{regionNo})
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getFavCafeCountByRegion" resultType="Integer" parameterType="HashMap">
+		select count(cm.cafeNo)
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+			left outer join cafe_members cmm2 on cm.cafeNo = cmm2.cafeNo
+		where cm.publishYN = 'Y' 
+		and (rv.lRegionNo = #{regionNo} or rv.mRegionNo = #{regionNo} or rv.sRegionNo = #{regionNo} or rv.tRegionNo = #{regionNo})
+		and cmm2.userID=#{userID}
+	</select>
+	
+	<select id="getPopularCafeList" resultType="HashMap" parameterType="HashMap">
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as url1
+		, ifnull(cmm.cntMembers,0) as cntMembers, cmm2.cntLatestMembers
+		, rv.*, cl.address
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+			left outer join ( 
+				select cafeNo, count(cafeNo) as cntLatestMembers
+				from cafe_members 
+				where createdDate >= (CURRENT_DATE - interval 6 month)
+				group by cafeNo 
+			) cmm2 on cm.cafeNo = cmm2.cafeNo
+		where cm.publishYN = 'Y' and cmm2.cafeNo is not null
+		order by cmm2.cntLatestMembers
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getPopularCafeListCount" resultType="Integer">
+		select count(cm.cafeNo)
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+			left outer join ( 
+				select cafeNo, count(cafeNo) as cntLatestMembers
+				from cafe_members 
+				where createdDate >= (CURRENT_DATE - interval 6 month)
+				group by cafeNo 
+			) cmm2 on cm.cafeNo = cmm2.cafeNo
+		where cm.publishYN = 'Y' and cmm2.cafeNo is not null
+	</select>
+	
+	<select id="getMyPublicMeetingList" resultType="HashMap" parameterType="HashMap">
+		select cp.*, ifnull(cpm.cntMembers,0) as cntMembers , cm.cafeID, cm.cafeName, cl.address
+				from cafe_public_meeting cp
+			left outer join (
+				select meetingNo, count(meetingNo) as cntMembers
+				from cafe_public_meeting_members
+				group by meetingNo
+			) cpm on cpm.meetingNo = cp.meetingNo
+			left outer join cafe_master cm on cm.cafeNo = cp.cafeNo
+			left outer join ( 
+				select cafeNo, userID from cafe_members where userID=#{userID} 
+			) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cl.No = cp.locationNo			
+		where meetingDate > NOW()
+		and (cm.owner = #{userID} or cmm.userID is not null )
+		group by cp.meetingNo
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getMyPublicMeetingListCount" resultType="Integer" parameterType="String">
+		select count(cp.meetingNo)
+				from cafe_public_meeting cp
+			left outer join (
+				select meetingNo, count(meetingNo) as cntMembers
+				from cafe_public_meeting_members
+				group by meetingNo
+			) cpm on cpm.meetingNo = cp.meetingNo
+			left outer join cafe_master cm on cm.cafeNo = cp.cafeNo
+			left outer join ( 
+				select cafeNo, userID from cafe_members where userID=#{value}
+			) cmm on cm.cafeNo = cmm.cafeNo
+		where meetingDate > NOW()
+		and (cm.owner = #{value} or cmm.userID is not null )
+	</select>
+	
+	<select id="getPopularPublicMeetingList" resultType="HashMap" parameterType="String">
+		select cp.*, ifnull(cpm.cntMembers,0) as cntMembers , cm.cafeID, cm.cafeName, cl.address
+		from cafe_public_meeting cp
+			left outer join (
+				select meetingNo, count(meetingNo) as cntMembers
+				from cafe_public_meeting_members
+				group by meetingNo
+			) cpm on cpm.meetingNo = cp.meetingNo
+			left outer join cafe_master cm on cm.cafeNo = cp.cafeNo
+			left outer join cafe_location cl on cl.No = cp.locationNo
+		where meetingDate > NOW()
+		and ifnull(cntMembers,0)>0
+		order by ifnull(cntMembers,0) desc
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getPopularPublicMeetingListCount" resultType="Integer">
+		select count(cp.meetingNo)
+		from cafe_public_meeting cp
+			left outer join (
+				select meetingNo, count(meetingNo) as cntMembers
+				from cafe_public_meeting_members
+				group by meetingNo
+			) cpm on cpm.meetingNo = cp.meetingNo
+			left outer join cafe_master cm on cm.cafeNo = cp.cafeNo
+		where meetingDate > NOW()
+		and ifnull(cntMembers,0)>0
+	</select>
+	<!-- 카페 메인  -->
+
+	<select id="searchCafe" resultType="HashMap" parameterType="HashMap">
+		select cm.*, cd.mainDesc, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as iconImageURL
+		, ifnull(cmm.cntMembers,0) as cntMembers , rv.*
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci on ci.imageNo = cd.iconImageNo
+			left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+		where cafeName like concat('%',#{keyword},'%') and cm.publishYN = 'Y'
+		<if test="level != null and level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level != null and level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level != null and level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level != null and level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="searchCafeCount" resultType="Integer" parameterType="HashMap">
+		select count(cm.cafeNo) as cntCafes
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_location cl on cd.locationNo = cl.No
+			left outer join region_view rv on cl.regionNo = rv.regionNo
+		where cafeName like concat('%',#{keyword},'%') and cm.publishYN = 'Y'
+		<if test="level != null and level==1">
+			and rv.lRegionNo = #{regionNo}
+		</if>
+		<if test="level != null and level==2">
+			and rv.mRegionNo = #{regionNo}
+		</if>
+		<if test="level != null and level==3">
+			and rv.sRegionNo = #{regionNo}
+		</if>
+		<if test="level != null and level==4">
+			and rv.tRegionNo = #{regionNo}
+		</if>
+	</select>
+	
+	<select id="getCafeMeetingsInMyFavRegion" resultType="HashMap" parameterType="String">
+		select cpm.meetingNo, cpm.title, cpm.meetingDate, cpm.maxNo, ifnull(cmm.curNo,0) as curNo, cpm.createdDate, 
+			rv.*, cm.cafeID, cm.cafeName, cl.address
+		from cafe_public_meeting cpm
+			left outer join cafe_location cl on cpm.locationNo = cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join user_favorite_region ur on ur.regionNo = rv.regionNo
+			left outer join cafe_master cm on cpm.cafeNo=cm.cafeNo
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cpm.meetingNo = cmm.meetingNo
+		where ur.userID = #{userID}
+		and cpm.meetingDate > NOW()
+		order by cpm.meetingDate desc
+		limit 0, 5;
+	</select>
+	
+	<select id="getCafeMeetingsByRegion" resultType="HashMap" parameterType="HashMap">
+		select cpm.meetingNo, cpm.title, cpm.meetingDate, cpm.maxNo, ifnull(cmm.curNo,0) as curNo, cpm.createdDate,  
+			rv.*, cm.cafeID, cm.cafeName, cl.latitude, cl.longitude, cl.address 
+		from cafe_public_meeting cpm
+			left outer join cafe_location cl on cpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo=cl.regionNo
+			left outer join cafe_master cm on cm.cafeNo=cpm.cafeNo
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cpm.meetingNo = cmm.meetingNo
+		where 
+		<if test="level==1">
+			lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			tRegionNo = #{regionNo}
+		</if>
+		limit #{startIndex}, #{showCount}
+	</select>
+	
+	<select id="getTotalCafeMeetingsCountByRegion" resultType="Integer" parameterType="HashMap">
+		select count(cpm.meetingNo) as totalItemCount
+		from cafe_public_meeting cpm
+			left outer join cafe_location cl on cpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo=cl.regionNo
+		where 
+		<if test="level==1">
+			lRegionNo = #{regionNo}
+		</if>
+		<if test="level==2">
+			mRegionNo = #{regionNo}
+		</if>
+		<if test="level==3">
+			sRegionNo = #{regionNo}
+		</if>
+		<if test="level==4">
+			tRegionNo = #{regionNo}
+		</if>
+	</select>
+	
+	<select id="getUpcomingCafeMeetingList" resultType="HashMap" parameterType="String">
+		select cp.*, cm.cafeID, cm.cafeName, cl.lRegionNo,cl.mRegionNo, cl.sRegionNo, cl.tRegionNo from cafe_public_meeting cp
+			left outer join cafe_location cl on cp.locationNo=cl.No
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate >= NOW() 
+		order by cp.meetingDate
+	</select>
+	
+	<select id="getUpcomingCafePublicMeetingCount" resultType="Integer" parameterType="HashMap">
+		select count(cp.meetingNo) 
+		from cafe_public_meeting cp			
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate >= NOW()
+		and cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getTotalCafeMeetingCountByCafeID" resultType="Integer" parameterType="HashMap">
+		select count(cp.meetingNo) 
+		from cafe_public_meeting cp			
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cm.cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafePublicMeetingListByCafeID" resultType="HashMap" parameterType="HashMap">
+		select cp.*, ifnull(cmm.curNo,0) as cntMembers, cm.cafeName, cm.cafeID, cl.regionNo 
+		from cafe_public_meeting cp
+			left outer join cafe_location cl on cp.locationNo=cl.No
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cp.meetingNo = cmm.meetingNo
+		where cp.meetingDate >= NOW()
+		and cm.cafeID=#{cafeID}
+		order by cp.meetingDate
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getLastCafeMeetingListByCafeID" resultType="HashMap" parameterType="HashMap">
+		select cp.*, cm.cafeName, cm.cafeID, cl.regionNo from cafe_public_meeting cp
+			left outer join cafe_location cl on cp.locationNo=cl.No
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate &lt; NOW()
+		and cm.cafeID=#{cafeID}
+		order by cp.meetingDate
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getLastCafeMeetingCountByCafeID" resultType="Integer" parameterType="HashMap">
+		select count(cp.meetingNo) 
+		from cafe_public_meeting cp			
+			left outer join cafe_master cm on cp.cafeNo=cm.cafeNo
+		where cp.meetingDate &lt; NOW()
+		and cm.cafeID=#{cafeID}
+	</select>
+	
+	<insert id="makeCafe" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="cafeNo" keyColumn="cafeNo">
+		insert into cafe_master( cafeID, cafeName, owner, createdDate )
+		values( #{cafeID}, #{cafeName}, #{userID}, NOW() );
+		<selectKey keyProperty="cafeNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<insert id="insertCafeDetail" parameterType="HashMap">
+		insert into cafe_detail( cafeNo, iconImageNo, mainImageNo, mainDesc, locationNo, contactEmail)
+		values( #{cafeNo}, #{iconImageNo}, #{mainImageNo}, #{mainDesc}, #{locationNo}, #{contactEmail} );
+	</insert>
+	
+	<insert id="insertCafeLocation" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="locationNo" keyColumn="locationNo">
+		insert into cafe_location( type, latitude, longitude, regionNo, locationName, address, createdDate )
+		values( #{locationType}, #{latitude}, #{longitude}, #{regionNo}, #{locationName}, #{address}, NOW() );
+		<selectKey keyProperty="locationNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<insert id="updateCafeLocation" parameterType="HashMap">
+		update cafe_location
+		set type=#{locationType}
+		, latitude=#{latitude}
+		, longitude=#{longitude}
+		, locationName=#{locationName}
+		, regionNo=#{regionNo}
+		, address=#{address}
+		where No = #{locationNo}
+	</insert>
+	
+	<select id="getCafeMainInfo" resultType="HashMap" parameterType="HashMap">
+		select cm.*, cd.iconImageNo, cd.mainImageNo
+			, ifnull(cd.mainDesc,'') as mainDesc
+			, concat(ifnull(ci2.url1,''), ifnull(ci2.url2,'')) as iconImageURL
+			, concat(ifnull(ci.url1,''), ifnull(ci.url2,'')) as mainImageURL
+			, cd.contactEmail
+			, cd.locationNo as cafeLocationNo
+			, cl.type as cafeLocationType
+			, cl.latitude as cafeLatitude
+			, cl.longitude as cafeLongitude
+			, cl.regionNo as cafeRegionNo
+			, cl.address as cafeAddress
+			, rv.lRegionNo
+			, rv.mRegionNo
+			, rv.sRegionNo
+			, rv.tRegionNo
+			, cd.notifyNewMemberYN
+			, cd.notifyMemberLeaveYN
+		from cafe_master cm
+			left outer join cafe_detail cd on cm.cafeNo=cd.cafeNo
+			left outer join cafe_image ci2 on cd.iconImageNo = ci2.imageNo
+			left outer join cafe_image ci on cd.mainImageNo = ci.imageNo
+			left outer join cafe_location cl on cl.No = cd.locationNo
+			left outer join region_view rv on rv.regionNo = cl.regionNo 
+		where cafeID=#{cafeID}
+	</select>
+	
+	<select id="getCafeMeetingInfo" resultType="HashMap" parameterType="HashMap">
+		select cm.meetingNo, cm.cafeNo, cm.title, cm.meetingDesc, cm.meetingDate
+			, cl.No as locationNo, cl.latitude, cl.longitude, cl.locationName, cl.address, cl.type as locationType
+			, ifnull(cm.maxNo, 0 ) as maxNo
+			, ifnull(cmm.curNo,0) as curNo
+		from cafe_public_meeting cm
+			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
+				on cm.meetingNo = cmm.meetingNo
+			left outer join cafe_location cl on cl.No=cm.locationNo
+		where cm.meetingNo=#{meetingNo}
+	</select>
+	
+	<select id="getCafeMeetingMembers" resultType="HashMap" parameterType="HashMap">
+		select cm.*, u.userName, u.profileImageURL, cm2.memberType
+		from cafe_public_meeting_members cm
+			left outer join cafe_public_meeting cpm on cm.meetingNo = cpm.meetingNo
+			left outer join cafe_members cm2 on cm.userID=cm2.userID and cpm.cafeNo=cm2.cafeNo
+			left outer join user u on u.userID=cm.userID
+		where cm.meetingNo=#{meetingNo}
+	</select>
+	
+	<insert id="insertCafeBoard" parameterType="HashMap">
+		insert into cafe_board_master( boardName, cafeNo, boardType, writePermission, createdDate )
+		select #{boardName}, cafeNo, #{boardType}, #{writePermission}, NOW() from cafe_master
+		where cafeID=#{cafeID}
+	</insert>
+	
+	<update id="updateCafeBoard" parameterType="HashMap">
+		update cafe_board_master 
+		set boardName=#{boardName}
+		, boardType = #{boardType}
+		, writePermission = #{writePermission} 
+		where boardNo=#{boardNo}
+		and cafeNo in ( select cafeNo from cafe_master where cafeID=#{cafeID} )
+	</update>
+	
+	<insert id="deleteCafeBoard" parameterType="HashMap">
+		delete from cafe_board_master
+		where boardNo = #{boardNo}
+		and cafeNo in ( select cafeNo from cafe_master where cafeID= #{cafeID})
+	</insert>
+	
+	<select id="getCafeBoardPostImageList" resultType="HashMap" parameterType="HashMap">
+		select cm.*, u.userName, bm.boardName, concat( ifnull(ci.url1,'') , ifnull(ci.url2,'') ) as imageURL 
+		from cafe_board_post_master cm
+			left outer join ( 
+				select postNo, imageNo from cafe_board_post_detail where type = 2 
+				group by postNo
+			) cd on cm.postNo = cd.postNo
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+			left outer join user u on cm.userID = u.userID
+			left outer join cafe_board_master bm on bm.boardNo = cm.boardNo
+			left outer join cafe_master cfm on cfm.cafeNo = bm.cafeNo
+		where cd.imageNo is not null
+		and cfm.cafeID=#{cafeID}
+		<if test="boardNo != null and boardNo != ''">
+			and bm.boardNo=#{boardNo}
+		</if>
+		order by cm.createdDate desc
+		limit #{startIndex},#{showCount};
+	</select>
+	
+	<select id="getCafeBoardPostImageCount" resultType="Integer" parameterType="HashMap">
+		select count(cm.postNo) as totalCount from cafe_board_post_master cm
+			left outer join ( 
+				select postNo, imageNo from cafe_board_post_detail where type = 2 
+				group by postNo
+			) cd on cm.postNo = cd.postNo
+			left outer join cafe_image ci on ci.imageNo = cd.imageNo
+			left outer join user u on cm.userID = u.userID
+			left outer join cafe_board_master bm on bm.boardNo = cm.boardNo
+			left outer join cafe_master cfm on cfm.cafeNo = bm.cafeNo
+		where cd.imageNo is not null
+		and cfm.cafeID=#{cafeID}
+		<if test="boardNo != null and boardNo != ''">
+			and bm.boardNo=#{boardNo}
+		</if>
+	</select>
+	
+	<insert id="insertCafeMeeting" parameterType="Hashmap">
+		insert into cafe_public_meeting_members(meetingNo, userID, createdDate)
+		values(#{meetingNo}, #{userID}, NOW());
+	</insert>
+	
+	<delete id="deleteCafeMeeting" parameterType="Hashmap">
+		delete from cafe_public_meeting_members
+		where meetingNo=#{meetingNo} and userID=#{userID};
+	</delete>
+	
+	<select id="getCafeUserInfo" resultType="HashMap" parameterType="HashMap">
+		select u.*
+			, ifnull( cmm.memberType, '' ) as memberType
+			, case when cm.owner = u.userID then 'Y' else 'N' end ownerYN
+			, 'Y' as memberYN
+			, case when cmm.deletedDate is null then 'N' else 'Y' end blockYN
+		from cafe_members cmm
+			left outer join cafe_master cm on cmm.cafeNo = cm.cafeNo
+			left outer join user u on cmm.userID = u.userID
+		where u.userID=#{userID}
+		and cm.cafeID=#{cafeID}
+	</select>
+	
+	<update id="updateCafeMasterInfo" parameterType="HashMap">
+		update cafe_master
+		set cafeName=#{cafeName}
+		where cafeID=#{cafeID} 
+	</update>
+	
+	<update id="updateCafePublishYN" parameterType="HashMap">
+		update cafe_master
+		set publishYN=#{publishYN}
+		where cafeID=#{cafeID} 
+	</update>
+	
+	<update id="updateCafeDetailInfo" parameterType="HashMap">
+		update cafe_detail
+		set mainDesc = #{mainDesc}
+		, iconImageNo = #{iconImageNo}
+		, mainImageNo = #{mainImageNo}
+		, contactEmail = #{contactEmail}
+		, locationNo = #{locationNo}
+		, notifyNewMemberYN = #{notifyNewMemberYN}
+		, notifyMemberLeaveYN = #{notifyMemberLeaveYN}
+		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID}) 
+	</update>
+	
+	<!-- 해당 카페 detail 삭제 -->
+	<delete id="deleteCafeDetail" parameterType="HashMap">
+		delete cd
+		from cafe_detail cd
+			left outer join cafe_master cm on cm.cafeNo = cd.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 해당 카페 master 삭제 -->
+	<delete id="deleteCafeMaster" parameterType="HashMap">
+		delete from cafe_master
+		where cafeID = #{cafeID}
+	</delete>
+	
+	<!-- 정모 만들기 -->
+	<insert id="insertCafePublicMeeting" parameterType="HashMap">
+		insert into cafe_public_meeting(cafeNo, title, meetingDesc, meetingDate, locationNo, maxNo, createdDate)
+		select cafeNo, #{meetingTitle}, #{meetingDesc}, #{meetingDate}, #{locationNo}, #{maxNo}, NOW()
+			FROM cafe_master cm
+		where cm.cafeID=#{cafeID}
+	</insert>
+	
+	<!-- 정모 수정 -->
+	<update id="updateCafePublicMeeting" parameterType="HashMap">
+		update cafe_public_meeting
+		set title = #{meetingTitle}, meetingDesc = #{meetingDesc}, meetingDate = #{meetingDate}
+		, locationNo = #{locationNo}, maxNo = #{maxNo}
+		, createdDate = NOW()
+		where meetingNo = #{meetingNo}
+	</update>
+	
+	<!-- 정모 삭제 -->
+	<delete id="deleteCafePublicMeeting" parameterType="HashMap">
+		delete from cafe_public_meeting
+		where meetingNo = #{meetingNo}
+	</delete>
+	
+	<!-- 이미지 등록 -->
+	<insert id="insertCafeImageRow" parameterType="HashMap"
+		useGeneratedKeys="true" keyProperty="imageNo" keyColumn="imageNo">
+		insert into cafe_image(imageName, url1, url2, serverPath, createdDate)
+		values(#{imageName}, #{url1}, #{url2}, #{serverPath}, NOW());
+		<selectKey keyProperty="imageNo" resultType="String" order="AFTER">
+			select LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<!-- 이미지 commit -->
+	<update id="updateCafeImageAsCommitted" parameterType="HashMap">
+		update cafe_image
+		set commitDate = NOW()
+		where imageNo = #{imageNo}
+	</update>
+	
+	<!-- 이미지 삭제 -->
+	<update id="updateCafeImageAsDeleted" parameterType="HashMap">
+		update cafe_image
+		set commitDate = NULL
+		where imageNo = #{imageNo}
+	</update>
+	
+	<!-- 카페 아이콘 지우기 -->
+	<update id="updateCafeIconAsNull" parameterType="HashMap">
+		update cafe_detail
+		set iconImageNo = NULL
+		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID}) 
+	</update>
+	
+	<!-- 카페 메인 이미지 지우기 -->
+	<update id="updateCafeImageAsNull" parameterType="HashMap">
+		update cafe_detail
+		set mainImageNo = NULL
+		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID}) 
+	</update>
+	
+</mapper>

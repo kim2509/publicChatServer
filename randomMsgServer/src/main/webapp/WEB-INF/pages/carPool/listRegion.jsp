@@ -37,7 +37,7 @@
 <html>
 
 <head>
-<title>이근처 합승</title>
+<title>이근처</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -258,24 +258,6 @@
 		document.location.href='nearhere://viewPost?postID=' + postID;
 	}
 	
-	function openUserProfile( userID )
-	{
-		<% if ( appVersion < 1.53 ) { %>
-			
-		document.location.href='nearhere://openUserProfile?userID=' + userID;
-		
-		<% } else { %>
-		
-		var url = '<%= userInfoPage %>' + '?userID=' + userID;
-		
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
-		else
-			document.location.href = decodeURIComponent(url);
-		
-		<% }%>
-	}
-	
 	function snsLogin()
 	{
 		document.location.href='nearhere://snsLogin';
@@ -323,21 +305,6 @@
 <%
 			}
 %>			
-		}
-	}
-	
-	function goFavoriteRegionPage()
-	{
-		if ( isApp == 'Y' )
-		{
-			var titleUrlEncoded = encodeURIComponent( '관심지역설정' );
-			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=' + userID + '&isApp=<%= isApp %>';
-			document.location.href='nearhere://openURL?title=' + titleUrlEncoded + '&url=' + encodeURIComponent( url );
-		}
-		else
-		{
-			var url = '<%= Constants.getServerURL() %>/region/favoriteRegion.do?userID=' + userID + '&isApp=<%= isApp %>';
-			document.location.href= url;
 		}
 	}
 	

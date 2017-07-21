@@ -397,8 +397,6 @@ a{
 	
 	jQuery(document).ready(function(){
 		
-		console.log('ready');
-		
 	});
 	
 	function goFavoriteRegionPage()

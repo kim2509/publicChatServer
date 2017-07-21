@@ -42,8 +42,6 @@
 				// TODO
 				try {
 					
-					console.log( JSON.stringify( data ) );
-
 					displayNewUsers( data );
 					
 				} catch (ex) {

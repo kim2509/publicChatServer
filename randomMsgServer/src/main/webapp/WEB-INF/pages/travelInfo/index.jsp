@@ -333,7 +333,7 @@ dl {
 		if ( lastPage > firstPage + numOfPagesOnScreen )
 			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" style="padding:5px;">&gt;</a>');
 		
-		if ( firstPage + numOfPagesOnScreen < lastPage - numOfPagesOnScreen)
+		if ( firstPage + numOfPagesOnScreen <= lastPage )
 			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" style="padding:5px;">&gt;&gt;</a>');
 		
 	}

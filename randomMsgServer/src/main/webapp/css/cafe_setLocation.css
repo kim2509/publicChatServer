@@ -1,0 +1,62 @@
+
+/* 공통 */
+div, body, ul, p{
+	margin:0;
+	padding:0;
+}
+
+body{
+	background:white;
+}
+
+li{ 
+	list-style:none;
+}
+
+#wrapper{
+	max-width:900px;
+	margin:0 auto;
+}
+
+#container{
+	
+}
+
+.titleDiv{
+	background:#7bafe3;;
+	color:white;
+	height:50px;
+	text-align:center;
+	width: 100%;
+}
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	vertical-align:middle;
+	line-height:50px;
+}
+/* 공통 */
+
+#tabView{
+	margin:10px;
+	border:1px solid #d9d9d9;
+	overflow:auto;
+}
+
+#tabView li{
+	float:left;
+	width:50%;
+	text-align:center;
+	line-height:30px;
+	font-size:15px;
+	font-weight:bold;
+}
+
+#tabView li.selected{
+	background:yellow;
+}
+
+#tabMap{
+	border-right:1px solid #d9d9d9;
+}

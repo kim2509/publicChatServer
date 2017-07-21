@@ -1,10 +1,12 @@
 package common;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.dy.common.Util;
 import com.nearhere.domain.User;
 
 public class UserBiz extends CommonBiz{
@@ -70,5 +72,32 @@ public class UserBiz extends CommonBiz{
 	{
 		List<HashMap> userPushMessageList = sqlSession.selectList("com.tessoft.nearhere.user.getUserPushMessage", userID);
 		return userPushMessageList;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void updateUserPushMessageAsRead( HashMap param )
+	{
+		sqlSession.update("com.tessoft.nearhere.user.updateUserPushMessageAsRead", param );
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void updateAllUserPushMessageAsRead( HashMap param )
+	{
+		sqlSession.update("com.tessoft.nearhere.user.updateAllUserPushMessageAsRead", param );
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public HashMap selectUserByUserToken( String userToken ) throws Exception
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.selectUserByUserToken", userToken );
+		return userInfo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public String getUserIDByUserToken( String userToken ) throws Exception
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.selectUserByUserToken", userToken );
+		if ( Util.isEmptyForKey(userInfo, "userID") ) return null;
+		return userInfo.get("userID").toString();
 	}
 }

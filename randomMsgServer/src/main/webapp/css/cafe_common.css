@@ -1,0 +1,250 @@
+@CHARSET "utf-8";
+
+body, div, ul{
+	margin:0;
+	padding:0;
+}
+
+/* 상단 헤더 */
+.titleDiv{
+	background:#7bafe3;;
+	color:white;
+	height:50px;
+	text-align:center;
+	width: 100%;
+}
+
+
+.title{
+	font-weight:bold;
+	font-size:20px;
+	line-height:50px;
+}
+/* 상단 헤더 */
+
+/* 탭 스타일 */
+.tab3{
+	list-style:none;
+	overflow:auto;
+	line-height:30px;
+}
+
+.tab3 li{
+	float:left;
+	text-align:center;
+	font-size:14px;
+}
+
+.tab3 li.selected{
+	font-weight:bold;
+	color:#1c8c01;
+	background:red;
+	/*border-radius:5px;*/
+	background: #b5e49d;
+    cursor:pointer;
+}
+
+.tab3 li:nth-child(1){
+	width:33%;
+}
+
+.tab3 li:nth-child(2){
+	width:34%;
+}
+
+.tab3 li:nth-child(3){
+	width:33%;
+}
+
+.tab2{
+	list-style:none;
+	overflow:auto;
+	line-height:30px;
+}
+
+.tab2 li{
+	float:left;
+	text-align:center;
+	font-size:14px;
+	width:50%;
+}
+
+.tab2 li.selected{
+	font-weight:bold;
+	color:#1c8c01;
+	background:red;
+	/*border-radius:5px;*/
+	background: #b5e49d;
+    cursor:pointer;
+}
+
+/* 탭 스타일 */
+
+/* 공통 */
+.margin10{
+	margin:10px;
+}
+
+.more{
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #7d7777;
+    border-radius: 10px;
+    margin:10px 0px 10px 0px;
+}
+
+.empty{
+	text-align:center;
+	height:120px;
+	line-height:120px;
+	font-weight: bold;
+    font-size: 15px;
+    color: #9d8484;
+}
+
+.loading{
+	text-align:center;
+	height:120px;
+	line-height:120px;
+	font-weight: bold;
+    font-size: 15px;
+    color: #9d8484;
+}
+
+/* 공통 */
+
+/* 카페 리스트 */
+.cafeListUL{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid #d9d9d9;
+    margin:10px 0px;
+    border-radius:10px;
+}
+
+.cafeListUL li {
+    clear: both;
+    padding: 10px;
+    border-bottom: 1px solid #d9d9d9;
+    border-left:1px solid #d9d9d9;
+	border-right:1px solid #d9d9d9;
+	border-radius:10px;
+    overflow: auto;
+}
+
+.cafeListUL li .cafeImage {
+    float: left;
+}
+
+.cafeListUL li .cafeImage img{
+    border-radius:10px;
+}
+
+.cafeListUL li .cafeInfo {
+    margin-left: 70px;
+}
+
+.cafeListUL li .cafeInfo .cafeTitle {
+    margin: 5px 0px;
+}
+
+.cafeListUL li .cafeInfo .cafeDesc {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin: 5px 0px;
+    font-size: 14px;
+    color: gray;
+}
+
+.cafeListUL li .cafeInfo .regionInfo {
+    float: right;
+    font-size: 12px;
+}
+
+.cafeListUL li .cafeInfo .memberInfo {
+    margin: 5px 0px;
+    font-size: 12px;
+}
+
+/* 카페 리스트 */
+
+
+/* 정모 리스트 li style */
+.meetingListUL{
+	clear:both;
+	list-style:none;
+	margin:0px;
+	padding:0;
+	border-bottom:1px solid #d9d9d9;
+	margin-top:10px;
+	border-radius:10px;
+}
+
+.meetingListUL li{
+	border-top:1px solid #d9d9d9;
+	border-left:1px solid #d9d9d9;
+	border-right:1px solid #d9d9d9;
+	border-radius:10px;
+	padding:10px;
+	line-height:25px;
+	overflow: auto;
+}
+
+.meetingListUL li #title{
+	font-size:15px;
+	font-weight:bold;
+	color:#5b58d7;
+	margin-bottom:5px;
+}
+
+.meetingListUL li #meetingDate{
+	float:right;
+	font-size:14px;
+	font-weight:bold;
+	color:red;
+}
+
+.meetingListUL li #memberCount{
+	font-size:13px;
+}
+
+.meetingListUL li #cafeName{
+	float:right;
+	font-size:13px;
+}
+
+.meetingListUL li #location{
+	font-size:13px;
+}
+/* 정모 리스트 li style */
+
+/* 페이징 */
+#pagingInfo{
+	clear:both;
+	margin-bottom:50px;
+	display:none;
+}
+
+#pagingInfo a{
+	text-decoration:none;
+	border:1px solid #d9d9d9;
+}
+
+
+#pagingInfo .pageSelected{
+	text-decoration:none;
+	border:1px solid #d9d9d9;
+	background:#5642f4;
+	color:white;
+}
+
+#pagingInfo a{
+	padding:5px;
+	margin:0px 2px;
+}
+/* 페이징 */

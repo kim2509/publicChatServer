@@ -34,7 +34,7 @@
 <html>
 
 <head>
-<title>이근처 합승</title>
+<title>이근처</title>
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
@@ -107,13 +107,6 @@
 			});
 		}
 	});
-
-	function openUserProfile( userID )
-	{
-		var url = '<%= userInfoPage %>' + '?userID=' + userID;
-		
-		document.location.href='nearhere://openURL?title=' + encodeURIComponent('사용자정보') + '&url=' + encodeURIComponent(url);
-	}
 	
 	function goFriendInfo()
 	{

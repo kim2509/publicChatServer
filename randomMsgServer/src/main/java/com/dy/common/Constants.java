@@ -6,13 +6,21 @@ public class Constants {
 	
 	public static boolean bReal = true;
 	
+//	public static String ServerIP = "www.hereby.co.kr";
+//	public static String Port = "80";
+	
 	public static String ServerIP = "192.168.0.200";
-	public static String CSS_PATH = "http://www.hereby.co.kr/nearhere/css/";
-	public static String SECURE_CSS_PATH = "https://www.hereby.co.kr/nearhere/css/";
-	public static String IMAGE_PATH = "http://www.hereby.co.kr/nearhere/image/";
-	public static String SECURE_IMAGE_PATH = "https://www.hereby.co.kr/nearhere/image/";
+	public static String Port = "8080";
+	
+//	public static String ServerIP = "192.168.43.137";
+//	public static String ServerIP = "localhost";
 	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
-	public static String SECURE_JS_PATH = "https://www.hereby.co.kr/nearhere/js/";
+	public static String CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
+	public static String SECURE_CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
+	public static String IMAGE_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/image/";
+	public static String SECURE_IMAGE_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/image/";
+	public static String JS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/js/";
+	public static String SECURE_JS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/js/";
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static String DAUM_API_KEY = "a694766f82dd0fb809ccf02189747061";
 	//public static String DAUM_API_KEY = "d346cd447ad87016b635e77df459b155adb17509";
@@ -21,25 +29,44 @@ public class Constants {
 	
 	public static String getServerURL()
 	{
-//		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
-		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://" + ServerIP + ":8080/nearhere";
+		return "http://" + ServerIP + ":" + Port + "/nearhere";
 	}
 	
 	public static String getServerSSLURL()
 	{
-//		return Constants.bReal ? "http://www.hereby.co.kr/nearhere" : "http://localhost:8080/nearhere";
-		return Constants.bReal ? "https://www.hereby.co.kr/nearhere" : "http://" + ServerIP + ":8080/nearhere";
+		return "http://" + ServerIP + ":" + Port + "/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
 	{
-		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://www.hereby.co.kr/thumbnail/";
-//		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://172.30.1.200/thumbnail/";
+		return "http://" + ServerIP + "/thumbnail/";
 	}
 	
 	public static String getThumbnailImageSSLURL()
 	{
-		return Constants.bReal ? "https://www.hereby.co.kr/thumbnail/" : "http://www.hereby.co.kr/thumbnail/";
-//		return Constants.bReal ? "http://www.hereby.co.kr/thumbnail/" : "http://172.30.1.200/thumbnail/";
+		return "http://" + ServerIP + "/thumbnail/";
 	}
+	
+	public static String getApacheHome()
+	{
+		return Constants.bReal ? "https://www.hereby.co.kr/" : "http://" + ServerIP + "/";
+	}
+	
+	public static String CafeMemberTypeOwner = "카페주인";
+	public static String CafeMemberTypeOperator = "운영자";
+	public static String CafeMemberTypeMember = "회원";
+	
+	public static String PAGE_ID_CAFE_INDEX = "P0000";
+	public static String PAGE_ID_CAFE_HOME = "P0001";
+	public static String PAGE_ID_CAFE_MEETINGlIST = "P0002";
+	
+	public static String PAGE_ID_BOARD_HOME = "P1001";
+	public static String PAGE_ID_BOARD_POST_DETAIL = "P1002";
+	public static String PAGE_ID_SEARCH_BOARD = "P1003";
+	
+	public static String PAGE_ID_PUBLIC_MEETING_DETAIL = "P2001";
+	
+	public static String PAGE_ID_NEWS_LIST = "P5001";
+	
+	public static String CAFE_DEAULT_ICON = "cafe_default.png";
 }

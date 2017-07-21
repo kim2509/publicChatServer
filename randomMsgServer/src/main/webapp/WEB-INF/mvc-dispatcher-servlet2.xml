@@ -13,7 +13,9 @@
 	xmlns:task="http://www.springframework.org/schema/task">
 
 
-	<bean id="pushService" class="com.dy.common.ScheduledTasks" />
+	<bean id="pushService" class="com.tessoft.nearhere.background.ScheduledTasks" />
+	<bean id="ImageDeleteJob" class="com.tessoft.nearhere.background.ImageDeleteJob" />
+	
 	<task:executor id="executor" pool-size="5" />
 	<task:scheduler id="scheduler" pool-size="5" />
 	<task:annotation-driven scheduler="scheduler"

@@ -73,4 +73,30 @@
 		where r.regionNo=#{regionNo}
 	</select>
 	
+	<select id="getRegionInfoByRegionNo" parameterType="String" resultType="String">
+		select concat(ifnull(r.regionNo,0), '|' , ifnull(r2.regionNo,0), '|' , 
+			ifnull(r3.regionNo, 0), '|' , ifnull(r4.regionNo,0)) as regionInfo 
+		from region r
+			left outer join region r2 on r.parentNo=r2.regionNo
+			left outer join region r3 on r2.parentNo=r3.regionNo
+			left outer join region r4 on r3.parentNo=r4.regionNo	
+		where r.regionNo=#{value}
+	</select>
+	
+	<select id="getFullRegionNameByRegionNo" parameterType="String" resultType="String">
+		select concat(ifnull(r4.regionName,''), ' ' , ifnull(r3.regionName,''), ' ' , 
+			ifnull(r2.regionName,''), ' ' , ifnull(r.regionName,'')) as regionInfo 
+		from region r
+			left outer join region r2 on r.parentNo=r2.regionNo
+			left outer join region r3 on r2.parentNo=r3.regionNo
+			left outer join region r4 on r3.parentNo=r4.regionNo	
+		where r.regionNo=#{value}
+	</select>
+	
+	<select id="getFavoriteRegionNoByUserID" parameterType="String" resultType="HashMap">
+		select * from user_favorite_region ur
+			left outer join region_view rv on ur.regionNo = rv.regionNo
+		where ur.userID=#{value}
+	</select>
+	
 </mapper>

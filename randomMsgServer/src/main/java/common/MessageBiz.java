@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dy.common.Constants;
+import com.dy.common.Util;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
@@ -34,7 +35,7 @@ public class MessageBiz extends CommonBiz{
 	{
 		try
 		{
-			Message message = new Message.Builder().addData("title", "신규 합승정보 알림" )
+			Message message = new Message.Builder().addData("title", "신규 카풀정보 알림" )
 					.addData("message",  msg )
 					.addData("type",  "newPostByDistance" )
 					.addData("postID",  postID )
@@ -151,5 +152,39 @@ public class MessageBiz extends CommonBiz{
 		pushMessage.setParam1(param);
 		
 		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
+	}
+	
+	public String sendCafeNotification(String title, String userID, String regID, 
+			String msg , String url, String popupTitle, String messageType, String param1, String titleBarHiddenYN )
+	{
+		try
+		{
+			if ( Util.isEmptyString(regID) ) return "regID is empty string.";
+				
+			Message message = new Message.Builder().addData("title", title )
+					.addData("message",  msg )
+					.addData("type",  "webView" )
+					.addData("url",  url )
+					.addData("param",  popupTitle )
+					.addData("sound", "on")
+					.addData("vibrate", "on")
+					.addData("titleBarHidden", titleBarHiddenYN )
+					.build();
+			
+			String result = sendGCMPush(regID, message);
+			
+			UserPushMessage pushMessage = new UserPushMessage();
+			pushMessage.setToUserID( userID );
+			pushMessage.setType(messageType);
+			pushMessage.setMessage( msg );
+			pushMessage.setParam1(param1);
+			sqlSession.insert("com.tessoft.nearhere.taxi.insertUserPushMessage", pushMessage );
+			
+			return result;
+		}
+		catch( Exception ex)
+		{
+			return ex.getMessage();
+		}
 	}
 }
