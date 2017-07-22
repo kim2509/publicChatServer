@@ -958,7 +958,14 @@ public class CafeAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			if ( Util.isEmptyForKey(param, "cafeID") )
+			HashMap user = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			
+			if (!"Normal".equals( Util.getStringFromHash(user, "type")))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페를 공개하기 위해선 SNS로그인이 필요합니다.");
+			}
+			else if ( Util.isEmptyForKey(param, "cafeID") )
 			{
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("요청값이 올바르지 않습니다.");
@@ -968,33 +975,35 @@ public class CafeAjaxController extends BaseController {
 				response.setResCode( ErrorCode.INVALID_INPUT );
 				response.setResMsg("고객님은 해당메뉴에 권한이 없습니다.");
 			}
-
-			HashMap mainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
-			
-			if ( Util.isEmptyForKey(mainInfo, "cafeName") )
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("카페 이름이 설정되어 있지 않습니다.");
-			}
-			else if ( Util.isEmptyForKey(mainInfo, "mainDesc") )
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("카페 설명이 설정되어 있지 않습니다.");
-			}
-			else if ( Util.isEmptyForKey(mainInfo, "contactEmail") )
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("운영자 이메일이 설정되어 있지 않습니다.");
-			}
-			else if ( CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param).size() < 1 )
-			{
-				response.setResCode( ErrorCode.INVALID_INPUT );
-				response.setResMsg("게시판이 최소한 1개 이상이어야 합니다.");
-			}
 			else
 			{
-				param.put("publishYN", "Y");
-				CafeBiz.getInstance(sqlSession).updateCafePublishYN(param);
+				HashMap mainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+				
+				if ( Util.isEmptyForKey(mainInfo, "cafeName") )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("카페 이름이 설정되어 있지 않습니다.");
+				}
+				else if ( Util.isEmptyForKey(mainInfo, "mainDesc") )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("카페 설명이 설정되어 있지 않습니다.");
+				}
+				else if ( Util.isEmptyForKey(mainInfo, "contactEmail") )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("운영자 이메일이 설정되어 있지 않습니다.");
+				}
+				else if ( CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param).size() < 1 )
+				{
+					response.setResCode( ErrorCode.INVALID_INPUT );
+					response.setResMsg("게시판이 최소한 1개 이상이어야 합니다.");
+				}
+				else
+				{
+					param.put("publishYN", "Y");
+					CafeBiz.getInstance(sqlSession).updateCafePublishYN(param);
+				}	
 			}
 			
 			insertHistory("/cafe/publishCafeAjax.do", param.get("cafeID").toString() , null , null , null );
@@ -1105,7 +1114,9 @@ public class CafeAjaxController extends BaseController {
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 
-			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			HashMap user = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			
+			String userID = Util.getStringFromHash(user, "userID");
 			param.put("userID", userID);
 
 			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
@@ -1114,7 +1125,12 @@ public class CafeAjaxController extends BaseController {
 			param.put("cafeNo", Util.getStringFromHash(cafeMainInfo, "cafeNo"));
 			param.put("cafeID", Util.getStringFromHash(cafeMainInfo, "cafeID"));
 			
-			if ( Util.isEmptyString(userID) )
+			if (!"Normal".equals( Util.getStringFromHash(user, "type")))
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("카페에 가입하기 위해선 SNS로그인이 필요합니다.");
+			}
+			else if ( Util.isEmptyString(userID) )
 			{
 				response.setResCode( ErrorCode.UNKNOWN_ERROR );
 				response.setResMsg("회원정보가 올바르지 않습니다.");

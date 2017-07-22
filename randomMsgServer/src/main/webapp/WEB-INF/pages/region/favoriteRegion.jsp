@@ -23,6 +23,8 @@
 <script type="text/javascript"
 	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 	
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=5"></script>
+
 <style type="text/css">
 
 body{
@@ -90,6 +92,8 @@ select{
 </style>
 
 	<script language="javascript">
+	
+	var isApp = '<%= isApp %>';
 	
 		jQuery(document).ready( function() {
 			
@@ -181,7 +185,7 @@ select{
 		{
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/getUserFavoriteRegionList.do",
+				url : "/nearhere/region/getUserFavoriteRegionList.do?userID=<%= userID %>",
 				data : null,
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -229,7 +233,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/deleteUserFavoriteRegion.do",
+				url : "/nearhere/region/deleteUserFavoriteRegion.do?userID=<%= userID %>",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -238,6 +242,8 @@ select{
 					// TODO
 					try {
 
+						refreshCafeIndex();
+						
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
@@ -246,6 +252,7 @@ select{
 						}
 						
 						$('#emptyDiv').hide();
+						
 						displayUserFavoriteRegionList( result );
 						
 					} catch (ex) {
@@ -292,7 +299,7 @@ select{
 			
 			jQuery.ajax({
 				type : "POST",
-				url : "/nearhere/region/insertUserFavoriteRegion.do",
+				url : "/nearhere/region/insertUserFavoriteRegion.do?userID=<%= userID %>",
 				data : JSON.stringify( param ),
 				dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
 				contentType : "application/json; charset=UTF-8",
@@ -301,6 +308,8 @@ select{
 					// TODO
 					try {
 
+						refreshCafeIndex();
+						
 						if ( result == null || result.data == null || result.data.length == 0 )
 						{
 							$('#emptyDiv').show();
@@ -324,6 +333,18 @@ select{
 					alert("에러발생(getUserFavoriteRegionList)" + error );
 				}
 			});
+		}
+		
+		function refreshCafeIndex()
+		{
+			if ( isApp == 'Y' )
+			{
+				var broadcastList = [];
+				broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_INDEX %>"};
+				broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_NEWS_LIST %>"};
+				var param = {"broadcastList": broadcastList };
+				sendBroadcasts(param);
+			}
 		}
 		
 	</script>

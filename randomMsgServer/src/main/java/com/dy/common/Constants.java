@@ -4,23 +4,23 @@ public class Constants {
 
 	public final static int FETCH_MESSAGE_COUNT = 10;
 	
-	public static boolean bReal = false;
+	public static boolean bReal = true;
 	
-//	public static String ServerIP = "www.hereby.co.kr";
+	public static String ServerIP = "www.hereby.co.kr";
 //	public static String Port = "80";
 	
-	public static String ServerIP = "192.168.0.200";
-	public static String Port = "8080";
+//	public static String ServerIP = "192.168.0.200";
+//	public static String Port = "8080";
 	
 //	public static String ServerIP = "192.168.43.137";
 //	public static String ServerIP = "localhost";
-	
-	public static String CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
-	public static String SECURE_CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
-	public static String IMAGE_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/image/";
-	public static String SECURE_IMAGE_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/image/";
-	public static String JS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/js/";
-	public static String SECURE_JS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/js/";
+//	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
+	public static String CSS_PATH = "http://" + ServerIP + "/nearhere/css/";
+	public static String SECURE_CSS_PATH = "https://" + ServerIP + "/nearhere/css/";
+	public static String IMAGE_PATH = "http://" + ServerIP + "/nearhere/image/";
+	public static String SECURE_IMAGE_PATH = "https://" + ServerIP + "/nearhere/image/";
+	public static String JS_PATH = "http://" + ServerIP + "/nearhere/js/";
+	public static String SECURE_JS_PATH = "https://" + ServerIP + "/nearhere/js/";
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static String DAUM_API_KEY = "a694766f82dd0fb809ccf02189747061";
 	//public static String DAUM_API_KEY = "d346cd447ad87016b635e77df459b155adb17509";
@@ -29,12 +29,12 @@ public class Constants {
 	
 	public static String getServerURL()
 	{
-		return "http://" + ServerIP + ":" + Port + "/nearhere";
+		return "http://" + ServerIP + "/nearhere";
 	}
 	
 	public static String getServerSSLURL()
 	{
-		return "http://" + ServerIP + ":" + Port + "/nearhere";
+		return "https://" + ServerIP + "/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
@@ -44,7 +44,7 @@ public class Constants {
 	
 	public static String getThumbnailImageSSLURL()
 	{
-		return "http://" + ServerIP + "/thumbnail/";
+		return "https://" + ServerIP + "/thumbnail/";
 	}
 	
 	public static String getApacheHome()
@@ -65,6 +65,8 @@ public class Constants {
 	public static String PAGE_ID_SEARCH_BOARD = "P1003";
 	
 	public static String PAGE_ID_PUBLIC_MEETING_DETAIL = "P2001";
+	
+	public static String PAGE_ID_NEWS_LIST = "P5001";
 	
 	public static String CAFE_DEAULT_ICON = "cafe_default.png";
 }

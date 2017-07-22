@@ -186,8 +186,8 @@ public class CafeController extends BaseController {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping( value ="/cafe/{cafeID}")
-	public ModelAndView cafeHome ( @PathVariable(value="cafeID") String cafeID , ModelMap model,
+	@RequestMapping( value ="/cafe/cafeHome.do")
+	public ModelAndView cafeHome ( String cafeID , ModelMap model,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try

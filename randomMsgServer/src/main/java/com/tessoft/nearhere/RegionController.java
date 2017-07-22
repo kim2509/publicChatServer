@@ -82,13 +82,18 @@ public class RegionController extends BaseController{
 	
 	@RequestMapping( value ="/region/getUserFavoriteRegionList.do")
 	public @ResponseBody APIResponse getUserFavoriteRegionList( HttpServletRequest request, ModelMap model, @RequestBody String bodyString ,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+			String userID, @CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 
 		try
 		{
-			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			HashMap userInfo = new HashMap();
+			
+			if ( !Util.isEmptyString(userToken))
+				userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			else if ( !Util.isEmptyString(userID))
+				userInfo.put("userID", userID);
 			
 			getUserFavoriteRegionList(response, userInfo);
 
@@ -106,14 +111,20 @@ public class RegionController extends BaseController{
 	
 	@RequestMapping( value ="/region/insertUserFavoriteRegion.do")
 	public @ResponseBody APIResponse insertUserFavoriteRegion( HttpServletRequest request, ModelMap model, @RequestBody String bodyString,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+			String userID, @CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 
 		try
 		{
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
-			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+			HashMap userInfo = new HashMap();
+			
+			if ( !Util.isEmptyString(userToken))
+				userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			else if ( !Util.isEmptyString(userID))
+				userInfo.put("userID", userID);
 			
 			if ( userInfo != null )
 			{
@@ -136,14 +147,20 @@ public class RegionController extends BaseController{
 	
 	@RequestMapping( value ="/region/deleteUserFavoriteRegion.do")
 	public @ResponseBody APIResponse deleteUserFavoriteRegion( HttpServletRequest request, ModelMap model, @RequestBody String bodyString,
-			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+			String userID, @CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		APIResponse response = new APIResponse();
 
 		try
 		{
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
-			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+			HashMap userInfo = new HashMap();
+			
+			if ( !Util.isEmptyString(userToken))
+				userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			else if ( !Util.isEmptyString(userID))
+				userInfo.put("userID", userID);
 			
 			if ( userInfo != null )
 			{

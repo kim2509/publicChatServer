@@ -55,7 +55,10 @@ function sendBroadcasts( jsonObj )
 {
 	if ( Android && Android != null && typeof Android != 'undefined')
 	{
-		return Android.sendBroadcasts( JSON.stringify( jsonObj ) );
+		if ( Android.sendBroadcasts && Android.sendBroadcasts != null && typeof Android.sendBroadcasts != 'undefined')
+		{
+			return Android.sendBroadcasts( JSON.stringify( jsonObj ) );
+		}
 	}
 	
 	return '';

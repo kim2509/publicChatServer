@@ -33,17 +33,6 @@
 		}
 	}
 	
-	function goBoardHome( boardName, boardNo )
-	{
-		var url = '<%= Constants.getServerURL() + "/boardPost/" %>' + boardNo + '?cafeID=' + cafeID;
-		
-		var titleUrlEncoded = encodeURIComponent( boardName );
-		if ( isApp == 'Y' )
-			document.location.href='nearhere://openURL?titleBarHidden=Y&pageID=<%= Constants.PAGE_ID_BOARD_HOME %>&title=' + titleUrlEncoded + '&url=' + url + '';
-		else
-			document.location.href= url;
-	}
-	
 </script>
 <script id="boardT" type="text/x-handlebars-template">
 	{{#if data}}
