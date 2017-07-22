@@ -53,6 +53,30 @@ import common.TaxiBiz;
 @Controller
 public class AdminController extends BaseController{
 
+	@RequestMapping( value ="/admin/login.do")
+	public ModelAndView login ( HttpServletRequest request )
+	{
+		try
+		{
+			String id = request.getParameter("id");
+			String pw = request.getParameter("password");
+			
+			if ( "admin".equals( id ) && "fdsa4321".equals( pw ) )
+			{
+				ModelAndView mav = new ModelAndView();
+				request.getSession().setAttribute("id", "admin");
+				mav.setViewName("redirect:index.do");
+				return mav;
+			}
+		}
+		catch(Exception ex )
+		{
+			
+		}
+		
+		return new ModelAndView("admin/login");
+	}
+	
 	@RequestMapping( value ="/admin/index.do")
 	public ModelAndView index ( HttpServletRequest request , HttpServletResponse response , 
 			String token)
@@ -172,30 +196,6 @@ public class AdminController extends BaseController{
 		result.put("items", items);
 		
 		return result;
-	}
-	
-	@RequestMapping( value ="/admin/login.do")
-	public ModelAndView login ( HttpServletRequest request )
-	{
-		try
-		{
-			String id = request.getParameter("id");
-			String pw = request.getParameter("password");
-			
-			if ( "admin".equals( id ) && "fdsa4321".equals( pw ) )
-			{
-				ModelAndView mav = new ModelAndView();
-				request.getSession().setAttribute("id", "admin");
-				mav.setViewName("redirect:index.do");
-				return mav;
-			}
-		}
-		catch(Exception ex )
-		{
-			
-		}
-		
-		return new ModelAndView("admin/login");
 	}
 	
 	@RequestMapping( value ="/admin/allUsers.do")

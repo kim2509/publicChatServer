@@ -24,8 +24,8 @@ import common.UserBiz;
 public class BoardPostConroller extends BaseController {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping( value ="/boardPost/{boardNo}")
-	public ModelAndView boardHome ( @PathVariable(value="boardNo") String boardNo , ModelMap model,
+	@RequestMapping( value ="/boardPost/boardHome.do")
+	public ModelAndView boardHome ( String boardNo , ModelMap model,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken )
 	{
 		try
@@ -57,8 +57,8 @@ public class BoardPostConroller extends BaseController {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping( value ="/boardPost/detail/{postNo}")
-	public ModelAndView detail ( @PathVariable(value="postNo") String postNo , ModelMap model,
+	@RequestMapping( value ="/boardPost/detail.do")
+	public ModelAndView detail ( String postNo , ModelMap model,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
 	{
 		try
