@@ -64,7 +64,7 @@
 	
 	<!-- 오늘 설치율 조회 -->
 	<select id="getInstallCountForToday" resultType="java.util.HashMap">
-		select sum(i), sum(d), (1.0 - (sum(d)*0.1)/(sum(i)*0.1))*100 from (
+		select sum(i) as installNumber, sum(d) as deleteNumber, ifnull((1.0 - (sum(d)*0.1)/(sum(i)*0.1))*100,0) as installRate from (
 		select count(userNo) as i, 0 as d from user
 		where isDeleted is null
 		and left(createdDate, 10)=left(NOW(),10)
@@ -76,8 +76,8 @@
 	</select>
 	
 	<!-- value 일자 전 설치율 조회 -->
-	<select id="getInstallCountByDay" parameterType="Integer">
-		select sum(i), sum(d), (1.0 - (sum(d)*0.1)/(sum(i)*0.1))*100 from (
+	<select id="getInstallCountByDay" parameterType="Integer" resultType="HashMap">
+		select sum(i) as installNumber, sum(d) as deleteNumber, ifnull((1.0 - (sum(d)*0.1)/(sum(i)*0.1))*100,0) as installRate from (
 		select count(userNo) as i, 0 as d from user
 		where isDeleted is null
 		and left(createdDate, 10)=left( DATE_SUB(NOW(), INTERVAL #{value} DAY),10)

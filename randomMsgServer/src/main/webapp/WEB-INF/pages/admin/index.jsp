@@ -12,6 +12,7 @@
 	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
 	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
 
 <script language="javascript">
 	function sendEventPushToAdmin() {
@@ -157,14 +158,11 @@
 	
 </script>
 
+<jsp:include page="statistics.jsp" flush="true"></jsp:include>
+
 </head>
 <body>
 
-	<a href="/nearhere/admin/allUsers.do">전체 사용자 보기(최근 100명)</a>
-	<br/><br/>
-	<a href="/nearhere/admin/allUsersOnMap.do">전체 사용자 보기(지도)</a>
-	<br/><br/>
-	
 	<input type="button" value="관리자에게 이벤트 푸쉬 보내기"
 		onclick="sendEventPushToAdmin();" />
 	<br />
