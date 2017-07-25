@@ -30,8 +30,9 @@
 <script type="text/javascript"
 	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 <script type="text/javascript"
-	src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>	
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
+	src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>
+		
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/common.js?v=3"></script>
 
 <script language="javascript">
 
