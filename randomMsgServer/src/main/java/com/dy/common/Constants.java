@@ -4,7 +4,7 @@ public class Constants {
 
 	public final static int FETCH_MESSAGE_COUNT = 10;
 	
-	public static boolean bReal = true;
+	public static boolean bReal = false;
 	
 //	public static String ServerIP = "www.hereby.co.kr";
 //	public static String ServerIP = "192.168.43.137";
