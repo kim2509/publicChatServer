@@ -16,7 +16,7 @@
 				left outer join ( select cafeNo, count(cafeNo) as cntMembers from cafe_members group by cafeNo ) cmm on cm.cafeNo = cmm.cafeNo
 				left outer join cafe_location cl on cd.locationNo = cl.No
 				left outer join region_view rv on cl.regionNo = rv.regionNo
-			where cm2.userID=#{userID} and cm.publishYN='Y'
+			where cm2.userID=#{userID} and (cm.publishYN='Y' or cm2.memberType = '운영자')
 			union
 			select cm.*, ifnull(ci.url1,'') as url1, ifnull(ci.url2,'') as url2 , ifnull(cmm.cntMembers,0) as cntMembers, 
 			rv.*, cd.mainDesc, cl.address
