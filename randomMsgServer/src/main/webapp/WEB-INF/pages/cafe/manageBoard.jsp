@@ -23,7 +23,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=4"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage_board.css?v=1" />
 
@@ -64,10 +64,22 @@
 			return;
 		}
 		
+		if ( $('#seq').val() == '' || $('#seq').val().length < 1 )
+		{
+			alert('게시판이 보여지는 순서를 입력해 주십시오.\r\n처음이면 1을 입력하시면 됩니다.');
+			return;
+		}
+		
+		if ( isNumberOnly( $('#seq').val() ) == false )
+		{
+			alert('순서 항목은 숫자만 입력 가능합니다.');
+			return;
+		}
+		
 		if ( confirm( $('#boardName').val() + '게시판을 신규로 생성하시겠습니까?') )
 		{
 			var param = {"cafeID":'<%= cafeID %>', "boardName": $('#boardName').val(), 
-					"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val() };
+					"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val(), "seq": $('#seq').val() };
 			ajaxRequest('POST', '/nearhere/cafe/createBoardAjax.do', param , onCreateBoardResult );
 			
 			reset();
@@ -106,6 +118,7 @@
 			var template = Handlebars.compile(source);
 			var html = template(result.data.boardList);
 			$('#boardList').html(html);
+			reset();
 		}
 		catch( ex )
 		{
@@ -113,22 +126,44 @@
 		}
 	}
 	
-	function modifyBoard( boardNo, boardName, boardType, writePermission )
+	function modifyBoard( boardNo, boardName, boardType, writePermission, seq )
 	{
 		modifyBoardNo = boardNo;
 		$('#boardName').val( boardName );
 		$('#boardType').prop('selectedIndex', boardType );
 		$('#writePermission').prop('selectedIndex', writePermission );
+		$('#seq').val(seq);
 		
 		$('#btnCreate').hide();
 		$('#btnModify').show();
 		$('#btnReset').show();
 	}
 	
+	function isNumberOnly( str )
+	{
+		if ( str.match(/[^0-9]/) != null ) {
+		  return false;
+		}
+		
+		return true;
+	}
+	
 	function modifyBoardSubmit()
 	{
+		if ( $('#seq').val().length < 1 )
+		{
+			alert('순서 항목을 입력해 주십시오.');
+			return;
+		}
+		
+		if ( isNumberOnly( $('#seq').val() ) == false )
+		{
+			alert('순서 항목은 숫자만 입력 가능합니다.');
+			return;
+		}
+		
 		var param = {"cafeID":"<%= cafeID %>", "boardNo": modifyBoardNo , "boardName": $('#boardName').val(),
-				"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val() };
+				"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val(), "seq":$('#seq').val() };
 		ajaxRequest('POST', '/nearhere/cafe/modifyBoardAjax.do', param , onModifyBoardResult );	
 	}
 	
@@ -140,6 +175,7 @@
 			var template = Handlebars.compile(source);
 			var html = template(result.data.boardList);
 			$('#boardList').html(html);
+			reset();
 		}
 		catch( ex )
 		{
@@ -153,6 +189,7 @@
 		$('#boardName').val('');
 		$('#boardType').prop('selectedIndex', 0 );
 		$('#writePermission').prop('selectedIndex', 0 );
+		$('#seq').val('');
 		
 		$('#btnCreate').show();
 		$('#btnModify').hide();
@@ -166,8 +203,10 @@
 		{{#each this}}
 		<li>
 			<div style="clear:both;float:right">
-				<input type="button" value="수정" onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{writePermission}}');"/>
-				<input type="button" value="삭제" onclick="deleteBoard('{{boardNo}}');" />
+				<input type="button" value="수정" 
+					onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{writePermission}}','{{seq}}');"/>
+				<input type="button" value="삭제" 
+					onclick="deleteBoard('{{boardNo}}');" />
 			</div>
 			<div>{{boardName}}</div>
 		</li>
@@ -225,6 +264,14 @@
 							</select>
 						</td>
 					</tr>
+					<tr>
+						<td class="th1">게시판 순서</td>
+						<td class="th2">
+							<div class="inputContainer">
+								<input type="text" class="inputTxt" id="seq" placeholder="순서(숫자)"/>
+							</div>
+						</td>
+					</tr>
 					</tbody>
 				</table>
 				
@@ -237,29 +284,7 @@
 			<div class="header">게시판 리스트</div>
 			
 			<div id="boardList">
-				<ul>
-					<li>
-						<div style="clear:both;float:right">
-							<input type="button" value="수정" />
-							<input type="button" value="삭제" />
-						</div>
-						<div>공지사항</div>
-					</li>
-					<li>
-						<div style="clear:both;float:right">
-							<input type="button" value="수정" />
-							<input type="button" value="삭제" />
-						</div>
-						<div>자유게시판</div>
-					</li>
-					<li>
-						<div style="clear:both;float:right">
-							<input type="button" value="수정" />
-							<input type="button" value="삭제" />
-						</div>
-						<div>문의사항</div>
-					</li>
-				</ul>
+				
 			</div>
 		
 		</div>
