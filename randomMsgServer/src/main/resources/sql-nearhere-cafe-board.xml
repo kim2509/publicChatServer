@@ -8,6 +8,7 @@
 		select bm.* from cafe_board_master bm
 			left outer join cafe_master cm on cm.cafeNo=bm.cafeNo
 		where cm.cafeID=#{cafeID}
+		order by bm.seq, bm.createdDate
 	</select>
 	
 	<select id="getCafeBoardInfo" resultType="HashMap" parameterType="HashMap">

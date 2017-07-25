@@ -4,27 +4,32 @@ public class Constants {
 
 	public final static int FETCH_MESSAGE_COUNT = 10;
 	
-	public static boolean bReal = true;
+	/* real */
+//	public static boolean bReal = true;	
+//	public static String SSLProtocol = "https";
+//	public static String ServerIP = "www.hereby.co.kr";
+//	public static String Port = "80";
+//	public static String SSLPort = "443";	
+	/* real */
 	
-	public static String ServerIP = "www.hereby.co.kr";
+	/* dev */
+	public static boolean bReal = false;
+	public static String SSLProtocol = "http";
 //	public static String ServerIP = "192.168.43.137";
 //	public static String ServerIP = "localhost";
 //	public static String ServerIP = "192.168.0.200";
-	
-	public static String Port = "80";
 //	public static String Port = "8080";
-	
-	public static String SSLPort = "443";
 //	public static String SSLPort = "8080";
-	
+	/* dev */
+
 
 //	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
 	public static String CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
-	public static String SECURE_CSS_PATH = "https://" + ServerIP + ":" + SSLPort + "/nearhere/css/";
+	public static String SECURE_CSS_PATH = SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere/css/";
 	public static String IMAGE_PATH = "http://" + ServerIP + ":" + Port +  "/nearhere/image/";
 	public static String SECURE_IMAGE_PATH = "https://" + ServerIP + ":" + SSLPort + "/nearhere/image/";
 	public static String JS_PATH = "http://" + ServerIP + ":" + SSLPort + "/nearhere/js/";
-	public static String SECURE_JS_PATH = "https://" + ServerIP + ":" + SSLPort + "/nearhere/js/";
+	public static String SECURE_JS_PATH = SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere/js/";
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static String DAUM_API_KEY = "a694766f82dd0fb809ccf02189747061";
 	//public static String DAUM_API_KEY = "d346cd447ad87016b635e77df459b155adb17509";

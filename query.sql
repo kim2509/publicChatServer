@@ -33,14 +33,16 @@ CREATE TABLE `cafe_board_master` (
 	`cafeNo` INT(11) NULL DEFAULT NULL,
 	`boardType` INT(11) NULL DEFAULT NULL,
 	`writePermission` INT(11) NULL DEFAULT NULL,
+	`seq` INT(11) NULL DEFAULT NULL,
 	`createdDate` DATETIME NULL DEFAULT NULL,
 	`deletedDate` DATETIME NULL DEFAULT NULL,
 	PRIMARY KEY (`boardNo`)
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=9
+AUTO_INCREMENT=7
 ;
+
 
 
 CREATE TABLE `cafe_board_post_detail` (
