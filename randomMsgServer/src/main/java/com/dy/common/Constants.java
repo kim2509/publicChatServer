@@ -5,16 +5,16 @@ public class Constants {
 	public final static int FETCH_MESSAGE_COUNT = 10;
 	
 	/* real */
-//	public static boolean bReal = true;	
-//	public static String SSLProtocol = "https";
-//	public static String ServerIP = "www.hereby.co.kr";
-//	public static String Port = "80";
-//	public static String SSLPort = "443";	
+	public static boolean bReal = true;	
+	public static String SSLProtocol = "https";
+	public static String ServerIP = "www.hereby.co.kr";
+	public static String Port = "80";
+	public static String SSLPort = "443";	
 	/* real */
 	
 	/* dev */
-	public static boolean bReal = false;
-	public static String SSLProtocol = "http";
+//	public static boolean bReal = false;
+//	public static String SSLProtocol = "http";
 //	public static String ServerIP = "192.168.43.137";
 //	public static String ServerIP = "localhost";
 //	public static String ServerIP = "192.168.0.200";
@@ -43,8 +43,7 @@ public class Constants {
 	
 	public static String getServerSSLURL()
 	{
-//		return "http://" + ServerIP + ":" + SSLPort + "/nearhere";
-		return "https://" + ServerIP + "/nearhere";
+		return SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
