@@ -4,18 +4,18 @@ public class Constants {
 
 	public final static int FETCH_MESSAGE_COUNT = 10;
 	
-	public static boolean bReal = false;
+	public static boolean bReal = true;
 	
-//	public static String ServerIP = "www.hereby.co.kr";
+	public static String ServerIP = "www.hereby.co.kr";
 //	public static String ServerIP = "192.168.43.137";
-	public static String ServerIP = "localhost";
+//	public static String ServerIP = "localhost";
 //	public static String ServerIP = "192.168.0.200";
 	
-//	public static String Port = "80";
-	public static String Port = "8080";
+	public static String Port = "80";
+//	public static String Port = "8080";
 	
-//	public static String SSLPort = "443";
-	public static String SSLPort = "8080";
+	public static String SSLPort = "443";
+//	public static String SSLPort = "8080";
 	
 
 //	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
@@ -38,8 +38,8 @@ public class Constants {
 	
 	public static String getServerSSLURL()
 	{
-		return "http://" + ServerIP + ":" + SSLPort + "/nearhere";
-//		return "https://" + ServerIP + "/nearhere";
+//		return "http://" + ServerIP + ":" + SSLPort + "/nearhere";
+		return "https://" + ServerIP + "/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
