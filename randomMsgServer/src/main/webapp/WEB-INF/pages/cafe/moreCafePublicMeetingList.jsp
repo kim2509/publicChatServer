@@ -71,6 +71,8 @@
 		
 		initPagingVars();
 		
+		$('#pagingInfo').html('');
+		
 		if ( tabIndex == 0 )
 		{
 			$('#myCafeMeetingList .empty').hide();

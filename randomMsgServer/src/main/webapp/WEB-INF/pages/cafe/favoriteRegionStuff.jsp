@@ -30,7 +30,6 @@
 			}
 			
 			getCafeList();
-			getMeetingList();
 		}
 	});
 	
@@ -267,7 +266,7 @@
 			favCafeMap.panTo(cafePositions[0].latlng);
 	}
 	
-var meetingListViewMode = 'list';
+	var meetingListViewMode = 'list';
 	
 	function onMeetingListResult( result )
 	{
