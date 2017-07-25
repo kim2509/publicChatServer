@@ -43,8 +43,7 @@ public class Constants {
 	
 	public static String getServerSSLURL()
 	{
-		return "http://" + ServerIP + ":" + SSLPort + "/nearhere";
-//		return "https://" + ServerIP + "/nearhere";
+		return SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere";
 	}
 	
 	public static String getThumbnailImageURL()
