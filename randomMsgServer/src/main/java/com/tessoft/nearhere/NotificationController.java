@@ -34,13 +34,23 @@ public class NotificationController extends BaseController{
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("notification/list");
 
-		if ( Util.isEmptyString( userID ) || ( Constants.bReal&& !request.isSecure()) ) return mv;
-		
-		logger.info("[notification/list.do] userID:" + userID );
-		
-		List<HashMap> userPushMessageList = UserBiz.getInstance(sqlSession).getUserPushMessage(userID);
-		
-		mv.addObject("userPushMessageList", userPushMessageList );
+		try
+		{
+			if ( Util.isEmptyString(userID) && !Util.isEmptyString(userToken) )
+				userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+			if ( Util.isEmptyString( userID ) ) return mv;
+			
+			logger.info("[notification/list.do] userID:" + userID );
+			
+			List<HashMap> userPushMessageList = UserBiz.getInstance(sqlSession).getUserPushMessage(userID);
+			
+			mv.addObject("userPushMessageList", userPushMessageList );		
+		}
+		catch( Exception ex )
+		{
+			logger.error( ex );
+		}
 		
 		return mv;
 	}

@@ -8,6 +8,11 @@
 	var startIndex = 0;
 	var pageSize = 3;
 
+	jQuery(document).ready(function(){
+	
+		publicMeetingTabSelected(0);
+	});
+	
 	function publicMeetingTabSelected( tabIndex )
 	{
 		$('#myCafeMeetingList').hide();
@@ -58,6 +63,11 @@
 			var html = template(result);
 
 			$('#myCafeMeetingList').html(html);
+			
+			if ( result.data.length > 0 )
+			{
+				$('#meetingListHomeDiv').show();
+			}
 		}
 	}
 	
@@ -72,12 +82,17 @@
 			var html = template(result);
 
 			$('#popularCafeMeetingList').html(html);
+			
+			if ( result.data.length > 0 )
+			{
+				$('#meetingListHomeDiv').show();
+			}
 		}
 	}
 	
 </script>
 
-<div id="section">
+<div id="meetingListHomeDiv" style="background:white;border-radius:10px;border:1px solid gray;padding:10px;margin-bottom:10px;">
 
 	<ul id="publicMeetingTab" class="tab2">
 		<li onclick="publicMeetingTabSelected(0);" class="selected">인기 정모</li>

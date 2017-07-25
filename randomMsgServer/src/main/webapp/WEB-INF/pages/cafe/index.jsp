@@ -61,9 +61,6 @@
 			
 			// 내 카페 리스트 불러오기
 			cafeTabSelected(0);
-			
-			// 내 카페 정모 리스트 불러오기
-			publicMeetingTabSelected(0);
 		}
 		catch( ex )
 		{

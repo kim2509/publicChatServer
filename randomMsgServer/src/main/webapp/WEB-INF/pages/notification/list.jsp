@@ -67,11 +67,18 @@
 	
 	function goMemberList( element, pushNo, cafeID )
 	{
-		$(element).find('#new').hide();
-		var param = {"cafeID":cafeID, "pushNo":pushNo};
-		ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
-		
-		goMoreCafeMemberList( cafeID );
+		try
+		{
+			$(element).find('#new').hide();
+			var param = {"cafeID":cafeID, "pushNo":pushNo};
+			ajaxRequest('POST', '/nearhere/notification/updatePushMessageAsReadAjax.do', param , onPushReadResult );
+			
+			goMoreCafeMemberList( cafeID );	
+		}
+		catch( ex )
+		{
+			alert( ex.message );
+		}
 	}
 	
 	function onPushReadResult( result )
