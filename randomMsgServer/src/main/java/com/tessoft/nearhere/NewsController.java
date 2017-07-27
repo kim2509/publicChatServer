@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,17 +80,31 @@ public class NewsController extends BaseController{
 				for ( int i = 0; i < myFavRegionList.size(); i++ )
 				{
 					String regionName = "";
+					String lastRegionName = "";
 
 					if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
+					{
 						regionName += myFavRegionList.get(i).get("lRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("lRegionName").toString();
+					}
 					if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
+					{
 						regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("mRegionName").toString();
+					}
 					if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
+					{
 						regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("sRegionName").toString();
+					}
 					if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
+					{
 						regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("tRegionName").toString();
+					}
 					
 					myFavRegionList.get(i).put("regionName", regionName);
+					myFavRegionList.get(i).put("lastRegionName", lastRegionName);
 				}
 				
 				model.addAttribute("myFavRegionList", myFavRegionList);
@@ -139,8 +154,8 @@ public class NewsController extends BaseController{
 	XPath xPath =  XPathFactory.newInstance().newXPath();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping( value ="/news/getRegionNews.do")
-	public @ResponseBody APIResponse getRegionNews( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	@RequestMapping( value ="/news/getRegionNewsBlog.do")
+	public @ResponseBody APIResponse getRegionNewsBlog( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
 		StringBuffer resultText = new StringBuffer();
@@ -152,6 +167,8 @@ public class NewsController extends BaseController{
 		{
 			requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
+			String inquiryType = Util.getStringFromHash(requestHash, "inquiryType");
+			
 			String startIndex = Util.getStringFromHash(requestHash, "startIndex");
 			if ( Util.isEmptyString(startIndex))
 				startIndex = "0";
@@ -162,19 +179,29 @@ public class NewsController extends BaseController{
 			// 페이지수 기반이 아니라 수 기반이라서
 			int pageIndex = Integer.parseInt(startIndex) + 1;
 			int pageSize = Integer.parseInt(showCount);
-			int itemIndex = 1 + ( pageSize * (pageIndex - 1 ));
 			
-			startIndex = String.valueOf(itemIndex);
+			startIndex = String.valueOf(pageIndex);
 						
-			HashMap apiResult = callNaverAPI(resultText, requestHash, 1, showCount, startIndex );
+			regionName = Util.getStringFromHash(requestHash, "regionName");
+			String urlEncoded = URLEncoder.encode( regionName, "UTF-8");
 			
-			resultText = new StringBuffer();
-			
-			regionName = URLDecoder.decode( requestHash.get("regionName").toString(), "UTF-8");
-			
+			HashMap apiResult = null;
 			HashMap result = new HashMap();
-			result.put("newsList", apiResult.get("items"));
-			result.put("regionName", regionName );
+			
+			if ( "news".equals(inquiryType) )
+			{
+				apiResult = callNaverAPI(resultText, urlEncoded , 1, showCount, startIndex );
+				result.put("newsList", apiResult.get("items"));
+				result.put("regionName", regionName );
+			}
+			else if ( "blog".equals(inquiryType))
+			{
+				apiResult = callNaverAPI(resultText, urlEncoded , 2, showCount, startIndex );
+				result.put("blogList", apiResult.get("items"));
+				result.put("regionName", regionName );
+			}
+			
+			result.put("inquiryType", inquiryType );
 			
 			response.setData( result );
 			response.setData2( Util.getStringFromHash(apiResult, "total") );
@@ -221,9 +248,10 @@ public class NewsController extends BaseController{
 			
 			resultText = new StringBuffer();
 			
-			HashMap apiResult = callNaverAPI(resultText, requestHash, 2, showCount, startIndex );
+			regionName = Util.getStringFromHash(requestHash, "regionName");
+			String urlEncoded = URLEncoder.encode( regionName, "UTF-8");
 			
-			regionName = URLDecoder.decode( requestHash.get("regionName").toString(), "UTF-8");
+			HashMap apiResult = callNaverAPI(resultText, urlEncoded , 2, showCount, startIndex );
 			
 			HashMap result = new HashMap();
 			result.put("blogList", apiResult.get("items"));
@@ -246,7 +274,7 @@ public class NewsController extends BaseController{
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-	private HashMap callNaverAPI(StringBuffer resultText, HashMap requestHash, int type
+	private HashMap callNaverAPI(StringBuffer resultText, String query, int type
 			, String pageSize, String startIndex ) {
 		
 		HashMap result = new HashMap();
@@ -261,7 +289,7 @@ public class NewsController extends BaseController{
 			else if ( type == 2 )
 				apiURL = "/v1/search/blog.xml";
 			
-			url += apiURL + "?query=" + requestHash.get("regionName") + "&display=" + pageSize + "&start=" + startIndex + "&sort=sim";
+			url += apiURL + "?query=" + query + "&display=" + pageSize + "&start=" + startIndex + "&sort=sim";
 			
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet req = new HttpGet(url);

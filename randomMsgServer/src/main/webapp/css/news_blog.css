@@ -4,6 +4,9 @@ div{padding:0, margin:0}
 
 span{ padding:5px; }
 
+#wrapper{
+}
+
 .section{
 	border-radius: 10px;
 	border: 1px solid gray;
@@ -11,6 +14,7 @@ span{ padding:5px; }
 	margin-bottom:10px;
 	clear:both;
 	overflow:auto;
+	padding-bottom:20px;
 }
 
 #menu_category {background:#fff;}
@@ -44,13 +48,22 @@ li {
   	margin-bottom:10px;
 }
 
+.newsOption, .blogOption{
+	float:right;
+	margin-right:10px;
+	font-size:14px;
+	font-weight:bold;
+	color:white;
+	background:gray;
+	padding:5px;
+}
+
 .subject {
     font-weight: bold;
     font-size: 16px;
     padding-bottom: 10px;
     margin-bottom: 10px;
     border-bottom: 2px solid gray;
-    clear:both;
     margin-left:10px;
     margin-right:10px;
     margin-top:10px;
@@ -72,4 +85,35 @@ li {
 	margin-top:5px;
 	float:right;
 	color: #666;
+}
+
+#pagingInfo{
+	text-align: center;
+	margin-top: 10px;
+	font-weight: bold;
+	display: none;
+	clear:both;
+}
+
+#pagingInfo a {
+    padding: 5px;
+    margin: 0px 2px;
+}
+
+
+#pagingInfo .pageSelected {
+    text-decoration: none;
+    border: 1px solid #d9d9d9;
+    background: #5642f4;
+    color: white;
+}
+
+
+.empty {
+    text-align: center;
+    height: 120px;
+    line-height: 120px;
+    font-weight: bold;
+    font-size: 15px;
+    color: #9d8484;
 }

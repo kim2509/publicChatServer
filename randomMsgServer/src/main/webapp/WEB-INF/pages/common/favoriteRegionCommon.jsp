@@ -23,14 +23,15 @@
 				String level = myFavRegionList.get(i).get("level").toString();
 				String regionNo = myFavRegionList.get(i).get("regionNo").toString();
 				String regionName = myFavRegionList.get(i).get("regionName").toString();
+				String lastRegionName = Util.getStringFromHash(myFavRegionList.get(i), "lastRegionName");
 				
 				if ( i == 0 )
-					out.println("<li class='selected' level='" + level + "' regionNo='" + regionNo + 
-					"' onclick=\"changeCafeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+					out.println("<li class='selected' level='" + level + "' regionNo='" + regionNo + "' lastRegionName='" + lastRegionName + 
+					"' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
 						 regionName + "</li>");
 				else
-					out.println("<li  level='" + level + "' regionNo='" + regionNo +
-					"' onclick=\"changeCafeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
+					out.println("<li  level='" + level + "' regionNo='" + regionNo + "' lastRegionName='" + lastRegionName + 
+					"' onclick=\"changeRegion( this, '" + regionNo + "', '" + level + "')\">" + 
 							regionName + "</li>");
 			}
 		

@@ -25,11 +25,23 @@
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH %>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/common.js?v=2"></script>
+
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/news_blog.css" />
 
 	<script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	
+	var startIndex = 0;
+	var firstPage = 0;
+	var lastPage = 0;
+	var numOfPagesOnScreen = 5;
+	var pageNo = 1;
+	var pageSize = 10;
+	var totalItemCount = 0;
+	var inquiryType = 'news';
+	
 	
 	jQuery(document).ready(function(){
 		
@@ -43,7 +55,7 @@
 		
 		for ( int i = 0; i < favoriteRegionList.length; i++ ) {
 %>
-		getRegionNews('<%= favoriteRegionList[i] %>');
+		getRegionNews();
 <%
 		}	
 	} 
@@ -77,44 +89,61 @@
 		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
-	function getRegionNews( regionName )
+	function getRegionNews()
 	{
-		var param = {"regionName": encodeURIComponent( regionName ) };
+		inquiryType = 'news';
+		var regionName = $('.favoriteRegionUL li[class=selected]').attr('lastRegionName');
 		
-		jQuery.ajax({
-			type : "POST",
-			url : "/nearhere/news/getRegionNews.do",
-			data : JSON.stringify( param ),
-			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
-			contentType : "application/json; charset=UTF-8",
-			success : function(result) {
-				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
-				// TODO
-				try {
-
-					displayUserFavoriteRegionList( result );
-					
-				} catch (ex) {
-					alert(ex.message);
-				}
-			},
-			complete : function(data) {
-				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
-				// TODO
-				
-			},
-			error : function(xhr, status, error) {
-				alert("에러발생(deleteRegion)" + error );
-			}
-		});
+		var param = {"inquiryType": inquiryType, "regionName": regionName, "startIndex":startIndex, "showCount" : pageSize };
+		
+		ajaxRequest('POST', '/nearhere/news/getRegionNewsBlog.do', param , displayUserFavoriteRegionList );
+	}
+	
+	function getRegionBlog()
+	{
+		inquiryType = 'blog';
+		var regionName = $('.favoriteRegionUL li[class=selected]').attr('lastRegionName');
+		
+		var param = {"inquiryType": inquiryType, "regionName": regionName, "startIndex":startIndex, "showCount" : pageSize };
+		
+		ajaxRequest('POST', '/nearhere/news/getRegionNewsBlog.do', param , displayUserFavoriteRegionList );
+	}
+	
+	function changeRegion( element, regionNo, level )
+	{
+		pageNo = 1;
+		startIndex = 0;
+		
+		$('#favoriteRegionDiv .favoriteRegionUL li').removeClass('selected');		
+		$(element).addClass('selected');
+		
+		getRegionNews();	
 	}
 	
 	function displayUserFavoriteRegionList( result )
 	{
-		var source = $('#regionInfoT').html();
+		var source = '';
+		
+		if (inquiryType == 'news')
+			source = $('#newsT').html();
+		else if ( inquiryType == 'blog')
+			source = $('#blogT').html();
+		else
+			alert('알수 없는 오류');
+		
 		var template = Handlebars.compile(source);
 		var html = template(result);
 		$('#contentsDiv').html( html );
+		
+		totalItemCount = result.data2;
+		if ( totalItemCount > 1000)
+			totalItemCount = 1000;
+		
+		if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
+		{
+			$('#pagingInfo').show();
+			displayPagingInfo();
+		}
 	}
 	
 	function goLink( title, url )
@@ -125,10 +154,74 @@
 			document.location.href = url;
 	}
 	
+	function displayPagingInfo()
+	{
+		$('#pagingInfo').empty();
+		
+		if ( totalItemCount < 1 )
+			return;
+		
+		if ( pageNo <= numOfPagesOnScreen )
+			firstPage = 1;
+		else
+		{
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
+			if ( pageNo % numOfPagesOnScreen == 0 )
+				firstPage = firstPage - numOfPagesOnScreen + 1;
+			else
+				firstPage++;
+		}
+		
+		lastPage = parseInt( totalItemCount / pageSize );
+		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
+			lastPage++;
+		
+		if ( firstPage > numOfPagesOnScreen + 1)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);">&lt;&lt;</a>');
+		
+		if ( firstPage != 1 )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');">&lt;</a>');
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+		{
+			if ( firstPage + i == pageNo)
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" class="pageSelected">' + (firstPage + i) + '</a>');
+			}
+			else
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" >' + (firstPage + i) + '</a>');
+			}
+		
+			if ( (firstPage + i) == lastPage )
+				break;
+		}
+		
+		if ( lastPage > firstPage + numOfPagesOnScreen )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" >&gt;</a>');
+		
+		if ( firstPage + numOfPagesOnScreen <= lastPage )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" >&gt;&gt;</a>');
+		
+	}
+	
+	function goPage(num)
+	{
+		pageNo = num;
+		startIndex = (pageNo - 1) * pageSize;
+		
+		if ( inquiryType == 'news')
+			getRegionNews();
+		else if ( inquiryType == 'blog')
+			getRegionBlog();
+	}
+	
 	</script>
 	
-	<script id="regionInfoT" type="text/x-handlebars-template">
+	<script id="newsT" type="text/x-handlebars-template">
+		<div class="newsOption" onclick="getRegionBlog();">블로그 보기</div>
 		<div class="subject">{{data.regionName}} 뉴스</div>
+		{{#if data.newsList}}
 		<ul id="regionInfoList">
 			{{#each data.newsList}}
 				<li onclick="goLink('뉴스', '{{originallink}}')">
@@ -138,8 +231,15 @@
 				</li>
 			{{/each}}
 		</ul>
-
+		{{else}}
+		<div class="empty">뉴스가 존재하지 않습니다.</div>
+		{{/if}}
+	</script>
+	
+	<script id="blogT" type="text/x-handlebars-template">
+		<div class="blogOption" onclick="getRegionNews();">뉴스 보기</div>
 		<div class="subject">{{data.regionName}} 블로그</div>
+		{{#if data.blogList}}
 		<ul id="regionInfoList2">
 			{{#each data.blogList}}
 				<li onclick="goLink('블로그','{{link}}')">
@@ -148,6 +248,9 @@
 				</li>
 			{{/each}}
 		</ul>
+		{{else}}
+		<div class="empty">블로그가 존재하지 않습니다.</div>
+		{{/if}}
 	</script>
 </head>
 <body>
@@ -165,6 +268,9 @@
 			<div id="contentsDiv">
 			</div>
 			
+			<div id="pagingInfo">
+			</div>
+		
 		</div>
 	
 	</div>
