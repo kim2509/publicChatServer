@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,16 +54,64 @@ import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 
+import common.RegionBiz;
+import common.UserBiz;
+
 @Controller
 public class NewsController extends BaseController{
 
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked", "unchecked" })
 	@RequestMapping( value ="/news/list.do")
 	public ModelAndView list ( HttpServletRequest request, HttpServletResponse response , 
-			String userID, ModelMap model ) throws IOException
+			String userID, ModelMap model, @CookieValue(value = "userToken", defaultValue = "") String userToken ) throws IOException
 	{
 		try
 		{
+			if ( Util.isEmptyString(userID) && !Util.isEmptyString(userToken) )
+				userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+
+			if ( userInfo != null )
+			{
+				userID = userInfo.get("userID").toString();
+				List<HashMap> myFavRegionList = RegionBiz.getInstance(sqlSession).getFavoriteRegionNoByUserID(userID);
+				
+				for ( int i = 0; i < myFavRegionList.size(); i++ )
+				{
+					String regionName = "";
+					String lastRegionName = "";
+
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("lRegionName") ))
+					{
+						regionName += myFavRegionList.get(i).get("lRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("lRegionName").toString();
+					}
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("mRegionName") ))
+					{
+						regionName += " " + myFavRegionList.get(i).get("mRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("mRegionName").toString();
+					}
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("sRegionName") ))
+					{
+						regionName += " " + myFavRegionList.get(i).get("sRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("sRegionName").toString();
+					}
+					if ( !Util.isEmptyString(myFavRegionList.get(i).get("tRegionName") ))
+					{
+						regionName += " " + myFavRegionList.get(i).get("tRegionName").toString();
+						lastRegionName = myFavRegionList.get(i).get("tRegionName").toString();
+					}
+					
+					myFavRegionList.get(i).put("regionName", regionName);
+					myFavRegionList.get(i).put("lastRegionName", lastRegionName);
+				}
+				
+				model.addAttribute("myFavRegionList", myFavRegionList);
+				model.addAttribute("loginUserID", userID);
+				model.addAttribute("loginUserType", Util.getStringFromHash(userInfo, "type"));
+			}
+			
 			List list = (List) sqlSession.selectList("com.tessoft.nearhere.region.getFavoriteRegionByUser", userID );
 			String favoriteRegions = "";
 			
@@ -105,8 +154,8 @@ public class NewsController extends BaseController{
 	XPath xPath =  XPathFactory.newInstance().newXPath();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping( value ="/news/getRegionNews.do")
-	public @ResponseBody APIResponse getRegionNews( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	@RequestMapping( value ="/news/getRegionNewsBlog.do")
+	public @ResponseBody APIResponse getRegionNewsBlog( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse response = new APIResponse();
 		StringBuffer resultText = new StringBuffer();
@@ -118,20 +167,44 @@ public class NewsController extends BaseController{
 		{
 			requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
-			ArrayList newsList  = callNaverAPI(resultText, requestHash, 1);
+			String inquiryType = Util.getStringFromHash(requestHash, "inquiryType");
 			
-			resultText = new StringBuffer();
+			String startIndex = Util.getStringFromHash(requestHash, "startIndex");
+			if ( Util.isEmptyString(startIndex))
+				startIndex = "0";
+			String showCount = Util.getStringFromHash(requestHash, "showCount");
+			if ( Util.isEmptyString(showCount))
+				showCount = "5";
 			
-			ArrayList blogList = callNaverAPI(resultText, requestHash, 2);
+			// 페이지수 기반이 아니라 수 기반이라서
+			int pageIndex = Integer.parseInt(startIndex) + 1;
+			int pageSize = Integer.parseInt(showCount);
 			
-			regionName = URLDecoder.decode( requestHash.get("regionName").toString(), "UTF-8");
+			startIndex = String.valueOf(pageIndex);
+						
+			regionName = Util.getStringFromHash(requestHash, "regionName");
+			String urlEncoded = URLEncoder.encode( regionName, "UTF-8");
 			
+			HashMap apiResult = null;
 			HashMap result = new HashMap();
-			result.put("newsList", newsList);
-			result.put("blogList", blogList);
-			result.put("regionName", regionName );
+			
+			if ( "news".equals(inquiryType) )
+			{
+				apiResult = callNaverAPI(resultText, urlEncoded , 1, showCount, startIndex );
+				result.put("newsList", apiResult.get("items"));
+				result.put("regionName", regionName );
+			}
+			else if ( "blog".equals(inquiryType))
+			{
+				apiResult = callNaverAPI(resultText, urlEncoded , 2, showCount, startIndex );
+				result.put("blogList", apiResult.get("items"));
+				result.put("regionName", regionName );
+			}
+			
+			result.put("inquiryType", inquiryType );
 			
 			response.setData( result );
+			response.setData2( Util.getStringFromHash(apiResult, "total") );
 		}
 		catch( Exception ex )
 		{
@@ -146,7 +219,65 @@ public class NewsController extends BaseController{
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private ArrayList callNaverAPI(StringBuffer resultText, HashMap requestHash, int type ) {
+	@RequestMapping( value ="/news/getRegionBlogList.do")
+	public @ResponseBody APIResponse getRegionBlogList( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		StringBuffer resultText = new StringBuffer();
+		HashMap requestHash = null;
+		
+		String regionName = "";
+		
+		try
+		{
+			requestHash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String startIndex = Util.getStringFromHash(requestHash, "startIndex");
+			if ( Util.isEmptyString(startIndex))
+				startIndex = "1";
+			String showCount = Util.getStringFromHash(requestHash, "showCount");
+			if ( Util.isEmptyString(showCount))
+				showCount = "5";
+			
+			// 페이지수 기반이 아니라 수 기반이라서
+			int pageIndex = Integer.parseInt(startIndex);
+			int pageSize = Integer.parseInt(showCount);
+			int itemIndex = 1 + ( pageSize * (pageIndex - 1 ));
+			
+			startIndex = String.valueOf(itemIndex);
+			
+			resultText = new StringBuffer();
+			
+			regionName = Util.getStringFromHash(requestHash, "regionName");
+			String urlEncoded = URLEncoder.encode( regionName, "UTF-8");
+			
+			HashMap apiResult = callNaverAPI(resultText, urlEncoded , 2, showCount, startIndex );
+			
+			HashMap result = new HashMap();
+			result.put("blogList", apiResult.get("items"));
+			result.put("regionName", regionName );
+			
+			response.setData( result );
+			response.setData2( Util.getStringFromHash(apiResult, "total") );
+			
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			logger.error( ex );
+		}
+
+		insertHistory("/news/getRegionNews.do", regionName , null , null, null );
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
+	private HashMap callNaverAPI(StringBuffer resultText, String query, int type
+			, String pageSize, String startIndex ) {
+		
+		HashMap result = new HashMap();
 		
 		try
 		{
@@ -158,10 +289,12 @@ public class NewsController extends BaseController{
 			else if ( type == 2 )
 				apiURL = "/v1/search/blog.xml";
 			
-			url += apiURL + "?query=" + requestHash.get("regionName") + "&display=10&start=1&sort=sim";
+			url += apiURL + "?query=" + query + "&display=" + pageSize + "&start=" + startIndex + "&sort=sim";
 			
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet req = new HttpGet(url);
+			
+			logger.info("callNaver url:" + url);
 			
 			req.addHeader("X-Naver-Client-Id", "CWvII64L7EVDwJBZhXqo");
 			req.addHeader("X-Naver-Client-Secret", "xhRYo0GFE_");
@@ -189,9 +322,13 @@ public class NewsController extends BaseController{
 					responseString.getBytes("UTF-8"));
 			Document doc = builder.parse(input);
 
+			String total = xPath.compile("/rss/channel/total").evaluate(doc);
+			String start = xPath.compile("/rss/channel/start").evaluate(doc);
+			String display = xPath.compile("/rss/channel/display").evaluate(doc);
+			
 			NodeList nodeList = (NodeList) xPath.compile("/rss/channel/item").evaluate(doc, XPathConstants.NODESET);
 			
-			ArrayList result = new ArrayList();
+			ArrayList items = new ArrayList();
 			for ( int i = 0; i < nodeList.getLength(); i++ )
 			{
 				HashMap hash = new HashMap();
@@ -213,14 +350,20 @@ public class NewsController extends BaseController{
 					hash.put("bloggerlink", getXmlText("bloggerlink", nodeList.item(i), false ));
 				}
 				
-				result.add(hash);
+				items.add(hash);
 			}
+			
+			result.put("total", total);
+			result.put("start", start);
+			result.put("display", display);
+			result.put("items", items);
+			
 			return result;
 		}
 		catch( Exception ex )
 		{
 			logger.error(ex);
-			return new ArrayList();
+			return result;
 		}
 	}
 	

@@ -18,95 +18,30 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>이근처 뉴스</title>
 
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH %>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 
+<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/common.js?v=2"></script>
 
-<style type="text/css">
-
-body{background:#eeeeee;}
-
-span{ padding:5px; }
-
-.section{
-	border-radius: 10px;
-	border: 1px solid gray;
-	background:white;
-	padding:10px;
-	margin-bottom:10px;
-}
-
-#menu_category {background:#fff;}
-#menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}
-#menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
-
-a{
-	text-decoration: none;color:black;
-	line-height: 1.4em;
-}
-
-ul{
-	padding:0px;
-	margin:0px;
-}
-
-li {
-	list-style:none;
-	padding: 10px;
-	clear:both;
-}
-
-.title{
-	color: #005fc1;
-	display: -webkit-box;
-	overflow:hidden;
-	text-overflow: ellipsis;
-	font-size: 16px;
-  	line-height: 1.4;
-	-webkit-line-clamp: 1;
-  	-webkit-box-orient: vertical;
-  	margin-bottom:10px;
-}
-
-.subject {
-    font-weight: bold;
-    font-size: 16px;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid gray;
-    clear:both;
-    margin-left:10px;
-    margin-right:10px;
-    margin-top:10px;
-}
-
-.desc{
-	color: #666;
-	display: -webkit-box;
-	overflow:hidden;
-	text-overflow: ellipsis;
-	font-size: 16px;
-  	line-height: 1.4;
-	-webkit-line-clamp: 2;
-  	-webkit-box-orient: vertical;
-}
-
-.date{
-	font-size:13px;
-	margin-top:5px;
-	float:right;
-	color: #666;
-}
-
-</style>
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/news_blog.css" />
 
 	<script language="javascript">
 	
 	var isApp = '<%= isApp %>';
+	
+	var startIndex = 0;
+	var firstPage = 0;
+	var lastPage = 0;
+	var numOfPagesOnScreen = 5;
+	var pageNo = 1;
+	var pageSize = 10;
+	var totalItemCount = 0;
+	var inquiryType = 'news';
+	
 	
 	jQuery(document).ready(function(){
 		
@@ -120,7 +55,7 @@ li {
 		
 		for ( int i = 0; i < favoriteRegionList.length; i++ ) {
 %>
-		getRegionNews('<%= favoriteRegionList[i] %>');
+		getRegionNews();
 <%
 		}	
 	} 
@@ -154,44 +89,61 @@ li {
 		document.location.href='nearhere://openExternalURL?url=' + encodeURIComponent(url);
 	}
 	
-	function getRegionNews( regionName )
+	function getRegionNews()
 	{
-		var param = {"regionName": encodeURIComponent( regionName ) };
+		inquiryType = 'news';
+		var regionName = $('.favoriteRegionUL li[class=selected]').attr('lastRegionName');
 		
-		jQuery.ajax({
-			type : "POST",
-			url : "/nearhere/news/getRegionNews.do",
-			data : JSON.stringify( param ),
-			dataType : "JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
-			contentType : "application/json; charset=UTF-8",
-			success : function(result) {
-				// 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
-				// TODO
-				try {
-
-					displayUserFavoriteRegionList( result );
-					
-				} catch (ex) {
-					alert(ex.message);
-				}
-			},
-			complete : function(data) {
-				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
-				// TODO
-				
-			},
-			error : function(xhr, status, error) {
-				alert("에러발생(deleteRegion)" + error );
-			}
-		});
+		var param = {"inquiryType": inquiryType, "regionName": regionName, "startIndex":startIndex, "showCount" : pageSize };
+		
+		ajaxRequest('POST', '/nearhere/news/getRegionNewsBlog.do', param , displayUserFavoriteRegionList );
+	}
+	
+	function getRegionBlog()
+	{
+		inquiryType = 'blog';
+		var regionName = $('.favoriteRegionUL li[class=selected]').attr('lastRegionName');
+		
+		var param = {"inquiryType": inquiryType, "regionName": regionName, "startIndex":startIndex, "showCount" : pageSize };
+		
+		ajaxRequest('POST', '/nearhere/news/getRegionNewsBlog.do', param , displayUserFavoriteRegionList );
+	}
+	
+	function changeRegion( element, regionNo, level )
+	{
+		pageNo = 1;
+		startIndex = 0;
+		
+		$('#favoriteRegionDiv .favoriteRegionUL li').removeClass('selected');		
+		$(element).addClass('selected');
+		
+		getRegionNews();	
 	}
 	
 	function displayUserFavoriteRegionList( result )
 	{
-		var source = $('#regionInfoT').html();
+		var source = '';
+		
+		if (inquiryType == 'news')
+			source = $('#newsT').html();
+		else if ( inquiryType == 'blog')
+			source = $('#blogT').html();
+		else
+			alert('알수 없는 오류');
+		
 		var template = Handlebars.compile(source);
 		var html = template(result);
-		$('#wrapper').append( html );
+		$('#contentsDiv').html( html );
+		
+		totalItemCount = result.data2;
+		if ( totalItemCount > 1000)
+			totalItemCount = 1000;
+		
+		if ($('#pagingInfo').length > 0 && totalItemCount > 0 )
+		{
+			$('#pagingInfo').show();
+			displayPagingInfo();
+		}
 	}
 	
 	function goLink( title, url )
@@ -202,11 +154,74 @@ li {
 			document.location.href = url;
 	}
 	
+	function displayPagingInfo()
+	{
+		$('#pagingInfo').empty();
+		
+		if ( totalItemCount < 1 )
+			return;
+		
+		if ( pageNo <= numOfPagesOnScreen )
+			firstPage = 1;
+		else
+		{
+			firstPage = parseInt(pageNo / numOfPagesOnScreen) * numOfPagesOnScreen;
+			if ( pageNo % numOfPagesOnScreen == 0 )
+				firstPage = firstPage - numOfPagesOnScreen + 1;
+			else
+				firstPage++;
+		}
+		
+		lastPage = parseInt( totalItemCount / pageSize );
+		if ( (parseInt(totalItemCount) % parseInt(pageSize)) > 0)
+			lastPage++;
+		
+		if ( firstPage > numOfPagesOnScreen + 1)
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(1);">&lt;&lt;</a>');
+		
+		if ( firstPage != 1 )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage - 1) + ');">&lt;</a>');
+		
+		for ( var i = 0; i < numOfPagesOnScreen; i++ )
+		{
+			if ( firstPage + i == pageNo)
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" class="pageSelected">' + (firstPage + i) + '</a>');
+			}
+			else
+			{
+				$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + i) + ');" >' + (firstPage + i) + '</a>');
+			}
+		
+			if ( (firstPage + i) == lastPage )
+				break;
+		}
+		
+		if ( lastPage > firstPage + numOfPagesOnScreen )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + (firstPage + numOfPagesOnScreen) + ');" >&gt;</a>');
+		
+		if ( firstPage + numOfPagesOnScreen <= lastPage )
+			$('#pagingInfo').append('<a href="javascript:void(0)" onclick="goPage(' + lastPage + ');" >&gt;&gt;</a>');
+		
+	}
+	
+	function goPage(num)
+	{
+		pageNo = num;
+		startIndex = (pageNo - 1) * pageSize;
+		
+		if ( inquiryType == 'news')
+			getRegionNews();
+		else if ( inquiryType == 'blog')
+			getRegionBlog();
+	}
+	
 	</script>
 	
-	<script id="regionInfoT" type="text/x-handlebars-template">
-	<div class="section">
+	<script id="newsT" type="text/x-handlebars-template">
+		<div class="newsOption" onclick="getRegionBlog();">블로그 보기</div>
 		<div class="subject">{{data.regionName}} 뉴스</div>
+		{{#if data.newsList}}
 		<ul id="regionInfoList">
 			{{#each data.newsList}}
 				<li onclick="goLink('뉴스', '{{originallink}}')">
@@ -216,8 +231,15 @@ li {
 				</li>
 			{{/each}}
 		</ul>
-
+		{{else}}
+		<div class="empty">뉴스가 존재하지 않습니다.</div>
+		{{/if}}
+	</script>
+	
+	<script id="blogT" type="text/x-handlebars-template">
+		<div class="blogOption" onclick="getRegionNews();">뉴스 보기</div>
 		<div class="subject">{{data.regionName}} 블로그</div>
+		{{#if data.blogList}}
 		<ul id="regionInfoList2">
 			{{#each data.blogList}}
 				<li onclick="goLink('블로그','{{link}}')">
@@ -226,7 +248,9 @@ li {
 				</li>
 			{{/each}}
 		</ul>
-	</div>
+		{{else}}
+		<div class="empty">블로그가 존재하지 않습니다.</div>
+		{{/if}}
 	</script>
 </head>
 <body>
@@ -237,10 +261,16 @@ li {
 		</form>
 	
 		<div class="section">
+		
+			<% request.setAttribute("favoriteRegionEmptyMessage", "관심지역이 등록되어 있지 않습니다.<br/>관심지역을 등록하시면 지역뉴스와 블로그를 보실수 있습니다."); %>
+			<jsp:include page="../common/favoriteRegionCommon.jsp"/>
 			
-			<div class="subject">관심지역 리스트</div>
-			<div style="padding-left:10px;padding-right:10px;color:#005fc1"><%= favoriteRegions %></div>
-			<input type="button" value="설정 바로가기" onclick="goFavoriteRegionPage();" style="width:60%;margin-left:10px;padding:5px;"/>
+			<div id="contentsDiv">
+			</div>
+			
+			<div id="pagingInfo">
+			</div>
+		
 		</div>
 	
 	</div>
