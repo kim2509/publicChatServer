@@ -1,0 +1,64 @@
+#favoriteRegionDiv{
+	clear:both;
+	overflow:auto;
+	margin:0;
+	padding:0;
+}
+
+#favoriteRegionDiv p{
+	margin:50px;
+}
+
+#favoriteRegionDiv #linkDiv{
+	float:right;
+	margin:10px 10px 0px 0px;
+	font-size:15px;
+	font-weight:bold;
+	color:blue;
+	border-bottom: 1px solid blue;
+	padding: 1px 5px 2px;
+	line-height:20px;
+}
+
+#favoriteRegionDiv #subTitle{
+	font-size:16px;
+	font-weight:bold;
+	color:#f44a4a;
+	text-align:left;
+	margin:10px 0px 10px 10px;
+	line-height:20px;
+}
+
+#favoriteRegionDiv ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+	margin:10px 10px 10px 10px;
+	border-top:1px solid #d9d9d9;
+	overflow:auto;
+}
+
+.favoriteRegionUL li{
+	float:left;
+	font-size:13px;
+	font-weight:bold;
+	height:40px;
+	text-align:center;
+	border-bottom:1px solid #d9d9d9;
+	width:46%;
+	word-wrap:normal;
+	padding:5px;
+}
+
+.favoriteRegionUL li:nth-child(1n){
+	border-left:1px solid #d9d9d9;
+}
+
+.favoriteRegionUL li:nth-child(2n){
+	border-right:1px solid #d9d9d9;
+}
+
+.favoriteRegionUL .selected{
+	background:#cb3333;;
+	color:white;
+}

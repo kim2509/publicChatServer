@@ -18,91 +18,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
-<title>Insert title here</title>
+<title>이근처 뉴스</title>
 
 
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH %>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-
-<style type="text/css">
-
-body{background:#eeeeee;}
-
-span{ padding:5px; }
-
-.section{
-	border-radius: 10px;
-	border: 1px solid gray;
-	background:white;
-	padding:10px;
-	margin-bottom:10px;
-}
-
-#menu_category {background:#fff;}
-#menu_category .title {position:relative; height:33px; padding:0 12px 0 12px; background:#dee2e8; border-top:1px solid #bcc4cd; /*border-bottom:2px solid #0c1420;*/ display:box; box-orient:vertical;box-pack:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;display:-moz-box;-moz-box-orient:vertical;-moz-box-pack:center; -webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing: border-box}
-#menu_category .title .s_tit {display:block; font-weight:normal; font-size:0.81em; letter-spacing:-1px; color:#707b8b}
-
-a{
-	text-decoration: none;color:black;
-	line-height: 1.4em;
-}
-
-ul{
-	padding:0px;
-	margin:0px;
-}
-
-li {
-	list-style:none;
-	padding: 10px;
-	clear:both;
-}
-
-.title{
-	color: #005fc1;
-	display: -webkit-box;
-	overflow:hidden;
-	text-overflow: ellipsis;
-	font-size: 16px;
-  	line-height: 1.4;
-	-webkit-line-clamp: 1;
-  	-webkit-box-orient: vertical;
-  	margin-bottom:10px;
-}
-
-.subject {
-    font-weight: bold;
-    font-size: 16px;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid gray;
-    clear:both;
-    margin-left:10px;
-    margin-right:10px;
-    margin-top:10px;
-}
-
-.desc{
-	color: #666;
-	display: -webkit-box;
-	overflow:hidden;
-	text-overflow: ellipsis;
-	font-size: 16px;
-  	line-height: 1.4;
-	-webkit-line-clamp: 2;
-  	-webkit-box-orient: vertical;
-}
-
-.date{
-	font-size:13px;
-	margin-top:5px;
-	float:right;
-	color: #666;
-}
-
-</style>
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/news_blog.css" />
 
 	<script language="javascript">
 	
@@ -191,7 +114,7 @@ li {
 		var source = $('#regionInfoT').html();
 		var template = Handlebars.compile(source);
 		var html = template(result);
-		$('#wrapper').append( html );
+		$('#contentsDiv').html( html );
 	}
 	
 	function goLink( title, url )
@@ -205,7 +128,6 @@ li {
 	</script>
 	
 	<script id="regionInfoT" type="text/x-handlebars-template">
-	<div class="section">
 		<div class="subject">{{data.regionName}} 뉴스</div>
 		<ul id="regionInfoList">
 			{{#each data.newsList}}
@@ -226,7 +148,6 @@ li {
 				</li>
 			{{/each}}
 		</ul>
-	</div>
 	</script>
 </head>
 <body>
@@ -237,10 +158,13 @@ li {
 		</form>
 	
 		<div class="section">
+		
+			<% request.setAttribute("favoriteRegionEmptyMessage", "관심지역이 등록되어 있지 않습니다.<br/>관심지역을 등록하시면 지역뉴스와 블로그를 보실수 있습니다."); %>
+			<jsp:include page="../common/favoriteRegionCommon.jsp"/>
 			
-			<div class="subject">관심지역 리스트</div>
-			<div style="padding-left:10px;padding-right:10px;color:#005fc1"><%= favoriteRegions %></div>
-			<input type="button" value="설정 바로가기" onclick="goFavoriteRegionPage();" style="width:60%;margin-left:10px;padding:5px;"/>
+			<div id="contentsDiv">
+			</div>
+			
 		</div>
 	
 	</div>
