@@ -533,6 +533,14 @@
 		where cafeNo = (select cafeNo from cafe_master where cafeID=#{cafeID}) 
 	</update>
 	
+	<!-- 해당 카페 전체멤버삭제 -->
+	<delete id="deleteCafeAllMembers" parameterType="HashMap">
+		delete cmm
+		from cafe_members cmm
+			left outer join cafe_master cm on cm.cafeNo = cmm.cafeNo
+		where cm.cafeID = #{cafeID}
+	</delete>
+	
 	<!-- 해당 카페 detail 삭제 -->
 	<delete id="deleteCafeDetail" parameterType="HashMap">
 		delete cd
