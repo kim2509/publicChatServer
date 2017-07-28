@@ -308,6 +308,12 @@ select{
 					// TODO
 					try {
 
+						if ( result.resCode != '0000')
+						{
+							alert( result.resMsg );
+							return;
+						}
+						
 						refreshCafeIndex();
 						
 						if ( result == null || result.data == null || result.data.length == 0 )

@@ -686,6 +686,66 @@ public class CafeAjaxController extends BaseController {
 		return response;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/cafe/changeBoardOrderAjax.do")
+	public @ResponseBody APIResponse changeBoardOrderAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			if ( Util.isEmptyForKey(param, "cafeID") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else if ( !CafeBiz.getInstance(sqlSession).isCafeManager( param.get("cafeID").toString() , userToken) )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("고객님은 해당메뉴에 대해 권한이 없습니다.");
+			}
+				
+			CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+			
+			List boardList = (List) param.get("boardList");
+			
+			// 넘어온 순서대로 게시판 순서 업데이트
+			int dbResult = 0;
+			for ( int i = 0; i < boardList.size(); i++ )
+			{
+				HashMap temp = new HashMap();
+				temp.put("cafeID", Util.getStringFromHash(param, "cafeID"));
+				temp.put("boardNo", Util.getString(boardList.get(i)));
+				temp.put("seq", i+1 );
+				dbResult += cafeBiz.updateCafeBoardOrder(temp);	
+			}
+			
+			HashMap info = new HashMap();
+			
+			info.put("boardList", CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardList(param) );
+			info.put("dbResult", String.valueOf( dbResult ));
+			
+			response.setData(info);
+			
+			insertHistory("/cafe/modifyBoardAjax.do", param.get("cafeID").toString() , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("카페 게시판 수정도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/makeCafe.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping( value ="/cafe/deleteBoardAjax.do")
 	public @ResponseBody APIResponse deleteBoardAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)

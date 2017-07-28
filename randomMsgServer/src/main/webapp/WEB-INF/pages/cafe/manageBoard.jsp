@@ -32,7 +32,7 @@
 	var isApp = '<%= isApp %>';
 	var tmp = '<%= cafeBoardListJSON %>';
 	var cafeBoardList = null ;
-	
+	var cafeID = '<%= cafeID %>';
 	var modifyBoardNo = '';
 	
 	if ( tmp != null && tmp != '' )
@@ -63,23 +63,12 @@
 			alert('추가할 게시판의 이름을 입력해 주십시오.');
 			return;
 		}
-		
-		if ( $('#seq').val() == '' || $('#seq').val().length < 1 )
-		{
-			alert('게시판이 보여지는 순서를 입력해 주십시오.\r\n처음이면 1을 입력하시면 됩니다.');
-			return;
-		}
-		
-		if ( isNumberOnly( $('#seq').val() ) == false )
-		{
-			alert('순서 항목은 숫자만 입력 가능합니다.');
-			return;
-		}
-		
+				
 		if ( confirm( $('#boardName').val() + '게시판을 신규로 생성하시겠습니까?') )
 		{
+			var seq = $('#boardList li').length + 1;
 			var param = {"cafeID":'<%= cafeID %>', "boardName": $('#boardName').val(), 
-					"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val(), "seq": $('#seq').val() };
+					"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val(), "seq": seq };
 			ajaxRequest('POST', '/nearhere/cafe/createBoardAjax.do', param , onCreateBoardResult );
 			
 			reset();
@@ -126,13 +115,12 @@
 		}
 	}
 	
-	function modifyBoard( boardNo, boardName, boardType, writePermission, seq )
+	function modifyBoard( boardNo, boardName, boardType, writePermission )
 	{
 		modifyBoardNo = boardNo;
 		$('#boardName').val( boardName );
 		$('#boardType').prop('selectedIndex', boardType );
 		$('#writePermission').prop('selectedIndex', writePermission );
-		$('#seq').val(seq);
 		
 		$('#btnCreate').hide();
 		$('#btnModify').show();
@@ -150,20 +138,8 @@
 	
 	function modifyBoardSubmit()
 	{
-		if ( $('#seq').val().length < 1 )
-		{
-			alert('순서 항목을 입력해 주십시오.');
-			return;
-		}
-		
-		if ( isNumberOnly( $('#seq').val() ) == false )
-		{
-			alert('순서 항목은 숫자만 입력 가능합니다.');
-			return;
-		}
-		
 		var param = {"cafeID":"<%= cafeID %>", "boardNo": modifyBoardNo , "boardName": $('#boardName').val(),
-				"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val(), "seq":$('#seq').val() };
+				"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val() };
 		ajaxRequest('POST', '/nearhere/cafe/modifyBoardAjax.do', param , onModifyBoardResult );	
 	}
 	
@@ -189,22 +165,57 @@
 		$('#boardName').val('');
 		$('#boardType').prop('selectedIndex', 0 );
 		$('#writePermission').prop('selectedIndex', 0 );
-		$('#seq').val('');
 		
 		$('#btnCreate').show();
 		$('#btnModify').hide();
 		$('#btnReset').hide();
+		$('#btnSaveOrder').hide();
 	}
 	
+	function moveUp( element )
+	{
+		$('#btnSaveOrder').show();
+		var liElement = $(element).closest('li');
+		var before = $(liElement).prev();
+		$(liElement).insertBefore(before);
+	}
+	
+	function moveDown( element )
+	{
+		$('#btnSaveOrder').show();
+		var liElement = $(element).closest('li');
+		var after = $(liElement).next();
+		$(liElement).insertAfter(after);
+	}
+	
+	function saveBoardOrder()
+	{
+		if ( confirm('이대로 저장하시겠습니까?') )
+		{
+			var boardList = [];
+			var count = 0;
+			$('#boardList li').each(function(){
+				var boardNo = $(this).attr('boardNo');
+				boardList[count++] = boardNo;
+			});
+			
+			var param = {"cafeID": cafeID, "boardList": boardList };
+			ajaxRequest('POST', '/nearhere/cafe/changeBoardOrderAjax.do', param , onModifyBoardResult );	
+		}
+	}
 </script>
 <script id="boardT" type="text/x-handlebars-template">
 	{{#if this}}	
 	<ul>
 		{{#each this}}
-		<li>
+		<li boardNo='{{boardNo}}'>
 			<div style="clear:both;float:right">
+				<input type="button" value="∧" 
+					onclick="moveUp( this );"/>
+				<input type="button" value="∨" 
+					onclick="moveDown( this );"/>
 				<input type="button" value="수정" 
-					onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{writePermission}}','{{seq}}');"/>
+					onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{writePermission}}');"/>
 				<input type="button" value="삭제" 
 					onclick="deleteBoard('{{boardNo}}');" />
 			</div>
@@ -264,14 +275,6 @@
 							</select>
 						</td>
 					</tr>
-					<tr>
-						<td class="th1">게시판 순서</td>
-						<td class="th2">
-							<div class="inputContainer">
-								<input type="text" class="inputTxt" id="seq" placeholder="순서(숫자)"/>
-							</div>
-						</td>
-					</tr>
 					</tbody>
 				</table>
 				
@@ -287,6 +290,8 @@
 				
 			</div>
 		
+			<div class="wideBtn btnBG" id="btnSaveOrder" onclick="saveBoardOrder();" style="display:none">게시판 순서 저장</div>
+			
 		</div>
 					
 	</div>

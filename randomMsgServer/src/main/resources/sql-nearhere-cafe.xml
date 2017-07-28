@@ -246,18 +246,18 @@
 			left outer join cafe_master cm on cm.cafeNo=cpm.cafeNo
 			left outer join (select meetingNo, count(userID) as curNo from cafe_public_meeting_members group by meetingNo ) cmm
 				on cpm.meetingNo = cmm.meetingNo
-		where 
+		where cpm.meetingDate > NOW()
 		<if test="level==1">
-			lRegionNo = #{regionNo}
+			and lRegionNo = #{regionNo}
 		</if>
 		<if test="level==2">
-			mRegionNo = #{regionNo}
+			and mRegionNo = #{regionNo}
 		</if>
 		<if test="level==3">
-			sRegionNo = #{regionNo}
+			and sRegionNo = #{regionNo}
 		</if>
 		<if test="level==4">
-			tRegionNo = #{regionNo}
+			and tRegionNo = #{regionNo}
 		</if>
 		limit #{startIndex}, #{showCount}
 	</select>
@@ -267,18 +267,18 @@
 		from cafe_public_meeting cpm
 			left outer join cafe_location cl on cpm.locationNo=cl.No
 			left outer join region_view rv on rv.regionNo=cl.regionNo
-		where 
+		where cpm.meetingDate > NOW()
 		<if test="level==1">
-			lRegionNo = #{regionNo}
+			and lRegionNo = #{regionNo}
 		</if>
 		<if test="level==2">
-			mRegionNo = #{regionNo}
+			and mRegionNo = #{regionNo}
 		</if>
 		<if test="level==3">
-			sRegionNo = #{regionNo}
+			and sRegionNo = #{regionNo}
 		</if>
 		<if test="level==4">
-			tRegionNo = #{regionNo}
+			and tRegionNo = #{regionNo}
 		</if>
 	</select>
 	
@@ -432,6 +432,13 @@
 		<if test="seq != null and seq != ''">
 		, seq = #{seq}
 		</if> 
+		where boardNo=#{boardNo}
+		and cafeNo in ( select cafeNo from cafe_master where cafeID=#{cafeID} )
+	</update>
+	
+	<update id="updateCafeBoardOrder" parameterType="HashMap">
+		update cafe_board_master
+		set seq = #{seq} 
 		where boardNo=#{boardNo}
 		and cafeNo in ( select cafeNo from cafe_master where cafeID=#{cafeID} )
 	</update>

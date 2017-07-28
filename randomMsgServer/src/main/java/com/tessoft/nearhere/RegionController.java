@@ -138,7 +138,7 @@ public class RegionController extends BaseController{
 		catch( Exception ex )
 		{
 			response.setResCode( ErrorCode.UNKNOWN_ERROR );
-			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
+			response.setResMsg("데이터 전송 도중 오류가 발생했습니다.\r\n기존에 추가된 지역인지 확인해주십시오.");
 			logger.error( ex );
 		}
 

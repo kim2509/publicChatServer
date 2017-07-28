@@ -111,7 +111,7 @@
 			
 		</div>
 		
-		<div class="more" onclick="goMoreCafePublicMeetingList();">더 보기 &gt;</div>
+		<div class="more" onclick="goMoreCafePublicMeetingList();">정모 더 보기 &gt;</div>
 	</div>
 	
 </div>

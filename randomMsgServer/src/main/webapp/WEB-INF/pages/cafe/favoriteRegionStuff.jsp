@@ -539,7 +539,7 @@
 		<div id="favCafeMapDiv" style="display:none;height:200px;margin:0px 0px 10px 0px;">
 		</div>
 		
-		<div class="more" onclick="goMoreCafeList();" >더 보기 &gt;</div>
+		<div class="more" onclick="goMoreCafeList();" >카페 더 보기 &gt;</div>
 		
 	</div>
 	
@@ -553,7 +553,7 @@
 		<div id="map">
 		</div>
 		
-		<div class="more" onclick="goMoreCafePublicMeetingList();">더 보기 &gt;</div>
+		<div class="more" onclick="goMoreCafePublicMeetingList();">정모 더 보기 &gt;</div>
 	</div>
 	<% } %>
 		
