@@ -261,7 +261,7 @@
 						<td class="th2">
 							<select id="boardType">
 								<option value="0">리스트</option>
-								<option value="1">이미지</option>
+								<!-- option value="1">이미지</option-->
 							</select>
 						</td>
 					</tr>
