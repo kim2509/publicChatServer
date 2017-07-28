@@ -101,7 +101,7 @@
 		</div>
 
 		
-		<div class="more" onclick="goMoreCafeList();" >더 보기 &gt;</div>
+		<div class="more" onclick="goMoreCafeList();" >카페 더 보기 &gt;</div>
 		
 	</div>
 

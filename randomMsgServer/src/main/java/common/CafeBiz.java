@@ -282,6 +282,13 @@ public class CafeBiz extends CommonBiz{
 	}
 	
 	@SuppressWarnings("rawtypes")
+	public int updateCafeBoardOrder( HashMap param )
+	{
+		int result = sqlSession.update("com.tessoft.nearhere.cafe.updateCafeBoardOrder", param);
+		return result;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public int deleteCafeBoard( HashMap param )
 	{
 		int result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeBoard", param);
@@ -504,6 +511,7 @@ public class CafeBiz extends CommonBiz{
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardPostDetail", param);		
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeBoardAllPosts", param);
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.board.deleteCafeAllBoard", param);
+		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeAllMembers", param);
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeDetail", param);
 		result = sqlSession.delete("com.tessoft.nearhere.cafe.deleteCafeMaster", param);
 		
