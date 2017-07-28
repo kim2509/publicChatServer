@@ -27,7 +27,7 @@
 
 <script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/common.js?v=2"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/news_blog.css" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH %>/news_blog.css" />
 
 	<script language="javascript">
 	
