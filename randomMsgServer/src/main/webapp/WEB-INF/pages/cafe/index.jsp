@@ -116,7 +116,7 @@
 </head>
 <body style="background:#eeeeee;">
 
-	<div id="wrapper" style="padding:10px;margin:10px auto;">
+	<div id="wrapper" style="padding:10px;">
 		
 		<div id="section">
 
