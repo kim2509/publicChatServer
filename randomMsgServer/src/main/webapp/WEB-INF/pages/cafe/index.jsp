@@ -135,6 +135,10 @@
 		<jsp:include page="cafeList.jsp" flush="true"></jsp:include>
 		<!-- 카페 리스트 -->
 		
+		<!-- 카페 글 리스트 -->
+		<jsp:include page="cafeBoardPostList.jsp" flush="true"></jsp:include>
+		<!-- 카페 글  리스트 -->
+		
 		<!-- 정모 리스트 -->
 		<jsp:include page="publicMeetingList.jsp" flush="true"></jsp:include>
 		<!-- 정모 리스트 -->

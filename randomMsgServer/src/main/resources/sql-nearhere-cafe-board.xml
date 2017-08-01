@@ -302,4 +302,30 @@
 		delete from cafe_board_post_reply
 		where replyNo = #{replyNo}
 	</delete>
+	
+	<!-- 최신 글 조회 -->
+	<select id="getRecentCafeBoardPostList" resultType="HashMap">
+		select cbm.boardName, cbpm.*, cbpd.content, cbpm.locationNo, rv.* 
+			, concat( ifnull( ci.url1, '' ), ifnull( ci.url2, '' ) ) as imageURL
+		from cafe_board_post_master cbpm
+			left outer join (
+				select postNo, content from cafe_board_post_detail
+				where type = 1
+				group by postNo
+			) cbpd on cbpm.postNo = cbpd.postNo
+			left outer join cafe_location cl on cbpm.locationNo=cl.No
+			left outer join region_view rv on rv.regionNo = cl.regionNo
+			left outer join (
+				select postNo, imageNo from cafe_board_post_detail
+				where type = 2
+				group by postNo
+			) cbpd3 on cbpm.postNo = cbpd3.postNo
+			left outer join cafe_image ci on ci.imageNo = cbpd3.imageNo
+			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
+			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
+		where 
+		(cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
+		order by createdDate desc
+		limit 0, 5;
+	</select>
 </mapper>
