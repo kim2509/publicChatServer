@@ -131,4 +131,118 @@
 		isRead = 'Y'
 		where toUserID=#{userID};
 	</update>
+	
+	<update id="updateUserID_1" parameterType="HashMap">
+		update cafe_board_post_history
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_2" parameterType="HashMap">
+		update cafe_board_post_master
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_3" parameterType="HashMap">
+		update cafe_board_post_reply
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_4" parameterType="HashMap">
+		update cafe_members
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_5" parameterType="HashMap">
+		update cafe_public_meeting_members
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_6" parameterType="HashMap">
+		update event_apply
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_7" parameterType="HashMap">
+		update location_history
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_8" parameterType="HashMap">
+		update location_master
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_9" parameterType="HashMap">
+		update new_post_push_data
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_10" parameterType="HashMap">
+		update post
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_11" parameterType="HashMap">
+		update post_like
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_12" parameterType="HashMap">
+		update post_read_history
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_13" parameterType="HashMap">
+		update post_reply
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_14" parameterType="HashMap">
+		update user
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_15" parameterType="HashMap">
+		update user_favorite_region
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_16" parameterType="HashMap">
+		update user_location
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_17" parameterType="HashMap">
+		update user_setting
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_18" parameterType="HashMap">
+		update user_terms_agreement
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_19" parameterType="HashMap">
+		update user_token
+		set userID=#{userID}
+		where userID=#{oldUserID}
+	</update>
 </mapper>
