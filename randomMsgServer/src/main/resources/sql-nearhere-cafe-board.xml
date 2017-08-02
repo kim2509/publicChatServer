@@ -325,7 +325,8 @@
 			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
 			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
 		where 
-		cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y'
+		cm.publishYN = 'Y'
+		and (cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
 		order by createdDate desc
 		limit 0, 5;
 	</select>
