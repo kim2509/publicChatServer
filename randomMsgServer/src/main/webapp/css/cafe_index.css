@@ -78,16 +78,6 @@ span{ padding:5px; }
 	float:left;
 }
 
-.postTitle{
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-    text-overflow: ellipsis;
-	text-align:left;
-	margin-left:70px;
-	font-size:12px;
-}
 
 .cafeName{
 	position:absolute;
@@ -113,8 +103,62 @@ span{ padding:5px; }
 	background:white;	
 }
 
+#recentPostListDiv .subTitle{
+	margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 25px;
+}
+
 /* 공통 */
 
+.cafeBoardPostUL{
+	list-style:none;	
+}
+
+.cafeBoardPostUL li{
+	clear:both;
+	padding:10px;
+	border-bottom:1px solid #d9d9d9;
+	overflow:auto;
+	height:70px;
+	position:relative;
+}
+
+.cafeBoardPostUL li .postImage{
+	float:left;
+}
+
+.cafeBoardPostUL li .postImage img{
+	border-radius:10px;
+}
+	
+.cafeBoardPostUL li .postInfo{
+	margin-left:70px;
+}
+
+.cafeBoardPostUL li .postInfo .postTitle{
+	display: -webkit-box;
+	text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cafeBoardPostUL li .postInfo .createdDate{
+	color:gray;
+	font-size:12px;
+	position:absolute;
+	bottom:10px;
+}
+
+.cafeBoardPostUL li .postInfo .cafeName{
+	color:gray;
+	font-size:12px;
+	position:absolute;
+	bottom:10px;
+	right:10px;
+}
 
 /* 공통 */
 

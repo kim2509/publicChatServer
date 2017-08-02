@@ -72,8 +72,11 @@ public class BoardPostConroller extends BaseController {
 			param.put("userID", loginUserID);
 			
 			// 조회 수 증가
-			CafeBoardPostBiz.getInstance(sqlSession).insertCafeBoardPostHistory(param);
-			CafeBoardPostBiz.getInstance(sqlSession).updateCafeBoardPostReadCount(param);
+			if ( !Util.isEmptyString(loginUserID) )
+			{
+				CafeBoardPostBiz.getInstance(sqlSession).insertCafeBoardPostHistory(param);
+				CafeBoardPostBiz.getInstance(sqlSession).updateCafeBoardPostReadCount(param);	
+			}
 						
 			HashMap postInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
 			model.addAttribute("postInfo", postInfo);

@@ -87,7 +87,7 @@
 		<if test="cafeID != null">
 			AND cm.cafeID= #{cafeID}
 		</if>
-		<if test="boardNo != ''">
+		<if test="boardNo != null and boardNo != ''">
 			AND cbm.boardNo= #{boardNo}
 		</if>
 		limit #{startIndex}, #{showCount}
@@ -307,6 +307,7 @@
 	<select id="getRecentCafeBoardPostList" resultType="HashMap">
 		select cbm.boardName, cbpm.*, cbpd.content, cbpm.locationNo, rv.* 
 			, concat( ifnull( ci.url1, '' ), ifnull( ci.url2, '' ) ) as imageURL
+			, cm.cafeName
 		from cafe_board_post_master cbpm
 			left outer join (
 				select postNo, content from cafe_board_post_detail
@@ -324,7 +325,7 @@
 			left outer join cafe_board_master cbm on cbm.boardNo=cbpm.boardNo
 			left outer join cafe_master cm on cbm.cafeNo=cm.cafeNo
 		where 
-		(cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y')
+		cbpm.noticeYN is null or cbpm.noticeYN &lt;&gt; 'Y'
 		order by createdDate desc
 		limit 0, 5;
 	</select>

@@ -70,6 +70,7 @@
 	var isApp = '<%= isApp %>';
 	var cafeID = '<%= cafeID %>';
 	var boardNo = '<%= boardNo %>';
+	var boardName = '<%= boardName %>';
 	var postNo = '<%= postNo %>';
 	
 	var loginUserID = '<%= loginUserID %>';
@@ -275,7 +276,8 @@
 			</div>
 			
 			<div id="btns">
-				<div id="listBtn" onclick="goBack();">목록</div>
+				<div id="listBtn" onclick="goBoardHome(boardName, boardNo);">목록</div>
+				<div id="listBtn" onclick="goCafeHome(cafeID);">카페 바로가기</div>
 			</div>
 		</div>
 		<div id="postBodyDiv">

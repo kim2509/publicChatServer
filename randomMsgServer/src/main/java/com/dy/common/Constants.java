@@ -77,5 +77,6 @@ public class Constants {
 	
 	public static String PAGE_ID_NEWS_LIST = "P5001";
 	
-	public static String CAFE_DEAULT_ICON = "cafe_default.png";
+	public static String CAFE_DEFAULT_ICON = "cafe_default.png";
+	public static String POST_DEFAULT_ICON = "post_default.png";
 }
