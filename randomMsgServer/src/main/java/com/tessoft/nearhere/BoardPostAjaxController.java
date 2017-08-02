@@ -26,6 +26,45 @@ import common.UserBiz;
 public class BoardPostAjaxController extends BaseController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/boardPost/getRecentCafeBoardPostListAjax.do")
+	public @ResponseBody APIResponse getRecentCafeBoardPostListAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			HashMap resultData = new HashMap();
+			
+			HashMap boardInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardInfo(param);
+			resultData.put("boardInfo", boardInfo);
+			
+			List<HashMap> boardPostList = CafeBoardPostBiz.getInstance(sqlSession).getRecentCafeBoardPostList(param);
+			resultData.put("boardPostList", boardPostList);
+			
+			response.setData( resultData );
+			
+			insertHistory("/boardPost/getRecentCafeBoardPostListAjax.do", userID , null , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("최신글 가져오는 도중 오류가 발생했습니다.");
+			
+			insertHistory("/boardPost/getRecentCafeBoardPostListAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping( value ="/boardPost/getCafeBoardPostNoticeListAjax.do")
 	public @ResponseBody APIResponse getCafeBoardPostNoticeListAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
