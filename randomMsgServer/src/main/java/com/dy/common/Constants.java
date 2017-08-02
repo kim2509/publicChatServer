@@ -58,7 +58,7 @@ public class Constants {
 	
 	public static String getApacheHome()
 	{
-		return Constants.bReal ? "https://www.hereby.co.kr/" : "http://" + ServerIP + "/";
+		return Constants.bReal ? "http://www.hereby.co.kr/" : "http://" + ServerIP + "/";
 	}
 	
 	public static String CafeMemberTypeOwner = "카페주인";
