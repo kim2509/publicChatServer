@@ -365,9 +365,9 @@
 
 	<script id="boardImageTList" type="text/x-handlebars-template">
 	{{#if contentList}}
-	<ul class="meetingListUL">
+	<ul class="uploadedImage">
 		{{#each contentList}}
-		{{#if_eq  type "2"}}
+		{{#if_eq type "2"}}
 		<li>
 			<div>
 				<div id="optionDiv">
