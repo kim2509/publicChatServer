@@ -44,7 +44,7 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
 <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/newBoardPost.css?v=5" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/newBoardPost.css?v=6" />
 
 <script language="javascript">
 	
@@ -426,7 +426,9 @@
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">내용</p>
 			
-			<textarea id="desc" class="marginLR10 marginB20" value="" rows="5"></textarea>
+			<div class="marginLR10 marginB20">
+				<textarea id="desc" value="" rows="10"></textarea>
+			</div>
 			
 			<% if ("Y".equals(ownerYN) || Constants.CafeMemberTypeOperator.equals(memberType) ) { %>
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">공지여부</p>
