@@ -121,6 +121,11 @@
 		modifyBoardNo = boardNo;
 		$('#boardName').val( boardName );
 		$('#boardType').prop('selectedIndex', boardType );
+		if ( readPermission == null || readPermission == '' )
+			readPermission = '0';
+		if ( writePermission == null || writePermission == '' )
+			writePermission = '0';
+		
 		$('#readPermission').val(readPermission);
 		$('#writePermission').val(writePermission);
 		
