@@ -32,6 +32,7 @@ CREATE TABLE `cafe_board_master` (
 	`boardName` VARCHAR(50) NOT NULL,
 	`cafeNo` INT(11) NULL DEFAULT NULL,
 	`boardType` INT(11) NULL DEFAULT NULL,
+	`readPermission` INT(11) NULL DEFAULT NULL,
 	`writePermission` INT(11) NULL DEFAULT NULL,
 	`seq` INT(11) NULL DEFAULT NULL,
 	`createdDate` DATETIME NULL DEFAULT NULL,
@@ -40,7 +41,7 @@ CREATE TABLE `cafe_board_master` (
 )
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=7
+AUTO_INCREMENT=13
 ;
 
 
@@ -107,5 +108,17 @@ CREATE TABLE `cafe_board_post_history` (
 	INDEX `postNo_userID` (`postNo`, `userID`)
 )
 COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+
+
+
+CREATE TABLE `cafe_member_grade` (
+	`cafeNo` INT(11) NOT NULL,
+	`gradeName` VARCHAR(50) NOT NULL,
+	`gradeOrder` INT(11) NULL DEFAULT NULL,
+	UNIQUE INDEX `cafeNo_gradeName` (`cafeNo`, `gradeName`),
+	INDEX `cafeNo` (`cafeNo`)
+)
 ENGINE=InnoDB
 ;
