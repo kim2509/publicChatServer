@@ -20,19 +20,19 @@
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/category.css?v=3" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/friends.css?v=2" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common.css" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/category.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/friends.css?v=2" />
 
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>	
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
 
-<link rel="stylesheet" href="<%=Constants.SECURE_CSS_PATH%>/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="<%=Constants.CSS_PATH%>/jquery.mobile-1.4.5.min.css">
 <!-- Include the jQuery library -->
-<script src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
+<script src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <!-- Include the jQuery Mobile library -->
-<script src="<%=Constants.SECURE_JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
+<script src="<%=Constants.JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
   
 <script language="javascript">
 
@@ -333,8 +333,8 @@
 		{{#each friendRequestList}}
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
-				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
+				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' width="70" height="70" 
+					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
 				<div id='name'>{{userName}}</div>
@@ -352,8 +352,8 @@
 		{{#each userList}}
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
-				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
+				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' width="70" height="70" 
+					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
 				<div id='name'>{{userName}}</div>
@@ -372,7 +372,7 @@
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
 				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
-					width="70" height="70" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
+					width="70" height="70" onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
 				<div id='name' style='margin-left:5px;margin-top:5px;'>{{userName}}</div>

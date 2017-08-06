@@ -2,7 +2,7 @@
 <%@ page import="java.util.*"%>
 <%@ page import="com.dy.common.*"%>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH %>/favoriteRegionCommon.css" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH %>/favoriteRegionCommon.css" />
 
 <%
 	List<HashMap> myFavRegionList = (List<HashMap>) request.getAttribute("myFavRegionList");

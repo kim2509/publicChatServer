@@ -19,9 +19,9 @@
 
 <!-- Include the jQuery library -->
 <script type="text/javascript"
-	src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>
+	src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"
-	src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
+	src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 	
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=5"></script>
 

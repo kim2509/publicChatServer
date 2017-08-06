@@ -24,12 +24,12 @@ public class Constants {
 
 
 //	public static String JS_PATH = "http://www.hereby.co.kr/nearhere/js/";
-	public static String CSS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/css/";
-	public static String SECURE_CSS_PATH = SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere/css/";
-	public static String IMAGE_PATH = "http://" + ServerIP + ":" + Port +  "/nearhere/image/";
-	public static String SECURE_IMAGE_PATH = "https://" + ServerIP + ":" + SSLPort + "/nearhere/image/";
-	public static String JS_PATH = "http://" + ServerIP + ":" + Port + "/nearhere/js/";
-	public static String SECURE_JS_PATH = SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere/js/";
+	public static String CSS_PATH = "//" + ServerIP + "/nearhere/css/";
+//	public static String SECURE_CSS_PATH = SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere/css/";
+	public static String IMAGE_PATH = "//" + ServerIP + "/nearhere/image/";
+//	public static String SECURE_IMAGE_PATH = "https://" + ServerIP + ":" + SSLPort + "/nearhere/image/";
+	public static String JS_PATH = "//" + ServerIP + "/nearhere/js/";
+//	public static String SECURE_JS_PATH = SSLProtocol + "://" + ServerIP + ":" + SSLPort + "/nearhere/js/";
 	public static String GCM_API_KEY = "AIzaSyAfDDYJvFo6EWjLJH9PsPYzhcZJke30B4A";
 	public static String DAUM_API_KEY = "a694766f82dd0fb809ccf02189747061";
 	//public static String DAUM_API_KEY = "d346cd447ad87016b635e77df459b155adb17509";
