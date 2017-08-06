@@ -25,7 +25,7 @@
 
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=4"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage_board.css?v=1" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_manage_board.css?v=2" />
 
 <script language="javascript">
 
@@ -68,7 +68,8 @@
 		{
 			var seq = $('#boardList li').length + 1;
 			var param = {"cafeID":'<%= cafeID %>', "boardName": $('#boardName').val(), 
-					"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val(), "seq": seq };
+					"boardType": $('#boardType').val(), "readPermission": $('#readPermission').val()
+					, "writePermission": $('#writePermission').val(), "seq": seq };
 			ajaxRequest('POST', '/nearhere/cafe/createBoardAjax.do', param , onCreateBoardResult );
 			
 			reset();
@@ -115,12 +116,18 @@
 		}
 	}
 	
-	function modifyBoard( boardNo, boardName, boardType, writePermission )
+	function modifyBoard( boardNo, boardName, boardType, readPermission, writePermission )
 	{
 		modifyBoardNo = boardNo;
 		$('#boardName').val( boardName );
 		$('#boardType').prop('selectedIndex', boardType );
-		$('#writePermission').prop('selectedIndex', writePermission );
+		if ( readPermission == null || readPermission == '' )
+			readPermission = '0';
+		if ( writePermission == null || writePermission == '' )
+			writePermission = '0';
+		
+		$('#readPermission').val(readPermission);
+		$('#writePermission').val(writePermission);
 		
 		$('#btnCreate').hide();
 		$('#btnModify').show();
@@ -139,7 +146,8 @@
 	function modifyBoardSubmit()
 	{
 		var param = {"cafeID":"<%= cafeID %>", "boardNo": modifyBoardNo , "boardName": $('#boardName').val(),
-				"boardType": $('#boardType').val(), "writePermission": $('#writePermission').val() };
+				"boardType": $('#boardType').val(), "readPermission": $('#readPermission').val()
+				, "writePermission": $('#writePermission').val() };
 		ajaxRequest('POST', '/nearhere/cafe/modifyBoardAjax.do', param , onModifyBoardResult );	
 	}
 	
@@ -164,6 +172,7 @@
 		modifyBoardNo = 0;
 		$('#boardName').val('');
 		$('#boardType').prop('selectedIndex', 0 );
+		$('#readPermission').prop('selectedIndex', 0 );
 		$('#writePermission').prop('selectedIndex', 0 );
 		
 		$('#btnCreate').show();
@@ -215,7 +224,7 @@
 				<input type="button" value="∨" 
 					onclick="moveDown( this );"/>
 				<input type="button" value="수정" 
-					onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{writePermission}}');"/>
+					onclick="modifyBoard('{{boardNo}}','{{boardName}}','{{boardType}}','{{readPermission}}','{{writePermission}}');"/>
 				<input type="button" value="삭제" 
 					onclick="deleteBoard('{{boardNo}}');" />
 			</div>
@@ -266,10 +275,22 @@
 						</td>
 					</tr>
 					<tr>
+						<td class="th1">글읽기 권한</td>
+						<td class="th2">
+							<select id="readPermission">
+								<option value="0">모두</option>
+								<option value="3">카페회원 이상</option>
+								<option value="1">운영진 이상</option>
+								<option value="2">카페주인만</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
 						<td class="th1">글쓰기 권한</td>
 						<td class="th2">
 							<select id="writePermission">
 								<option value="0">모두</option>
+								<option value="3">카페회원 이상</option>
 								<option value="1">운영진 이상</option>
 								<option value="2">카페주인만</option>
 							</select>

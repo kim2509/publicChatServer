@@ -19,6 +19,10 @@
 <!-- Include the jQuery library -->
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 
+<!-- Include the jQuery library -->
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
+
+
 <link rel="stylesheet" type="text/css"
 	href="<%=Constants.CSS_PATH%>/cafe.css" />
 
@@ -31,7 +35,11 @@
 		try
 		{
 			alert('<%= errMsg %>');
-			window.history.back();
+			
+			if ( isApp == 'Y' )
+				finishActivity();
+			else
+				window.history.back();
 		}
 		catch( ex )
 		{

@@ -26,7 +26,7 @@
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_common.css?v=1" />
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_index.css?v=4" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/cafe_index.css?v=5" />
 
 <script language="javascript">
 		
@@ -77,7 +77,7 @@
 			<div>
 				<div class="cafeImage">
 				<img src="{{url1}}" width="60" height="60"
-					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH + "/" + Constants.CAFE_DEAULT_ICON %>';">
+					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH + "/" + Constants.CAFE_DEFAULT_ICON %>';">
 				</div>
 				<div class="cafeInfo">
 					<div class="cafeTitle">{{cafeName}}</div>
@@ -134,6 +134,10 @@
 		<!-- 카페 리스트 -->
 		<jsp:include page="cafeList.jsp" flush="true"></jsp:include>
 		<!-- 카페 리스트 -->
+		
+		<!-- 카페 글 리스트 -->
+		<jsp:include page="recentPostList.jsp" flush="true"></jsp:include>
+		<!-- 카페 글  리스트 -->
 		
 		<!-- 정모 리스트 -->
 		<jsp:include page="publicMeetingList.jsp" flush="true"></jsp:include>

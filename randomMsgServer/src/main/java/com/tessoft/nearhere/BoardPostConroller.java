@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dy.common.Constants;
+import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 
 import common.CafeBiz;
@@ -34,17 +36,36 @@ public class BoardPostConroller extends BaseController {
 			HashMap param = new HashMap();
 			param.put("boardNo", boardNo);
 			
-			HashMap boardInfo = cafeBoardPostBiz.getCafeBoardInfo(param);
-			model.addAttribute("boardInfo", boardInfo);
-			
-			String cafeID = Util.getStringFromHash(boardInfo, "cafeID");
-			param.put("cafeID", cafeID);
-			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
-			model.addAttribute("cafeMainInfo", cafeMainInfo);
-			
 			String loginUserID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
 			param.put("userID", loginUserID);
-			model.addAttribute("cafeUserInfo", CafeBiz.getInstance(sqlSession).getCafeUserInfo(param) );
+			
+			HashMap boardInfo = cafeBoardPostBiz.getCafeBoardInfo(param);
+			model.addAttribute("boardInfo", boardInfo);
+			String cafeID = Util.getStringFromHash(boardInfo, "cafeID");
+			param.put("cafeID", cafeID);
+			
+			HashMap cafeUserInfo = CafeBiz.getInstance(sqlSession).getCafeUserInfo(param);
+			model.addAttribute("cafeUserInfo", cafeUserInfo );
+			
+			String readPermission = Util.getStringFromHash(boardInfo, "readPermission");
+			String ownerYN = Util.getStringFromHash(cafeUserInfo, "ownerYN");
+			String memberType = Util.getStringFromHash(cafeUserInfo, "memberType");
+			
+			if ("1".equals(readPermission) && (!"Y".equals(ownerYN) && !Constants.CafeMemberTypeOperator.equals(memberType)))  // 운영진 이상
+			{
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+			}
+			else if ("2".equals(readPermission) && !"Y".equals(ownerYN) )  // 카페 주인만
+			{
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+			}			
+			else if ("3".equals(readPermission) && cafeUserInfo == null )  // 회원이상
+			{
+				return new ModelAndView("error", "errMsg", "고객님은 해당메뉴에 권한이 없습니다.");
+			}
+			
+			HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+			model.addAttribute("cafeMainInfo", cafeMainInfo);
 		}
 		catch( Exception ex )
 		{
@@ -72,8 +93,11 @@ public class BoardPostConroller extends BaseController {
 			param.put("userID", loginUserID);
 			
 			// 조회 수 증가
-			CafeBoardPostBiz.getInstance(sqlSession).insertCafeBoardPostHistory(param);
-			CafeBoardPostBiz.getInstance(sqlSession).updateCafeBoardPostReadCount(param);
+			if ( !Util.isEmptyString(loginUserID) )
+			{
+				CafeBoardPostBiz.getInstance(sqlSession).insertCafeBoardPostHistory(param);
+				CafeBoardPostBiz.getInstance(sqlSession).updateCafeBoardPostReadCount(param);	
+			}
 						
 			HashMap postInfo = CafeBoardPostBiz.getInstance(sqlSession).getCafeBoardPostInfo(param);
 			model.addAttribute("postInfo", postInfo);

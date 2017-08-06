@@ -20,14 +20,14 @@
 <meta name="viewport"
 	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/userInfo.css?v=3" />
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/searchDestination.css?v=4" />
-<link rel="stylesheet" href="<%=Constants.SECURE_CSS_PATH%>/w3.css">
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common.css" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/userInfo.css?v=3" />
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/searchDestination.css?v=4" />
+<link rel="stylesheet" href="<%=Constants.CSS_PATH%>/w3.css">
 		
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery.lazyload.min.js"></script>	
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery.lazyload.min.js"></script>	
 
 <script language="javascript">
 
@@ -70,9 +70,9 @@
 %>
 				<dd onclick="goUserInfo('<%= friendList.get(i).get("userID") %>')">
 					<div style="float:left;">
-						<img src='<%= Constants.getThumbnailImageSSLURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
+						<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
 							style="border-radius: 10px;" 
-							width="60" height="60" onError="this.src='<%= Constants.SECURE_IMAGE_PATH %>/no_image.png';"/>
+							width="60" height="60" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 					</div>
 					<div style="margin-left:80px;height:80px;">
 						<div><%= friendList.get(i).get("userName") %></div>

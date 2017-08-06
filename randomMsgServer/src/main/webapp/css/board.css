@@ -86,7 +86,6 @@ body{
 .boardPostUL li{
 	padding:10px;
 	border-bottom:1px solid #d3d3d3;
-	height:80px;
 }
 
 .boardPostUL li #commentCount{

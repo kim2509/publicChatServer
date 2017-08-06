@@ -920,6 +920,7 @@
 	<update id="updateUserAsDeleted" parameterType="com.nearhere.domain.User">
 		update user set
 		isDeleted='Y'
+		, deletedDateTime = NOW()
 		where userID=#{userID};
 	</update>
 	

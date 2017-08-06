@@ -28,15 +28,15 @@
 <title>이근처</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" type="text/css" href="<%=Constants.SECURE_CSS_PATH%>/common.css" />
-<link rel="stylesheet" href="<%=Constants.SECURE_CSS_PATH%>/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/common.css" />
+<link rel="stylesheet" href="<%=Constants.CSS_PATH%>/jquery.mobile-1.4.5.min.css">
 		
 <!-- Include the jQuery library -->
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <!-- Include the jQuery Mobile library -->
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery.mobile-1.4.5.min.js"></script>
 
-<script type="text/javascript" src="<%=Constants.SECURE_JS_PATH%>/handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
 <script language="javascript">
 
