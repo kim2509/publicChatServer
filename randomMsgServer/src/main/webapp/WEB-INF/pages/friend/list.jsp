@@ -333,7 +333,7 @@
 		{{#each friendRequestList}}
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
-				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' width="70" height="70" 
+				<img src='<%= Constants.getThumbnailImageURL() %>/{{profileImageURL}}' width="70" height="70" 
 					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
@@ -352,7 +352,7 @@
 		{{#each userList}}
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
-				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' width="70" height="70" 
+				<img src='<%= Constants.getThumbnailImageURL() %>/{{profileImageURL}}' width="70" height="70" 
 					onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >
@@ -371,7 +371,7 @@
 		{{#each friendsList}}
 		<dd>
 			<div class='userProfile' onclick="openUserProfile('{{userID}}');">
-				<img src='<%= Constants.getThumbnailImageSSLURL() %>/{{profileImageURL}}' 
+				<img src='<%= Constants.getThumbnailImageURL() %>/{{profileImageURL}}' 
 					width="70" height="70" onerror="this.onerror=null;this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 			</div>
 			<div class='desc' >

@@ -338,7 +338,7 @@
 					if ( meetingMember == null ) continue;
 				%>
 					<li onclick="openUserProfile('<%= Util.getStringFromHash(meetingMember, "userID") %>')">
-					<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= Util.getStringFromHash(meetingMember, "profileImageURL") %>" 
+					<img src="<%= Constants.getThumbnailImageURL() %>/<%= Util.getStringFromHash(meetingMember, "profileImageURL") %>" 
 							width=60 height=60
 							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 						

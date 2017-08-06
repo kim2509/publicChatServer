@@ -48,12 +48,7 @@ public class Constants {
 	
 	public static String getThumbnailImageURL()
 	{
-		return "http://" + ServerIP + "/thumbnail/";
-	}
-	
-	public static String getThumbnailImageSSLURL()
-	{
-		return "https://" + ServerIP + "/thumbnail/";
+		return "//" + ServerIP + "/thumbnail/";
 	}
 	
 	public static String getApacheHome()
