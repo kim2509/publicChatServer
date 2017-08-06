@@ -85,7 +85,7 @@ body{
 }
 
 #desc{
-	width:93%;
+	width:96%;
 }
 
 li{ 
@@ -208,10 +208,11 @@ li{
 	display:none;
 	background-color:#FFFFFF;
 	position:absolute;
-	height:450px;
+	height:500px;
 	width:80%;
 	padding:10px;
 	border:2px solid #E2E2E2;
-	z-Index:9999
+	z-Index:9999;
+	overflow:hidden;
 }
 /* 모달 */

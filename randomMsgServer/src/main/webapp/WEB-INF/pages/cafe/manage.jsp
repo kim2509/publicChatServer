@@ -478,7 +478,7 @@
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 설명</p>
 			
-			<textarea id="cafeDescInput" class="marginLR10 marginB20" value="" rows="3">
+			<textarea id="cafeDescInput" class="marginLR10 marginB20" value="" rows="10">
 			</textarea>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">카페 위치</p>

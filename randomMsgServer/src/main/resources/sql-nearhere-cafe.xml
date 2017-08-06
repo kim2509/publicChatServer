@@ -419,8 +419,8 @@
 	</select>
 	
 	<insert id="insertCafeBoard" parameterType="HashMap">
-		insert into cafe_board_master( boardName, cafeNo, boardType, writePermission, seq, createdDate )
-		select #{boardName}, cafeNo, #{boardType}, #{writePermission}, #{seq}, NOW() from cafe_master
+		insert into cafe_board_master( boardName, cafeNo, boardType, readPermission, writePermission, seq, createdDate )
+		select #{boardName}, cafeNo, #{boardType}, #{readPermission}, #{writePermission}, #{seq}, NOW() from cafe_master
 		where cafeID=#{cafeID}
 	</insert>
 	
@@ -428,6 +428,7 @@
 		update cafe_board_master 
 		set boardName=#{boardName}
 		, boardType = #{boardType}
+		, readPermission = #{readPermission}
 		, writePermission = #{writePermission}
 		<if test="seq != null and seq != ''">
 		, seq = #{seq}
