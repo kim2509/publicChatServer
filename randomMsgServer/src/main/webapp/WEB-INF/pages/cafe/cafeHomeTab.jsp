@@ -184,7 +184,7 @@
 					%>
 					<li onclick="openUserProfile('<%= Util.getStringFromHash(member, "userID") %>')">
 						<div id="imgProfile">
-							<img src="<%= Constants.getThumbnailImageSSLURL() %>/<%= member.get("profileImageURL") %>" 
+							<img src="<%= Constants.getThumbnailImageURL() %>/<%= member.get("profileImageURL") %>" 
 							width=60 height=60
 							onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 						</div>

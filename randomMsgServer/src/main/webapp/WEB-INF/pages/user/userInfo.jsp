@@ -204,7 +204,7 @@
 			
 				<div>
 					<div onclick="openPhotoViewer('<%= userInfo.get("profileImageURL") %>')">
-						<img class="userProfile" src='<%= Constants.getThumbnailImageSSLURL() %>/<%= userInfo.get("profileImageURL") %>' 
+						<img class="userProfile" src='<%= Constants.getThumbnailImageURL() %>/<%= userInfo.get("profileImageURL") %>' 
 							width="100" height="100" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 					</div>
 					
@@ -321,7 +321,7 @@
 %>
 				<dd onclick="goUserInfo('<%= friendList.get(i).get("userID") %>')">
 					<div style="float:left;">
-						<img src='<%= Constants.getThumbnailImageSSLURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
+						<img src='<%= Constants.getThumbnailImageURL() %>/<%= friendList.get(i).get("profileImageURL") %>'
 							style="border-radius: 10px;" 
 							width="60" height="60" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 					</div>
@@ -396,7 +396,7 @@
 								<img src="/nearhere/image//progressing.png" width="50" height="50">
 							</div>
 							<div class="userProfile">
-								<img src='<%= Constants.getThumbnailImageSSLURL() %>/<%= user.get("profileImageURL") %>' 
+								<img src='<%= Constants.getThumbnailImageURL() %>/<%= user.get("profileImageURL") %>' 
 									width="70" height="70" onError="this.src='<%= Constants.IMAGE_PATH %>/no_image.png';"/>
 								<% if ( !Util.isEmptyString( user.get("kakaoID") ) ) { %>
 									<img src="/nearhere/image//kakaotalk_icon.png" width="18" height="18" id="kakao">

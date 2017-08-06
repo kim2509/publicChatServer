@@ -562,4 +562,53 @@ public class BoardPostAjaxController extends BaseController {
 		
 		return response;
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping( value ="/boardPost/deleteBoardImageAjax.do")
+	public @ResponseBody APIResponse deleteBoardImageAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		String userID = "";
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+			if ( Util.isEmptyForKey(param, "imageNo") )
+			{
+				response.setResCode( ErrorCode.INVALID_INPUT );
+				response.setResMsg("요청값이 올바르지 않습니다.");
+			}
+			else
+			{
+				CafeBiz cafeBiz = CafeBiz.getInstance(sqlSession);
+				
+				HashMap cafeMainInfo = CafeBiz.getInstance(sqlSession).getCafeMainInfo(param);
+				
+				int dbResult = 0;
+				
+				dbResult = cafeBiz.updateCafeImageAsDeleted( Util.getStringFromHash(param, "imageNo"));
+				
+				HashMap info = new HashMap();
+				info.put("dbResult", String.valueOf( dbResult ));
+				response.setData(info);
+			}
+			
+			insertHistory("/cafe/deleteBoardImageAjax.do", userID , Util.getStringFromHash(param, "imageNo") , null , null );
+		}
+		catch( Exception ex )
+		{
+			response.setResCode( ErrorCode.UNKNOWN_ERROR );
+			response.setResMsg("이미지 삭제도중 오류가 발생했습니다.");
+			
+			insertHistory("/cafe/deleteBoardImageAjax.do", null , null , null, "exception" );
+			logger.error( ex );
+		}
+		
+		return response;
+	}
 }
