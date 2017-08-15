@@ -921,7 +921,7 @@
 		update user set
 		isDeleted='Y'
 		, deletedDateTime = NOW()
-		where userID=#{userID};
+		where userID=#{userID} and deletedDateTime is null;
 	</update>
 	
 	<select id="getMainInfo" parameterType="java.util.HashMap"
