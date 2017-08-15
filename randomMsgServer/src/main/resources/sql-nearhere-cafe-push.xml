@@ -19,10 +19,10 @@
 		<![CDATA[
 		select u.* from
 		(
-		select userID from cafe_board_post_master 
+		select userID, postNo from cafe_board_post_master 
 		where postNo = #{postNo}
 		union
-		select userID from cafe_board_post_reply
+		select userID, postNo from cafe_board_post_reply
 		where postNo = #{postNo}
 		) A
 			inner join user u on A.userID=u.userID
