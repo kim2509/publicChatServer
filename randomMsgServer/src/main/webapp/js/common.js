@@ -25,6 +25,7 @@ String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s
 String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
 Number.prototype.zf = function(len){return this.toString().zf(len);};
 
+/* 안드로이드 함수들 start */
 function notice( message )
 {
 	if ( isApp == 'Y' )
@@ -73,6 +74,21 @@ function selectPhotoUpload( jsonObj )
 	
 	return '';
 }
+
+function setLoginUser( jsonObj )
+{
+	if ( Android && Android != null && typeof Android != 'undefined')
+	{
+		if ( Android.setLoginUser && Android.setLoginUser != null && typeof Android.setLoginUser != 'undefined')
+		{
+			return Android.setLoginUser( JSON.stringify( jsonObj ) );
+		}
+	}
+	
+	return '';
+}
+
+/* 안드로이드 함수들 end */
 
 function isAlphaNumberKorOnly( str )
 {

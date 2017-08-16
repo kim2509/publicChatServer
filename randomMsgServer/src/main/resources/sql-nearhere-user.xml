@@ -107,6 +107,55 @@
 		]]>
 	</select>
 	
+	<select id="getRegisterAvailableCheck1" parameterType="HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+			select *
+			from user u
+			where userNo <> #{userNo} and userID=#{userID}
+		]]>
+	</select>
+	
+	<select id="getRegisterAvailableCheck2" parameterType="HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+			select *
+			from user u
+			where userNo=#{userNo} and userID=#{userID}
+		]]>
+	</select>
+	
+	<update id="updateUser" parameterType="java.util.HashMap">
+		update user
+		set updatedDate = NOW()
+		<if test="userName != null and userName != ''">
+		, userName = #{userName}
+		</if>
+		<if test="password != null and password != ''">
+		, password = #{password}
+		</if>
+		<if test="sex != null and sex != ''">
+		, sex = #{sex}
+		</if>
+		<if test="email != null and email != ''">
+		, email = #{email}
+		</if>
+		<if test="mobileNo != null and mobileNo != ''">
+		, mobileNo = #{mobileNo}
+		</if>
+		<if test="type != null and type != ''">
+		, type = #{type}
+		</if>
+		<if test="profileImageURL != null and profileImageURL != ''">
+		, profileImageURL = #{profileImageURL}
+		</if>
+		<if test="registerUserFinished != null and registerUserFinished != ''">
+		, registerUserFinished = #{profileImageURL}
+		</if>
+		<if test="regID != null and regID != ''">
+		, regID = #{regID}
+		</if>
+		where userNo=#{userNo}
+	</update>
+	
 	<update id="updateUserAppVersion" parameterType="java.util.HashMap">
 		update user
 		set appVersion=#{AppVersion}
@@ -131,6 +180,12 @@
 		update user_push_message set
 		isRead = 'Y'
 		where toUserID=#{userID};
+	</update>
+	
+	<update id="updateUserID" parameterType="HashMap">
+		update user
+		set userID=#{userID}
+		where userID=#{oldUserID}
 	</update>
 	
 	<update id="updateUserID_1" parameterType="HashMap">
@@ -230,20 +285,47 @@
 	</update>
 	
 	<update id="updateUserID_17" parameterType="HashMap">
+		update user_message
+		set toUserID=#{userID}
+		where toUserID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_18" parameterType="HashMap">
+		update user_message
+		set fromUserID=#{userID}
+		where fromUserID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_19" parameterType="HashMap">
+		update user_push_message
+		set toUserID=#{userID}
+		where toUserID=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_21" parameterType="HashMap">
 		update user_setting
 		set userID=#{userID}
 		where userID=#{oldUserID}
 	</update>
 	
-	<update id="updateUserID_18" parameterType="HashMap">
+	<update id="updateUserID_22" parameterType="HashMap">
 		update user_terms_agreement
 		set userID=#{userID}
 		where userID=#{oldUserID}
 	</update>
 	
-	<update id="updateUserID_19" parameterType="HashMap">
+	<update id="updateUserID_23" parameterType="HashMap">
 		update user_token
 		set userID=#{userID}
 		where userID=#{oldUserID}
 	</update>
+	
+	<insert id="insertUserToken" parameterType="java.util.HashMap">
+		insert into user_token( userID, seed, hash, expireDate, activeYN, createdDate )
+		values ( #{userID}, #{seed}, #{hash}, NOW() + INTERVAL 20 DAY, 'Y', NOW() );
+	</insert>
+	
+	<delete id="deleteUserToken" parameterType="java.util.HashMap">
+		delete from user_token where userID=#{userID}
+	</delete>
 </mapper>

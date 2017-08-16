@@ -618,24 +618,24 @@
 		'user.userName', U.profileImageURL as 'user.profileImageURL',
 		A.message, A.createdDate, A.isRead
 		from (
-		select fromUserID as 'userID',
-		message, createdDate,
-		(
-		CASE isRead
-		WHEN 'Y' THEN 'true'
-		WHEN 'N' THEN
-		'false'
-		END
-		)AS isRead
-		from user_message
-		where toUserID=#{userID}
-		union all
-		select toUserID as 'userID', message, createdDate, 'true' AS 'isRead'
-		from user_message
-		where fromUserID=#{userID}
+			select fromUserID as 'userID',
+			message, createdDate,
+			(
+			CASE isRead
+			WHEN 'Y' THEN 'true'
+			WHEN 'N' THEN
+			'false'
+			END
+			)AS isRead
+			from user_message
+			where toUserID=#{userID}
+			union all
+			select toUserID as 'userID', message, createdDate, 'true' AS 'isRead'
+			from user_message
+			where fromUserID=#{userID}
 		) A
-		left outer join user U
-		on A.userID=U.userID
+			left outer join user U on A.userID=U.userID
+		where U.userID is not null
 		order by A.createdDate desc;
 	</select>
 
@@ -762,9 +762,14 @@
 		<![CDATA[
 			select sum(messageCount) as 'messageCount', sum(pushCount) as 'pushCount' 
 			from (
-				select count(messageID) as 'messageCount', 0 as 'pushCount' from user_message where toUserID=#{userID} and isRead = 'N'
+				select count(um.messageID) as 'messageCount', 0 as 'pushCount' 
+				from user_message um
+					left outer join user u on u.userID = um.fromUserID
+				where um.toUserID=#{userID} and um.isRead = 'N' and u.userID is not null
             	union all
-            	select 0 as 'messageCount', count(pushNo) as 'pushCount' from user_push_message where toUserID=#{userID} and isRead = 'N'
+            	select 0 as 'messageCount', count(pushNo) as 'pushCount' 
+            	from user_push_message 
+            	where toUserID=#{userID} and isRead = 'N'
   			) A;
 		]]>
 	</select>
@@ -1072,15 +1077,6 @@
 		insert into event_apply( eventSeq, userID, phoneNo, pushNo, param1, createdDate )
 		values(#{eventSeq}, #{userID}, #{phoneNo}, #{pushNo}, #{param1}, NOW());
 	</insert>
-	
-	<insert id="insertUserToken" parameterType="java.util.HashMap">
-		insert into user_token( userID, seed, hash, expireDate, activeYN, createdDate )
-		values ( #{userID}, #{seed}, #{hash}, NOW() + INTERVAL 20 DAY, 'Y', NOW() );
-	</insert>
-	
-	<delete id="deleteUserToken" parameterType="java.util.HashMap">
-		delete from user_token where userID=#{userID}
-	</delete>
 	
 	<select id="selectUserToken" resultType="java.util.HashMap" parameterType="java.util.HashMap">
 		select * from user_token where userID=#{userID} and hash=#{hash} and activeYN='Y';

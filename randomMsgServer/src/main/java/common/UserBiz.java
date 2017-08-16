@@ -48,6 +48,62 @@ public class UserBiz extends CommonBiz{
 		return user;
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public int updateUserID( HashMap user )
+	{
+		if ( Util.isEmptyForKey(user, "userID") || Util.isEmptyForKey(user, "oldUserID"))
+			return 0;
+		
+		int dbResult = 0;
+		dbResult = sqlSession.update("com.tessoft.nearhere.user.updateUserID", user );
+		
+		if ( dbResult > 0 )
+		{
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_1", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_2", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_3", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_4", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_5", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_6", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_7", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_8", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_9", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_10", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_11", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_12", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_13", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_14", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_15", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_16", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_17", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_18", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_19", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_21", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_22", user );
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_23", user );	
+		}
+		
+		return dbResult;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void updateUser( HashMap user )
+	{
+		sqlSession.update("com.tessoft.nearhere.user.updateUser", user );
+	}
+	
+	public List<HashMap> getRegisterAvailableCheck1(HashMap param)
+	{
+		List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.user.getRegisterAvailableCheck1", param);
+		return userList;
+	}
+	
+	public List<HashMap> getRegisterAvailableCheck2(HashMap param)
+	{
+		List<HashMap> userList = sqlSession.selectList("com.tessoft.nearhere.user.getRegisterAvailableCheck2", param);
+		return userList;
+	}
+	
 	public HashMap getUserInfo( String userID )
 	{
 		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getUserInfo", userID);
@@ -232,14 +288,8 @@ public class UserBiz extends CommonBiz{
 			sqlSession.update("com.tessoft.nearhere.taxi.updateUserID", user);
 		}
 		
-		sqlSession.delete("com.tessoft.nearhere.taxi.deleteUserToken", user );
-		String randomSeed = Util.getRandomSeed();
-		String hashString = Util.getShaHashString( user.getUserID() + randomSeed );
-		HashMap userHash = new HashMap();
-		userHash.put("seed", randomSeed );
-		userHash.put("hash", hashString );
-		userHash.put("userID", user.getUserID() );
-		sqlSession.insert("com.tessoft.nearhere.taxi.insertUserToken", userHash );
+		// user_token 을 갱신한다.
+		String hashString = renewUserToken(user.getUserID());
 		
 		addInfo.put("hash", hashString );
 		
@@ -249,6 +299,22 @@ public class UserBiz extends CommonBiz{
 		
 		response.setData( user );
 		response.setData2( addInfo );
+	}
+
+	public String renewUserToken( String userID ) throws Exception {
+		
+		HashMap userHash = new HashMap();
+		userHash.put("userID", userID );
+		
+		sqlSession.delete("com.tessoft.nearhere.user.deleteUserToken", userHash );
+		
+		String randomSeed = Util.getRandomSeed();
+		String hashString = Util.getShaHashString( userID + randomSeed );
+		userHash.put("seed", randomSeed );
+		userHash.put("hash", hashString );
+		
+		sqlSession.insert("com.tessoft.nearhere.user.insertUserToken", userHash );
+		return hashString;
 	}
 	
 	public String getRegisterUserFinishedYN(User user, double appVersion) {

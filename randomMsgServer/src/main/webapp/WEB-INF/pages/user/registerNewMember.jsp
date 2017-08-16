@@ -3,6 +3,9 @@
 <%@ page import="com.dy.common.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+	String isApp = request.getParameter("isApp");
+%>
 
 <html>
 <head>
@@ -16,27 +19,15 @@
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="<%=Constants.JS_PATH%>/handlebars-v3.0.3.js"></script>
 
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=2"></script>
-
-<script type="text/javascript" src="<%=Constants.JS_PATH%>/modal_dialog.js"></script>
-<script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=a694766f82dd0fb809ccf02189747061&libraries=services"></script>
+<script type="text/javascript" src="<%=Constants.JS_PATH%>/common.js?v=4"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=Constants.CSS_PATH%>/registerNewMember.css?v=2" />
 
 <script language="javascript">
-
-
 	
-	var selectLocationModal = null;
+	var isApp = '<%= isApp %>';
 	
 	jQuery(document).ready(function(){
-
-
-		
-		// 모달창 인스턴트 생성
-		selectLocationModal = new Example.Modal({
-		    id: "modal" // 모달창 아이디 지정
-		});
 		
 		Handlebars.registerHelper('if_eq', function(a, b, opts) {
 		    if(a == b) // Or === depending on your needs
@@ -45,53 +36,65 @@
 		        return opts.inverse(this);
 		});
 		
-		if ( postNo != null && parseInt(postNo) > 0 )
-		{
-			getBoardPost();
-		}
 	});
 	
-	function goSelectLocation()
-	{
-		selectLocationModal.show();
-		showLocationSelectDiv( locationResult );
-	}
-
-	var locationResult = null;
-	function locationSelected( result )
-	{
-		if ( selectLocationModal != null )
-			selectLocationModal.hide();
-		
-		if ( locationResult == null )
-			locationResult = result;
-		else
-		{
-			result.locationNo = locationResult.locationNo;
-			locationResult = result;
-		}
-		
-		setAddress();
-	}
-
 
 	function registerMember()
 	{
-		var title = $('#title').val();
-		var desc = $('#desc').val();
-		var maxNo = $('#maxNo').val();
+		var userID = $('#userID').val();
+		var password1 = $('#password1').val();
+		var password2 = $('#password2').val();
+		var userName = $('#userName').val();
+		var sex = $('#sex').val();
+		var email = $('#email').val();
+		var mobile = $('#mobile').val();
 		
-		if ( title == '' )
+		if ( userID == '' )
 		{
-			notice('제목을 입력해 주십시오.');
+			notice('아이디를 입력해 주십시오.');
+			$('#userID').focus();
 			return;
 		}
 		
-		if ( confirm('설정을 저장하시겠습니까?') )
+		if ( password1 == '' )
 		{
-
-
-			ajaxRequest('POST', '/nearhere/boardPost/saveCafeBoardPostAjax.do', param , onSaveResult );
+			notice('비밀번호를 입력해 주십시오.');
+			$('#password1').focus();
+			return;
+		}
+		
+		if ( password2 == '' )
+		{
+			notice('비밀번호 확인란을 입력해 주십시오.');
+			$('#password2').focus();
+			return;
+		}
+		
+		if ( password1 != password2 )
+		{
+			notice('비밀번호 확인값이 비밀번호와 일치하지 않습니다.');
+			$('#password2').focus();
+			return;
+		}
+		
+		if ( userName == '' )
+		{
+			notice('사용자 이름을 입력해 주십시오.');
+			$('#userName').focus();
+			return;
+		}
+		
+		if ( sex == '' )
+		{
+			notice('성별을 선택해 주십시오.');
+			return;
+		}
+		
+		if ( confirm('회원가입 하시겠습니까?') )
+		{
+			var param = {"userID": userID, "password": password1, "userName": userName, "sex":sex,
+					"email": email, "mobileNo": mobile };
+			ajaxRequest('POST', '/nearhere/user/registerMemberAjax.do', param , onSaveResult );
 		}
 	}
 	
@@ -108,92 +111,15 @@
 		}
 		else
 		{
-			alert('저장되었습니다.');
+			alert('회원가입이 완료되었습니다.');
 			
 			if ( isApp == 'Y' )
 			{
-				finish();	
-			}
-		}
-	}
-	
-	function finish()
-	{
-		var broadcastList = [];
-		broadcastList[0] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_HOME %>"};
-		broadcastList[1] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_CAFE_HOME %>"};
-		broadcastList[2] = {"broadcastName":"BROADCAST_REFRESH_PAGE", "broadcastParam":"<%= Constants.PAGE_ID_BOARD_POST_DETAIL %>"};
-		
-		var param = {"broadcastList": broadcastList };
-		
-		if ( Android && Android != null && typeof Android != 'undefined')
-		{
-			return Android.finishActivity2( JSON.stringify( param ) );
-		}
-		
-		return '';
-	}
-	
-	function uploadImage()
-	{
-		if ( isApp == 'Y' )
-		{
-			var param = {"imageName":"카페 게시판 이미지", "cafeID":boardNo };
-			selectPhotoUpload( param );	
-		}	
-	}
-	
-	function onImageUploaded( result )
-	{
-		try
-		{
-			if ( result == null || result.data == null )
-			{
-				notice('처리도중 오류가 발생했습니다.');
-				return;
-			}
-			
-			if ( result.resCode != '0000' )
-			{
-				notice( result.resMsg );
-				return;
-			}
-			else
-			{
-				$('#imageListDiv #emptyDiv').hide();
-				
-				/*
-				var imageUL = $('#imageListDiv ul');
-				imageUL.append('<li><img class="thumbnail" imageNo="' + result.data.imageNo + '" src="' + result.data.url1 + '"></li>');
-				*/
-				
-				
-				var source = $('#boardImageT').html();
-				var template = Handlebars.compile(source);
-				var html = template(result.data);
-				if ( $('#imageListDiv ul').length < 1 )
-					$('#imageListDiv').append('<ul></ul>');
-				
-				$('#imageListDiv ul').append(html);
-			}
-		}
-		catch( ex )
-		{
-			alert( ex.message );
-		}
-	}
-	
-	function deleteImage( elem, imageNo )
-	{
-		if ( confirm('정말 삭제하시겠습니까?') )
-		{
-			$(elem).closest('li').remove();
-			if ( $('#imageListDiv ul li').length < 1 )
-			{
-				var source = $('#boardImageTList').html();
-				var template = Handlebars.compile(source);
-				var html = template({});
-				$('#imageListDiv').html(html);
+				if ( Android && Android != null && typeof Android != 'undefined')
+				{
+					var param = {"loginUserInfo": result.data, "goMainActivity":"true" };
+					return Android.finishActivity2( JSON.stringify( param ) );
+				}
 			}
 		}
 	}
@@ -224,7 +150,13 @@
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">비밀번호</p>
 			
 			<div class="inputContainer marginLR10 marginB20">
-				<input type="password" id="password" class="inputTxt" placeholder="비밀번호" value="" />
+				<input type="password" id="password1" class="inputTxt" placeholder="비밀번호" value="" />
+			</div>
+			
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">비밀번호 확인</p>
+			
+			<div class="inputContainer marginLR10 marginB20">
+				<input type="password" id="password2" class="inputTxt" placeholder="비밀번호 확인" value="" />
 			</div>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">사용자 이름</p>
@@ -233,9 +165,14 @@
 				<input type="text" id="userName" class="inputTxt" placeholder="사용자 이름(예, 홍길동)" value="" />
 			</div>
 			
-			<div id="iconDiv">
-				<img src = "" id="imgCafeIcon"/>
-				<div id="emptyDiv" style="display:none;">사진이 없습니다.</div>
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">성별</p>
+			
+			<div class="marginLR10 marginB20">
+				<select name="sex" id="sex" style="padding:5px;width:150px;">
+					<option value="">선택하세요.</option>
+					<option value="M">남자</option>
+					<option value="F">여자</option>
+				</select>
 			</div>
 			
 			<p class="subTitle paddingLR10 paddingTop10 upperLine">이메일(선택)</p>
