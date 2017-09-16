@@ -162,11 +162,6 @@
 		return '';
 	}
 	
-	function goKaraoke(){
-		document.location.href='nearhere://openExternalURL?url=' + 
-				encodeURIComponent('https://play.google.com/store/apps/details?id=com.tessoft.mykaraoke');
-	}
-	
 </script>
 
 	<jsp:include page="common/common.jsp" flush="true"></jsp:include>
@@ -210,7 +205,7 @@ if ("Y".equals( showSearchDiv ) )
 <%	
 }
 %>		
-		
+
 		<div class="section">
 		
 			<div id="menu_category">
@@ -255,6 +250,8 @@ if ("Y".equals( showSearchDiv ) )
 		
 		</div>
 
+<jsp:include page="common/ads.jsp" flush="true"></jsp:include>
+
 <%
 	if ( "Y".equals( showRecentPosts ) )
 	{
@@ -274,9 +271,6 @@ if ("Y".equals( showSearchDiv ) )
 	}
 %>
 
-	<div style="background:blue;height:50px;width:100%;" onclick="goKaraoke();">
-		라빠빠빠 고고싱
-	</div>
 
 <% if ("Y".equals( showHotSpot ) ) { %>
 		<div class="section">
