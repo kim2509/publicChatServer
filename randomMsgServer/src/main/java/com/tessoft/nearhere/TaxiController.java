@@ -533,6 +533,7 @@ public class TaxiController extends BaseController {
 
 		try
 		{
+			logDetail = new StringBuilder();
 			logDetail.append("login_bg start|");
 			
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
@@ -629,6 +630,7 @@ public class TaxiController extends BaseController {
 		
 		try
 		{
+			logDetail = new StringBuilder();
 			logDetail.append("login_bg2 start|");
 			
 			HashMap loginInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
