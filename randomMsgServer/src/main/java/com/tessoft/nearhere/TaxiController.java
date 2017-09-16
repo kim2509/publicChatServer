@@ -533,31 +533,56 @@ public class TaxiController extends BaseController {
 
 		try
 		{
+			logDetail = new StringBuilder();
+			logDetail.append("login_bg start|");
+			
 			HashMap hash = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
+			
+			logDetail.append("1|");
+			
 			user = selectUser(user, false);
+			
+			logDetail.append("3|");
 			
 			if ( user != null && !Util.isEmptyString(user.getUserID()) && hash.containsKey("AppVersion") )
 			{
+				logDetail.append("5|");
+				
 				HashMap appVersion = new HashMap();
 				appVersion.put("userID", user.getUserID());
 				appVersion.put("AppVersion", hash.get("AppVersion") );
 				sqlSession.update("com.tessoft.nearhere.taxi.updateUserAppVersion", appVersion );
 			}
 			
+			logDetail.append("7|");
+			
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) )
+			if ( profilePoint == null || "".equals( profilePoint ) ) {
 				profilePoint = "0";
+				
+				logDetail.append("9|");
+			}
+		
+			logDetail.append("11|");
+		
 			user.setProfilePoint(profilePoint);
 
+			logDetail.append("13|");
+			
 			res.setData(user);
 			
 			HashMap registerUserInfo = sqlSession.selectOne("com.tessoft.nearhere.taxi.registerUserFinishedInfo", user);
 			
+			logDetail.append("15|");
+			
 			String userAgreed = "N";
-			if ( !Util.isEmptyString( registerUserInfo.get("agreementUserID") ))
+			if ( !Util.isEmptyString( registerUserInfo.get("agreementUserID") )) {
 				userAgreed = "Y";
+				
+				logDetail.append("17|");
+			}
 			
 			HashMap<String,String> addInfo = new HashMap<String, String>();
 			addInfo.put("UserAgreed", userAgreed );
@@ -572,13 +597,25 @@ public class TaxiController extends BaseController {
 			}
 			*/
 
+			logDetail.append("19|");
+			
 			insertHistory("login_bg.do", user.getUserID() , null , null, null );
+			
+			logDetail.append("login_bg SUCCESS|");
 		}
 		catch( Exception ex )
 		{
 			res.setResCode( ErrorCode.UNKNOWN_ERROR );
 			res.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
+			
+			if ( ex != null )
+				logDetail.append("login_bg end ex:" + ex.getMessage() + "|");
+			else
+				logDetail.append("login_bg end ex null|");
+		}
+		finally {
+			logger.info(logDetail.toString());
 		}
 
 		return res;
@@ -590,82 +627,135 @@ public class TaxiController extends BaseController {
 			ModelMap model, @RequestBody String bodyString )
 	{
 		APIResponse res = new APIResponse();
-
+		
 		try
 		{
+			logDetail = new StringBuilder();
+			logDetail.append("login_bg2 start|");
+			
 			HashMap loginInfo = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			logDetail.append("1|");
 			
 			if ( !loginInfo.containsKey("hash") && !"".equals( loginInfo.get("hash") ) )
 			{
+				logDetail.append("3|");
+				
 				res.setResCode( ErrorCode.INVALID_INPUT );
 				res.setResMsg("세션키가 올바르지 않습니다.");
 				logger.error( res.getResCode() + " " + res.getResMsg() );
 				insertHistory("login_bg2.do", "hash is null" , null , null, null );
+				
+				logger.info(logDetail.toString());
+				
 				return res;
 			}
 			
+			logDetail.append("5|");
+			
 			if ( !loginInfo.containsKey("userID") && !"".equals( loginInfo.get("userID") ) )
 			{
+				logDetail.append("7|");
+				
 				res.setResCode( ErrorCode.INVALID_INPUT );
 				res.setResMsg("사용자정보가 올바르지 않습니다.");
 				logger.error( res.getResCode() + " " + res.getResMsg() );
 				insertHistory("login_bg2.do", "userID is empty" , null , null, null );
+				
+				logger.info(logDetail.toString());
+				
 				return res;
 			}
 			
+			logDetail.append("9|");
+			
 			if ( loginInfo != null && !Util.isEmptyString(loginInfo.get("userID")) && loginInfo.containsKey("AppVersion") )
 			{
+				logDetail.append("11|");
 				sqlSession.update("com.tessoft.nearhere.taxi.updateUserAppVersion", loginInfo );
 			}
+			
+			logDetail.append("13|");
 			
 			User user = new User();
 			user.setUserID( loginInfo.get("userID").toString() );
 			user = selectUser(user, false);
 			
+			logDetail.append("15|");
+			
 			double appVersion = 0.0;
-			if ( loginInfo != null && loginInfo.containsKey("AppVersion") )
+			if ( loginInfo != null && loginInfo.containsKey("AppVersion") ) {
 				appVersion = Double.parseDouble( loginInfo.get("AppVersion").toString() );
+				
+				logDetail.append("17|");
+			}
 
 			HashMap addInfo = new HashMap();
 			String registerUserFinished = getRegisterUserFinishedYN(user, appVersion);
 			addInfo.put("registerUserFinished", registerUserFinished );
 			res.setData2( addInfo );
 			
+			logDetail.append("19|");
+			
 			if ( "Y".equals( registerUserFinished ) )
 			{
+				logDetail.append("21|");
+				
 				sqlSession.update("com.tessoft.nearhere.taxi.updateUserTokenAsLogIn", loginInfo );
+				
+				logDetail.append("23|");
 				
 				List<HashMap> userToken = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserToken", loginInfo );
 
+				logDetail.append("25|");
+				
 				if ( userToken == null || userToken.size() < 1 )
 				{
+					logDetail.append("27|");
+					
 					res.setResCode( ErrorCode.INVALID_INPUT );
 					res.setResMsg("로그인정보가 올바르지 않습니다.");
 					logger.error( res.getResCode() + " " + res.getResMsg() );
 					insertHistory("login_bg2.do", "userToken null" , null , null, null );
+					
+					logger.info(logDetail.toString());
+					
 					return res;
 				}
 				
 				String seed = userToken.get(0).get("seed").toString();
 				
+				logDetail.append("29|");
+				
 				String hash = Util.getShaHashString( loginInfo.get("userID") + seed );
 				if ( !userToken.get(0).get("hash").equals( hash ))
 				{
+					logDetail.append("31|");
+					
 					res.setResCode( ErrorCode.INVALID_INPUT );
 					res.setResMsg("유효한 사용자정보가 아닙니다.");
 					logger.error( res.getResCode() + " " + res.getResMsg() );
 					insertHistory("login_bg2.do", "wrong seed" , null , null, null );
+					
+					logger.info(logDetail.toString());
+					
 					return res;
 				}
 				
+				logDetail.append("33|");
+				
 				user.setUserToken(hash);
 			}
+			
+			logDetail.append("35|");
 			
 			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
 			if ( profilePoint == null || "".equals( profilePoint ) )
 				profilePoint = "0";
 			user.setProfilePoint(profilePoint);
 			res.setData(user);
+			
+			logDetail.append("37|");
 			
 			/*
 			if ( !Util.isEmptyString(user.getUserToken()))
@@ -676,12 +766,22 @@ public class TaxiController extends BaseController {
 			*/
 			
 			insertHistory("login_bg2.do", user.getUserID() , null , null, null );
+			
+			logDetail.append("login_bg2 end SUCCESS|");
 		}
 		catch( Exception ex )
 		{
 			res.setResCode( ErrorCode.UNKNOWN_ERROR );
 			res.setResMsg("로그인 도중 오류가 발생했습니다.\r\n다시 시도해 주십시오.");
 			logger.error( ex );
+			
+			if ( ex != null )
+				logDetail.append("login_bg2 end ex:" + ex.getMessage() + "|");
+			else
+				logDetail.append("login_bg2 end ex null|");
+		}
+		finally {
+			logger.info(logDetail.toString());
 		}
 
 		return res;
