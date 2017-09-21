@@ -44,6 +44,7 @@ public class BaseController {
 	@Autowired
 	public SqlSession sqlSession;
 	protected static Logger logger = Logger.getLogger(BaseController.class.getName());
+	StringBuilder logDetail = new StringBuilder();
 	ObjectMapper mapper = null;
 	
 	public BaseController()

@@ -498,6 +498,10 @@
 			</ul>
 		</div>
 		
+		<div style="margin-left:10px;margin-right:10px;">
+			<jsp:include page="../common/ads.jsp" flush="true"></jsp:include>
+		</div>
+		
 		<div id="favoriteRegionDivN" class="favoriteRegion">
 			<div><span id="regionName"></span>를 관심지역으로 추가하시겠습니까?</div>
 			<div style="margin-top:10px;margin-bottom:10px;">

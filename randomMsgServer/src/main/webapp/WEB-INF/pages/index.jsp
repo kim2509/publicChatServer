@@ -205,7 +205,7 @@ if ("Y".equals( showSearchDiv ) )
 <%	
 }
 %>		
-		
+
 		<div class="section">
 		
 			<div id="menu_category">
@@ -249,6 +249,8 @@ if ("Y".equals( showSearchDiv ) )
 			</div>
 		
 		</div>
+
+<jsp:include page="common/ads.jsp" flush="true"></jsp:include>
 
 <%
 	if ( "Y".equals( showRecentPosts ) )
