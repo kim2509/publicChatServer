@@ -14,6 +14,7 @@ import com.nearhere.domain.User;
 public class UserBiz extends CommonBiz{
 
 	private static UserBiz userBiz = null;
+	private StringBuilder logDetail = null;
 
 	public static UserBiz getInstance( SqlSession sqlSession )
 	{
@@ -28,6 +29,16 @@ public class UserBiz extends CommonBiz{
 		super(sqlSession);
 	}
 
+	public void setLoggingBuffer( StringBuilder logDetail ) {
+		this.logDetail = logDetail;
+	}
+	
+	public void log( String msg ) {
+		if ( this.logDetail != null ) {
+			logDetail.append( msg + "|");
+		}
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public void updateUserAsDeleted( HashMap receiver )
 	{
@@ -51,37 +62,118 @@ public class UserBiz extends CommonBiz{
 	@SuppressWarnings("rawtypes")
 	public int updateUserID( HashMap user )
 	{
+		log("UserBiz updateUserID start");
+		
 		if ( Util.isEmptyForKey(user, "userID") || Util.isEmptyForKey(user, "oldUserID"))
 			return 0;
+		
+		log("1");
 		
 		int dbResult = 0;
 		dbResult = sqlSession.update("com.tessoft.nearhere.user.updateUserID", user );
 		
+		log("3");
+		
 		if ( dbResult > 0 )
 		{
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_1", user );
+			
+			log("5");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_2", user );
+			
+			log("7");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_3", user );
+			
+			log("9");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_4", user );
+			
+			log("11");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_5", user );
+			
+			log("13");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_6", user );
+			
+			log("15");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_7", user );
+			
+			log("17");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_8", user );
+			
+			log("19");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_9", user );
+			
+			log("21");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_10", user );
+			
+			log("23");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_11", user );
+			
+			log("25");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_12", user );
+			
+			log("27");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_13", user );
+			
+			log("29");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_14", user );
+			
+			log("31");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_15", user );
+			
+			log("39");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_16", user );
+			
+			log("41");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_17", user );
+			
+			log("43");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_18", user );
+			
+			log("45");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_19", user );
+			
+			log("47");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_21", user );
+			
+			log("49");
+			
 			sqlSession.update("com.tessoft.nearhere.user.updateUserID_22", user );
-			sqlSession.update("com.tessoft.nearhere.user.updateUserID_23", user );	
+			
+			log("51");
+			
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_23", user );
+			
+			log("53");
+			
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_24", user );
+			
+			log("55");
+			
+			sqlSession.update("com.tessoft.nearhere.user.updateUserID_25", user );
 		}
+		
+		log("UserBiz updateUserID end");
+		
+		logDetail = null;
 		
 		return dbResult;
 	}
@@ -343,9 +435,15 @@ public class UserBiz extends CommonBiz{
 	public User selectUser(User user, boolean bRequireMobileNo ) {
 		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
 		
-		if ( bRequireMobileNo == false )
+		if ( bRequireMobileNo == false && user != null )
 			user.setMobileNo("");
 		
 		return user;
+	}
+	
+	public HashMap getLoginInfo( HashMap param )
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getLoginInfo", param);
+		return userInfo;
 	}
 }

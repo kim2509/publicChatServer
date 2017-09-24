@@ -16,9 +16,16 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -750,5 +757,33 @@ public class Util {
 			result += " " + region.get("tRegionName");
 		
 		return result.trim();
+	}
+	
+	public static void sendMail() throws Exception {
+		final String username = "nearheretaxi@gmail.com";
+		final String password = "google!23";
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getInstance(props,
+		  new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		  });
+
+		Message message = new MimeMessage(session);
+		message.setFrom(new InternetAddress("kim2509@gmail.com"));
+		message.setRecipients(Message.RecipientType.TO,
+			InternetAddress.parse("kdy2509@naver.com"));
+		message.setSubject("Testing Subject");
+		String htmlMsg = "<h3>Hello World!</h3>";
+		message.setContent(htmlMsg, "text/html");
+
+		Transport.send(message);
 	}
 }

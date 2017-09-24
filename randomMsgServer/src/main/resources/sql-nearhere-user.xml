@@ -320,6 +320,18 @@
 		where userID=#{oldUserID}
 	</update>
 	
+	<update id="updateUserID_24" parameterType="HashMap">
+		update friends
+		set friend_one=#{userID}
+		where friend_one=#{oldUserID}
+	</update>
+	
+	<update id="updateUserID_25" parameterType="HashMap">
+		update friends
+		set friend_two=#{userID}
+		where friend_two=#{oldUserID}
+	</update>
+	
 	<insert id="insertUserToken" parameterType="java.util.HashMap">
 		insert into user_token( userID, seed, hash, expireDate, activeYN, createdDate )
 		values ( #{userID}, #{seed}, #{hash}, NOW() + INTERVAL 20 DAY, 'Y', NOW() );
@@ -328,4 +340,16 @@
 	<delete id="deleteUserToken" parameterType="java.util.HashMap">
 		delete from user_token where userID=#{userID}
 	</delete>
+	
+	<select id="getLoginInfo" parameterType="String"
+		resultType="java.util.HashMap">
+		<![CDATA[
+			select u.*
+			from user u
+				left outer join user_token ut on u.userID=ut.userID
+			where u.userID=#{loginID}
+			and u.password = #{password}
+			and ut.hash=#{userToken}
+		]]>
+	</select>
 </mapper>

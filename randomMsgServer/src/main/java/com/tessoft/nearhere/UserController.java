@@ -49,7 +49,7 @@ public class UserController extends BaseController{
 		return new ModelAndView("user/registerNewMember", model);
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	@RequestMapping( value ="/user/registerMemberAjax.do")
 	public @ResponseBody APIResponse registerMemberAjax(HttpServletRequest request, @RequestBody String bodyString,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken)
@@ -57,12 +57,22 @@ public class UserController extends BaseController{
 		APIResponse response = new APIResponse();
 		String newUserID = "";
 		
+		logDetail = new StringBuilder();
+		logDetail.append("registerMemberAjax start|");
+		
 		try
 		{
 			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
 			
+			logDetail.append("1 token:" + userToken + "|");
+			
 			HashMap userMap = UserBiz.getInstance(sqlSession).selectUserByUserToken(userToken);
+			
+			logDetail.append("3|");
+			
 			String userID = Util.getStringFromHash(userMap, "userID");
+			
+			logDetail.append("5 userID:" + userID + "|");
 			
 			if ( Util.isEmptyString(userID) )
 			{
@@ -91,11 +101,15 @@ public class UserController extends BaseController{
 			}
 			else
 			{
+				logDetail.append("7|");
+				
 				param.put("userNo", Util.getStringFromHash(userMap, "userNo"));
 				param.put("oldUserID", userID);
 				param.put("type", "Normal");
 				param.put("registerUserFinished", "Y");
 				param.put("password", Util.getShaHashString( Util.getStringFromHash(param, "password") ));
+				
+				logDetail.append("9|");
 				
 				// 기존 아이디 체크
 				List<HashMap> tmpList = UserBiz.getInstance(sqlSession).getRegisterAvailableCheck1(param);
@@ -103,30 +117,51 @@ public class UserController extends BaseController{
 				List<HashMap> tmpList2 = UserBiz.getInstance(sqlSession).getRegisterAvailableCheck2(param);
 				if ( tmpList.size() > 0 )
 				{
+					logDetail.append("11|");
+					
 					response.setResCode( ErrorCode.REGISTER_USER_ALREADY_EXIST );
 					response.setResMsg("해당 아이디는 이미 사용중입니다.");
 				}
 				else if ( tmpList2.size() > 0 )
 				{
+					logDetail.append("13|");
+				
 					response.setResCode( ErrorCode.REGISTER_USER_ALREADY_EXIST );
 					response.setResMsg("고객님은 이미 이근처의 회원입니다.");
 				}
 				else
 				{
-					UserBiz.getInstance(sqlSession).updateUserID(param);
+					logDetail.append("15|");
+					
+					UserBiz userBiz = UserBiz.getInstance(sqlSession);
+					userBiz.setLoggingBuffer(logDetail);
+					userBiz.updateUserID(param);
+					
+					logDetail.append("17|");
+					
 					UserBiz.getInstance(sqlSession).updateUser(param);
 				
+					logDetail.append("21|");
+					
 					newUserID = Util.getStringFromHash(param, "userID");
 					
 					// user_token 갱신
 					UserBiz.getInstance(sqlSession).renewUserToken(newUserID);
 					
+					logDetail.append("23|");
+					
 					User user = UserBiz.getInstance(sqlSession).selectUser( newUserID, false);
 					response.setData(user);
+					
+					logDetail.append("25|");
 				}
 			}
 			
+			logDetail.append("27|");
+			
 			insertHistory("/cafe/registerMemberAjax.do", userID , newUserID , null, null );
+			
+			logDetail.append("registerMemberAjax end SUCCESS|");
 		}
 		catch( Exception ex )
 		{
@@ -135,7 +170,82 @@ public class UserController extends BaseController{
 			
 			insertHistory("/cafe/registerMemberAjax.do", null , null , null, "exception" );
 			logger.error( ex );
+			
+			if ( ex != null )
+				logDetail.append("registerMemberAjax end ex:" + ex.getMessage() + "|");
+			else
+				logDetail.append("registerMemberAjax end ex null|");
 		}
+		finally {
+			logger.info(logDetail.toString());
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
+	@RequestMapping( value ="/user/loginAjax.do")
+	public @ResponseBody APIResponse loginAjax(HttpServletRequest request, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken)
+	{
+		APIResponse response = new APIResponse();
+		
+		logDetail = new StringBuilder();
+		logDetail.append("loginAjax start|");
+		
+		try {
+			
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			logDetail.append("1 loginID:" + Util.getStringFromHash(param, "loginID") + 
+					"  userToken:" + Util.getStringFromHash(param, "userToken") + "|");
+			
+			param.put("password", Util.getShaHashString( Util.getStringFromHash(param, "password") ));
+			
+			logDetail.append("3|");
+			
+			HashMap loginInfo = UserBiz.getInstance(sqlSession).getLoginInfo(param);
+			
+			logDetail.append("5|");
+			
+			if ( loginInfo == null ) {
+				response.setResCode( ErrorCode.INVALID_PASSWORD );
+				response.setResMsg("아이디 혹은 비밀번호가 올바르지 않습니다.");
+				
+				logDetail.append("7|");
+				
+			} else {
+				
+				logDetail.append("9|");
+				
+				param.put("type", "Normal");
+				UserBiz.getInstance(sqlSession).updateUser(param);
+				
+				logDetail.append("11|");
+				
+				// user_token 갱신
+				UserBiz.getInstance(sqlSession).renewUserToken( Util.getStringFromHash(param, "loginID") );
+				
+				logDetail.append("13|");
+				
+				User user = UserBiz.getInstance(sqlSession).selectUser( Util.getStringFromHash(param, "loginID"), false);
+				response.setData(user);
+				
+				logDetail.append("loginAjax end SUCCESS|");
+			}
+			
+		} catch ( Exception ex ) {
+			logger.error(ex);
+			
+			if ( ex != null )
+				logDetail.append("loginAjax end ex:" + ex.getMessage() + "|");
+			else
+				logDetail.append("loginAjax end ex null|");
+			
+		} finally {
+			logger.info(logDetail.toString());
+		}
+		
 		
 		return response;
 	}

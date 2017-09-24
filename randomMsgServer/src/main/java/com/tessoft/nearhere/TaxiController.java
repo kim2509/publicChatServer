@@ -370,11 +370,14 @@ public class TaxiController extends BaseController {
 			bodyString = mapper.writeValueAsString( hash.get("user") );
 			User user = mapper.readValue(bodyString, new TypeReference<User>(){});
 			
-			logDetail.append("1|");
+			logDetail.append("1 userID:" + user.getUserID() + "|");
 			
-			user = selectUser(user, false);
+			user = UserBiz.getInstance(sqlSession).selectUser(user, false);
 			
-			logDetail.append("3|");
+			if ( user == null )
+				logDetail.append("3 user null|");
+			else
+				logDetail.append("4|");
 			
 			if ( user != null && !Util.isEmptyString(user.getUserID()) && hash.containsKey("AppVersion") )
 			{
@@ -2320,14 +2323,20 @@ public class TaxiController extends BaseController {
 			@CookieValue(value = "userToken", defaultValue = "") String userToken,
 			ModelMap model )
 	{
-		List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
+		try {
 		
-		model.addAttribute("regionList", regionList );
-		
-		List<HashMap> hotspotList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotList");
-		model.addAttribute("hotspotList", hotspotList );
-		
-		insertHistory("/taxi/index.do", null , null , null, null );
+			List<HashMap> regionList = sqlSession.selectList("com.tessoft.nearhere.taxi.getMainInfo");
+			
+			model.addAttribute("regionList", regionList );
+			
+			List<HashMap> hotspotList = sqlSession.selectList("com.tessoft.nearhere.taxi.getHotspotList");
+			model.addAttribute("hotspotList", hotspotList );
+			
+			insertHistory("/taxi/index.do", null , null , null, null );
+			
+		} catch ( Exception ex ) {
+			logger.error(ex);
+		}
 		
 		return new ModelAndView("index", model);
 	}
