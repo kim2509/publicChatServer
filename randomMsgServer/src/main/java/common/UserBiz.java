@@ -51,12 +51,31 @@ public class UserBiz extends CommonBiz{
 		User user = new User();
 		user.setUserID(userID);
 		
-		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		user = selectUser(userID);
 		
 		if ( bRequireMobileNo == false )
 			user.setMobileNo("");
 		
 		return user;
+	}
+	
+	public User selectUser( String userID ) {
+		
+		User user = new User();
+		user.setUserID(userID);
+		
+		user = sqlSession.selectOne("com.tessoft.nearhere.user.selectUser", user );
+		
+		return user;
+	}
+	
+	public String selectProfilePoint( User user ) {
+		
+		String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.user.selectProfilePoint", user);
+		if ( profilePoint == null || "".equals( profilePoint ) )
+			profilePoint = "0";
+		
+		return profilePoint;
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -339,10 +358,7 @@ public class UserBiz extends CommonBiz{
 				}
 				
 				user = selectUser( tempUser, false );
-				
-				String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-				if ( profilePoint == null || "".equals( profilePoint ) )
-					profilePoint = "0";
+				String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 				user.setProfilePoint(profilePoint);
 			}
 		}
@@ -359,7 +375,7 @@ public class UserBiz extends CommonBiz{
 			logger.info( "[" + logIdentifier + "]: new userID:" + user.getUserID() );
 			
 			// 해당 userID 가 있는지 검사.
-			User existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+			User existingUser = selectUser( user.getUserID() );
 
 			// 해당 userID 가 이미 존재하면, userID 를 랜덤하게 다르게 변경해서 다시 검사. 5회
 			int retryCount = 0; 
@@ -370,7 +386,7 @@ public class UserBiz extends CommonBiz{
 				Random rand = new Random();
 				int  n = rand.nextInt(99998) + 1;
 				user.setUserID("user" + n );
-				existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+				existingUser = selectUser(user.getUserID());
 				retryCount++;
 			}
 			
@@ -433,7 +449,7 @@ public class UserBiz extends CommonBiz{
 	}
 	
 	public User selectUser(User user, boolean bRequireMobileNo ) {
-		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		user = selectUser(user.getUserID());
 		
 		if ( bRequireMobileNo == false && user != null )
 			user.setMobileNo("");
@@ -445,5 +461,23 @@ public class UserBiz extends CommonBiz{
 	{
 		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getLoginInfo", param);
 		return userInfo;
+	}
+	
+	public HashMap getIDFind( HashMap param )
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getIDFind", param);
+		return userInfo;
+	}
+	
+	public HashMap getPasswordFind( HashMap param )
+	{
+		HashMap userInfo = sqlSession.selectOne("com.tessoft.nearhere.user.getPasswordFind", param);
+		return userInfo;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void updateUserPassword( HashMap param )
+	{
+		sqlSession.update("com.tessoft.nearhere.user.updateUserPassword", param );
 	}
 }

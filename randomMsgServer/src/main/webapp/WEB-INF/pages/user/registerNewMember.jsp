@@ -90,6 +90,13 @@
 			return;
 		}
 		
+		if ( email == '' )
+		{
+			notice('이메일 주소를 입력해 주십시오.\r\n(아이디 비번찾기 시 사용됩니다.)');
+			$('#userName').focus();
+			return;
+		}
+		
 		if ( confirm('회원가입 하시겠습니까?') )
 		{
 			var param = {"userID": userID, "password": password1, "userName": userName, "sex":sex,
@@ -175,7 +182,7 @@
 				</select>
 			</div>
 			
-			<p class="subTitle paddingLR10 paddingTop10 upperLine">이메일(선택)</p>
+			<p class="subTitle paddingLR10 paddingTop10 upperLine">이메일</p>
 			
 			<div class="inputContainer marginLR10 marginB20">
 				<input type="text" id="email" class="inputTxt" placeholder="이메일" value="" />

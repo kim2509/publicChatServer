@@ -176,10 +176,9 @@
 		{
 %>
 		<div class="snsLogin" onclick="snsLogin();">
-			<div>SNS계정으로 로그인을 하시면 상대방에게 보다 더 믿음을 주실 수 있습니다.</div>
-			<div class="snsBtns">
-				<img class="kakaoLogin" src="<%= Constants.IMAGE_PATH %>/kakao_login_btn.png" width="42%;" height="40px"/>
-				<img class="fbLogin" src="<%= Constants.IMAGE_PATH %>/facebook_logo.png" width="42%;" height="40px"/>
+			<div>현재 Guest 이용자입니다. 로그인 및 회원가입을 하시려면 아래의 버튼을 클릭해 주십시오.</div>
+			<div style="text-align:center;padding:10px;background:#2b9728;color:white;margin-top:10px;border-radius:10px;margin-left:20px;margin-right:20px;">
+				로그인 및 회원가입
 			</div>
 		</div>
 

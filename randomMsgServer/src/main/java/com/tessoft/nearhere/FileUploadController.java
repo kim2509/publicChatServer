@@ -32,6 +32,7 @@ import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
 
 import common.CafeBiz;
+import common.UserBiz;
 
 /**
  * Handles requests for the application file upload requests
@@ -88,13 +89,9 @@ public class FileUploadController {
 				int result = sqlSession.update("com.tessoft.nearhere.taxi.updateUserProfileImage", hash );
 
 				response.setData( result );
-				User user = new User();
-				user.setUserID( userID );
-				user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
 				
-				String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-				if ( profilePoint == null || "".equals( profilePoint ) )
-					profilePoint = "0";
+				User user = UserBiz.getInstance(sqlSession).selectUser( userID );
+				String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 				user.setProfilePoint(profilePoint);
 				
 				response.setData2( user );

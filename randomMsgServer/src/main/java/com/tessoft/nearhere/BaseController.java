@@ -38,6 +38,8 @@ import com.google.android.gcm.server.Sender;
 import com.nearhere.domain.User;
 import com.nearhere.domain.UserPushMessage;
 
+import common.UserBiz;
+
 @Controller
 public class BaseController {
 
@@ -82,7 +84,7 @@ public class BaseController {
 	}
 
 	protected User selectUser(User user) {
-		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		user = UserBiz.getInstance(sqlSession).selectUser(user.getUserID());
 		return user;
 	}
 	

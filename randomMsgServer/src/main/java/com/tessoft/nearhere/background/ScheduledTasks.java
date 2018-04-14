@@ -21,6 +21,7 @@ import com.nearhere.domain.UserPushMessage;
 
 import common.BackgroundJobBiz;
 import common.NewsBiz;
+import common.UserBiz;
 
 public class ScheduledTasks {
 
@@ -168,7 +169,7 @@ public class ScheduledTasks {
 	}
 
 	protected User selectUser(User user) {
-		user = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user );
+		user = UserBiz.getInstance(sqlSession).selectUser(user.getUserID());
 		return user;
 	}
 

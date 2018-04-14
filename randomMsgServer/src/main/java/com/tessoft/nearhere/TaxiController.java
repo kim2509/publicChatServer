@@ -200,7 +200,7 @@ public class TaxiController extends BaseController {
 				return response;
 			}
 
-			User existingUser = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectUser", user);
+			User existingUser = UserBiz.getInstance(sqlSession).selectUser(user.getUserID());
 
 			if ( existingUser != null && !"".equals( existingUser.getUserID() ) )
 			{
@@ -391,12 +391,7 @@ public class TaxiController extends BaseController {
 			
 			logDetail.append("7|");
 			
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) ) {
-				profilePoint = "0";
-				
-				logDetail.append("9|");
-			}
+			String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 		
 			logDetail.append("11|");
 		
@@ -582,9 +577,7 @@ public class TaxiController extends BaseController {
 			
 			logDetail.append("35|");
 			
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) )
-				profilePoint = "0";
+			String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 			user.setProfilePoint(profilePoint);
 			res.setData(user);
 			
@@ -1211,9 +1204,7 @@ public class TaxiController extends BaseController {
 			}
 			
 			User user = UserBiz.getInstance(sqlSession).selectUser(post.getUser(), false );
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) )
-				profilePoint = "0";
+			String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 			user.setProfilePoint(profilePoint);
 			post.setUser( user );
 			
@@ -1386,9 +1377,7 @@ public class TaxiController extends BaseController {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private HashMap getUserInfoCommon(User user) {
 		
-		String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-		if ( profilePoint == null || "".equals( profilePoint ) )
-			profilePoint = "0";
+		String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 		user.setProfilePoint(profilePoint);
 
 		List<UserLocation> locationList = sqlSession.selectList("com.tessoft.nearhere.taxi.selectUserLocation", user);
@@ -2108,9 +2097,7 @@ public class TaxiController extends BaseController {
 			HashMap addInfo = new HashMap();
 			
 			user = UserBiz.getInstance(sqlSession).selectUser(user, false);
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) )
-				profilePoint = "0";
+			String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 			user.setProfilePoint(profilePoint);
 			
 			addInfo.put("user", user );
@@ -2726,9 +2713,7 @@ public class TaxiController extends BaseController {
 			HashMap addInfo = new HashMap();
 			
 			user = UserBiz.getInstance(sqlSession).selectUser(user, false);
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
-			if ( profilePoint == null || "".equals( profilePoint ) )
-				profilePoint = "0";
+			String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 			user.setProfilePoint(profilePoint);
 			
 			addInfo.put("user", user );

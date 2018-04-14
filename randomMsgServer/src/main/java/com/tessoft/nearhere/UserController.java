@@ -3,11 +3,14 @@ package com.tessoft.nearhere;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.type.TypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -21,15 +24,16 @@ import com.dy.common.ErrorCode;
 import com.dy.common.Util;
 import com.nearhere.domain.APIResponse;
 import com.nearhere.domain.User;
-import com.nearhere.domain.UserLocation;
 
-import common.CafeBiz;
 import common.CarPoolPostBiz;
 import common.UserBiz;
 
 @Controller
 public class UserController extends BaseController{
 
+	@Autowired
+	ServletContext servletContext;
+	
 	@RequestMapping( value ="/user/registerNewMember.do")
 	public ModelAndView registerNewMember ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
 			@CookieValue(value = "userToken", defaultValue = "") String userToken )
@@ -107,7 +111,7 @@ public class UserController extends BaseController{
 				param.put("oldUserID", userID);
 				param.put("type", "Normal");
 				param.put("registerUserFinished", "Y");
-				param.put("password", Util.getShaHashString( Util.getStringFromHash(param, "password") ));
+				param.put("password", Util.encryptPassword( Util.getStringFromHash(param, "password") ));
 				
 				logDetail.append("9|");
 				
@@ -200,7 +204,7 @@ public class UserController extends BaseController{
 			logDetail.append("1 loginID:" + Util.getStringFromHash(param, "loginID") + 
 					"  userToken:" + Util.getStringFromHash(param, "userToken") + "|");
 			
-			param.put("password", Util.getShaHashString( Util.getStringFromHash(param, "password") ));
+			param.put("password", Util.encryptPassword( Util.getStringFromHash(param, "password") ));
 			
 			logDetail.append("3|");
 			
@@ -230,6 +234,11 @@ public class UserController extends BaseController{
 				
 				User user = UserBiz.getInstance(sqlSession).selectUser( Util.getStringFromHash(param, "loginID"), false);
 				response.setData(user);
+				
+				logDetail.append("15|");
+				
+				String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
+				user.setProfilePoint(profilePoint);
 				
 				logDetail.append("loginAjax end SUCCESS|");
 			}
@@ -266,7 +275,7 @@ public class UserController extends BaseController{
 			
 			HashMap userInfo = userBiz.getUserInfo(userID);
 			User user = userBiz.selectUser(userInfo.get("userID").toString(), false);
-			String profilePoint = sqlSession.selectOne("com.tessoft.nearhere.taxi.selectProfilePoint", user);
+			String profilePoint = UserBiz.getInstance(sqlSession).selectProfilePoint(user);
 			userInfo.put("profilePoint", profilePoint);
 			
 			if ( !Util.isEmptyString( userInfo.get("birthday") ) )
@@ -330,6 +339,194 @@ public class UserController extends BaseController{
 		catch( Exception ex )
 		{
 			logger.error(ex);
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/user/findID.do")
+	public ModelAndView findID ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		try
+		{
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+
+			insertHistory("/cafe/findID.do", userID , null , null, null );
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("user/findID", model);
+	}
+	
+	@RequestMapping( value ="/user/findPassword.do")
+	public ModelAndView findPassword ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		try
+		{
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+
+			insertHistory("/cafe/findPassword.do", userID , null , null, null );
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("user/findPassword", model);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping( value ="/user/findIDAjax.do")
+	public @ResponseBody APIResponse findIDAjax( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).getIDFind(param);
+			
+			HashMap data = new HashMap();
+			data.put("userInfo", userInfo);
+			response.setData( data );
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return response;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
+	@RequestMapping( value ="/user/findPasswordAjax.do")
+	public @ResponseBody APIResponse findPasswordAjax( HttpServletRequest request, ModelMap model, @RequestBody String bodyString )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			HashMap userInfo = UserBiz.getInstance(sqlSession).getPasswordFind(param);
+			
+			HashMap data = new HashMap();
+			data.put("userInfo", userInfo);
+			response.setData( data );
+			
+			if ( userInfo != null && !Util.isEmptyForKey(userInfo, "email")) {
+				
+				String newPw = Util.randomString(8);
+				param.put("password", Util.encryptPassword(newPw));
+				UserBiz.getInstance(sqlSession).updateUserPassword(param);
+				
+				String htmlContent = "<html><head><meta charset=\"UTF-8\" />" +
+						"<meta name=\"viewport\" content=\"user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width\" />" +
+						"</head><body>" +
+						"<div id=\"header\"><img src=\"cid:image\" style=\"width:250px;\"/></div>" +
+						"<hr style=\"background:#7bafe3;height:2px;\" />" +
+						"<div><h3>비밀번호 재설정안내</h3>" +
+						"<p>해당 메일은 비밀번호 재설정 메일입니다.<br/><br/>고객님의 계정에 해당하는 비밀번호가 아래와 같이 변경되었습니다.</p>" +
+						"<div>임시 비밀번호 : <span style=\"font-weight:bold;color:blue;\">" + newPw +"</span></div>" +
+						"<p style=\"font-size:14px;margin-top:30px;color:#ab2010;\">비밀번호 변경요청을 하지 않았을 경우 아래의 고객센터로 연락 주시기 바랍니다.</p>" +
+						"<hr /><div  style=\"font-size:14px;\">" +
+						"이근처 고객센터 nearheretaxi@gmail.com" +
+						"</div></div></body></html>";
+				
+				Util.sendPasswordResetMail( Util.getStringFromHash(userInfo, "email"),
+						"비밀번호가 재설정되었습니다.", htmlContent, servletContext.getRealPath("image/email_footer.png") );
+			}
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping( value ="/user/changePassword.do")
+	public ModelAndView changePassword ( HttpServletRequest request, HttpServletResponse response , ModelMap model,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		try
+		{
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+
+			insertHistory("/cafe/changePassword.do", userID , null , null, null );
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+		}
+		
+		return new ModelAndView("user/changePassword", model);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
+	@RequestMapping( value ="/user/changePasswordAjax.do")
+	public @ResponseBody APIResponse changePasswordAjax( HttpServletRequest request, ModelMap model, @RequestBody String bodyString,
+			@CookieValue(value = "userToken", defaultValue = "") String userToken )
+	{
+		APIResponse response = new APIResponse();
+		
+		try
+		{
+			logDetail = new StringBuilder();
+			logDetail.append("changePasswordAjax start|");
+			
+			HashMap param = mapper.readValue(bodyString, new TypeReference<HashMap>(){});
+			
+			String userID = UserBiz.getInstance(sqlSession).getUserIDByUserToken(userToken);
+			
+			logDetail.append("1 userID:" + userID + "|");
+			
+			param.put("loginID", userID);
+			param.put("userToken", userToken);
+			param.put("password", Util.encryptPassword( Util.getStringFromHash(param, "oldPassword") ));
+			
+			logDetail.append("3|");
+			
+			HashMap loginInfo = UserBiz.getInstance(sqlSession).getLoginInfo(param);
+			
+			if ( loginInfo == null ) {
+				
+				logDetail.append("5|");
+				
+				response.setResCode( ErrorCode.INVALID_PASSWORD );
+				response.setResMsg("현재 비밀번호가 올바르지 않습니다.");
+			} else {
+				
+				logDetail.append("7|");
+				
+				String newPw = Util.randomString(8);
+				param.put("userID", userID);
+				param.put("password", Util.encryptPassword(Util.getStringFromHash(param, "newPassword")));
+				UserBiz.getInstance(sqlSession).updateUserPassword(param);
+			}
+			
+			logDetail.append("changePasswordAjax end SUCCESS|");
+		}
+		catch( Exception ex )
+		{
+			logger.error(ex);
+			
+			if ( ex != null )
+				logDetail.append("changePasswordAjax end ex:" + ex.getMessage() + "|");
+			else
+				logDetail.append("changePasswordAjax end ex null|");
+		}
+		finally {
+			logger.info(logDetail.toString());
 		}
 		
 		return response;

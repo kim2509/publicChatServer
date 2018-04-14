@@ -15,9 +15,9 @@ public class Constants {
 	/* dev */
 	public static boolean bReal = false;
 	public static String SSLProtocol = "http";
-	public static String ServerIP = "192.168.43.137";
+//	public static String ServerIP = "192.168.43.137";
 //	public static String ServerIP = "localhost";
-//	public static String ServerIP = "192.168.0.200";
+	public static String ServerIP = "192.168.0.200";
 	public static String Port = "8080";
 	public static String SSLPort = "8080";
 	/* dev */

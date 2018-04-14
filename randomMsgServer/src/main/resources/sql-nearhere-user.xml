@@ -341,7 +341,7 @@
 		delete from user_token where userID=#{userID}
 	</delete>
 	
-	<select id="getLoginInfo" parameterType="String"
+	<select id="getLoginInfo" parameterType="HashMap"
 		resultType="java.util.HashMap">
 		<![CDATA[
 			select u.*
@@ -352,4 +352,77 @@
 			and ut.hash=#{userToken}
 		]]>
 	</select>
+	
+	<select id="getIDFind" parameterType="HashMap"
+		resultType="java.util.HashMap">
+		<![CDATA[
+			select u.*
+			from user u
+			where userName=#{userName}
+			and email=#{email}
+		]]>
+	</select>
+	
+	<select id="getPasswordFind" parameterType="HashMap"
+		resultType="java.util.HashMap">
+		<![CDATA[
+			select u.*
+			from user u
+			where userID=#{userID}
+			and email=#{email}
+		]]>
+	</select>
+	
+	<update id="updateUserPassword" parameterType="java.util.HashMap">
+		update user
+		set password=#{password}
+		where userID=#{userID}
+	</update>
+	
+	<select id="selectUser" parameterType="com.nearhere.domain.User"
+		resultType="com.nearhere.domain.User">
+		select u.*, ut.hash as userToken
+		FROM user u
+			left outer join user_token ut on u.userID= ut.userID
+		where u.userID = #{userID};
+	</select>
+	
+	<select id="selectProfilePoint" parameterType="com.nearhere.domain.User"
+		resultType="String">
+		select sum( credit ) as 'profilePoint'
+		from (
+		select 30 as
+		'credit' from user where facebookID is not null and registerUserFinished = 'Y' and userID=#{userID}
+		union all
+		
+		select 20 as
+		'credit' from user where kakaoID is not null and registerUserFinished = 'Y' and userID=#{userID}
+		union all
+		
+		select 10 as 'credit' from user where userID=#{userID}
+		and birthday is not null
+		union all
+		
+		select 15 as 'credit' from user
+		left outer join user_location ul on user.userID=ul.userID and
+		ul.locationName='집'
+		where user.userID=#{userID}
+		and ul.userID is not null
+		union all
+		
+		select 15 as 'credit' from user
+		left outer join user_location ul on user.userID=ul.userID and
+		ul.locationName='직장'
+		where user.userID=#{userID}
+		and ul.userID is not null
+		union all
+		
+		select 10 as 'credit' from user where userID=#{userID} and jobTitle is not
+		null
+		union all
+		
+		select 0 as 'credit'
+		) A
+	</select>
+	
 </mapper>

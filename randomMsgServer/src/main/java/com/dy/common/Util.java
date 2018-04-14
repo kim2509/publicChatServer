@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -20,12 +21,18 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -759,7 +766,7 @@ public class Util {
 		return result.trim();
 	}
 	
-	public static void sendMail() throws Exception {
+	public static void sendPasswordResetMail( String receiver, String title, String htmlMsg, String headerImgPath ) throws Exception {
 		final String username = "nearheretaxi@gmail.com";
 		final String password = "google!23";
 
@@ -777,13 +784,43 @@ public class Util {
 		  });
 
 		Message message = new MimeMessage(session);
-		message.setFrom(new InternetAddress("kim2509@gmail.com"));
+		message.setFrom(new InternetAddress( username ));
 		message.setRecipients(Message.RecipientType.TO,
-			InternetAddress.parse("kdy2509@naver.com"));
-		message.setSubject("Testing Subject");
-		String htmlMsg = "<h3>Hello World!</h3>";
-		message.setContent(htmlMsg, "text/html");
+			InternetAddress.parse( receiver ));
+		message.setSubject(title);
+		
+		// This mail has 2 part, the BODY and the embedded image
+        MimeMultipart multipart = new MimeMultipart("related");
+        
+		// first part (the html)
+		BodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent(htmlMsg, "text/html;charset=UTF-8");
+		// add it
+		multipart.addBodyPart(messageBodyPart);
+		
+		// second part (the image)
+        messageBodyPart = new MimeBodyPart();
+        DataSource fds = new FileDataSource( headerImgPath );
+
+        messageBodyPart.setDataHandler(new DataHandler(fds));
+        messageBodyPart.setHeader("Content-ID", "<image>");
+
+        // add image to the multipart
+        multipart.addBodyPart(messageBodyPart);
+        
+        message.setContent(multipart);
+//		message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
 		Transport.send(message);
+	}
+	
+	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	static SecureRandom rnd = new SecureRandom();
+
+	public static String randomString( int len ){
+	   StringBuilder sb = new StringBuilder( len );
+	   for( int i = 0; i < len; i++ ) 
+	      sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+	   return sb.toString();
 	}
 }
